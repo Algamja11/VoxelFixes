@@ -207,7 +207,7 @@ public class VoxelMap implements PreparableReloadListener {
             } else if (radarOptions.radarMode == 2) {
                 return this.radar;
             } else if (radarOptions.radarMode == 3) {
-                if (VoxelConstants.getAlternativeListKey().isDown()){
+                if (VoxelConstants.getAlternativeListKey().isDown()) {
                     return this.radar;
                 } else {
                     return this.radarSimple;

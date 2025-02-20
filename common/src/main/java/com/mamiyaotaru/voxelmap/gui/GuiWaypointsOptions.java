@@ -29,12 +29,12 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
         for (EnumOptionsMinimap option : relevantOptions) {
             if (option.isFloat()) {
                 float value = this.options.getOptionFloatValue(option);
-                if (option == EnumOptionsMinimap.WAYPOINTDISTANCE){
+                if (option == EnumOptionsMinimap.WAYPOINTDISTANCE) {
                     if (value < 0.0F) {
                         value = 10001.0F;
                     }
                     value = (value - 50.0F) / 9951.0F;
-                } else if (option == EnumOptionsMinimap.WAYPOINTSIZE){
+                } else if (option == EnumOptionsMinimap.WAYPOINTSIZE) {
                     value -= 0.5f;
                 }
                 this.addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 - 155 + var2 % 2 * 160, this.getHeight() / 6 + 24 * (var2 >> 1), option, value, this.options));

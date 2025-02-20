@@ -253,8 +253,8 @@ public class MapSettingsManager implements ISettingsManager {
         String s = I18n.get(options.getName()) + ": ";
         if (options.isFloat()) {
             float f = this.getOptionFloatValue(options);
-            switch (options){
-                case ZOOMLEVEL ->{
+            switch (options) {
+                case ZOOMLEVEL -> {
                     return s + (int) f;
                 }
                 case WAYPOINTDISTANCE -> {
@@ -280,7 +280,7 @@ public class MapSettingsManager implements ISettingsManager {
 
     @Override
     public float getOptionFloatValue(EnumOptionsMinimap options) {
-        switch (options){
+        switch (options) {
             case ZOOMLEVEL -> {
                 return this.zoom;
             }
@@ -327,26 +327,26 @@ public class MapSettingsManager implements ISettingsManager {
     public String getOptionListValue(EnumOptionsMinimap par1EnumOptions) {
         switch (par1EnumOptions) {
             case DISPLAY -> {
-                if (this.displayMode == 0 || !this.minimapAllowed){
+                if (this.displayMode == 0 || !this.minimapAllowed) {
                     return I18n.get("options.off");
-                } else if (this.displayMode == 1){
+                } else if (this.displayMode == 1) {
                     return I18n.get("options.minimap.display.minimap");
-                } else if (this.displayMode == 2){
+                } else if (this.displayMode == 2) {
                     return I18n.get("options.minimap.display.fullmap");
                 } else {
-                    if (this.displayMode == 3){
+                    if (this.displayMode == 3) {
                         return I18n.get("options.minimap.display.both");
                     }
                     return "error";
                 }
             }
             case COORDS -> {
-                if (this.coordsMode == 0){
+                if (this.coordsMode == 0) {
                     return I18n.get("options.off");
-                } else if (this.coordsMode == 1){
+                } else if (this.coordsMode == 1) {
                     return I18n.get("options.minimap.showcoordinates.mode1");
                 } else {
-                    if (this.coordsMode == 2){
+                    if (this.coordsMode == 2) {
                         return I18n.get("options.minimap.showcoordinates.mode2");
                     }
                     return "error";
@@ -374,7 +374,7 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.shape == 0) {
                     return I18n.get("options.minimap.shape.round");
                 } else {
-                    if (this.shape == 1){
+                    if (this.shape == 1) {
                         return I18n.get("options.minimap.shape.squre");
                     }
                     return "error";
@@ -445,7 +445,7 @@ public class MapSettingsManager implements ISettingsManager {
 
     @Override
     public void setOptionFloatValue(EnumOptionsMinimap options, float value) {
-        switch (options){
+        switch (options) {
             case WAYPOINTDISTANCE -> {
                 float distance = value * 9951.0F + 50.0F;
                 if (distance > 10000.0F) {
@@ -485,9 +485,9 @@ public class MapSettingsManager implements ISettingsManager {
             case OLDNORTH -> this.oldNorth = !this.oldNorth;
 
             case DISPLAY -> {
-                if (this.minimapAllowed){
+                if (this.minimapAllowed) {
                     this.displayMode++;
-                    if (this.displayMode > 3){
+                    if (this.displayMode > 3) {
                         this.displayMode = 0;
                     }
                 } else {
@@ -497,26 +497,26 @@ public class MapSettingsManager implements ISettingsManager {
 
             case COORDS -> {
                 this.coordsMode++;
-                if (this.coordsMode > 2){
+                if (this.coordsMode > 2) {
                     this.coordsMode = 0;
                 }
             }
 
             case SIZE -> {
                 this.sizeModifier++;
-                if (this.sizeModifier > 4){
+                if (this.sizeModifier > 4) {
                     this.sizeModifier = -1;
                 }
             }
             case SHAPE -> {
                 this.shape++;
-                if (this.shape > 1){
+                if (this.shape > 1) {
                     this.shape = 0;
                 }
             }
             case LOCATION -> {
                 this.mapCorner++;
-                if (this.mapCorner > 3){
+                if (this.mapCorner > 3) {
                     this.mapCorner = 0;
                 }
             }
