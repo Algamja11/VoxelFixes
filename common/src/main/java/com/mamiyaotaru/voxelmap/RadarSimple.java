@@ -183,7 +183,7 @@ public class RadarSimple implements IRadar {
         double lastX = GameVariableAccessShim.xCoordDouble();
         double lastZ = GameVariableAccessShim.zCoordDouble();
         int lastY = GameVariableAccessShim.yCoord();
-        double maxY = this.layoutVariables.zoomScaleAdjusted * 32.0;
+        double max = this.layoutVariables.zoomScaleAdjusted * 32.0;
         float iconScale = this.layoutVariables.fullscreenMap ? 0.5f : 1.0f;
         OpenGL.Utils.disp2(this.textureAtlas.getId());
 
@@ -192,21 +192,24 @@ public class RadarSimple implements IRadar {
             double wayX = lastX - contact.x;
             double wayZ = lastZ - contact.z;
             int wayY = lastY - contact.y;
+            double entityMax = max;
             if (contact.type == EnumMobs.PHANTOM) {
-                maxY *= 2;
+                entityMax *= 2;
             }
-            double adjustedDiff = maxY - Math.max(Math.abs(wayY), 0);
-            float red, green, blue;
+            double adjustedDiff = entityMax - Math.max(Math.abs(wayY), 0);
+            contact.brightness = (float) Math.max(adjustedDiff / entityMax, 0.0);
+            contact.brightness *= contact.brightness;
+            contact.angle = (float) Math.toDegrees(Math.atan2(wayX, wayZ));
+            contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) / this.layoutVariables.zoomScaleAdjusted;
+            OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
+            float red;
+            float green;
+            float blue;
             if (isHostile(contact.entity)) {
                 red = 1f; green = 0.25f; blue = 0f;
             } else {
                 red = 1f; green = 1f; blue = 1f;
             }
-            contact.brightness = (float) Math.max(adjustedDiff / maxY, 0.0);
-            contact.brightness *= contact.brightness;
-            contact.angle = (float) Math.toDegrees(Math.atan2(wayX, wayZ));
-            contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) / this.layoutVariables.zoomScaleAdjusted;
-            OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
             if (wayY < 0) {
                 OpenGL.glColor4f(red, green, blue, contact.brightness);
             } else {

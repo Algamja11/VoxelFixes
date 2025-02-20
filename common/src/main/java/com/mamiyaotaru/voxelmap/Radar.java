@@ -1431,7 +1431,7 @@ public class Radar implements IRadar {
         double lastX = GameVariableAccessShim.xCoordDouble();
         double lastZ = GameVariableAccessShim.zCoordDouble();
         int lastY = GameVariableAccessShim.yCoord();
-        double maxY = this.layoutVariables.zoomScaleAdjusted * 32.0;
+        double max = this.layoutVariables.zoomScaleAdjusted * 32.0;
         float iconScale = this.layoutVariables.fullscreenMap ? 0.5f : 1.0f;
 
         for (Contact contact : this.contacts) {
@@ -1444,11 +1444,12 @@ public class Radar implements IRadar {
             double wayX = lastX - contact.x;
             double wayZ = lastZ - contact.z;
             int wayY = lastY - contact.y;
+            double entityMax = max;
             if (contact.type == EnumMobs.PHANTOM) {
-                maxY *= 2;
+                entityMax *= 2;
             }
-            double adjustedDiff = maxY - Math.max(Math.abs(wayY), 0);
-            contact.brightness = (float) Math.max(adjustedDiff / maxY, 0.0);
+            double adjustedDiff = entityMax - Math.max(Math.abs(wayY), 0);
+            contact.brightness = (float) Math.max(adjustedDiff / entityMax, 0.0);
             contact.brightness *= contact.brightness;
             contact.angle = (float) Math.toDegrees(Math.atan2(wayX, wayZ));
             contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) / this.layoutVariables.zoomScaleAdjusted;
