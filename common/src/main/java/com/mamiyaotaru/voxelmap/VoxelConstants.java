@@ -4,6 +4,7 @@ import com.mamiyaotaru.voxelmap.persistent.ThreadManager;
 import com.mamiyaotaru.voxelmap.util.BiomeRepository;
 import com.mamiyaotaru.voxelmap.util.CommandUtils;
 import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.LogManager;
@@ -193,5 +194,9 @@ public final class VoxelConstants {
 
     public static void setPacketBridge(PacketBridge packetBridge) {
         VoxelConstants.packetBridge = packetBridge;
+    }
+
+    public static KeyMapping getAlternativeListKey() {
+        return VoxelMap.mapOptions.keyBindListAlternative.isUnbound() ? KeyMapping.get("key.playerlist") : VoxelMap.mapOptions.keyBindListAlternative;
     }
 }

@@ -84,7 +84,6 @@ public class MapSettingsManager implements ISettingsManager {
     public final KeyMapping keyBindRadarToggle = new KeyMapping("key.minimap.togglemobs", -1, "controls.minimap.title");
     public final KeyMapping keyBindListAlternative = new KeyMapping("key.minimap.listalternative", -1, "controls.minimap.title");
     public final KeyMapping[] keyBindings;
-    public final KeyMapping keyBindPlayerList;
 
     private boolean somethingChanged;
     public static MapSettingsManager instance;
@@ -92,14 +91,7 @@ public class MapSettingsManager implements ISettingsManager {
 
     public MapSettingsManager() {
         instance = this;
-        this.keyBindings = new KeyMapping[]{
-                this.keyBindMenu, this.keyBindWaypointMenu,
-                this.keyBindZoom, this.keyBindZoomOut,
-                this.keyBindFullscreen, this.keyBindWaypoint,
-                this.keyBindWaypointToggle, this.keyBindRadarToggle,
-                this.keyBindListAlternative
-        };
-        keyBindPlayerList = KeyMapping.get("key.playerlist");
+        this.keyBindings = new KeyMapping[]{ this.keyBindMenu, this.keyBindWaypointMenu, this.keyBindZoom, this.keyBindZoomOut, this.keyBindFullscreen, this.keyBindWaypoint, this.keyBindWaypointToggle, this.keyBindRadarToggle, this.keyBindListAlternative };
     }
 
     public void addSecondaryOptionsManager(ISubSettingsManager secondarySettingsManager) {

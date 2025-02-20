@@ -35,7 +35,6 @@ public class VoxelMap implements PreparableReloadListener {
     private Map map;
     private IRadar radar;
     private IRadar radarSimple;
-    private boolean listKeyIsHolding;
     private PersistentMap persistentMap;
     private SettingsAndLightingChangeNotifier settingsAndLightingChangeNotifier;
     private WorldUpdateListener worldUpdateListener;
@@ -147,14 +146,6 @@ public class VoxelMap implements PreparableReloadListener {
             }
         }
 
-        KeyMapping holdKeymap = this.getMapOptions().keyBindListAlternative.isUnbound()
-                ? this.getMapOptions().keyBindPlayerList : this.getMapOptions().keyBindListAlternative;
-        if (holdKeymap == null){
-            listKeyIsHolding = false;
-        } else{
-            listKeyIsHolding = holdKeymap.isDown();
-        }
-
         VoxelConstants.tick();
         this.persistentMap.onTick();
     }
@@ -213,27 +204,18 @@ public class VoxelMap implements PreparableReloadListener {
         if (radarOptions.showRadar) {
             if (radarOptions.radarMode == 1) {
                 return this.radarSimple;
-            }
-
-            if (radarOptions.radarMode == 2) {
+            } else if (radarOptions.radarMode == 2) {
                 return this.radar;
-            }
-
-            if (radarOptions.radarMode == 3){
-                if (this.listKeyIsHolding){
+            } else if (radarOptions.radarMode == 3) {
+                if (VoxelConstants.getAlternativeListKey().isDown()){
                     return this.radar;
-                }
-                else{
+                } else {
                     return this.radarSimple;
                 }
             }
         }
 
         return null;
-    }
-
-    public boolean getListKeyIsHolding(){
-        return this.listKeyIsHolding;
     }
 
     public ColorManager getColorManager() {
