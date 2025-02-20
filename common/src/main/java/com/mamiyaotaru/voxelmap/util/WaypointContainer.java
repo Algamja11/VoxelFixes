@@ -182,13 +182,21 @@ public class WaypointContainer {
             for (int side = 0; side < 5; ++side) {
                 float vertexX_1 = (float) (baseX + 0.5 - beamWidth);
                 float vertexZ_1 = (float) (baseZ + 0.5 - beamWidth);
-                if (side == 1 || side == 2) { vertexX_1 = (float) (vertexX_1 + beamWidth * 2.0); }
-                if (side == 2 || side == 3) { vertexZ_1 = (float) (vertexZ_1 + beamWidth * 2.0); }
+                if (side == 1 || side == 2) {
+                    vertexX_1 = (float) (vertexX_1 + beamWidth * 2.0);
+                }
+                if (side == 2 || side == 3) {
+                    vertexZ_1 = (float) (vertexZ_1 + beamWidth * 2.0);
+                }
 
                 float vertexX_2 = (float) (baseX + 0.5 - beamWidth);
                 float vertexY_2 = (float) (baseZ + 0.5 - beamWidth);
-                if (side == 1 || side == 2) { vertexX_2 = (float) (vertexX_2 + beamWidth * 2.0); }
-                if (side == 2 || side == 3) { vertexY_2 = (float) (vertexY_2 + beamWidth * 2.0); }
+                if (side == 1 || side == 2) {
+                    vertexX_2 = (float) (vertexX_2 + beamWidth * 2.0);
+                }
+                if (side == 2 || side == 3) {
+                    vertexY_2 = (float) (vertexY_2 + beamWidth * 2.0);
+                }
 
                 vertexBuffer.addVertex(matrix4f, vertexX_1, (float) baseY, vertexZ_1).setColor(r * brightness, g * brightness, b * brightness, fade);
                 vertexBuffer.addVertex(matrix4f, vertexX_2, (float) (baseY + height), vertexY_2).setColor(r * brightness, g * brightness, b * brightness, fade);
