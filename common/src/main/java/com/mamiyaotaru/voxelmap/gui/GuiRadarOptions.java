@@ -12,9 +12,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiRadarOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] iconRelevantOptions = { EnumOptionsMinimap.SHOWRADAR, EnumOptionsMinimap.RADARMODE, EnumOptionsMinimap.SHOWMOBS, EnumOptionsMinimap.SHOWPLAYERS, EnumOptionsMinimap.SHOWMOBHELMETS, EnumOptionsMinimap.SHOWPLAYERHELMETS, EnumOptionsMinimap.SHOWMOBNAMES, EnumOptionsMinimap.SHOWPLAYERNAMES, EnumOptionsMinimap.RADARFILTERING, EnumOptionsMinimap.RADAROUTLINE };
+    private static final EnumOptionsMinimap[] iconRelevantOptions = { EnumOptionsMinimap.SHOWRADAR, EnumOptionsMinimap.RADARMODE, EnumOptionsMinimap.SHOWMOBS, EnumOptionsMinimap.SHOWPLAYERS, EnumOptionsMinimap.SHOWMOBHELMETS, EnumOptionsMinimap.SHOWPLAYERHELMETS, EnumOptionsMinimap.SHOWMOBNAMES, EnumOptionsMinimap.SHOWPLAYERNAMES };
     private static final EnumOptionsMinimap[] simpleRelevantOptions = { EnumOptionsMinimap.SHOWRADAR, EnumOptionsMinimap.RADARMODE, EnumOptionsMinimap.SHOWMOBS, EnumOptionsMinimap.SHOWPLAYERS, EnumOptionsMinimap.SHOWMOBNAMES, EnumOptionsMinimap.SHOWPLAYERNAMES, EnumOptionsMinimap.SHOWFACING };
-    private static final EnumOptionsMinimap[] dynamicRelevantOptions = { EnumOptionsMinimap.SHOWRADAR, EnumOptionsMinimap.RADARMODE, EnumOptionsMinimap.SHOWMOBS, EnumOptionsMinimap.SHOWPLAYERS, EnumOptionsMinimap.SHOWMOBHELMETS, EnumOptionsMinimap.SHOWPLAYERHELMETS, EnumOptionsMinimap.SHOWMOBNAMES, EnumOptionsMinimap.SHOWPLAYERNAMES, EnumOptionsMinimap.RADARFILTERING, EnumOptionsMinimap.RADAROUTLINE, EnumOptionsMinimap.SHOWFACING };
+    private static final EnumOptionsMinimap[] dynamicRelevantOptions = { EnumOptionsMinimap.SHOWRADAR, EnumOptionsMinimap.RADARMODE, EnumOptionsMinimap.SHOWMOBS, EnumOptionsMinimap.SHOWPLAYERS, EnumOptionsMinimap.SHOWMOBHELMETS, EnumOptionsMinimap.SHOWPLAYERHELMETS, EnumOptionsMinimap.SHOWMOBNAMES, EnumOptionsMinimap.SHOWPLAYERNAMES, EnumOptionsMinimap.SHOWFACING };
 
     private final Screen parent;
     private final RadarSettingsManager options;

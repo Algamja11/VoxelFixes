@@ -13,7 +13,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiRadarDetails extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.RADARFONTSIZE, EnumOptionsMinimap.SHOWONLYTAGGEDMOBNAMES };
+    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.RADARFONTSIZE, EnumOptionsMinimap.SHOWONLYTAGGEDMOBNAMES, EnumOptionsMinimap.RADARFILTERING, EnumOptionsMinimap.RADAROUTLINE };
     private final Screen parent;
     private final RadarSettingsManager options;
     protected Component screenTitle;
@@ -36,7 +36,7 @@ public class GuiRadarDetails extends GuiScreenMinimap {
             if (option.isFloat()) {
                 float sliderValue = this.options.getOptionFloatValue(option);
                 this.addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 - 155 + i % 2 * 160, this.getHeight() / 6 + 24 * (i >> 1), option, sliderValue, this.options));
-            } else{
+            } else {
                 addRenderableWidget(new GuiOptionButtonMinimap(this.getWidth() / 2 - 155 + i % 2 * 160, this.getHeight() / 6 + 24 * (i >> 1), option, Component.literal(options.getKeyText(option)), this::optionClicked));
             }
         }
@@ -84,17 +84,8 @@ public class GuiRadarDetails extends GuiScreenMinimap {
             if (button.returnEnumOptions() != EnumOptionsMinimap.SHOWRADAR) {
                 button.active = options.showRadar;
             }
-            if (button.returnEnumOptions() == EnumOptionsMinimap.SHOWMOBS) {
-                button.active = button.active && (options.radarAllowed || options.radarMobsAllowed);
-            }
-            if (button.returnEnumOptions() == EnumOptionsMinimap.SHOWMOBHELMETS || button.returnEnumOptions() == EnumOptionsMinimap.SHOWMOBNAMES) {
-                button.active = button.active && (options.showNeutrals || options.showHostiles) && (options.radarAllowed || options.radarMobsAllowed);
-            }
-            if (button.returnEnumOptions() == EnumOptionsMinimap.SHOWPLAYERS) {
-                button.active = button.active && (options.radarAllowed || options.radarPlayersAllowed);
-            }
-            if (button.returnEnumOptions() == EnumOptionsMinimap.SHOWPLAYERHELMETS || button.returnEnumOptions() == EnumOptionsMinimap.SHOWPLAYERNAMES) {
-                button.active = button.active && options.showPlayers && (options.radarAllowed || options.radarPlayersAllowed);
+            if (button.returnEnumOptions() == EnumOptionsMinimap.RADAROUTLINE || button.returnEnumOptions() == EnumOptionsMinimap.RADARFILTERING) {
+                button.active = button.active && options.radarAllowed && options.radarMode != 1;
             }
         }
     }

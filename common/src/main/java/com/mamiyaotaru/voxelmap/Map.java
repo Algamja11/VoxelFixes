@@ -1782,7 +1782,7 @@ public class Map implements Runnable, IChangeObserver {
         float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX) * multi;
         float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ) * multi;
         float uOne = 1.0f + percentX - 0.03125f; float vOne = 1.0f + percentY - 0.03125f;
-        float uZero =       percentX + 0.03125f; float vZero =       percentY + 0.03125f;
+        float uZero = percentX + 0.03125f; float vZero = percentY + 0.03125f;
         matrixStack.pushPose();
         matrixStack.translate(scWidth / 2.0F, scHeight / 2.0F, 0.0);
         matrixStack.mulPose(Axis.ZP.rotationDegrees(this.northRotate));
