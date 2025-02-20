@@ -483,66 +483,66 @@ public class Radar implements IRadar {
         try {
             int intendedSize = 8;
             String fullPath = ("textures/icons/" + identifier + ".png").toLowerCase();
-            InputStream inputStream = null;
+            InputStream is = null;
 
             try {
-                inputStream = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
             } catch (IOException ignored) {}
 
-            if (inputStream == null) {
+            if (is == null) {
                 fullPath = ("textures/icons/" + identifierSimple + ".png").toLowerCase();
                 try {
-                    inputStream = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
-            if (inputStream == null) {
+            if (is == null) {
                 fullPath = ("textures/icons/" + identifier + "8.png").toLowerCase();
                 try {
-                    inputStream = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
-            if (inputStream == null) {
+            if (is == null) {
                 fullPath = ("textures/icons/" + identifierSimple + "8.png").toLowerCase();
                 try {
-                    inputStream = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
-            if (inputStream == null) {
+            if (is == null) {
                 intendedSize = 16;
                 fullPath = ("textures/icons/" + identifier + "16.png").toLowerCase();
                 try {
-                    inputStream = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
-            if (inputStream == null) {
+            if (is == null) {
                 fullPath = ("textures/icons/" + identifierSimple + "16.png").toLowerCase();
                 try {
-                    inputStream = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
-            if (inputStream == null) {
+            if (is == null) {
                 intendedSize = 32;
                 fullPath = ("textures/icons/" + identifier + "32.png").toLowerCase();
                 try {
-                    inputStream = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
-            if (inputStream == null) {
+            if (is == null) {
                 fullPath = ("textures/icons/" + identifierSimple + "32.png").toLowerCase();
                 try {
-                    inputStream = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
-            if (inputStream != null) {
-                mobSkin = ImageIO.read(inputStream);
-                inputStream.close();
+            if (is != null) {
+                mobSkin = ImageIO.read(is);
+                is.close();
                 mobSkin = ImageUtils.validateImage(mobSkin);
                 float scale = (float) mobSkin.getWidth() / intendedSize;
                 mobSkin = ImageUtils.fillOutline(ImageUtils.pad(ImageUtils.scaleImage(mobSkin, 4.0F / scale)), this.options.outlines, 2);
