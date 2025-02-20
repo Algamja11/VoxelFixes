@@ -1470,9 +1470,9 @@ public class Radar implements IRadar {
                 inRange = contact.distance < 31.0;
             } else {
                 double radLocate = Math.toRadians(contact.angle);
-                double squareRangeX = contact.distance * Math.cos(radLocate);
-                double squareRangeY = contact.distance * Math.sin(radLocate);
-                inRange = Math.abs(squareRangeX) <= 28.5 && Math.abs(squareRangeY) <= 28.5;
+                double dispX = contact.distance * Math.cos(radLocate);
+                double dispY = contact.distance * Math.sin(radLocate);
+                inRange = Math.abs(dispX) <= 28.5 && Math.abs(dispY) <= 28.5;
             }
 
             if (inRange) {
