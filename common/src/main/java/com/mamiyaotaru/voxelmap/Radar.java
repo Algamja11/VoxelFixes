@@ -278,8 +278,7 @@ public class Radar implements IRadar {
             BufferedImage sheepFur = ImageUtils.loadImage(ResourceLocation.parse("textures/entity/sheep/sheep_fur.png"), 6, 6, 6, 6);
             float scale = sheepFur.getWidth() / 6.0F;
             sheepFur = ImageUtils.scaleImage(sheepFur, 4.0F / scale * 1.0625F);
-            int chop = 2; //(int) Math.max(1.0F, 2.0F); ??????
-            ImageUtils.eraseArea(sheepFur, chop, chop, sheepFur.getWidth() - chop * 2, sheepFur.getHeight() - chop * 2, sheepFur.getWidth(), sheepFur.getHeight());
+            ImageUtils.eraseArea(sheepFur, 2, 2, sheepFur.getWidth() - 4, sheepFur.getHeight() - 4, sheepFur.getWidth(), sheepFur.getHeight());
             sheepFur = ImageUtils.fillOutline(ImageUtils.pad(sheepFur), this.options.outlines, true, 27.5F, 27.5F, (int) Math.max(1.0F, 2.0F));
             this.textureAtlas.registerIconForBufferedImage(headIDs[6], sheepFur);
 
