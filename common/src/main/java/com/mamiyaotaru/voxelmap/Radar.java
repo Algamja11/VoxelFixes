@@ -185,7 +185,6 @@ public class Radar implements IRadar {
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
-        entityIconMap.clear();
         this.loadTexturePackIcons();
     }
 
@@ -193,6 +192,7 @@ public class Radar implements IRadar {
         this.completedLoading = false;
 
         try {
+            entityIconMap.clear();
             this.mpContactsSkinGetTries.clear();
             this.contactsSkinGetTries.clear();
             this.textureAtlas.reset();
@@ -358,8 +358,12 @@ public class Radar implements IRadar {
             }
 
             this.direction = GameVariableAccessShim.rotationYaw() + 180.0F;
-            while (this.direction < 0.0F) {this.direction += 360.0F;}
-            while (this.direction >= 360.0F) {this.direction -= 360.0F;}
+            while (this.direction < 0.0F) {
+                this.direction += 360.0F;
+            }
+            while (this.direction >= 360.0F) {
+                this.direction -= 360.0F;
+            }
 
             if (this.completedLoading && this.timer > 95) {
                 this.calculateMobs();
@@ -1562,7 +1566,7 @@ public class Radar implements IRadar {
                         }
                     }
 
-                    if (contact.name != null && ((this.options.showPlayerNames && this.isPlayer(contact.entity)) || (this.options.showMobNames && !this.isPlayer(contact.entity) && (!this.options.showOnlyTaggedMobNames || contact.entity.hasCustomName())))) {
+                    if (contact.name != null && ((this.options.showPlayerNames && this.isPlayer(contact.entity)) || (this.options.showMobNames && !this.isPlayer(contact.entity) && (!this.options.showNamesOnlyForTagged || contact.entity.hasCustomName())))) {
                         float fontSize = this.options.fontSize * iconScale;
                         float scaleFactor = 1f / fontSize;
                         String mobName = contact.entity.getDisplayName().getString();

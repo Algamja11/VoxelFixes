@@ -34,13 +34,13 @@ public enum EnumOptionsMinimap {
     SHOWPLAYERHELMETS("options.minimap.radar.showplayerhelmets", false, true, false),
     SHOWMOBNAMES("options.minimap.radar.showmobnames", false, true, false),
     SHOWPLAYERNAMES("options.minimap.radar.showplayernames", false, true, false),
-    RADAROUTLINE("options.minimap.radar.iconoutlines", false, true, false),
-    RADARFILTERING("options.minimap.radar.iconfiltering", false, true, false),
     SHOWFACING("options.minimap.radar.showfacing", false, true, false),
 
     // Radar Detail Options
     RADARFONTSIZE("options.minimap.radar.fontsize", true, false, false),
-    SHOWONLYTAGGEDMOBNAMES("options.minimap.radar.showonlytaggedmobnames", false, true, false),
+    SHOWNAMESONLYFORTAGGED("options.minimap.radar.shownamesonlyfortagged", false, true, false),
+    RADAROUTLINE("options.minimap.radar.iconoutlines", false, true, false),
+    RADARFILTERING("options.minimap.radar.iconfiltering", false, true, false),
 
     // Waypoint Options
     WAYPOINTDISTANCE("options.minimap.waypoints.distance", true, false, false),

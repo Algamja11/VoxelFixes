@@ -13,7 +13,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiRadarDetails extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.RADARFONTSIZE, EnumOptionsMinimap.SHOWONLYTAGGEDMOBNAMES, EnumOptionsMinimap.RADARFILTERING, EnumOptionsMinimap.RADAROUTLINE };
+    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.RADARFONTSIZE, EnumOptionsMinimap.SHOWNAMESONLYFORTAGGED, EnumOptionsMinimap.RADARFILTERING, EnumOptionsMinimap.RADAROUTLINE };
     private final Screen parent;
     private final RadarSettingsManager options;
     protected Component screenTitle;

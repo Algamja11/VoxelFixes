@@ -29,7 +29,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
     public boolean showFacing = true;
 
     public float fontSize = 0.25f;
-    public boolean showOnlyTaggedMobNames = true;
+    public boolean showNamesOnlyForTagged = true;
 
     public boolean radarAllowed = true;
     public boolean radarPlayersAllowed = true;
@@ -58,7 +58,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
                     case "Show Facing" -> this.showFacing = Boolean.parseBoolean(curLine[1]);
 
                     case "Font Size" -> this.fontSize = Float.parseFloat(curLine[1]);
-                    case "Show Only Tagged Mob Names" -> this.showOnlyTaggedMobNames = Boolean.parseBoolean(curLine[1]);
+                    case "Show Names Only For Tagged Mobs" -> this.showNamesOnlyForTagged = Boolean.parseBoolean(curLine[1]);
 
                     case "Hidden Mobs" -> this.applyHiddenMobSettings(curLine[1]);
                 }
@@ -105,7 +105,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
         out.println("Show Facing:" + this.showFacing);
 
         out.println("Font Size:" + this.fontSize);
-        out.println("Show Only Tagged Mob Names" + this.showOnlyTaggedMobNames);
+        out.println("Show Names Only For Tagged Mobs" + this.showNamesOnlyForTagged);
 
         out.print("Hidden Mobs:");
 
@@ -149,7 +149,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
             case RADARFILTERING -> this.filtering;
             case SHOWFACING -> this.showFacing;
 
-            case SHOWONLYTAGGEDMOBNAMES -> this.showOnlyTaggedMobNames;
+            case SHOWNAMESONLYFORTAGGED -> this.showNamesOnlyForTagged;
 
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a boolean)");
         };
@@ -205,7 +205,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
             case RADARFILTERING -> this.filtering = !this.filtering;
             case SHOWFACING -> this.showFacing = !this.showFacing;
 
-            case SHOWONLYTAGGEDMOBNAMES -> this.showOnlyTaggedMobNames = !this.showOnlyTaggedMobNames;
+            case SHOWNAMESONLYFORTAGGED -> this.showNamesOnlyForTagged = !this.showNamesOnlyForTagged;
 
             case RADARMODE -> {
                 this.radarMode++;

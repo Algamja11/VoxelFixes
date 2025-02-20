@@ -67,7 +67,7 @@
   "options.minimap.radar.showmobhelmets": "몹 헬멧 표시",
   "options.minimap.radar.showplayernames": "플레이어 이름 표시",
   "options.minimap.radar.showmobnames": "몹 이름 표시",
-  "options.minimap.radar.showonlytaggedmobnames": "이름이 지어진 몹의 이름만 표시",
+  "options.minimap.radar.shownamesonlyfortagged": "이름표가 부착된 몹의 이름만 표시",
   "options.minimap.radar.randomobs": "랜덤 몹",
   "options.minimap.radar.showfacing": "방향 표시",
   "options.minimap.radar.fontsize": "글자 크기",

@@ -257,7 +257,7 @@ public class RadarSimple implements IRadar {
                         OpenGL.Utils.drawPost();
                     }
 
-                    if (contact.name != null && ((this.options.showPlayerNames && this.isPlayer(contact.entity)) || (this.options.showMobNames && !this.isPlayer(contact.entity) && (!this.options.showOnlyTaggedMobNames || contact.entity.hasCustomName())))) {
+                    if (contact.name != null && ((this.options.showPlayerNames && this.isPlayer(contact.entity)) || (this.options.showMobNames && !this.isPlayer(contact.entity) && (!this.options.showNamesOnlyForTagged || contact.entity.hasCustomName())))) {
                         float fontSize = this.options.fontSize * iconScale;
                         float scaleFactor = 1f / fontSize;
                         String mobName = contact.entity.getDisplayName().getString();
