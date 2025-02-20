@@ -200,11 +200,11 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
             this.waypointY.mouseClicked(mouseX, mouseY, button);
             this.waypointZ.mouseClicked(mouseX, mouseY, button);
         }
-        else if (choosingColor){
+        else if (choosingColor) {
             int pickerSize = 200;
             int pickerCenterX = this.getWidth() / 2 - pickerSize / 2;
             int pickerCenterY = this.getHeight() / 2 - pickerSize / 2;
-            if (mouseX >= pickerCenterX && mouseX <= pickerCenterX + pickerSize && mouseY >= pickerCenterY && mouseY <= pickerCenterY + pickerSize){
+            if (mouseX >= pickerCenterX && mouseX <= pickerCenterX + pickerSize && mouseY >= pickerCenterY && mouseY <= pickerCenterY + pickerSize) {
                 int pickPointX = (int) ((mouseX - pickerCenterX) / (float) pickerSize * 255f);
                 int pickPointY = (int) ((mouseY - pickerCenterY) / (float) pickerSize * 255f);
                 int color = this.colorManager.getColorPicker().getRGB(pickPointX, pickPointY);
@@ -214,13 +214,13 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
                 this.choosingColor = false;
             }
         }
-        else if (choosingIcon){
+        else if (choosingIcon) {
             TextureAtlas chooser = waypointManager.getTextureAtlasChooser();
             float chooserCenterX = this.getWidth() / 2f - chooser.getWidth() / 2f;
             float chooserCenterY = this.getHeight() / 2f - chooser.getHeight() / 2f;
             Sprite icon = chooser.getIconAt((float) mouseX - chooserCenterX, (float) mouseY - chooserCenterY);
 
-            if (icon != chooser.getMissingImage()){
+            if (icon != chooser.getMissingImage()) {
                 this.waypoint.imageSuffix = icon.getIconName().replace("voxelmap:images/waypoints/waypoint", "").replace(".png", "");
                 this.choosingIcon = false;
             }
@@ -301,7 +301,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
                 int pickerCenterX = this.getWidth() / 2 - pickerSize / 2;
                 int pickerCenterY = this.getHeight() / 2 - pickerSize / 2;
                 drawContext.blit(RenderType::guiTextured, PICKER, pickerCenterX, pickerCenterY, 0f, 0f, pickerSize, pickerSize, pickerSize, pickerSize);
-                if (mouseX >= pickerCenterX && mouseX <= pickerCenterX + pickerSize && mouseY >= pickerCenterY && mouseY <= pickerCenterY + pickerSize){
+                if (mouseX >= pickerCenterX && mouseX <= pickerCenterX + pickerSize && mouseY >= pickerCenterY && mouseY <= pickerCenterY + pickerSize) {
                     int pickPointX = (int) ((mouseX - pickerCenterX) / (float) pickerSize * 255f);
                     int pickPointY = (int) ((mouseY - pickerCenterY) / (float) pickerSize * 255f);
                     int color = this.colorManager.getColorPicker().getRGB(pickPointX, pickPointY);
@@ -329,7 +329,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
                 RenderSystem.disableBlend();
                 RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-                if (icon != chooser.getMissingImage()){
+                if (icon != chooser.getMissingImage()) {
                     iconLocation = icon.getIconName();
                     if (this.waypointIconMap.containsKey(iconLocation)) {
                         waypointIcon = this.waypointIconMap.get(iconLocation);
@@ -345,7 +345,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
                     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
                     String iconName = icon.getIconName().replace("voxelmap:images/waypoints/waypoint", "").replace(".png", "");
-                    if (iconName.length() > 1){
+                    if (iconName.length() > 1) {
                         iconName = iconName.substring(0, 1).toUpperCase() + iconName.substring(1).toLowerCase();
                     }
                     this.tooltip = Component.literal(iconName);

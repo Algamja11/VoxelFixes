@@ -15,9 +15,12 @@ import net.minecraft.client.renderer.CoreShaders;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 import org.joml.Vector3f;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -30,7 +33,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class WaypointContainer {
-    private final List<Waypoint> wayPts = new ArrayList<>();
+    private final List<Waypoint> waypoints = new ArrayList<>();
+    private final List<Map.Entry<Waypoint, Double>> centeredWaypoints = new ArrayList<>();
     private Waypoint highlightedWaypoint;
     public final MapSettingsManager options;
 
@@ -39,44 +43,40 @@ public class WaypointContainer {
     }
 
     public void addWaypoint(Waypoint newWaypoint) {
-        this.wayPts.add(newWaypoint);
+        this.waypoints.add(newWaypoint);
     }
 
     public void removeWaypoint(Waypoint waypoint) {
-        this.wayPts.remove(waypoint);
+        this.waypoints.remove(waypoint);
     }
 
     public void setHighlightedWaypoint(Waypoint highlightedWaypoint) {
         this.highlightedWaypoint = highlightedWaypoint;
     }
 
-    private void sortWaypoints() {
-        this.wayPts.sort(Collections.reverseOrder());
-    }
-
-    public void renderWaypoints(float partialTicks, Matrix4fStack matrixStack, boolean beacons, boolean signs, boolean withDepth, boolean withoutDepth) {
-        this.sortWaypoints();
+    public void renderWaypoints(Matrix4fStack matrixStack, boolean withDepth, boolean withoutDepth) {
+        this.waypoints.sort(Collections.reverseOrder());
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         Vec3 cameraPos = camera.getPosition();
         double renderPosX = cameraPos.x;
         double renderPosY = cameraPos.y;
         double renderPosZ = cameraPos.z;
         OpenGL.glEnable(OpenGL.GL11_GL_CULL_FACE);
-        if (this.options.showBeacons && beacons) {
+        if (this.options.showBeacons) {
             OpenGL.glEnable(OpenGL.GL11_GL_DEPTH_TEST);
             OpenGL.glDepthMask(false);
             OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
             OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, 1);
             RenderSystem.setShader(CoreShaders.POSITION_COLOR);
-
-            for (Waypoint pt : this.wayPts) {
-                if (pt.isActive() || pt == this.highlightedWaypoint) {
-                    int x = pt.getX();
-                    int z = pt.getZ();
+            for (Waypoint point : this.waypoints) {
+                if (point.isActive() || point == this.highlightedWaypoint) {
+                    int x = point.getX();
+                    int z = point.getZ();
+                    double distance = Math.sqrt(Math.pow(x - renderPosX, 2) + Math.pow(z - renderPosZ, 2));
                     LevelChunk chunk = VoxelConstants.getPlayer().level().getChunk(x >> 4, z >> 4);
                     if (chunk != null && !chunk.isEmpty() && VoxelConstants.getPlayer().level().hasChunk(x >> 4, z >> 4)) {
                         double bottomOfWorld = VoxelConstants.getPlayer().level().getMinY() - renderPosY;
-                        this.renderBeam(pt, x - renderPosX, bottomOfWorld, z - renderPosZ, matrixStack);
+                        this.renderBeam(point, distance, x - renderPosX, bottomOfWorld, z - renderPosZ, matrixStack);
                     }
                 }
             }
@@ -85,31 +85,47 @@ public class WaypointContainer {
             OpenGL.glDepthMask(true);
         }
 
-        if (this.options.showWaypoints && signs) {
+        if (this.options.showWaypoints) {
             OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
             OpenGL.glBlendFuncSeparate(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA, 1, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
 
-            for (Waypoint pt : this.wayPts) {
-                if (pt.isActive() || pt == this.highlightedWaypoint) {
-                    int x = pt.getX();
-                    int z = pt.getZ();
-                    int y = pt.getY();
-                    double distance = Math.sqrt(pt.getDistanceSqToCamera(camera));
-                    if ((distance < this.options.maxWaypointDisplayDistance || this.options.maxWaypointDisplayDistance < 0 || pt == this.highlightedWaypoint) && !VoxelConstants.getMinecraft().options.hideGui) {
-                        boolean isPointedAt = this.isPointedAt(pt, distance, camera);
-                        String label = pt.name;
-                        this.renderLabel(matrixStack, pt, distance, isPointedAt, label, false, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ, withDepth, withoutDepth);
+            this.centeredWaypoints.clear();
+            for (Waypoint point : this.waypoints) {
+                if (point.isActive() || point == this.highlightedWaypoint) {
+                    double distance = Math.sqrt(point.getDistanceSqToCamera(camera));
+                    if ((distance < this.options.maxWaypointDisplayDistance || this.options.maxWaypointDisplayDistance < 0 || point == this.highlightedWaypoint) && !VoxelConstants.getMinecraft().options.hideGui) {
+                        double distFromCenter = this.isPointedAt(point, distance, camera);
+                        if (distFromCenter >= 0.0) {
+                            centeredWaypoints.add(new AbstractMap.SimpleEntry<>(point, distFromCenter));
+                        } else {
+                            int x = point.getX();
+                            int y = point.getY();
+                            int z = point.getZ();
+                            this.renderLabel(matrixStack, point, distance, false, false, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ, withDepth, withoutDepth);
+                        }
                     }
+                }
+            }
+            if (!this.centeredWaypoints.isEmpty()) {
+                this.centeredWaypoints.sort(Comparator.comparingDouble(entry -> -entry.getValue()));
+                int listSize = centeredWaypoints.size();
+                for (int i = 0; i < listSize; i++) {
+                    Waypoint point = centeredWaypoints.get(i).getKey();
+                    int x = point.getX();
+                    int y = point.getY();
+                    int z = point.getZ();
+                    double distance = Math.sqrt(point.getDistanceSqToCamera(camera));
+                    this.renderLabel(matrixStack, point, distance, i == (listSize - 1), false, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ, withDepth, withoutDepth);
                 }
             }
 
             if (this.highlightedWaypoint != null && !VoxelConstants.getMinecraft().options.hideGui) {
                 int x = this.highlightedWaypoint.getX();
-                int z = this.highlightedWaypoint.getZ();
                 int y = this.highlightedWaypoint.getY();
+                int z = this.highlightedWaypoint.getZ();
                 double distance = Math.sqrt(this.highlightedWaypoint.getDistanceSqToCamera(camera));
-                boolean isPointedAt = this.isPointedAt(this.highlightedWaypoint, distance, camera);
-                this.renderLabel(matrixStack, this.highlightedWaypoint, distance, isPointedAt, "", true, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ, withDepth, withoutDepth);
+                boolean isPointedAt = this.isPointedAt(this.highlightedWaypoint, distance, camera) >= 0.0;
+                this.renderLabel(matrixStack, this.highlightedWaypoint, distance, isPointedAt, true, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ, withDepth, withoutDepth);
             }
 
             OpenGL.glEnable(OpenGL.GL11_GL_DEPTH_TEST);
@@ -119,61 +135,63 @@ public class WaypointContainer {
 
     }
 
-    private boolean isPointedAt(Waypoint waypoint, double distance, Camera camera) {
-        Vec3 cameraPos = camera.getPosition();
+    private double isPointedAt(Waypoint waypoint, double distance, Camera camera) {
         double degrees = 5.0 + Math.min(5.0 / distance, 5.0);
         double angle = degrees * 0.0174533;
         double size = Math.sin(angle) * distance;
-        Vector3f cameraPosPlusDirection = camera.getLookVector();
-        Vec3 cameraPosPlusDirectionTimesDistance = cameraPos.add(cameraPosPlusDirection.x * distance, cameraPosPlusDirection.y * distance, cameraPosPlusDirection.z * distance);
-        AABB axisalignedbb = new AABB((waypoint.getX() + 0.5F) - size, (waypoint.getY() + 1.65F) - size, (waypoint.getZ() + 0.5F) - size, (waypoint.getX() + 0.5F) + size, (waypoint.getY() + 1.5F) + size, (waypoint.getZ() + 0.5F) + size);
-        Optional<Vec3> raytraceresult = axisalignedbb.clip(cameraPos, cameraPosPlusDirectionTimesDistance);
-        if (axisalignedbb.contains(cameraPos)) {
-            return distance >= 1.0;
-        } else
-            return raytraceresult.isPresent();
+        Vec3 cameraPos = camera.getPosition();
+        Vector3f lookVector = camera.getLookVector();
+        Vec3 lookVectorAdjusted = cameraPos.add(lookVector.x * distance, lookVector.y * distance, lookVector.z * distance);
+        float centeredX = waypoint.getX() + 0.5f;
+        float centeredY = waypoint.getY() + 1.65f;
+        float centeredZ = waypoint.getZ() + 0.5f;
+        AABB axisAlignedBB = new AABB(
+                centeredX - size, centeredY - size, centeredZ - size,
+                centeredX + size, centeredY + size, centeredZ + size
+        );
+        Optional<Vec3> raycastResult = axisAlignedBB.clip(cameraPos, lookVectorAdjusted);
+        if (axisAlignedBB.contains(cameraPos) || raycastResult.isPresent()) {
+            if (distance > 5.0) {
+                double dx = lookVectorAdjusted.x - centeredX;
+                double dy = lookVectorAdjusted.y - centeredY;
+                double dz = lookVectorAdjusted.z - centeredZ;
+                return Math.sqrt(dx * dx + dy * dy + dz * dz) / size;
+            } else {
+                return 0.0;
+            }
+        } else {
+            return -1.0;
+        }
     }
 
-    private void renderBeam(Waypoint par1EntityWaypoint, double baseX, double baseY, double baseZ, Matrix4f matrix4f) {
-        Tesselator tessellator = Tesselator.getInstance();
+    private void renderBeam(Waypoint waypoint, double distance, double baseX, double baseY, double baseZ, Matrix4f matrix4f) {
+        Tesselator tesselator = Tesselator.getInstance();
         int height = VoxelConstants.getClientWorld().getHeight();
         float brightness = 0.06F;
-        double topWidthFactor = 1.05;
-        double bottomWidthFactor = 1.05;
-        float r = par1EntityWaypoint.red;
-        float b = par1EntityWaypoint.blue;
-        float g = par1EntityWaypoint.green;
+        double widthFactor = Math.max(1.0, distance / 50.0);
+        float r = waypoint.red;
+        float g = waypoint.green;
+        float b = waypoint.blue;
+        float fade = Math.min(5.0f, (float)distance) / 5.0f;
 
         for (int width = 0; width < 4; ++width) {
-            BufferBuilder vertexBuffer = tessellator.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-            double d6 = 0.1 + width * 0.2;
-            d6 *= topWidthFactor;
-            double d7 = 0.1 + width * 0.2;
-            d7 *= bottomWidthFactor;
+            BufferBuilder vertexBuffer = tesselator.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+
+            double beamWidth = (0.1 + width * 0.2) * widthFactor;
 
             for (int side = 0; side < 5; ++side) {
-                float vertX2 = (float) (baseX + 0.5 - d6);
-                float vertZ2 = (float) (baseZ + 0.5 - d6);
-                if (side == 1 || side == 2) {
-                    vertX2 = (float) (vertX2 + d6 * 2.0);
-                }
+                float vertexX_1 = (float) (baseX + 0.5 - beamWidth);
+                float vertexZ_1 = (float) (baseZ + 0.5 - beamWidth);
+                if (side == 1 || side == 2) { vertexX_1 = (float) (vertexX_1 + beamWidth * 2.0); }
+                if (side == 2 || side == 3) { vertexZ_1 = (float) (vertexZ_1 + beamWidth * 2.0); }
 
-                if (side == 2 || side == 3) {
-                    vertZ2 = (float) (vertZ2 + d6 * 2.0);
-                }
+                float vertexX_2 = (float) (baseX + 0.5 - beamWidth);
+                float vertexY_2 = (float) (baseZ + 0.5 - beamWidth);
+                if (side == 1 || side == 2) { vertexX_2 = (float) (vertexX_2 + beamWidth * 2.0); }
+                if (side == 2 || side == 3) { vertexY_2 = (float) (vertexY_2 + beamWidth * 2.0); }
 
-                float vertX1 = (float) (baseX + 0.5 - d7);
-                float vertZ1 = (float) (baseZ + 0.5 - d7);
-                if (side == 1 || side == 2) {
-                    vertX1 = (float) (vertX1 + d7 * 2.0);
-                }
-
-                if (side == 2 || side == 3) {
-                    vertZ1 = (float) (vertZ1 + d7 * 2.0);
-                }
-
-                vertexBuffer.addVertex(matrix4f, vertX1, (float) baseY + 0.0F, vertZ1).setColor(r * brightness, g * brightness, b * brightness, 0.8F);
-                vertexBuffer.addVertex(matrix4f, vertX2, (float) baseY + height, vertZ2).setColor(r * brightness, g * brightness, b * brightness, 0.8F);
+                vertexBuffer.addVertex(matrix4f, vertexX_1, (float) baseY, vertexZ_1).setColor(r * brightness, g * brightness, b * brightness, fade);
+                vertexBuffer.addVertex(matrix4f, vertexX_2, (float) (baseY + height), vertexY_2).setColor(r * brightness, g * brightness, b * brightness, fade);
             }
 
             BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
@@ -181,25 +199,24 @@ public class WaypointContainer {
 
     }
 
-    private void renderLabel(Matrix4fStack matrixStack, Waypoint pt, double distance, boolean isPointedAt, String name, boolean target, double baseX, double baseY, double baseZ, boolean withDepth, boolean withoutDepth) {
+    private void renderLabel(Matrix4fStack matrixStack, Waypoint point, double distance, boolean showLabel, boolean target, double baseX, double baseY, double baseZ, boolean withDepth, boolean withoutDepth) {
+        String name = point.name;
         if (target) {
-            if (pt.red == 2.0F && pt.green == 0.0F && pt.blue == 0.0F) {
-                name = "X:" + pt.getX() + ", Y:" + pt.getY() + ", Z:" + pt.getZ();
+            if (point.red == 2.0F && point.green == 0.0F && point.blue == 0.0F) {
+                name = "X:" + point.getX() + ", Y:" + point.getY() + ", Z:" + point.getZ();
             } else {
-                isPointedAt = false;
+                showLabel = false;
             }
         }
         String distStr;
-        if (this.options.distanceUnitConversion && distance > 10000.0){
+        if (this.options.distanceUnitConversion && distance > 10000.0) {
             distStr = (Math.round(distance / 100.0) / 10.0) + "km";
-        }
-        else if (distance >= 9999999.0F) {
+        } else if (distance >= 9999999.0F) {
             distStr = (int) distance  + "m";
-        }
-        else{
+        } else {
             distStr = (Math.round(distance * 10.0) / 10.0) + "m";
         }
-        if (!this.options.waypointDistanceBelowName){
+        if (!this.options.waypointDistanceBelowName) {
             name = name + " (" + distStr + ")";
         }
         double maxDistance = VoxelConstants.getMinecraft().options.simulationDistance().get() * 16.0 * 0.99;
@@ -211,21 +228,21 @@ public class WaypointContainer {
             adjustedDistance = maxDistance;
         }
 
-        float var14 = ((float) adjustedDistance * 0.1F + 1.0F) * 0.0266F;
+        float distanceBasedScale = ((float) adjustedDistance * 0.1F + 1.0F) * 0.0266F * this.options.waypointSize;
         matrixStack.pushMatrix();
         matrixStack.translate((float) baseX + 0.5F, (float) baseY + 0.5F, (float) baseZ + 0.5F);
         matrixStack.rotate(Axis.YP.rotationDegrees(-VoxelConstants.getMinecraft().getEntityRenderDispatcher().camera.getYRot()));
         matrixStack.rotate(Axis.XP.rotationDegrees(VoxelConstants.getMinecraft().getEntityRenderDispatcher().camera.getXRot()));
-        matrixStack.scale(-var14, -var14, -var14);
+        matrixStack.scale(-distanceBasedScale);
         Tesselator tessellator = Tesselator.getInstance();
         float fade = distance > 5.0 ? 1.0F : (float) distance / 5.0F;
-        fade = Math.min(fade, !pt.enabled && !target ? 0.3F : 1.0F);
+        fade = Math.min(fade, !point.enabled && !target ? 0.3F : 1.0F);
         float width = 10.0F;
-        float r = target ? 1.0F : pt.red;
-        float g = target ? 0.0F : pt.green;
-        float b = target ? 0.0F : pt.blue;
+        float r = target ? 1.0F : point.red;
+        float g = target ? 0.0F : point.green;
+        float b = target ? 0.0F : point.blue;
         TextureAtlas textureAtlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
-        Sprite icon = target ? textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png") : textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
+        Sprite icon = target ? textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png") : textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + point.imageSuffix + ".png");
         if (icon == textureAtlas.getMissingImage()) {
             icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
         }
@@ -255,7 +272,7 @@ public class WaypointContainer {
         }
 
         Font fontRenderer = VoxelConstants.getMinecraft().font;
-        if (isPointedAt && fontRenderer != null) {
+        if (showLabel && fontRenderer != null) {
             byte elevateBy = this.options.waypointNameBelowIcon ? (byte) 10 : (byte) -19;
             byte elevateDistBy = this.options.waypointNameBelowIcon ? (byte) 30: (byte) -39;
             float distTextScale = 0.65F;
@@ -268,10 +285,10 @@ public class WaypointContainer {
                 OpenGL.glDepthMask(distance < maxDistance);
                 OpenGL.glPolygonOffset(1.0F, 7.0F);
                 BufferBuilder vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                vertexBuffer.addVertex(matrixStack, (-halfStringWidth - 2), (-2 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexBuffer.addVertex(matrixStack, (-halfStringWidth - 2), (9 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexBuffer.addVertex(matrixStack, (halfStringWidth + 2), (9 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexBuffer.addVertex(matrixStack, (halfStringWidth + 2), (-2 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexBuffer.addVertex(matrixStack, (-halfStringWidth - 2), (-2 + elevateBy), 0.0F).setColor(point.red, point.green, point.blue, 0.6F * fade);
+                vertexBuffer.addVertex(matrixStack, (-halfStringWidth - 2), (9 + elevateBy), 0.0F).setColor(point.red, point.green, point.blue, 0.6F * fade);
+                vertexBuffer.addVertex(matrixStack, (halfStringWidth + 2), (9 + elevateBy), 0.0F).setColor(point.red, point.green, point.blue, 0.6F * fade);
+                vertexBuffer.addVertex(matrixStack, (halfStringWidth + 2), (-2 + elevateBy), 0.0F).setColor(point.red, point.green, point.blue, 0.6F * fade);
                 BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
                 OpenGL.glPolygonOffset(1.0F, 5.0F);
                 vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -281,15 +298,15 @@ public class WaypointContainer {
                 vertexBuffer.addVertex(matrixStack, (halfStringWidth + 1), (-1 + elevateBy), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
                 BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
 
-                if (this.options.waypointDistanceBelowName){
+                if (this.options.waypointDistanceBelowName) {
                     matrixStack.pushMatrix();
                     matrixStack.scale(distTextScale);
                     OpenGL.glPolygonOffset(1.0F, 7.0F);
                     vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                    vertexBuffer.addVertex(matrixStack, (-halfDistStringWidth - 2), (-2 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                    vertexBuffer.addVertex(matrixStack, (-halfDistStringWidth - 2), (9 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                    vertexBuffer.addVertex(matrixStack, (halfDistStringWidth + 2), (9 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                    vertexBuffer.addVertex(matrixStack, (halfDistStringWidth + 2), (-2 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                    vertexBuffer.addVertex(matrixStack, (-halfDistStringWidth - 2), (-2 + elevateDistBy), 0.0F).setColor(point.red, point.green, point.blue, 0.6F * fade);
+                    vertexBuffer.addVertex(matrixStack, (-halfDistStringWidth - 2), (9 + elevateDistBy), 0.0F).setColor(point.red, point.green, point.blue, 0.6F * fade);
+                    vertexBuffer.addVertex(matrixStack, (halfDistStringWidth + 2), (9 + elevateDistBy), 0.0F).setColor(point.red, point.green, point.blue, 0.6F * fade);
+                    vertexBuffer.addVertex(matrixStack, (halfDistStringWidth + 2), (-2 + elevateDistBy), 0.0F).setColor(point.red, point.green, point.blue, 0.6F * fade);
                     BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
                     OpenGL.glPolygonOffset(1.0F, 5.0F);
                     vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -307,10 +324,10 @@ public class WaypointContainer {
                 OpenGL.glDepthMask(false);
                 OpenGL.glPolygonOffset(1.0F, 11.0F);
                 BufferBuilder vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                vertexBuffer.addVertex(matrixStack, (-halfStringWidth - 2), (-2 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.15F * fade);
-                vertexBuffer.addVertex(matrixStack, (-halfStringWidth - 2), (9 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.15F * fade);
-                vertexBuffer.addVertex(matrixStack, (halfStringWidth + 2), (9 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.15F * fade);
-                vertexBuffer.addVertex(matrixStack, (halfStringWidth + 2), (-2 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.15F * fade);
+                vertexBuffer.addVertex(matrixStack, (-halfStringWidth - 2), (-2 + elevateBy), 0.0F).setColor(point.red, point.green, point.blue, 0.15F * fade);
+                vertexBuffer.addVertex(matrixStack, (-halfStringWidth - 2), (9 + elevateBy), 0.0F).setColor(point.red, point.green, point.blue, 0.15F * fade);
+                vertexBuffer.addVertex(matrixStack, (halfStringWidth + 2), (9 + elevateBy), 0.0F).setColor(point.red, point.green, point.blue, 0.15F * fade);
+                vertexBuffer.addVertex(matrixStack, (halfStringWidth + 2), (-2 + elevateBy), 0.0F).setColor(point.red, point.green, point.blue, 0.15F * fade);
                 BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
                 OpenGL.glPolygonOffset(1.0F, 9.0F);
                 vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -320,15 +337,15 @@ public class WaypointContainer {
                 vertexBuffer.addVertex(matrixStack, (halfStringWidth + 1), (-1 + elevateBy), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
                 BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
 
-                if (this.options.waypointDistanceBelowName){
+                if (this.options.waypointDistanceBelowName) {
                     matrixStack.pushMatrix();
                     matrixStack.scale(distTextScale);
                     OpenGL.glPolygonOffset(1.0F, 11.0F);
                     vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                    vertexBuffer.addVertex(matrixStack, (-halfDistStringWidth - 2), (-2 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.15F * fade);
-                    vertexBuffer.addVertex(matrixStack, (-halfDistStringWidth - 2), (9 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.15F * fade);
-                    vertexBuffer.addVertex(matrixStack, (halfDistStringWidth + 2), (9 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.15F * fade);
-                    vertexBuffer.addVertex(matrixStack, (halfDistStringWidth + 2), (-2 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.15F * fade);
+                    vertexBuffer.addVertex(matrixStack, (-halfDistStringWidth - 2), (-2 + elevateDistBy), 0.0F).setColor(point.red, point.green, point.blue, 0.15F * fade);
+                    vertexBuffer.addVertex(matrixStack, (-halfDistStringWidth - 2), (9 + elevateDistBy), 0.0F).setColor(point.red, point.green, point.blue, 0.15F * fade);
+                    vertexBuffer.addVertex(matrixStack, (halfDistStringWidth + 2), (9 + elevateDistBy), 0.0F).setColor(point.red, point.green, point.blue, 0.15F * fade);
+                    vertexBuffer.addVertex(matrixStack, (halfDistStringWidth + 2), (-2 + elevateDistBy), 0.0F).setColor(point.red, point.green, point.blue, 0.15F * fade);
                     BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
                     OpenGL.glPolygonOffset(1.0F, 9.0F);
                     vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -348,7 +365,7 @@ public class WaypointContainer {
                 int textColor = (int) (255.0F * fade) << 24 | 13421772;
                 OpenGL.glDisable(OpenGL.GL11_GL_DEPTH_TEST);
                 fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), elevateBy, textColor, false, matrixStack, vertexConsumerProvider, DisplayMode.SEE_THROUGH, 0, 15728880);
-                if (this.options.waypointDistanceBelowName){
+                if (this.options.waypointDistanceBelowName) {
                     matrixStack.scale(distTextScale);
                     fontRenderer.drawInBatch(Component.literal(distStr), (-fontRenderer.width(distStr) / 2f), elevateDistBy, textColor, false, matrixStack, vertexConsumerProvider, DisplayMode.SEE_THROUGH, 0, 15728880);
                     matrixStack.scale(1.0F / distTextScale);

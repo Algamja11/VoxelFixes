@@ -8,6 +8,7 @@ import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
 import com.mamiyaotaru.voxelmap.util.LayoutVariables;
 import com.mamiyaotaru.voxelmap.util.OpenGL;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class RadarSimple implements IRadar {
 
             ++this.timer;
             if (this.completedLoading) {
-                this.renderMapMobs(matrixStack, this.layoutVariables.mapX, this.layoutVariables.mapY);
+                this.renderMapMobs(drawContext, matrixStack, this.layoutVariables.mapX, this.layoutVariables.mapY, scaleProj);
             }
 
             OpenGL.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -133,9 +134,9 @@ public class RadarSimple implements IRadar {
 
     private EnumMobs getUnknownMobNeutrality(Entity entity) {
         if (this.isHostile(entity)) {
-            return EnumMobs.GENERICHOSTILE;
+            return EnumMobs.GENERIC_HOSTILE;
         } else {
-            return !(entity instanceof TamableAnimal) || !((TamableAnimal) entity).isTame() || !VoxelConstants.getMinecraft().hasSingleplayerServer() && !((TamableAnimal) entity).getOwner().equals(VoxelConstants.getPlayer()) ? EnumMobs.GENERICNEUTRAL : EnumMobs.GENERICTAME;
+            return !(entity instanceof TamableAnimal) || !((TamableAnimal) entity).isTame() || !VoxelConstants.getMinecraft().hasSingleplayerServer() && !((TamableAnimal) entity).getOwner().equals(VoxelConstants.getPlayer()) ? EnumMobs.GENERIC_NEUTRAL : EnumMobs.GENERIC_TAME;
         }
     }
 
@@ -178,51 +179,62 @@ public class RadarSimple implements IRadar {
         }
     }
 
-    public void renderMapMobs(Matrix4fStack matrixStack, int x, int y) {
-        double max = this.layoutVariables.zoomScaleAdjusted * 32.0;
+    public void renderMapMobs(GuiGraphics drawContext, Matrix4fStack matrixStack, int x, int y, float scaleProj) {
+        double lastX = GameVariableAccessShim.xCoordDouble();
+        double lastZ = GameVariableAccessShim.zCoordDouble();
+        int lastY = GameVariableAccessShim.yCoord();
+        double maxY = this.layoutVariables.zoomScaleAdjusted * 32.0;
+        float iconScale = this.layoutVariables.fullscreenMap ? 0.5f : 1.0f;
         OpenGL.Utils.disp2(this.textureAtlas.getId());
 
         for (Contact contact : this.contacts) {
             contact.updateLocation();
-            double contactX = contact.x;
-            double contactZ = contact.z;
-            int contactY = contact.y;
-            double wayX = GameVariableAccessShim.xCoordDouble() - contactX;
-            double wayZ = GameVariableAccessShim.zCoordDouble() - contactZ;
-            int wayY = GameVariableAccessShim.yCoord() - contactY;
-            double adjustedDiff = max - Math.max(Math.abs(wayY), 0);
-            contact.brightness = (float) Math.max(adjustedDiff / max, 0.0);
+            double wayX = lastX - contact.x;
+            double wayZ = lastZ - contact.z;
+            int wayY = lastY - contact.y;
+            if (contact.type == EnumMobs.PHANTOM) {
+                maxY *= 2;
+            }
+            double adjustedDiff = maxY - Math.max(Math.abs(wayY), 0);
+            float red, green, blue;
+            if (isHostile(contact.entity)) {
+                red = 1f; green = 0.25f; blue = 0f;
+            } else {
+                red = 1f; green = 1f; blue = 1f;
+            }
+            contact.brightness = (float) Math.max(adjustedDiff / maxY, 0.0);
             contact.brightness *= contact.brightness;
             contact.angle = (float) Math.toDegrees(Math.atan2(wayX, wayZ));
             contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) / this.layoutVariables.zoomScaleAdjusted;
             OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
             if (wayY < 0) {
-                OpenGL.glColor4f(1.0F, 1.0F, 1.0F, contact.brightness);
+                OpenGL.glColor4f(red, green, blue, contact.brightness);
             } else {
-                OpenGL.glColor3f(contact.brightness, contact.brightness, contact.brightness);
+                contact.brightness = Math.max(contact.brightness, 0.3f);
+                OpenGL.glColor3f(red * contact.brightness, green * contact.brightness, blue * contact.brightness);
             }
 
-            if (this.minimapOptions.rotates) {
+            if (this.layoutVariables.rotating) {
                 contact.angle += this.direction;
             } else if (this.minimapOptions.oldNorth) {
                 contact.angle -= 90.0F;
             }
 
             boolean inRange;
-            if (!this.minimapOptions.squareMap) {
+            if (this.minimapOptions.shape != 1 && !this.layoutVariables.fullscreenMap) {
                 inRange = contact.distance < 31.0;
             } else {
                 double radLocate = Math.toRadians(contact.angle);
-                double dispX = contact.distance * Math.cos(radLocate);
-                double dispY = contact.distance * Math.sin(radLocate);
-                inRange = Math.abs(dispX) <= 28.5 && Math.abs(dispY) <= 28.5;
+                double squareRangeX = contact.distance * Math.cos(radLocate);
+                double squareRangeY = contact.distance * Math.sin(radLocate);
+                inRange = Math.abs(squareRangeX) <= 28.5 && Math.abs(squareRangeY) <= 28.5;
             }
 
             if (inRange) {
                 try {
                     matrixStack.pushMatrix();
                     float contactFacing = contact.entity.getYHeadRot();
-                    if (this.minimapOptions.rotates) {
+                    if (this.layoutVariables.rotating) {
                         contactFacing -= this.direction;
                     } else if (this.minimapOptions.oldNorth) {
                         contactFacing += 90.0F;
@@ -236,13 +248,36 @@ public class RadarSimple implements IRadar {
 
                     // this.applyFilteringParameters();
                     OpenGL.Utils.drawPre();
-                    OpenGL.Utils.setMap(this.textureAtlas.getAtlasSprite("contact"), x, y, 16.0F);
+                    OpenGL.Utils.setMap(this.textureAtlas.getAtlasSprite("contact"), x, y, 12.0F * iconScale);
                     OpenGL.Utils.drawPost();
                     if (this.options.showFacing) {
                         // this.applyFilteringParameters();
                         OpenGL.Utils.drawPre();
-                        OpenGL.Utils.setMap(this.textureAtlas.getAtlasSprite("facing"), x, y, 16.0F);
+                        OpenGL.Utils.setMap(this.textureAtlas.getAtlasSprite("facing"), x, y, 12.0F * iconScale);
                         OpenGL.Utils.drawPost();
+                    }
+
+                    if (contact.name != null && ((this.options.showPlayerNames && this.isPlayer(contact.entity)) || (this.options.showMobNames && !this.isPlayer(contact.entity) && (!this.options.showOnlyTaggedMobNames || contact.entity.hasCustomName())))) {
+                        float fontSize = this.options.fontSize * iconScale;
+                        float scaleFactor = 1f / fontSize;
+                        String mobName = contact.entity.getDisplayName().getString();
+                        int halfStringWidth = VoxelConstants.getMinecraft().font.width(mobName) / 2;
+                        int textColor;
+                        int textAlpha = (int) (contact.brightness * 255);
+                        if (wayY < 0) {
+                            textColor = (textAlpha << 24) | (255 << 16) | (255 << 8) | 255;
+                        } else {
+                            textColor = (255 << 24) | (textAlpha << 16) | (textAlpha << 8) | textAlpha;
+                        }
+                        PoseStack textMatrixStack = drawContext.pose();
+                        textMatrixStack.pushPose();
+                        textMatrixStack.setIdentity();
+                        textMatrixStack.scale(scaleProj * fontSize, scaleProj * fontSize, 1.0f);
+                        wayX = Math.sin(Math.toRadians(contact.angle)) * contact.distance;
+                        wayZ = Math.cos(Math.toRadians(contact.angle)) * contact.distance;
+                        textMatrixStack.translate(-wayX * scaleFactor, -wayZ * scaleFactor, 900.0f);
+                        drawContext.drawString(VoxelConstants.getMinecraft().font, mobName, (int) (x * scaleFactor - halfStringWidth), (int) ((y + 2) * scaleFactor), textColor);
+                        textMatrixStack.popPose();
                     }
                 } catch (Exception e) {
                     VoxelConstants.getLogger().error("Error rendering mob icon! " + e.getLocalizedMessage() + " contact type " + contact.type, e);

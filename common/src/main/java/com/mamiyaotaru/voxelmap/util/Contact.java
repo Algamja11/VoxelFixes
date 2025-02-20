@@ -28,7 +28,7 @@ public class Contact {
         this.entity = entity;
         this.type = type;
         this.uuid = entity.getUUID();
-        this.vanillaType = type != EnumMobs.GENERICNEUTRAL && type != EnumMobs.GENERICHOSTILE && type != EnumMobs.GENERICTAME && type != EnumMobs.UNKNOWN;
+        this.vanillaType = type != EnumMobs.GENERIC_NEUTRAL && type != EnumMobs.GENERIC_HOSTILE && type != EnumMobs.GENERIC_TAME && type != EnumMobs.UNKNOWN;
     }
 
     public void setUUID(UUID uuid) {

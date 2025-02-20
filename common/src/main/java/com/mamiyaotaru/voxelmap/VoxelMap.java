@@ -1,7 +1,6 @@
 package com.mamiyaotaru.voxelmap;
 
 import com.mamiyaotaru.voxelmap.interfaces.IRadar;
-import com.mamiyaotaru.voxelmap.packets.WorldIdC2S;
 import com.mamiyaotaru.voxelmap.persistent.PersistentMap;
 import com.mamiyaotaru.voxelmap.persistent.PersistentMapSettingsManager;
 import com.mamiyaotaru.voxelmap.persistent.ThreadManager;
@@ -18,7 +17,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
@@ -36,6 +35,7 @@ public class VoxelMap implements PreparableReloadListener {
     private Map map;
     private IRadar radar;
     private IRadar radarSimple;
+    private boolean listKeyIsHolding;
     private PersistentMap persistentMap;
     private SettingsAndLightingChangeNotifier settingsAndLightingChangeNotifier;
     private WorldUpdateListener worldUpdateListener;
@@ -147,6 +147,14 @@ public class VoxelMap implements PreparableReloadListener {
             }
         }
 
+        KeyMapping holdKeymap = this.getMapOptions().keyBindListAlternative.isUnbound()
+                ? this.getMapOptions().keyBindPlayerList : this.getMapOptions().keyBindListAlternative;
+        if (holdKeymap == null){
+            listKeyIsHolding = false;
+        } else{
+            listKeyIsHolding = holdKeymap.isDown();
+        }
+
         VoxelConstants.tick();
         this.persistentMap.onTick();
     }
@@ -210,9 +218,22 @@ public class VoxelMap implements PreparableReloadListener {
             if (radarOptions.radarMode == 2) {
                 return this.radar;
             }
+
+            if (radarOptions.radarMode == 3){
+                if (this.listKeyIsHolding){
+                    return this.radar;
+                }
+                else{
+                    return this.radarSimple;
+                }
+            }
         }
 
         return null;
+    }
+
+    public boolean getListKeyIsHolding(){
+        return this.listKeyIsHolding;
     }
 
     public ColorManager getColorManager() {

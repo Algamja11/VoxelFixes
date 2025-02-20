@@ -107,6 +107,7 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
         this.waypointsFiltered.forEach(x -> this.addEntry((WaypointItem) x));
     }
 
+    @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
 
     }
@@ -140,10 +141,12 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
                 } else if (mouseX >= x + padding && mouseX <= x + iconWidth + padding) {
                     tooltip = this.waypoint == this.parentGui.highlightedWaypoint ? TOOLTIP_HIGHLIGHT_REMOVE : TOOLTIP_HIGHLIGHT;
                 } else {
-                    String tooltipText = "X: " + this.waypoint.getX() + " Z: " + this.waypoint.getZ();
+                    String tooltipText = "X: " + this.waypoint.getX();
                     if (this.waypoint.getY() > minecraft.level.getMinY()) {
-                        tooltipText = tooltipText + " Y: " + this.waypoint.getY();
+                        tooltipText += " Y: " + this.waypoint.getY();
                     }
+                    tooltipText += " Z: " + this.waypoint.getZ();
+
 
                     tooltip = Component.literal(tooltipText);
                 }
