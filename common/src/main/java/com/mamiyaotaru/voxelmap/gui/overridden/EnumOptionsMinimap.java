@@ -3,7 +3,7 @@ package com.mamiyaotaru.voxelmap.gui.overridden;
 public enum EnumOptionsMinimap {
     // Map Options
     DISPLAY("options.minimap.display", false, false, true),
-    COORDS("options.minimap.showcoordinates", false, false, true),
+    INFOLABEL("options.minimap.infolabel", false, false, true),
     SIZE("options.minimap.size", false, false, true),
     SHAPE("options.minimap.shape", false, false, true),
     ROTATES("options.minimap.rotation", false, true, false),

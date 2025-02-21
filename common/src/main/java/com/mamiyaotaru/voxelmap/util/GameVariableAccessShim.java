@@ -3,6 +3,7 @@ package com.mamiyaotaru.voxelmap.util;
 import com.mamiyaotaru.voxelmap.VoxelConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 
 public class GameVariableAccessShim {
@@ -36,5 +37,9 @@ public class GameVariableAccessShim {
 
     public static float rotationYaw() {
         return VoxelConstants.getMinecraft().getCameraEntity().yRotO + (VoxelConstants.getMinecraft().getCameraEntity().getYRot() - VoxelConstants.getMinecraft().getCameraEntity().yRotO) * VoxelConstants.getMinecraft().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+    }
+
+    public static BlockPos playerBlockPos() {
+        return VoxelConstants.getMinecraft().player.blockPosition();
     }
 }

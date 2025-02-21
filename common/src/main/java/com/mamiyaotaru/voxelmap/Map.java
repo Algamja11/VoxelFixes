@@ -670,7 +670,7 @@ public class Map implements Runnable, IChangeObserver {
             }
         }
 
-        if (this.options.coordsMode != 0) {
+        if (this.options.infoLabelMode != 0) {
             this.showCoords(drawContext, mapX, mapY, (float) (scScale / VoxelConstants.getMinecraft().getWindow().getGuiScale()));
         }
 
@@ -1969,28 +1969,35 @@ public class Map implements Runnable, IChangeObserver {
             matrixStack.pushPose();
             matrixStack.scale(scaleProj * textScale, scaleProj * textScale, 1.0F);
 
-            if (this.options.coordsMode == 1) {
+            if (this.options.infoLabelMode == 1 || this.options.infoLabelMode == 2) {
                 String xyz = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
-                int halfWidth = this.chkLen(xyz) / 2;
-                this.write(drawContext, xyz, x * (1f / textScale) - halfWidth, textStart * (1f / textScale), 16777215); // X, Z
+                int xPos = this.chkLen(xyz) / 2;
+                this.write(drawContext, xyz, x * (1f / textScale) - xPos, textStart * (1f / textScale), 16777215); // X, Z
 
                 xyz = dCoord(GameVariableAccessShim.yCoord());
-                halfWidth = this.chkLen(xyz) / 2;
-                this.write(drawContext, xyz, x * (1f / textScale) - halfWidth, textStart * (1f / textScale) + 10.0F, 16777215); // Y
-
-                if (zTimer > 0) {
-                    halfWidth = this.chkLen(this.message) / 2;
-                    this.write(drawContext, this.message, x * (1f / textScale) - halfWidth, textStart * (1f / textScale) + 19.0F, 16777215); // WORLD NAME
-                }
+                xPos = this.chkLen(xyz) / 2;
+                this.write(drawContext, xyz, x * (1f / textScale) - xPos, textStart * (1f / textScale) + 10.0F, 16777215); // Y
             } else {
-                String xyz = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + dCoord(GameVariableAccessShim.yCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
-                int halfWidth = this.chkLen(xyz) / 2;
-                this.write(drawContext, xyz, x * (1f / textScale) - halfWidth, textStart * (1f / textScale), 16777215); // X, Y, Z
+                String xyz = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.yCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
+                int xPos = this.chkLen(xyz) / 2;
+                this.write(drawContext, xyz, x * (1f / textScale) - xPos, textStart * (1f / textScale), 16777215); // X, Y, Z
+            }
 
-                if (zTimer > 0) {
-                    halfWidth = this.chkLen(this.message) / 2;
-                    this.write(drawContext, this.message, x * (1f / textScale) - halfWidth, textStart * (1f / textScale) + 10.0F, 16777215); // WORLD NAME
+            if (this.options.infoLabelMode == 2 || this.options.infoLabelMode == 4) {
+                String biomeString = GameVariableAccessShim.getWorld().getBiome(GameVariableAccessShim.playerBlockPos()).getRegisteredName();
+                biomeString = I18n.get(biomeString.replace("minecraft:", "biome.minecraft."));
+                int xPos = this.chkLen(biomeString) / 2;
+                int yPos = this.options.infoLabelMode == 2 ? 20 : 10;
+                this.write(drawContext, biomeString, x * (1f / textScale) - xPos, textStart * (1f / textScale) + yPos, 16777215);
+            }
+
+            if (zTimer > 0) {
+                int xPos = this.chkLen(this.message) / 2;
+                int yPos = (this.options.infoLabelMode == 1 || this.options.infoLabelMode == 2) ? 20 : 10;
+                if (this.options.infoLabelMode == 2 || this.options.infoLabelMode == 4) {
+                    yPos += 10;
                 }
+                this.write(drawContext, this.message, x * (1f / textScale) - xPos, textStart * (1f / textScale) + yPos, 16777215); // WORLD NAME
             }
 
             matrixStack.popPose();

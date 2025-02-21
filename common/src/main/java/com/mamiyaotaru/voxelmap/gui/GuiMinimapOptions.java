@@ -26,7 +26,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
     public void init() {
         this.screenTitle = I18n.get("options.minimap.title");
 
-        EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.DISPLAY, EnumOptionsMinimap.COORDS, EnumOptionsMinimap.SIZE, EnumOptionsMinimap.SHAPE, EnumOptionsMinimap.ROTATES, EnumOptionsMinimap.LOCATION, EnumOptionsMinimap.CAVEMODE, EnumOptionsMinimap.INGAMEWAYPOINTS, EnumOptionsMinimap.MOVESCOREBOARDDOWN, EnumOptionsMinimap.MOVEMAPDOWNWHILESTATSUEFFECT };
+        EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.DISPLAY, EnumOptionsMinimap.INFOLABEL, EnumOptionsMinimap.SIZE, EnumOptionsMinimap.SHAPE, EnumOptionsMinimap.ROTATES, EnumOptionsMinimap.LOCATION, EnumOptionsMinimap.CAVEMODE, EnumOptionsMinimap.INGAMEWAYPOINTS, EnumOptionsMinimap.MOVESCOREBOARDDOWN, EnumOptionsMinimap.MOVEMAPDOWNWHILESTATSUEFFECT };
         for (int i = 0; i < relevantOptions.length; i++) {
             EnumOptionsMinimap option = relevantOptions[i];
             GuiOptionButtonMinimap optionButton = new GuiOptionButtonMinimap(getWidth() / 2 - 155 + i % 2 * 160, getHeight() / 6 + 24 * (i >> 1), option, Component.literal(options.getKeyText(option)), this::optionClicked);

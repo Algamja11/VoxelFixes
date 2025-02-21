@@ -29,7 +29,7 @@ public class MapSettingsManager implements ISettingsManager {
     public final boolean multicore = this.availableProcessors > 1;
 
     public int displayMode = 3;
-    public int coordsMode = 1;
+    public int infoLabelMode = 2;
     public int sizeModifier = 1;
     public int shape = 1;
     public boolean rotates = true;
@@ -109,7 +109,7 @@ public class MapSettingsManager implements ISettingsManager {
                     String[] curLine = sCurrentLine.split(":");
                     switch (curLine[0]) {
                         case "Display Mode" -> this.displayMode = Math.max(0, Math.min(3, Integer.parseInt(curLine[1])));
-                        case "Coordinates Mode" -> this.coordsMode = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
+                        case "Info Label Mode" -> this.infoLabelMode = Math.max(0, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Map Size" -> this.sizeModifier = Math.max(-1, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Map Shape" -> this.shape = Math.max(0, Math.min(1, Integer.parseInt(curLine[1])));
                         case "Map Rotating" -> this.rotates = Boolean.parseBoolean(curLine[1]);
@@ -193,7 +193,7 @@ public class MapSettingsManager implements ISettingsManager {
             PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.settingsFile), StandardCharsets.UTF_8.newEncoder())));
 
             out.println("Display Mode:" + this.displayMode);
-            out.println("Coordinates Mode:" + this.coordsMode);
+            out.println("Info Label Mode:" + this.infoLabelMode);
             out.println("Map Size:" + this.sizeModifier);
             out.println("Map Shape:" + this.shape);
             out.println("Map Rotating:" + this.rotates);
@@ -340,14 +340,18 @@ public class MapSettingsManager implements ISettingsManager {
                     return "error";
                 }
             }
-            case COORDS -> {
-                if (this.coordsMode == 0) {
+            case INFOLABEL -> {
+                if (this.infoLabelMode == 0) {
                     return I18n.get("options.off");
-                } else if (this.coordsMode == 1) {
-                    return I18n.get("options.minimap.showcoordinates.mode1");
+                } else if (this.infoLabelMode == 1) {
+                    return I18n.get("options.minimap.infolabel.mode1");
+                } else if (this.infoLabelMode == 2){
+                    return I18n.get("options.minimap.infolabel.mode2");
+                } else if (this.infoLabelMode == 3) {
+                    return I18n.get("options.minimap.infolabel.mode3");
                 } else {
-                    if (this.coordsMode == 2) {
-                        return I18n.get("options.minimap.showcoordinates.mode2");
+                    if (this.infoLabelMode == 4) {
+                        return I18n.get("options.minimap.infolabel.mode4");
                     }
                     return "error";
                 }
@@ -495,10 +499,10 @@ public class MapSettingsManager implements ISettingsManager {
                 }
             }
 
-            case COORDS -> {
-                this.coordsMode++;
-                if (this.coordsMode > 2) {
-                    this.coordsMode = 0;
+            case INFOLABEL -> {
+                this.infoLabelMode++;
+                if (this.infoLabelMode > 4) {
+                    this.infoLabelMode = 0;
                 }
             }
 
