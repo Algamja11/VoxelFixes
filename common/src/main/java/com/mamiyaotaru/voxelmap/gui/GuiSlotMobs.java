@@ -37,8 +37,10 @@ class GuiSlotMobs extends AbstractSelectionList<GuiSlotMobs.MobItem> {
         this.mobs = new ArrayList<>();
 
         for (EnumMobs mob : EnumMobs.values()) {
-            if (mob.isTopLevelUnit && (mob.isHostile && options.showHostiles || mob.isNeutral && options.showNeutrals)) {
-                this.mobs.add(new MobItem(this.parentGui, mob.id));
+            if (mob.isHostile && options.showHostiles || mob.isNeutral && options.showNeutrals) {
+                if (mob != EnumMobs.UNKNOWN && mob != EnumMobs.GENERIC_TAME && mob != EnumMobs.GENERIC_NEUTRAL && mob != EnumMobs.GENERIC_HOSTILE) {
+                    this.mobs.add(new MobItem(this.parentGui, mob.id));
+                }
             }
         }
 

@@ -144,6 +144,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     Waypoint selectedWaypoint;
     public boolean passEvents;
     private PopupGuiButton buttonWaypoints;
+    private boolean wpSelectionToggle = false;
 
     public GuiPersistentMap(Screen parent) {
         this.parent = parent;
@@ -225,7 +226,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         if (!VoxelConstants.getMinecraft().hasSingleplayerServer() && !VoxelConstants.getVoxelMapInstance().getWaypointManager().receivedAutoSubworldName()) {
             this.addRenderableWidget(this.buttonMultiworld = new PopupGuiButton(this.sideMargin + (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, this.multiworldButtonName, buttonWidget_1 -> VoxelConstants.getMinecraft().setScreen(new GuiSubworldsSelect(this)), this));
         }
-
+        this.addRenderableWidget(new PopupGuiButton(this.sideMargin, this.getHeight() - 64, 20, 20, Component.literal(""), button -> this.wpSelectionToggle = !this.wpSelectionToggle, this));
         this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 3 * (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, Component.translatable("menu.options"), null, this) {
             @Override
             public void onPress() {
@@ -741,6 +742,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
             }
 
+            OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
+            OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
             RenderSystem.setShader(CoreShaders.POSITION_TEX);
             if (VoxelMap.mapOptions.waypointsAllowed && this.options.showWaypoints) {
                 for (Waypoint pt : this.waypointManager.getWaypoints()) {
@@ -766,12 +769,9 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 modelViewMatrixStack.translate(-(playerX * this.mapToGui), -(playerZ * this.mapToGui), 0.0f);
             }
 
-            this.drawTexturedModalRect(-10.0F / this.scScale + playerX * this.mapToGui, -10.0F / this.scScale + playerZ * this.mapToGui, 20.0F / this.scScale, 20.0F / this.scScale);
+            this.drawTexturedModalRect(-4.0F + playerX * this.mapToGui, -4.0F + playerZ * this.mapToGui, 8.0F, 8.0F);
             if (this.oldNorth) {
                 modelViewMatrixStack.popMatrix();
-            }
-
-            if (this.oldNorth) {
                 modelViewMatrixStack.rotate(Axis.ZP.rotationDegrees(-90.0F));
             }
 
@@ -872,13 +872,13 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             this.switchToMouseInput();
         }
 
-        this.overlayBackground(0, this.top, 255, 255);
-        this.overlayBackground(this.bottom, this.getHeight(), 255, 255);
+        this.overlayBackground(0, this.top);
+        this.overlayBackground(this.bottom, this.getHeight());
         if (VoxelMap.mapOptions.worldmapAllowed) {
             drawContext.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 16, 0xFFFFFF);
             int x = (int) Math.floor(cursorCoordX);
             int z = (int) Math.floor(cursorCoordZ);
-            if (VoxelConstants.getVoxelMapInstance().getMapOptions().coords) {
+            if (VoxelConstants.getVoxelMapInstance().getMapOptions().infoLabelMode != 0) {
                 if (!this.editingCoordinates) {
                     drawContext.drawString(this.getFontRenderer(), "X: " + x, this.sideMargin, 16, 0xFFFFFF);
                     drawContext.drawString(this.getFontRenderer(), "Z: " + z, this.sideMargin + 64, 16, 0xFFFFFF);
@@ -908,6 +908,74 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             drawContext.drawString(this.getFontRenderer(), Component.translatable("worldmap.disabled"), this.sideMargin, 16, 0xFFFFFF);
         }
         super.render(drawContext, mouseX, mouseY, delta);
+
+        TextureAtlas atlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
+        OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
+        RenderSystem.setShader(CoreShaders.POSITION_TEX);
+        OpenGL.Utils.disp2(atlas.getId());
+        OpenGL.glColor4f(0f, 1f, 0f, 1f);
+        this.drawTexturedModalRect(this.sideMargin + 1f, this.getHeight() - 63f, atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png"), 18f, 18f);
+        OpenGL.glColor4f(1f, 1f, 1f, 1f);
+        if (VoxelMap.mapOptions.waypointsAllowed && this.options.showWaypoints && this.wpSelectionToggle) {
+            ArrayList<Waypoint> waypoints = this.waypointManager.getWaypoints();
+            waypoints.sort((wp1, wp2) -> String.CASE_INSENSITIVE_ORDER.compare(wp1.name, wp2.name));
+            int filteredCount = 0;
+            for (Waypoint wp : waypoints) {
+                if (wp.inWorld && wp.inDimension) {
+                    filteredCount++;
+                }
+            }
+            byte countPerRow = 16;
+            float listLeft = this.sideMargin + 32f;
+            float listRight = this.sideMargin + 32f + 20f * countPerRow;
+            float listTop = this.getHeight() - 44f - 20f * (filteredCount / countPerRow + 1);
+            float listBottom = this.getHeight() - 44f;
+            RenderSystem.setShader(CoreShaders.POSITION_COLOR);
+            Tesselator tesselator = Tesselator.getInstance();
+            BufferBuilder vertexBuffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            vertexBuffer.addVertex(listLeft, listBottom, 0).setUv(0.0F, 1.0F).setColor(0, 0, 0, 127);
+            vertexBuffer.addVertex(listRight, listBottom, 0).setUv(1.0F, 1.0F).setColor(0, 0, 0, 127);
+            vertexBuffer.addVertex(listRight, listTop, 0).setUv(1.0F, 0.0F).setColor(0, 0, 0, 127);
+            vertexBuffer.addVertex(listLeft, listTop, 0).setUv(0.0F, 0.0F).setColor(0, 0, 0, 127);
+            vertexBuffer.addVertex(listLeft + 1, listBottom - 1, 0).setUv(0.0F, 1.0F).setColor(255, 255, 255, 32);
+            vertexBuffer.addVertex(listRight - 1, listBottom - 1, 0).setUv(1.0F, 1.0F).setColor(255, 255, 255, 32);
+            vertexBuffer.addVertex(listRight - 1, listTop + 1, 0).setUv(1.0F, 0.0F).setColor(255, 255, 255, 32);
+            vertexBuffer.addVertex(listLeft + 1, listTop + 1, 0).setUv(0.0F, 0.0F).setColor(255, 255, 255, 32);
+            BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
+
+            RenderSystem.setShader(CoreShaders.POSITION_TEX);
+            OpenGL.Utils.disp2(atlas.getId());
+            String tooltip = "";
+            int count = 0;
+            for (Waypoint wp : waypoints) {
+                if (wp.inWorld && wp.inDimension) {
+                    float placeX = listLeft + (count % countPerRow) * 20f;
+                    float placeY = listTop + (count / countPerRow) * 20f;
+                    boolean hovered = mouseX > placeX && mouseX < (placeX + 20f) && mouseY > placeY && mouseY < (placeY + 20f);
+                    Sprite icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + wp.imageSuffix + ".png");
+                    if (icon == atlas.getMissingImage()) {
+                        icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
+                    }
+                    OpenGL.glColor4f(wp.red, wp.green, wp.blue, (wp.enabled || hovered) ? 1.0f : 0.3f);
+                    float iconSize = hovered ? 22f : 18f;
+                    float iconOffset = hovered ? -2f : 0f;
+                    this.drawTexturedModalRect(placeX + iconOffset, placeY + iconOffset, icon, iconSize, iconSize);
+                    if (hovered) {
+                        tooltip = wp.name;
+                        if (this.leftMouseButtonDown) {
+                            this.mapCenterX = wp.getX();
+                            this.mapCenterZ = wp.getZ();
+                        }
+                    }
+                    count++;
+                }
+            }
+            OpenGL.glColor4f(1f, 1f, 1f, 1f);
+            if (!tooltip.isEmpty()) {
+                this.renderTooltip(drawContext, Component.literal(tooltip), mouseX, mouseY);
+            }
+        }
+        OpenGL.glDisable(OpenGL.GL11_GL_BLEND);
     }
 
     @Override
@@ -961,25 +1029,28 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                     matrixStack.translate(-(ptX * this.mapToGui), -(ptZ * this.mapToGui), 0.0);
                 }
 
-                this.drawTexturedModalRect(-16.0F / this.scScale + ptX * this.mapToGui, -16.0F / this.scScale + ptZ * this.mapToGui, icon, 32.0F / this.scScale, 32.0F / this.scScale);
+                if (hover) {
+                    this.drawTexturedModalRect(-7.0F + ptX * this.mapToGui, -7.0F + ptZ * this.mapToGui, icon, 14.0F, 14.0F);
+                } else {
+                    this.drawTexturedModalRect(-6.0F + ptX * this.mapToGui, -6.0F + ptZ * this.mapToGui, icon, 12.0F, 12.0F);
+                }
                 if (this.oldNorth) {
                     matrixStack.popPose();
                 }
 
                 if (mapOptions.biomeOverlay == 0 && this.options.showWaypointNames || target || hover) {
                     float fontScale = 2.0F / this.scScale;
-                    int m = this.chkLen(name) / 2;
+                    int halfStringWidth = this.chkLen(name) / 2;
                     matrixStack.pushPose();
-                    // matrixStack.scale(fontScale, fontScale, 1.0F);
                     if (this.oldNorth) {
                         matrixStack.translate(ptX * this.mapToGui / fontScale, ptZ * this.mapToGui / fontScale, 0.0);
                         matrixStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
                         matrixStack.translate(-(ptX * this.mapToGui / fontScale), -(ptZ * this.mapToGui / fontScale), 0.0);
                     }
-                    Vector3f f = new Vector3f(ptX * this.mapToGui - m, ptZ * this.mapToGui + 16.0F / (float) VoxelConstants.getMinecraft().getWindow().getGuiScale(), 0);
-                    matrixStack.last().pose().transformPosition(f);
-                    RenderSystem.getModelViewStack().transformPosition(f);
-                    this.write(drawContext, name, f.x, f.y, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFF);
+                    Vector3f textPos = new Vector3f(ptX * this.mapToGui - halfStringWidth, ptZ * this.mapToGui + 16.0F / (float) VoxelConstants.getMinecraft().getWindow().getGuiScale(), 0);
+                    RenderSystem.getModelViewStack().transformPosition(textPos);
+                    matrixStack.translate(textPos.x - Math.floor(textPos.x), textPos.y - Math.floor(textPos.y), 0f);
+                    this.write(drawContext, name, textPos.x, textPos.y, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFF);
                     matrixStack.popPose();
                     OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
                 }
@@ -989,20 +1060,18 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     }
 
     private boolean isOnScreen(int x, int z) {
-        int left;
-        int right;
-        int top;
-        int bottom;
+        int left; int right;
+        int top;  int bottom;
         if (this.oldNorth) {
-            left = (int) Math.floor(this.mapCenterZ - (this.centerY * this.guiToMap) * 1.1);
-            right = (int) Math.floor(this.mapCenterZ + (this.centerY * this.guiToMap) * 1.1);
-            top = (int) Math.floor((-this.mapCenterX) - (this.centerX * this.guiToMap) * 1.1);
-            bottom = (int) Math.floor((-this.mapCenterX) + (this.centerX * this.guiToMap) * 1.1);
+            left = (int) Math.floor(this.mapCenterZ - (this.centerY * this.guiToMap));
+            right = (int) Math.floor(this.mapCenterZ + (this.centerY * this.guiToMap));
+            top = (int) Math.floor((-this.mapCenterX) - (this.centerX * this.guiToMap));
+            bottom = (int) Math.floor((-this.mapCenterX) + (this.centerX * this.guiToMap));
         } else {
-            left = (int) Math.floor(this.mapCenterX - (this.centerX * this.guiToMap) * 1.1);
-            right = (int) Math.floor(this.mapCenterX + (this.centerX * this.guiToMap) * 1.1);
-            top = (int) Math.floor(this.mapCenterZ - (this.centerY * this.guiToMap) * 1.1);
-            bottom = (int) Math.floor(this.mapCenterZ + (this.centerY * this.guiToMap) * 1.1);
+            left = (int) Math.floor(this.mapCenterX - (this.centerX * this.guiToMap));
+            right = (int) Math.floor(this.mapCenterX + (this.centerX * this.guiToMap));
+            top = (int) Math.floor(this.mapCenterZ - (this.centerY * this.guiToMap));
+            bottom = (int) Math.floor(this.mapCenterZ + (this.centerY * this.guiToMap));
         }
 
         return x > left && x < right && z > top && z < bottom;
@@ -1013,16 +1082,15 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         drawContext.flush();
     }
 
-    protected void overlayBackground(int startY, int endY, int startAlpha, int endAlpha) {
+    protected void overlayBackground(int startY, int endY) {
         Tesselator tessellator = Tesselator.getInstance();
-        BufferBuilder vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        RenderSystem.setShader(CoreShaders.POSITION_TEX_COLOR);
-        RenderSystem.setShaderTexture(0, VoxelConstants.getOptionsBackgroundTexture());
+        BufferBuilder vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        RenderSystem.setShader(CoreShaders.POSITION_COLOR);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        vertexBuffer.addVertex(0.0F, endY, 0.0F).setUv(0.0F, endY / 32.0F).setColor(64, 64, 64, endAlpha);
-        vertexBuffer.addVertex(this.getWidth(), endY, 0.0F).setUv(this.width / 32.0F, endY / 32.0F).setColor(64, 64, 64, endAlpha);
-        vertexBuffer.addVertex(this.getWidth(), startY, 0.0F).setUv(this.width / 32.0F, startY / 32.0F).setColor(64, 64, 64, startAlpha);
-        vertexBuffer.addVertex(0.0F, startY, 0.0F).setUv(0.0F, startY / 32.0F).setColor(64, 64, 64, startAlpha);
+        vertexBuffer.addVertex(0.0F, endY, 0.0F).setUv(0.0F, endY / 32.0F).setColor(0, 0, 0, 180);
+        vertexBuffer.addVertex(this.getWidth(), endY, 0.0F).setUv(this.width / 32.0F, endY / 32.0F).setColor(0, 0, 0, 180);
+        vertexBuffer.addVertex(this.getWidth(), startY, 0.0F).setUv(this.width / 32.0F, startY / 32.0F).setColor(0, 0, 0, 180);
+        vertexBuffer.addVertex(0.0F, startY, 0.0F).setUv(0.0F, startY / 32.0F).setColor(0, 0, 0, 180);
         BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
     }
 

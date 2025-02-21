@@ -4,6 +4,7 @@ import com.mamiyaotaru.voxelmap.persistent.ThreadManager;
 import com.mamiyaotaru.voxelmap.util.BiomeRepository;
 import com.mamiyaotaru.voxelmap.util.CommandUtils;
 import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.LogManager;
@@ -135,9 +136,9 @@ public final class VoxelConstants {
         }
     }
 
-    public static void onRenderHand(float partialTicks, Matrix4fStack matrixStack, boolean beacons, boolean signs, boolean withDepth, boolean withoutDepth) {
+    public static void onRenderHand(Matrix4fStack matrixStack, boolean withDepth, boolean withoutDepth) {
         try {
-            VoxelConstants.getVoxelMapInstance().getWaypointManager().renderWaypoints(partialTicks, matrixStack, beacons, signs, withDepth, withoutDepth);
+            VoxelConstants.getVoxelMapInstance().getWaypointManager().renderWaypoints(matrixStack, withDepth, withoutDepth);
         } catch (RuntimeException e) {
             VoxelConstants.getLogger().log(org.apache.logging.log4j.Level.ERROR, "Error while render waypoints", e);
         }
@@ -165,7 +166,7 @@ public final class VoxelConstants {
 
     public static int moveScoreboard(int bottomX, int entriesHeight) {
         double unscaledHeight = Map.getMinTablistOffset(); // / scaleFactor;
-        if (VoxelMap.mapOptions.hide || !VoxelMap.mapOptions.minimapAllowed || VoxelMap.mapOptions.mapCorner != 1 || !VoxelMap.mapOptions.moveScoreBoardDown || !Double.isFinite(unscaledHeight)) {
+        if (VoxelMap.mapOptions.displayMode == 0 || !VoxelMap.mapOptions.minimapAllowed || VoxelMap.mapOptions.mapCorner != 1 || !VoxelMap.mapOptions.moveScoreBoardDown || !Double.isFinite(unscaledHeight)) {
             return bottomX;
         }
         double scaleFactor = Minecraft.getInstance().getWindow().getGuiScale(); // 1x 2x 3x, ...
@@ -193,5 +194,9 @@ public final class VoxelConstants {
 
     public static void setPacketBridge(PacketBridge packetBridge) {
         VoxelConstants.packetBridge = packetBridge;
+    }
+
+    public static KeyMapping getAlternativeListKey() {
+        return VoxelMap.mapOptions.keyBindListAlternative.isUnbound() ? KeyMapping.get("key.playerlist") : VoxelMap.mapOptions.keyBindListAlternative;
     }
 }

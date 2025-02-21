@@ -13,7 +13,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 
 public class GuiMinimapPerformance extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = {EnumOptionsMinimap.LIGHTING, EnumOptionsMinimap.TERRAIN, EnumOptionsMinimap.WATERTRANSPARENCY, EnumOptionsMinimap.BLOCKTRANSPARENCY, EnumOptionsMinimap.BIOMES, EnumOptionsMinimap.FILTERING, EnumOptionsMinimap.CHUNKGRID, EnumOptionsMinimap.BIOMEOVERLAY, EnumOptionsMinimap.SLIMECHUNKS, EnumOptionsMinimap.WORLDBORDER};
+    private static final EnumOptionsMinimap[] relevantOptions = {EnumOptionsMinimap.LIGHTING, EnumOptionsMinimap.TERRAINDEPTH, EnumOptionsMinimap.WATERTRANSPARENCY, EnumOptionsMinimap.BLOCKTRANSPARENCY, EnumOptionsMinimap.BIOMETINT, EnumOptionsMinimap.FILTERING, EnumOptionsMinimap.CHUNKGRID, EnumOptionsMinimap.BIOMEOVERLAY, EnumOptionsMinimap.SLIMECHUNKS, EnumOptionsMinimap.WORLDBORDER};
     private GuiButtonText worldSeedButton;
     private GuiButtonText teleportCommandButton;
     private GuiOptionButtonMinimap slimeChunksButton;
@@ -37,7 +37,7 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
 
         for (EnumOptionsMinimap option : relevantOptions) {
             StringBuilder text = new StringBuilder().append(this.options.getKeyText(option));
-            if ((option == EnumOptionsMinimap.WATERTRANSPARENCY || option == EnumOptionsMinimap.BLOCKTRANSPARENCY || option == EnumOptionsMinimap.BIOMES) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
+            if ((option == EnumOptionsMinimap.WATERTRANSPARENCY || option == EnumOptionsMinimap.BLOCKTRANSPARENCY || option == EnumOptionsMinimap.BIOMETINT) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
                 text.append("§c").append(text);
             }
 
@@ -80,7 +80,7 @@ public class GuiMinimapPerformance extends GuiScreenMinimap {
         EnumOptionsMinimap option = ((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions();
         this.options.setOptionValue(option);
         String perfBomb = "";
-        if ((option == EnumOptionsMinimap.WATERTRANSPARENCY || option == EnumOptionsMinimap.BLOCKTRANSPARENCY || option == EnumOptionsMinimap.BIOMES) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
+        if ((option == EnumOptionsMinimap.WATERTRANSPARENCY || option == EnumOptionsMinimap.BLOCKTRANSPARENCY || option == EnumOptionsMinimap.BIOMETINT) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
             perfBomb = "§c";
         }
 

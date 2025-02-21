@@ -112,8 +112,8 @@ public class GuiMinimapControls extends GuiScreenMinimap {
             drawContext.drawString(this.getFontRenderer(), this.options.getKeyBindingDescription(keyCounter), leftBorder + keyCounter % 2 * 160 + 70 + 6, this.getHeight() / 6 + 24 * (keyCounter >> 1) + 7, -1);
         }
 
-        drawContext.drawCenteredString(this.getFontRenderer(), I18n.get("controls.minimap.unbind1"), this.getWidth() / 2, this.getHeight() / 6 + 115, 16777215);
-        drawContext.drawCenteredString(this.getFontRenderer(), I18n.get("controls.minimap.unbind2"), this.getWidth() / 2, this.getHeight() / 6 + 129, 16777215);
+        drawContext.drawCenteredString(this.getFontRenderer(), I18n.get("controls.minimap.unbind1"), this.getWidth() / 2, this.getHeight() / 6 + 129, 16777215);
+        drawContext.drawCenteredString(this.getFontRenderer(), I18n.get("controls.minimap.unbind2"), this.getWidth() / 2, this.getHeight() / 6 + 143, 16777215);
         super.render(drawContext, mouseX, mouseY, delta);
     }
 }
