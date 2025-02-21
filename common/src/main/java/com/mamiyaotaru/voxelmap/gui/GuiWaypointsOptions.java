@@ -12,7 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiWaypointsOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINTDISTANCE, EnumOptionsMinimap.DISTANCEUNITCONVERSION, EnumOptionsMinimap.WAYPOINTNAMEBELOWICON, EnumOptionsMinimap.WAYPOINTDISTANCEBELOWNAME, EnumOptionsMinimap.DEATHPOINTS};
+    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINTDISTANCE, EnumOptionsMinimap.WAYPOINTSIZE, EnumOptionsMinimap.DISTANCEUNITCONVERSION, EnumOptionsMinimap.WAYPOINTNAMEBELOWICON, EnumOptionsMinimap.WAYPOINTDISTANCEBELOWNAME, EnumOptionsMinimap.DEATHPOINTS };
     private final Screen parent;
     private final MapSettingsManager options;
     protected Component screenTitle;
@@ -28,13 +28,16 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 
         for (EnumOptionsMinimap option : relevantOptions) {
             if (option.isFloat()) {
-                float distance = this.options.getOptionFloatValue(option);
-                if (distance < 0.0F) {
-                    distance = 10001.0F;
+                float value = this.options.getOptionFloatValue(option);
+                if (option == EnumOptionsMinimap.WAYPOINTDISTANCE) {
+                    if (value < 0.0F) {
+                        value = 10001.0F;
+                    }
+                    value = (value - 50.0F) / 9951.0F;
+                } else if (option == EnumOptionsMinimap.WAYPOINTSIZE) {
+                    value -= 0.5f;
                 }
-
-                distance = (distance - 50.0F) / 9951.0F;
-                this.addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 - 155 + var2 % 2 * 160, this.getHeight() / 6 + 24 * (var2 >> 1), option, distance, this.options));
+                this.addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 - 155 + var2 % 2 * 160, this.getHeight() / 6 + 24 * (var2 >> 1), option, value, this.options));
             } else {
                 GuiOptionButtonMinimap optionButton = new GuiOptionButtonMinimap(this.getWidth() / 2 - 155 + var2 % 2 * 160, this.getHeight() / 6 + 24 * (var2 >> 1), option, Component.literal(this.options.getKeyText(option)), this::optionClicked);
                 this.addRenderableWidget(optionButton);

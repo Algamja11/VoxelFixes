@@ -1,7 +1,6 @@
 package com.mamiyaotaru.voxelmap;
 
 import com.mamiyaotaru.voxelmap.interfaces.IRadar;
-import com.mamiyaotaru.voxelmap.packets.WorldIdC2S;
 import com.mamiyaotaru.voxelmap.persistent.PersistentMap;
 import com.mamiyaotaru.voxelmap.persistent.PersistentMapSettingsManager;
 import com.mamiyaotaru.voxelmap.persistent.ThreadManager;
@@ -18,7 +17,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
@@ -205,10 +204,14 @@ public class VoxelMap implements PreparableReloadListener {
         if (radarOptions.showRadar) {
             if (radarOptions.radarMode == 1) {
                 return this.radarSimple;
-            }
-
-            if (radarOptions.radarMode == 2) {
+            } else if (radarOptions.radarMode == 2) {
                 return this.radar;
+            } else if (radarOptions.radarMode == 3) {
+                if (VoxelConstants.getAlternativeListKey().isDown()) {
+                    return this.radar;
+                } else {
+                    return this.radarSimple;
+                }
             }
         }
 
