@@ -741,7 +741,6 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (this.options.lightmap) {
-            //int torchOffset = this.options.realTimeTorches ? 8 : 0;
             int skylightMultiplier = 16;
 
             for (int t = 0; t < 16; ++t) {
