@@ -237,41 +237,40 @@ public class Radar implements IRadar {
 
             for (int i = 0; i < leatherImages.length; i++) {
                 float scale = leatherImages[i].getWidth() / 8.0F;
-                leatherImages[i] = ImageUtils.fillOutline(
-                        ImageUtils.pad(ImageUtils.scaleImage(leatherImages[i], 4.0F / scale * 47.0F / 38.0F)), this.options.outlines && i < 2, true, 37.6F, 37.6F, 2
-                );
-
+                leatherImages[i] = ImageUtils.fillOutline(ImageUtils.pad(ImageUtils.scaleImage(leatherImages[i], 4.0F / scale * 47.0F / 38.0F)), this.options.outlines && i < 2, true, 37.6F, 37.6F, 2);
                 Sprite icon = this.textureAtlas.registerIconForBufferedImage("armor " + this.armorNames[i], leatherImages[i]);
-                if (i == 0) { this.leatherArmorIcon = icon; }
+                if (i == 0) {
+                    this.leatherArmorIcon = icon;
+                }
             }
 
             BufferedImage skeleton = ImageUtils.loadImage(EnumMobs.SKELETON.resourceLocation, 8, 8, 8, 8, 64, 32);
-            skeleton = ImageUtils.scaleImage(skeleton, 5f);
+            skeleton = ImageUtils.scaleImage(skeleton, 40f / skeleton.getWidth());
             skeleton = ImageUtils.fillOutline(ImageUtils.pad(skeleton), this.options.outlines, true, 40.0f, 40.0f, 2);
             this.textureAtlas.registerIconForBufferedImage(headIDs[0], skeleton);
 
             BufferedImage witherSkeleton = ImageUtils.loadImage(EnumMobs.WITHER_SKELETON.resourceLocation, 8, 8, 8, 8, 64, 32);
-            witherSkeleton = ImageUtils.scaleImage(witherSkeleton, 5f);
+            witherSkeleton = ImageUtils.scaleImage(witherSkeleton, 40f / witherSkeleton.getWidth());
             witherSkeleton = ImageUtils.fillOutline(ImageUtils.pad(witherSkeleton), this.options.outlines, true, 40.0f, 40.0f, 2);
             this.textureAtlas.registerIconForBufferedImage(headIDs[1], witherSkeleton);
 
             BufferedImage zombie = ImageUtils.loadImage(EnumMobs.ZOMBIE.resourceLocation, 8, 8, 8, 8, 64, 64);
-            zombie = ImageUtils.scaleImage(zombie, 5f);
+            zombie = ImageUtils.scaleImage(zombie, 40f / zombie.getWidth());
             zombie = ImageUtils.fillOutline(ImageUtils.pad(zombie), this.options.outlines, true, 40.0f, 40.0f, 2);
             this.textureAtlas.registerIconForBufferedImage(headIDs[2], zombie);
 
             BufferedImage creeper = ImageUtils.loadImage(EnumMobs.CREEPER.resourceLocation, 8, 8, 8, 8, 64, 64);
-            creeper = ImageUtils.scaleImage(creeper, 5f);
+            creeper = ImageUtils.scaleImage(creeper, 40f / creeper.getWidth());
             creeper = ImageUtils.fillOutline(ImageUtils.pad(creeper), this.options.outlines, true, 40.0f, 40.0f, 2);
             this.textureAtlas.registerIconForBufferedImage(headIDs[3], creeper);
 
             BufferedImage dragon = createPreMappedIcon(EnumMobs.ENDER_DRAGON, EnumMobs.ENDER_DRAGON.resourceLocation);
-            dragon = ImageUtils.scaleImage(dragon, 2.5f);
+            dragon = ImageUtils.scaleImage(dragon, 20f / dragon.getWidth());
             dragon = ImageUtils.fillOutline(ImageUtils.pad(dragon), this.options.outlines, true, 20.0f, 25.0f, 2);
             this.textureAtlas.registerIconForBufferedImage(headIDs[4], dragon);
 
             BufferedImage piglin = createPreMappedIcon(EnumMobs.PIGLIN, EnumMobs.PIGLIN.resourceLocation);
-            piglin = ImageUtils.scaleImage(piglin, 5f);
+            piglin = ImageUtils.scaleImage(piglin, 50f / piglin.getWidth());
             piglin = ImageUtils.fillOutline(ImageUtils.pad(piglin), this.options.outlines, true, 50.0f, 40.0f, 2);
             this.textureAtlas.registerIconForBufferedImage(headIDs[5], piglin);
 
@@ -279,11 +278,11 @@ public class Radar implements IRadar {
             float scale = sheepFur.getWidth() / 6.0F;
             sheepFur = ImageUtils.scaleImage(sheepFur, 4.0F / scale * 1.0625F);
             ImageUtils.eraseArea(sheepFur, 2, 2, sheepFur.getWidth() - 4, sheepFur.getHeight() - 4, sheepFur.getWidth(), sheepFur.getHeight());
-            sheepFur = ImageUtils.fillOutline(ImageUtils.pad(sheepFur), this.options.outlines, true, 27.5F, 27.5F, (int) Math.max(1.0F, 2.0F));
+            sheepFur = ImageUtils.fillOutline(ImageUtils.pad(sheepFur), this.options.outlines, true, 27.5F, 27.5F, 2);
             this.textureAtlas.registerIconForBufferedImage(headIDs[6], sheepFur);
 
             BufferedImage slimeOverlay = ImageUtils.loadImage(EnumMobs.SLIME.resourceLocation, 8, 8, 8, 8, 64, 32);
-            slimeOverlay = ImageUtils.scaleImage(slimeOverlay, 4.5f);
+            slimeOverlay = ImageUtils.scaleImage(slimeOverlay, 36f / slimeOverlay.getWidth());
             slimeOverlay = ImageUtils.fillOutline(ImageUtils.pad(slimeOverlay), this.options.outlines, true, 36.0f, 36.0f, 2);
             this.textureAtlas.registerIconForBufferedImage(headIDs[7], slimeOverlay);
 
