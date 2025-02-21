@@ -265,7 +265,7 @@ public class Radar implements IRadar {
             this.textureAtlas.registerIconForBufferedImage(headIDs[3], creeper);
 
             BufferedImage dragon = createPreMappedIcon(EnumMobs.ENDER_DRAGON, EnumMobs.ENDER_DRAGON.resourceLocation);
-            dragon = ImageUtils.scaleImage(dragon, 20f / dragon.getWidth());
+            dragon = ImageUtils.scaleImage(dragon, 40f / dragon.getWidth());
             dragon = ImageUtils.fillOutline(ImageUtils.pad(dragon), this.options.outlines, true, 20.0f, 25.0f, 2);
             this.textureAtlas.registerIconForBufferedImage(headIDs[4], dragon);
 
