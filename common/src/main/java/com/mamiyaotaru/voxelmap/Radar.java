@@ -1585,7 +1585,7 @@ public class Radar implements IRadar {
                         wayX = Math.sin(Math.toRadians(contact.angle)) * contact.distance;
                         wayZ = Math.cos(Math.toRadians(contact.angle)) * contact.distance;
                         textMatrixStack.translate(-wayX * scaleFactor, -wayZ * scaleFactor, 900.0f);
-                        drawContext.drawString(VoxelConstants.getMinecraft().font, mobName, (int) (x * scaleFactor - halfStringWidth), (int) (y + 2 * scaleFactor), textColor);
+                        drawContext.drawString(VoxelConstants.getMinecraft().font, mobName, (int) (x * scaleFactor - halfStringWidth), (int) ((y + 2) * scaleFactor), textColor);
                         textMatrixStack.popPose();
                     }
                 } catch (Exception e) {
