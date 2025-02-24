@@ -72,7 +72,7 @@ public class RadarSimple implements IRadar {
     }
 
     @Override
-    public void onTickInGame(GuiGraphics drawContext, Matrix4fStack matrixStack, LayoutVariables layoutVariables, float scaleProj) {
+    public void onTickInGame(GuiGraphics drawContext, Matrix4fStack matrixStack, LayoutVariables layoutVariables, float scaleProj, float iconSize) {
         if (this.options.radarAllowed || this.options.radarMobsAllowed || this.options.radarPlayersAllowed) {
             this.layoutVariables = layoutVariables;
             if (this.options.isChanged()) {
@@ -96,7 +96,7 @@ public class RadarSimple implements IRadar {
 
             ++this.timer;
             if (this.completedLoading) {
-                this.renderMapMobs(drawContext, matrixStack, this.layoutVariables.mapX, this.layoutVariables.mapY, scaleProj);
+                this.renderMapMobs(drawContext, matrixStack, this.layoutVariables.mapX, this.layoutVariables.mapY, scaleProj, iconSize);
             }
 
             OpenGL.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -179,12 +179,11 @@ public class RadarSimple implements IRadar {
         }
     }
 
-    public void renderMapMobs(GuiGraphics drawContext, Matrix4fStack matrixStack, int x, int y, float scaleProj) {
+    public void renderMapMobs(GuiGraphics drawContext, Matrix4fStack matrixStack, int x, int y, float scaleProj, float iconSize) {
         double lastX = GameVariableAccessShim.xCoordDouble();
         double lastZ = GameVariableAccessShim.zCoordDouble();
         int lastY = GameVariableAccessShim.yCoord();
         double max = this.layoutVariables.zoomScaleAdjusted * 32.0;
-        float iconScale = this.layoutVariables.fullscreenMap ? 0.5f : 1.0f;
         OpenGL.Utils.disp2(this.textureAtlas.getId());
 
         for (Contact contact : this.contacts) {
@@ -251,17 +250,17 @@ public class RadarSimple implements IRadar {
 
                     // this.applyFilteringParameters();
                     OpenGL.Utils.drawPre();
-                    OpenGL.Utils.setMap(this.textureAtlas.getAtlasSprite("contact"), x, y, 12.0F * iconScale);
+                    OpenGL.Utils.setMap(this.textureAtlas.getAtlasSprite("contact"), x, y, 12.0F * iconSize);
                     OpenGL.Utils.drawPost();
                     if (this.options.showFacing) {
                         // this.applyFilteringParameters();
                         OpenGL.Utils.drawPre();
-                        OpenGL.Utils.setMap(this.textureAtlas.getAtlasSprite("facing"), x, y, 12.0F * iconScale);
+                        OpenGL.Utils.setMap(this.textureAtlas.getAtlasSprite("facing"), x, y, 12.0F * iconSize);
                         OpenGL.Utils.drawPost();
                     }
 
                     if (contact.name != null && ((this.options.showPlayerNames && this.isPlayer(contact.entity)) || (this.options.showMobNames && !this.isPlayer(contact.entity) && (!this.options.showNamesOnlyForTagged || contact.entity.hasCustomName())))) {
-                        float fontSize = this.options.fontSize * iconScale;
+                        float fontSize = this.options.fontSize * iconSize;
                         float scaleFactor = 1f / fontSize;
                         String mobName = contact.entity.getDisplayName().getString();
                         int halfStringWidth = VoxelConstants.getMinecraft().font.width(mobName) / 2;

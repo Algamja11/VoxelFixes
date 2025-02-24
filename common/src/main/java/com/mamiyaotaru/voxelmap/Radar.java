@@ -344,7 +344,7 @@ public class Radar implements IRadar {
     }
 
     @Override
-    public void onTickInGame(GuiGraphics drawContext, Matrix4fStack matrixStack, LayoutVariables layoutVariables, float scaleProj) {
+    public void onTickInGame(GuiGraphics drawContext, Matrix4fStack matrixStack, LayoutVariables layoutVariables, float scaleProj, float iconSize) {
         if (this.options.radarAllowed || this.options.radarMobsAllowed || this.options.radarPlayersAllowed) {
             this.layoutVariables = layoutVariables;
             if (this.options.isChanged()) {
@@ -369,7 +369,7 @@ public class Radar implements IRadar {
             }
             ++this.timer;
             if (this.completedLoading) {
-                this.renderMapMobs(drawContext, matrixStack, this.layoutVariables.mapX, this.layoutVariables.mapY, scaleProj);
+                this.renderMapMobs(drawContext, matrixStack, this.layoutVariables.mapX, this.layoutVariables.mapY, scaleProj, iconSize);
             }
 
             OpenGL.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -1425,12 +1425,11 @@ public class Radar implements IRadar {
         return helmet.getDescriptionId().equals("item.minecraft.leather_helmet");
     }
 
-    public void renderMapMobs(GuiGraphics drawContext, Matrix4fStack matrixStack, int x, int y, float scaleProj) {
+    public void renderMapMobs(GuiGraphics drawContext, Matrix4fStack matrixStack, int x, int y, float scaleProj, float iconSize) {
         double lastX = GameVariableAccessShim.xCoordDouble();
         double lastZ = GameVariableAccessShim.zCoordDouble();
         int lastY = GameVariableAccessShim.yCoord();
         double max = this.layoutVariables.zoomScaleAdjusted * 32.0;
-        float iconScale = this.layoutVariables.fullscreenMap ? 0.5f : 1.0f;
 
         for (Contact contact : this.contacts) {
             RenderSystem.setShader(CoreShaders.POSITION_TEX);
@@ -1493,10 +1492,10 @@ public class Radar implements IRadar {
                     if (contact.entity.getVehicle() != null && this.isEntityShown(contact.entity.getVehicle())) {
                         yOffset = -4.0F;
                     }
-                    yOffset *= iconScale;
+                    yOffset *= iconSize;
 
                     OpenGL.Utils.drawPre();
-                    OpenGL.Utils.setMap(contact.icon, x, y + yOffset, ((int) (contact.icon.getIconWidth() / 4.0F * iconScale)));
+                    OpenGL.Utils.setMap(contact.icon, x, y + yOffset, ((int) (contact.icon.getIconWidth() / 4.0F * iconSize)));
                     OpenGL.Utils.drawPost();
                     if ((this.options.showHelmetsPlayers && contact.type == EnumMobs.PLAYER || this.options.showHelmetsMobs && contact.type != EnumMobs.PLAYER || contact.type == EnumMobs.SHEEP) && contact.armorIcon != null) {
                         Sprite icon = contact.armorIcon;
@@ -1504,9 +1503,9 @@ public class Radar implements IRadar {
                         if (contact.type == EnumMobs.ZOMBIE_VILLAGER) {
                             armorOffset = -0.5F;
                         }
-                        armorOffset *= iconScale;
+                        armorOffset *= iconSize;
 
-                        float armorScale = iconScale;
+                        float armorScale = iconSize;
                         float red = 1.0F; float green = 1.0F; float blue = 1.0F;
                         if (contact.armorColor != -1) {
                             red = (contact.armorColor >> 16 & 0xFF) / 255.0F;
@@ -1525,7 +1524,7 @@ public class Radar implements IRadar {
                                     blue = (sheepColors1.getBlue() * (1.0F - lerpVal) + sheepColors2.getBlue() * lerpVal) / 255.0F;
                                 }
 
-                                armorScale = 1.04F * iconScale;
+                                armorScale = 1.04F * iconSize;
                             }
 
                             if (wayY < 0) {
@@ -1568,7 +1567,7 @@ public class Radar implements IRadar {
                     }
 
                     if (contact.name != null && ((this.options.showPlayerNames && this.isPlayer(contact.entity)) || (this.options.showMobNames && !this.isPlayer(contact.entity) && (!this.options.showNamesOnlyForTagged || contact.entity.hasCustomName())))) {
-                        float fontSize = this.options.fontSize * iconScale;
+                        float fontSize = this.options.fontSize * iconSize;
                         float scaleFactor = 1f / fontSize;
                         String mobName = contact.entity.getDisplayName().getString();
                         int halfStringWidth = VoxelConstants.getMinecraft().font.width(mobName) / 2;
