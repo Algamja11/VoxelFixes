@@ -1493,6 +1493,7 @@ public class Radar implements IRadar {
                     if (contact.entity.getVehicle() != null && this.isEntityShown(contact.entity.getVehicle())) {
                         yOffset = -4.0F;
                     }
+                    yOffset *= iconScale;
 
                     OpenGL.Utils.drawPre();
                     OpenGL.Utils.setMap(contact.icon, x, y + yOffset, ((int) (contact.icon.getIconWidth() / 4.0F * iconScale)));
@@ -1503,6 +1504,7 @@ public class Radar implements IRadar {
                         if (contact.type == EnumMobs.ZOMBIE_VILLAGER) {
                             armorOffset = -0.5F;
                         }
+                        armorOffset *= iconScale;
 
                         float armorScale = iconScale;
                         float red = 1.0F; float green = 1.0F; float blue = 1.0F;
@@ -1554,13 +1556,13 @@ public class Radar implements IRadar {
                             }
                             icon = this.textureAtlas.getAtlasSpriteIncludingYetToBeStitched("armor " + this.armorNames[1]);
                             OpenGL.Utils.drawPre();
-                            OpenGL.Utils.setMap(icon, x, y + yOffset + armorOffset, icon.getIconWidth() / 4.0F * armorScale * 40.0F / 37.0F);
+                            OpenGL.Utils.setMap(icon, x, y + yOffset + armorOffset, icon.getIconWidth() / 4.0F * 40.0F / 37.0F * armorScale);
                             OpenGL.Utils.drawPost();
 
                             OpenGL.glColor3f(1.0F, 1.0F, 1.0F);
                             icon = this.textureAtlas.getAtlasSpriteIncludingYetToBeStitched("armor " + this.armorNames[3]);
                             OpenGL.Utils.drawPre();
-                            OpenGL.Utils.setMap(icon, x, y + yOffset + armorOffset, icon.getIconWidth() / 4.0F * armorScale * 40.0F / 37.0F);
+                            OpenGL.Utils.setMap(icon, x, y + yOffset + armorOffset, icon.getIconWidth() / 4.0F * 40.0F / 37.0F * armorScale);
                             OpenGL.Utils.drawPost();
                         }
                     }
@@ -1584,7 +1586,7 @@ public class Radar implements IRadar {
                         wayX = Math.sin(Math.toRadians(contact.angle)) * contact.distance;
                         wayZ = Math.cos(Math.toRadians(contact.angle)) * contact.distance;
                         textMatrixStack.translate(-wayX * scaleFactor, -wayZ * scaleFactor, 900.0f);
-                        drawContext.drawString(VoxelConstants.getMinecraft().font, mobName, (int) (x * scaleFactor - halfStringWidth), (int) ((y + 2) * scaleFactor), textColor);
+                        drawContext.drawString(VoxelConstants.getMinecraft().font, mobName, (int) (x * scaleFactor - halfStringWidth), (int) (y + 2 * scaleFactor), textColor);
                         textMatrixStack.popPose();
                     }
                 } catch (Exception e) {

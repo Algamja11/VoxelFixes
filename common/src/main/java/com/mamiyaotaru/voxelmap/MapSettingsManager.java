@@ -29,7 +29,7 @@ public class MapSettingsManager implements ISettingsManager {
     public final boolean multicore = this.availableProcessors > 1;
 
     public int displayMode = 3;
-    public int infoLabelMode = 2;
+    public int infoLabelMode = 4;
     public int sizeModifier = 1;
     public int shape = 1;
     public boolean rotates = true;

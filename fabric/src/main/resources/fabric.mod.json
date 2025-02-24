@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "voxelmap",
   "version": "${version}",
-  "name": "Voxelmap",
+  "name": "VoxelMap-Updated",
   "description": "Minimap and world map",
   "authors": [
     "Lahwran ",
@@ -13,7 +13,8 @@
     "TheAlgorithm476"
   ],
   "contact": {
-    "homepage": "https://minecraft.curseforge.com/projects/voxelmap"
+    "homepage": "https://modrinth.com/mod/voxelmap-updated",
+    "issues": "https://github.com/fantahund/Voxelmap/issues"
   },
   "icon": "assets/voxelmap/icon.png",
   "environment": "client",

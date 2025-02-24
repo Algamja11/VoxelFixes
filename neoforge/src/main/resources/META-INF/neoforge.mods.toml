@@ -6,11 +6,11 @@ issueTrackerURL = "https://github.com/fantahund/Voxelmap/issues"
 [[mods]]
 modId = "voxelmap"
 version = "${version}"
-displayName = "Voxelmap"
+displayName = "VoxelMap-Updated"
 logoFile = "icon.png"
 authors = "Lahwran, Zaneris, MamiyaOtaru, fantahund, Brokkonaut, TheAlgorithm476"
 description = "Minimap and world map"
-displayURL = "https://github.com/fantahund/Voxelmap"
+displayURL = "https://modrinth.com/mod/voxelmap-updated"
 
 [[dependencies.voxelmap]]
 modId = "neoforge"
