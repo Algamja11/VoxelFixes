@@ -64,10 +64,10 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 
-import java.awt.*;
+import java.awt.Image;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.RasterFormatException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;

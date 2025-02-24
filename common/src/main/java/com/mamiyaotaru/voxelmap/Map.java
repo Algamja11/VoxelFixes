@@ -653,7 +653,7 @@ public class Map implements Runnable, IChangeObserver {
 
             if (this.fullscreenMap) {
                 if (this.options.displayMode >= 2) {
-                    this.renderMapFull(drawContext, modelViewMatrixStack, this.scWidth, this.scHeight, scScale);
+                    this.renderMapFull(drawContext, this.scWidth, this.scHeight, scScale);
                 }
             } else if (this.options.displayMode == 1 || this.options.displayMode == 3) {
                 this.renderMap(drawContext, modelViewMatrixStack, mapX, mapY, scScale);
@@ -1051,7 +1051,7 @@ public class Map implements Runnable, IChangeObserver {
                         }
                     }
                 } else {
-                    surfaceHeight = this.getCaveHeight(startX + imageX, startZ + imageY);
+                    surfaceHeight = this.getNetherHeight(startX + imageX, startZ + imageY);
                     this.surfaceBlockState = world.getBlockState(blockPos.withXYZ(startX + imageX, surfaceHeight - 1, startZ + imageY));
                     surfaceBlockStateID = BlockRepository.getStateId(this.surfaceBlockState);
                     foliageHeight = surfaceHeight + 1;
@@ -1321,10 +1321,10 @@ public class Map implements Runnable, IChangeObserver {
             }
         }
         MutableBlockPosCache.release(blockPos);
-        return (nether || caves) && height > playerHeight ? this.getCaveHeight(x, z) : height;
+        return (nether || caves) && height > playerHeight ? this.getNetherHeight(x, z) : height;
     }
 
-    private int getCaveHeight(int x, int z) {
+    private int getNetherHeight(int x, int z) {
         MutableBlockPos blockPos = MutableBlockPosCache.get();
         int y = this.lastY;
         blockPos.setXYZ(x, y, z);
@@ -1763,7 +1763,7 @@ public class Map implements Runnable, IChangeObserver {
 
     }
 
-    private void renderMapFull(GuiGraphics drawContext, Matrix4fStack modelStack, int scWidth, int scHeight, int scScale) {
+    private void renderMapFull(GuiGraphics drawContext, int scWidth, int scHeight, int scScale) {
         PoseStack matrixStack = drawContext.pose();
         synchronized (this.coordinateLock) {
             if (this.imageChanged) {
@@ -1803,27 +1803,28 @@ public class Map implements Runnable, IChangeObserver {
         float markerScale = mapScale / 64f + mapScale / 1024f;
         int markerX = Math.round(scWidth / markerScale / 2f);
         int markerY = Math.round(scHeight / markerScale / 2f);
-        modelStack.pushMatrix();
-        modelStack.scale(markerScale, markerScale, 1f);
+
+        Matrix4fStack modelViewMatrixStack = RenderSystem.getModelViewStack();
+        modelViewMatrixStack.pushMatrix();
+        modelViewMatrixStack.scale(markerScale, markerScale, 1f);
         if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
             this.layoutVariables.updateVars(scScale, markerX, markerY, this.zoomScale, this.zoomScale, false, true);
-            VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(drawContext, modelStack, this.layoutVariables, markerScale * (float) (scScale / VoxelConstants.getMinecraft().getWindow().getGuiScale()));
+            VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(drawContext, modelViewMatrixStack, this.layoutVariables, markerScale * (float) (scScale / VoxelConstants.getMinecraft().getWindow().getGuiScale()));
         }
-        modelStack.popMatrix();
+        modelViewMatrixStack.popMatrix();
 
-        float fixedScale = scScale / (float)VoxelConstants.getMinecraft().getWindow().getGuiScale();
+        float fixedScale = scScale / (float) VoxelConstants.getMinecraft().getWindow().getGuiScale();
 
         int frameScale = mapScale + 8;
         OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
         OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
         this.drawMapFrame(scWidth / 2, scHeight / 2, 2, frameScale * 2);
-        float directionTextSize = 0.75f;
         matrixStack.pushPose();
-        matrixStack.scale(fixedScale * directionTextSize, fixedScale * directionTextSize, 1.0f);
-        this.write(drawContext, "N", scWidth / (directionTextSize * 2f) - 2f, scHeight / (directionTextSize * 2f) - frameScale / (directionTextSize * 2f) - 8f, 0xFFFFFF);
-        this.write(drawContext, "S", scWidth / (directionTextSize * 2f) - 2f, scHeight / (directionTextSize * 2f) + frameScale / (directionTextSize * 2f), 0xFFFFFF);
-        this.write(drawContext, "E", scWidth / (directionTextSize * 2f) + frameScale / (directionTextSize * 2f), scHeight / (directionTextSize * 2f) - 4f, 0xFFFFFF);
-        this.write(drawContext, "W", scWidth / (directionTextSize * 2f) - frameScale / (directionTextSize * 2f) - 6f, scHeight / (directionTextSize * 2f) - 4f, 0xFFFFFF);
+        matrixStack.scale(fixedScale, fixedScale, 1.0f);
+        this.write(drawContext, "N", scWidth / 2f - 2f, scHeight / 2f - frameScale / 2f - 8f, 0xFFFFFF);
+        this.write(drawContext, "S", scWidth / 2f - 2f, scHeight / 2f + frameScale / 2f, 0xFFFFFF);
+        this.write(drawContext, "E", scWidth / 2f + frameScale / 2f, scHeight / 2f - 4f, 0xFFFFFF);
+        this.write(drawContext, "W", scWidth / 2f - frameScale / 2f - 6f, scHeight / 2f - 4f, 0xFFFFFF);
         matrixStack.popPose();
 
         double lastXDouble = GameVariableAccessShim.xCoordDouble();
@@ -1832,8 +1833,8 @@ public class Map implements Runnable, IChangeObserver {
         OpenGL.Utils.disp2(textureAtlas.getId());
         OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
         OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
-        modelStack.pushMatrix();
-        modelStack.scale(markerScale, markerScale, 1f);
+        modelViewMatrixStack.pushMatrix();
+        modelViewMatrixStack.scale(markerScale, markerScale, 1f);
         if (VoxelMap.mapOptions.waypointsAllowed) {
             Waypoint highlightedPoint = this.waypointManager.getHighlightedWaypoint();
 
@@ -1841,33 +1842,34 @@ public class Map implements Runnable, IChangeObserver {
                 if (pt.isActive() || pt == highlightedPoint) {
                     double distanceSq = pt.getDistanceSqToEntity(VoxelConstants.getMinecraft().getCameraEntity());
                     if (distanceSq < (this.options.maxWaypointDisplayDistance * this.options.maxWaypointDisplayDistance) || this.options.maxWaypointDisplayDistance < 0 || pt == highlightedPoint) {
-                        this.drawWaypoint(modelStack, pt, textureAtlas, null, null, null, null, markerX, markerY, lastXDouble, lastZDouble, this.zoomScale, false);
+                        this.drawWaypoint(modelViewMatrixStack, pt, textureAtlas, null, null, null, null, markerX, markerY, lastXDouble, lastZDouble, this.zoomScale, false);
                     }
                 }
             }
 
             if (highlightedPoint != null) {
-                this.drawWaypoint(modelStack, highlightedPoint, textureAtlas, textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png"), 1.0F, 0.0F, 0.0F, markerX, markerY, lastXDouble, lastZDouble, this.zoomScale, false);
+                this.drawWaypoint(modelViewMatrixStack, highlightedPoint, textureAtlas, textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png"), 1.0F, 0.0F, 0.0F, markerX, markerY, lastXDouble, lastZDouble, this.zoomScale, false);
             }
         }
         OpenGL.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        modelStack.popMatrix();
+        modelViewMatrixStack.popMatrix();
 
         if (this.options.biomeOverlay != 0) {
-            float biomeTextSize = 0.5f;
             double factor = Math.pow(2.0, 3 - this.zoom);
             int minimumSize = (int) Math.pow(2.0, this.zoom);
             minimumSize *= minimumSize;
             ArrayList<AbstractMapData.BiomeLabel> labels = this.mapData[this.zoom].getBiomeLabels();
+            float labelSize = 0.5f;
             matrixStack.pushPose();
-            matrixStack.scale(fixedScale * biomeTextSize, fixedScale * biomeTextSize, 1.0f);
+            matrixStack.scale(fixedScale * labelSize, fixedScale * labelSize, 1.0f);
             for (AbstractMapData.BiomeLabel o : labels) {
                 if (o.segmentSize > minimumSize) {
                     String name = o.name;
                     int nameWidth = this.chkLen(name);
-                    float x = (float) (o.x * factor);
-                    float z = (float) (o.z * factor);
-                    float labelX; float labelY;
+                    float x = (float) (o.x * factor) / 256f * mapScale;
+                    float z = (float) (o.z * factor) / 256f * mapScale;
+                    float labelX;
+                    float labelY;
                     if (this.options.oldNorth) {
                         labelX = (left + mapScale) - z - (nameWidth / 2f);
                         labelY = top + x - 3.0F;
@@ -1875,9 +1877,10 @@ public class Map implements Runnable, IChangeObserver {
                         labelX = left + x - (nameWidth / 2f);
                         labelY = top + z - 3.0F;
                     }
-                    labelX *= (1f / biomeTextSize);
-                    labelY *= (1f / biomeTextSize);
-                    this.write(drawContext, name, labelX, labelY, 0xFFFFFF);
+                    labelX *= (1f / labelSize);
+                    labelY *= (1f / labelSize);
+                    int color = this.options.biomeOverlay == 1 ? 0xFFFFFFFF : 0x80FFFFFF;
+                    this.write(drawContext, name, labelX, labelY, color);
                 }
             }
             matrixStack.popPose();
