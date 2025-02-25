@@ -1506,7 +1506,9 @@ public class Radar implements IRadar {
                         armorOffset *= iconSize;
 
                         float armorScale = iconSize;
-                        float red = 1.0F; float green = 1.0F; float blue = 1.0F;
+                        float red = 1.0F;
+                        float green = 1.0F;
+                        float blue = 1.0F;
                         if (contact.armorColor != -1) {
                             red = (contact.armorColor >> 16 & 0xFF) / 255.0F;
                             green = (contact.armorColor >> 8 & 0xFF) / 255.0F;
