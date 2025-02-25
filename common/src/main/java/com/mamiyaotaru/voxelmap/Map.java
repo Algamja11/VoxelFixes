@@ -1803,7 +1803,6 @@ public class Map implements Runnable, IChangeObserver {
         matrixStack.popMatrix();
 
         double guiScale = VoxelConstants.getMinecraft().getWindow().getGuiScale();
-        float fixedScale = (float) (scScale / guiScale);
         float scaleProj = (float) (guiScale / scScale);
         float markerScale = (mapScale / 64f + mapScale / 1024f);
         int markerX = Math.round(scWidth / markerScale / 2f);
@@ -1824,13 +1823,10 @@ public class Map implements Runnable, IChangeObserver {
         this.drawMapFrame(scWidth / 2, scHeight / 2, 2, frameScale * 2);
 
         float dirLabelDivide = scaleProj * 2f;
-        matrixStack.pushMatrix();
-        matrixStack.scale(fixedScale * scaleProj, fixedScale * scaleProj, 1.0f);
         this.write(drawContext, "N", scWidth / dirLabelDivide - 2f, scHeight / dirLabelDivide - frameScale / dirLabelDivide - 8f, 0xFFFFFF);
         this.write(drawContext, "S", scWidth / dirLabelDivide - 2f, scHeight / dirLabelDivide + frameScale / dirLabelDivide, 0xFFFFFF);
         this.write(drawContext, "W", scWidth / dirLabelDivide - frameScale / dirLabelDivide - 6f, scHeight / dirLabelDivide - 4f, 0xFFFFFF);
         this.write(drawContext, "E", scWidth / dirLabelDivide + frameScale / dirLabelDivide, scHeight / dirLabelDivide - 4f, 0xFFFFFF);
-        matrixStack.popMatrix();
 
         double lastXDouble = GameVariableAccessShim.xCoordDouble();
         double lastZDouble = GameVariableAccessShim.zCoordDouble();
@@ -1861,13 +1857,15 @@ public class Map implements Runnable, IChangeObserver {
         matrixStack.popMatrix();
 
         if (this.options.biomeOverlay != 0) {
+            PoseStack poseStack = drawContext.pose();
             double factor = Math.pow(2.0, 3 - this.zoom);
             int minimumSize = (int) Math.pow(2.0, this.zoom);
             minimumSize *= minimumSize;
             ArrayList<AbstractMapData.BiomeLabel> labels = this.mapData[this.zoom].getBiomeLabels();
             float labelSize = 0.5f;
-            matrixStack.pushMatrix();
-            matrixStack.scale(fixedScale * labelSize, fixedScale * labelSize, 1.0f);
+            float fixedScale = (float) (scScale / guiScale);
+            poseStack.pushPose();
+            poseStack.scale(fixedScale * labelSize, fixedScale * labelSize, 1.0f);
             for (AbstractMapData.BiomeLabel o : labels) {
                 if (o.segmentSize > minimumSize) {
                     String name = o.name;
@@ -1889,7 +1887,7 @@ public class Map implements Runnable, IChangeObserver {
                     this.write(drawContext, name, labelX, labelY, color);
                 }
             }
-            matrixStack.popMatrix();
+            poseStack.popPose();
         }
 
     }
