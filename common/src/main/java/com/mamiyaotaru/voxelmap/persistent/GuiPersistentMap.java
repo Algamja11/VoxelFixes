@@ -878,7 +878,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             drawContext.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 16, 0xFFFFFF);
             int x = (int) Math.floor(cursorCoordX);
             int z = (int) Math.floor(cursorCoordZ);
-            if (VoxelConstants.getVoxelMapInstance().getMapOptions().infoLabelMode != 0) {
+            if (VoxelConstants.getVoxelMapInstance().getMapOptions().coordinatesMode != 0) {
                 if (!this.editingCoordinates) {
                     drawContext.drawString(this.getFontRenderer(), "X: " + x, this.sideMargin, 16, 0xFFFFFF);
                     drawContext.drawString(this.getFontRenderer(), "Z: " + z, this.sideMargin + 64, 16, 0xFFFFFF);

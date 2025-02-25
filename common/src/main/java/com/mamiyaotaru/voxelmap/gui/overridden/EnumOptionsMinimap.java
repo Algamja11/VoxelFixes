@@ -3,7 +3,9 @@ package com.mamiyaotaru.voxelmap.gui.overridden;
 public enum EnumOptionsMinimap {
     // Map Options
     DISPLAY("options.minimap.display", false, false, true),
-    INFOLABEL("options.minimap.infolabel", false, false, true),
+    COORDS("options.minimap.showcoordinates", false, false, true),
+    OLDNORTH("options.minimap.oldnorth", false, true, false),
+    SHOWBIOMELABEL("options.minimap.showbiomeinfo", false, true, false),
     SIZE("options.minimap.size", false, false, true),
     SHAPE("options.minimap.shape", false, false, true),
     ROTATES("options.minimap.rotation", false, true, false),
@@ -12,8 +14,6 @@ public enum EnumOptionsMinimap {
     INGAMEWAYPOINTS("options.minimap.ingamewaypoints", false, false, true),
     MOVESCOREBOARDDOWN("options.minimap.movescoreboarddown", false, true, false),
     MOVEMAPDOWNWHILESTATSUEFFECT("options.minimap.movemapdownwhilestatuseffect", false, true, false),
-
-    // Map Detail Options
     LIGHTING("options.minimap.dynamiclighting", false, true, false),
     TERRAINDEPTH("options.minimap.terraindepth", false, false, true),
     FILTERING("options.minimap.filtering", false, true, false),
@@ -59,7 +59,6 @@ public enum EnumOptionsMinimap {
 
     // Internal
     WELCOME("Welcome Screen", false, true, false),
-    OLDNORTH("options.minimap.oldnorth", false, true, false),
     ZOOMLEVEL("option.minimapZoom", false, true, false);
 
     private final boolean isFloat;

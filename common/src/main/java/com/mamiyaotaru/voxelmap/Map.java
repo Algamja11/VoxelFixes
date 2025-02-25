@@ -670,7 +670,7 @@ public class Map implements Runnable, IChangeObserver {
             }
         }
 
-        if (this.options.infoLabelMode != 0) {
+        if (this.options.coordinatesMode != 0) {
             this.showCoords(drawContext, mapX, mapY, (float) (scScale / guiScale));
         }
 
@@ -1764,7 +1764,7 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private void renderMapFull(GuiGraphics drawContext, int scWidth, int scHeight, int scScale) {
-        PoseStack matrixStack = drawContext.pose();
+        Matrix4fStack matrixStack = RenderSystem.getModelViewStack();
         synchronized (this.coordinateLock) {
             if (this.imageChanged) {
                 this.imageChanged = false;
@@ -1780,12 +1780,14 @@ public class Map implements Runnable, IChangeObserver {
         float multi = (float) (0.015625f / this.zoomScale);
         float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX) * multi;
         float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ) * multi;
-        float uOne = 1.0f + percentX - 0.03125f; float vOne = 1.0f + percentY - 0.03125f;
-        float uZero = percentX + 0.03125f; float vZero = percentY + 0.03125f;
-        matrixStack.pushPose();
-        matrixStack.translate(scWidth / 2.0F, scHeight / 2.0F, 0.0);
-        matrixStack.mulPose(Axis.ZP.rotationDegrees(this.northRotate));
-        matrixStack.translate(-(scWidth / 2.0F), -(scHeight / 2.0F), 0.0);
+        float uOne = 1.0f + percentX - 0.03125f;
+        float vOne = 1.0f + percentY - 0.03125f;
+        float uZero = percentX + 0.03125f;
+        float vZero = percentY + 0.03125f;
+        matrixStack.pushMatrix();
+        matrixStack.translate(scWidth / 2.0F, scHeight / 2.0F, 0.0f);
+        matrixStack.rotate(Axis.ZP.rotationDegrees(this.northRotate));
+        matrixStack.translate(-(scWidth / 2.0F), -(scHeight / 2.0F), 0.0f);
         RenderSystem.setShader(CoreShaders.POSITION_TEX);
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         OpenGL.Utils.disp2(this.mapImages[this.zoom].getIndex());
@@ -1798,7 +1800,7 @@ public class Map implements Runnable, IChangeObserver {
         OpenGL.Utils.ldrawone(left + mapScale, top, 160.0, uOne, vZero);
         OpenGL.Utils.ldrawone(left, top, 160.0, uZero, vZero);
         OpenGL.Utils.drawPost();
-        matrixStack.popPose();
+        matrixStack.popMatrix();
 
         double guiScale = VoxelConstants.getMinecraft().getWindow().getGuiScale();
         float fixedScale = (float) (scScale / guiScale);
@@ -1808,14 +1810,13 @@ public class Map implements Runnable, IChangeObserver {
         int markerY = Math.round(scHeight / markerScale / 2f);
         float iconSize = (2f / markerScale) * scaleProj;
 
-        Matrix4fStack modelViewMatrixStack = RenderSystem.getModelViewStack();
-        modelViewMatrixStack.pushMatrix();
-        modelViewMatrixStack.scale(markerScale, markerScale, 1f);
+        matrixStack.pushMatrix();
+        matrixStack.scale(markerScale, markerScale, 1f);
         if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
             this.layoutVariables.updateVars(scScale, markerX, markerY, this.zoomScale, this.zoomScale, false, true);
-            VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(drawContext, modelViewMatrixStack, this.layoutVariables, markerScale * (float) (scScale / guiScale), iconSize);
+            VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(drawContext, matrixStack, this.layoutVariables, markerScale * (float) (scScale / guiScale), iconSize);
         }
-        modelViewMatrixStack.popMatrix();
+        matrixStack.popMatrix();
 
         int frameScale = mapScale + 8;
         OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
@@ -1823,13 +1824,13 @@ public class Map implements Runnable, IChangeObserver {
         this.drawMapFrame(scWidth / 2, scHeight / 2, 2, frameScale * 2);
 
         float dirLabelDivide = scaleProj * 2f;
-        matrixStack.pushPose();
+        matrixStack.pushMatrix();
         matrixStack.scale(fixedScale * scaleProj, fixedScale * scaleProj, 1.0f);
         this.write(drawContext, "N", scWidth / dirLabelDivide - 2f, scHeight / dirLabelDivide - frameScale / dirLabelDivide - 8f, 0xFFFFFF);
         this.write(drawContext, "S", scWidth / dirLabelDivide - 2f, scHeight / dirLabelDivide + frameScale / dirLabelDivide, 0xFFFFFF);
         this.write(drawContext, "W", scWidth / dirLabelDivide - frameScale / dirLabelDivide - 6f, scHeight / dirLabelDivide - 4f, 0xFFFFFF);
         this.write(drawContext, "E", scWidth / dirLabelDivide + frameScale / dirLabelDivide, scHeight / dirLabelDivide - 4f, 0xFFFFFF);
-        matrixStack.popPose();
+        matrixStack.popMatrix();
 
         double lastXDouble = GameVariableAccessShim.xCoordDouble();
         double lastZDouble = GameVariableAccessShim.zCoordDouble();
@@ -1837,8 +1838,8 @@ public class Map implements Runnable, IChangeObserver {
         OpenGL.Utils.disp2(textureAtlas.getId());
         OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
         OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
-        modelViewMatrixStack.pushMatrix();
-        modelViewMatrixStack.scale(markerScale, markerScale, 1f);
+        matrixStack.pushMatrix();
+        matrixStack.scale(markerScale, markerScale, 1f);
         if (VoxelMap.mapOptions.waypointsAllowed) {
             Waypoint highlightedPoint = this.waypointManager.getHighlightedWaypoint();
 
@@ -1846,18 +1847,18 @@ public class Map implements Runnable, IChangeObserver {
                 if (pt.isActive() || pt == highlightedPoint) {
                     double distanceSq = pt.getDistanceSqToEntity(VoxelConstants.getMinecraft().getCameraEntity());
                     if (distanceSq < (this.options.maxWaypointDisplayDistance * this.options.maxWaypointDisplayDistance) || this.options.maxWaypointDisplayDistance < 0 || pt == highlightedPoint) {
-                        this.drawWaypoint(modelViewMatrixStack, pt, textureAtlas, null, null, null, null, markerX, markerY, lastXDouble, lastZDouble, this.zoomScale, false, iconSize);
+                        this.drawWaypoint(matrixStack, pt, textureAtlas, null, null, null, null, markerX, markerY, lastXDouble, lastZDouble, this.zoomScale, false, iconSize);
                     }
                 }
             }
 
             if (highlightedPoint != null) {
-                this.drawWaypoint(modelViewMatrixStack, highlightedPoint, textureAtlas,
+                this.drawWaypoint(matrixStack, highlightedPoint, textureAtlas,
                         textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png"), 1.0F, 0.0F, 0.0F, markerX, markerY, lastXDouble, lastZDouble, this.zoomScale, false, iconSize);
             }
         }
         OpenGL.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        modelViewMatrixStack.popMatrix();
+        matrixStack.popMatrix();
 
         if (this.options.biomeOverlay != 0) {
             double factor = Math.pow(2.0, 3 - this.zoom);
@@ -1865,7 +1866,7 @@ public class Map implements Runnable, IChangeObserver {
             minimumSize *= minimumSize;
             ArrayList<AbstractMapData.BiomeLabel> labels = this.mapData[this.zoom].getBiomeLabels();
             float labelSize = 0.5f;
-            matrixStack.pushPose();
+            matrixStack.pushMatrix();
             matrixStack.scale(fixedScale * labelSize, fixedScale * labelSize, 1.0f);
             for (AbstractMapData.BiomeLabel o : labels) {
                 if (o.segmentSize > minimumSize) {
@@ -1888,7 +1889,7 @@ public class Map implements Runnable, IChangeObserver {
                     this.write(drawContext, name, labelX, labelY, color);
                 }
             }
-            matrixStack.popPose();
+            matrixStack.popMatrix();
         }
 
     }
@@ -1976,11 +1977,10 @@ public class Map implements Runnable, IChangeObserver {
             matrixStack.pushPose();
             matrixStack.scale(scaleProj * textScale, scaleProj * textScale, 1.0F);
 
-            if (this.options.infoLabelMode == 1 || this.options.infoLabelMode == 2) {
+            if (this.options.coordinatesMode == 1) {
                 String xyz = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
                 int xPos = this.chkLen(xyz) / 2;
                 this.write(drawContext, xyz, x * (1f / textScale) - xPos, textStart * (1f / textScale), 16777215); // X, Z
-
                 xyz = dCoord(GameVariableAccessShim.yCoord());
                 xPos = this.chkLen(xyz) / 2;
                 this.write(drawContext, xyz, x * (1f / textScale) - xPos, textStart * (1f / textScale) + 10.0F, 16777215); // Y
@@ -1990,18 +1990,18 @@ public class Map implements Runnable, IChangeObserver {
                 this.write(drawContext, xyz, x * (1f / textScale) - xPos, textStart * (1f / textScale), 16777215); // X, Y, Z
             }
 
-            if (this.options.infoLabelMode == 2 || this.options.infoLabelMode == 4) {
+            if (this.options.showBiomeLabel) {
                 String biomeString = GameVariableAccessShim.getWorld().getBiome(GameVariableAccessShim.playerBlockPos()).getRegisteredName();
                 biomeString = I18n.get(biomeString.replace("minecraft:", "biome.minecraft."));
                 int xPos = this.chkLen(biomeString) / 2;
-                int yPos = this.options.infoLabelMode == 2 ? 20 : 10;
+                int yPos = this.options.coordinatesMode == 1 ? 20 : 10;
                 this.write(drawContext, biomeString, x * (1f / textScale) - xPos, textStart * (1f / textScale) + yPos, 16777215);
             }
 
             if (zTimer > 0) {
                 int xPos = this.chkLen(this.message) / 2;
-                int yPos = (this.options.infoLabelMode == 1 || this.options.infoLabelMode == 2) ? 20 : 10;
-                if (this.options.infoLabelMode == 2 || this.options.infoLabelMode == 4) {
+                int yPos = (this.options.coordinatesMode == 1) ? 20 : 10;
+                if (this.options.showBiomeLabel) {
                     yPos += 10;
                 }
                 this.write(drawContext, this.message, x * (1f / textScale) - xPos, textStart * (1f / textScale) + yPos, 16777215); // WORLD NAME

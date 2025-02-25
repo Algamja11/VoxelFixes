@@ -29,7 +29,9 @@ public class MapSettingsManager implements ISettingsManager {
     public final boolean multicore = this.availableProcessors > 1;
 
     public int displayMode = 3;
-    public int infoLabelMode = 4;
+    public int coordinatesMode = 2;
+    public boolean oldNorth = false;
+    public boolean showBiomeLabel = true;
     public int sizeModifier = 1;
     public int shape = 1;
     public boolean rotates = true;
@@ -66,7 +68,6 @@ public class MapSettingsManager implements ISettingsManager {
 
     public int zoom = 2;
     protected boolean welcome = true;
-    public boolean oldNorth = false;
 
     public Boolean cavesAllowed = true;
     public boolean worldmapAllowed = true;
@@ -109,7 +110,9 @@ public class MapSettingsManager implements ISettingsManager {
                     String[] curLine = sCurrentLine.split(":");
                     switch (curLine[0]) {
                         case "Display Mode" -> this.displayMode = Math.max(0, Math.min(3, Integer.parseInt(curLine[1])));
-                        case "Info Label Mode" -> this.infoLabelMode = Math.max(0, Math.min(4, Integer.parseInt(curLine[1])));
+                        case "Coordinates Mode" -> this.coordinatesMode = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
+                        case "Old North" -> this.oldNorth = Boolean.parseBoolean(curLine[1]);
+                        case "Show Biome Label" -> this.showBiomeLabel = Boolean.parseBoolean(curLine[1]);
                         case "Map Size" -> this.sizeModifier = Math.max(-1, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Map Shape" -> this.shape = Math.max(0, Math.min(1, Integer.parseInt(curLine[1])));
                         case "Map Rotating" -> this.rotates = Boolean.parseBoolean(curLine[1]);
@@ -119,7 +122,6 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Waypoint Beacons" -> this.showBeacons = Boolean.parseBoolean(curLine[1]);
                         case "Move ScoreBoard Down" -> this.moveScoreBoardDown = Boolean.parseBoolean(curLine[1]);
                         case "Move Map Down While Status Effect" -> this.moveMapDownWhileStatusEffect = Boolean.parseBoolean(curLine[1]);
-
                         case "Dynamic Lighting" -> this.lightmap = Boolean.parseBoolean(curLine[1]);
                         case "Slope Map" -> this.slopemap = Boolean.parseBoolean(curLine[1]);
                         case "Height Map" -> this.heightmap = Boolean.parseBoolean(curLine[1]);
@@ -132,7 +134,6 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Slime Chunks" -> this.slimeChunks = Boolean.parseBoolean(curLine[1]);
                         case "World Border" -> this.worldborder = Boolean.parseBoolean(curLine[1]);
                         case "Teleport Command" -> this.teleportCommand = curLine[1];
-
                         case "Waypoint Sort By" -> this.waypointSort = Math.max(1, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Waypoint Max Distance" -> this.maxWaypointDisplayDistance = Math.max(-1, Math.min(10000, Integer.parseInt(curLine[1])));
                         case "Waypoint Size" -> this.waypointSize = Math.max(0.5f, Math.min(1.5f, Float.parseFloat(curLine[1])));
@@ -140,7 +141,6 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Distance Unit Conversion" -> this.distanceUnitConversion = Boolean.parseBoolean(curLine[1]);
                         case "Waypoint Name Below Icon" -> this.waypointNameBelowIcon = Boolean.parseBoolean(curLine[1]);
                         case "Waypoint Distance Below Name" -> this.waypointDistanceBelowName  = Boolean.parseBoolean(curLine[1]);
-
                         case "Menu Key" -> this.bindKey(this.keyBindMenu, curLine[1]);
                         case "Waypoint Menu Key" -> this.bindKey(this.keyBindWaypointMenu, curLine[1]);
                         case "Zoom Key" -> this.bindKey(this.keyBindZoom, curLine[1]);
@@ -149,10 +149,8 @@ public class MapSettingsManager implements ISettingsManager {
                         case "In-game Waypoint Key" -> this.bindKey(this.keyBindWaypointToggle, curLine[1]);
                         case "Radar Key" -> this.bindKey(this.keyBindRadarToggle, curLine[1]);
                         case "Dynamic Rader Key" -> this.bindKey(this.keyBindListAlternative, curLine[1]);
-
                         case "Zoom Level" -> this.zoom = Math.max(0, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Welcome Message" -> this.welcome = Boolean.parseBoolean(curLine[1]);
-                        case "Old North" -> this.oldNorth = Boolean.parseBoolean(curLine[1]);
 
                         //case "Real Time Torch Flicker" -> this.realTimeTorches = Boolean.parseBoolean(curLine[1]);
                     }
@@ -193,7 +191,9 @@ public class MapSettingsManager implements ISettingsManager {
             PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.settingsFile), StandardCharsets.UTF_8.newEncoder())));
 
             out.println("Display Mode:" + this.displayMode);
-            out.println("Info Label Mode:" + this.infoLabelMode);
+            out.println("Coordinates Mode" + this.coordinatesMode);
+            out.println("Old North:" + this.oldNorth);
+            out.println("Show Biome Label" + this.showBiomeLabel);
             out.println("Map Size:" + this.sizeModifier);
             out.println("Map Shape:" + this.shape);
             out.println("Map Rotating:" + this.rotates);
@@ -203,7 +203,6 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Waypoint Beacons:" + this.showBeacons);
             out.println("Move ScoreBoard Down:" + this.moveScoreBoardDown);
             out.println("Move Map Down While Status Effect:" + this.moveMapDownWhileStatusEffect);
-
             out.println("Dynamic Lighting:" + this.lightmap);
             out.println("Slope Map:" + this.slopemap);
             out.println("Height Map:" + this.heightmap);
@@ -216,7 +215,6 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Slime Chunks:" + this.slimeChunks);
             out.println("World Border:" + this.worldborder);
             out.println("Teleport Command:" + this.teleportCommand);
-
             out.println("Waypoint Sort By:" + this.waypointSort);
             out.println("Waypoint Max Distance:" + this.maxWaypointDisplayDistance);
             out.println("Waypoint Size: " + this.waypointSize);
@@ -224,7 +222,6 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Distance Unit Conversion:" + this.distanceUnitConversion);
             out.println("Waypoint Name Below Icon:" + this.waypointNameBelowIcon);
             out.println("Waypoint Distance Below Name:" + this.waypointDistanceBelowName);
-
             out.println("Menu Key:" + this.keyBindMenu.saveString());
             out.println("Waypoint Menu Key:" + this.keyBindWaypointMenu.saveString());
             out.println("Zoom Key:" + this.keyBindZoom.saveString());
@@ -233,10 +230,8 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("In-game Waypoint Key:" + this.keyBindWaypointToggle.saveString());
             out.println("Radar Key:" + this.keyBindRadarToggle.saveString());
             out.println("Dynamic Radar Key" + this.keyBindListAlternative.saveString());
-
             out.println("Zoom Level:" + this.zoom);
             out.println("Welcome Message:" + this.welcome);
-            out.println("Old North:" + this.oldNorth);
 
             for (ISubSettingsManager subSettingsManager : this.subSettingsManagers) {
                 subSettingsManager.saveAll(out);
@@ -298,11 +293,12 @@ public class MapSettingsManager implements ISettingsManager {
 
     public boolean getOptionBooleanValue(EnumOptionsMinimap par1EnumOptions) {
         return switch (par1EnumOptions) {
+            case OLDNORTH -> this.oldNorth;
+            case SHOWBIOMELABEL -> this.showBiomeLabel;
             case ROTATES -> this.rotates;
             case CAVEMODE -> this.cavesAllowed && this.showCaves;
             case MOVESCOREBOARDDOWN -> this.moveScoreBoardDown;
             case MOVEMAPDOWNWHILESTATSUEFFECT -> this.moveMapDownWhileStatusEffect;
-
             case LIGHTING -> this.lightmap;
             case FILTERING -> this.filtering;
             case WATERTRANSPARENCY -> this.waterTransparency;
@@ -311,13 +307,10 @@ public class MapSettingsManager implements ISettingsManager {
             case CHUNKGRID -> this.chunkGrid;
             case SLIMECHUNKS -> this.slimeChunks;
             case WORLDBORDER -> this.worldborder;
-
             case DISTANCEUNITCONVERSION -> this.distanceUnitConversion;
             case WAYPOINTNAMEBELOWICON -> this.waypointNameBelowIcon;
             case WAYPOINTDISTANCEBELOWNAME -> this.waypointDistanceBelowName;
-
             case WELCOME -> this.welcome;
-            case OLDNORTH -> this.oldNorth;
 
             default ->
                     throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a boolean applicable to minimap)");
@@ -340,18 +333,14 @@ public class MapSettingsManager implements ISettingsManager {
                     return "error";
                 }
             }
-            case INFOLABEL -> {
-                if (this.infoLabelMode == 0) {
+            case COORDS -> {
+                if (this.coordinatesMode == 0) {
                     return I18n.get("options.off");
-                } else if (this.infoLabelMode == 1) {
-                    return I18n.get("options.minimap.infolabel.mode1");
-                } else if (this.infoLabelMode == 2){
-                    return I18n.get("options.minimap.infolabel.mode2");
-                } else if (this.infoLabelMode == 3) {
-                    return I18n.get("options.minimap.infolabel.mode3");
+                } else if (this.coordinatesMode == 1) {
+                    return I18n.get("options.minimap.showcoordinates.mode1");
                 } else {
-                    if (this.infoLabelMode == 4) {
-                        return I18n.get("options.minimap.infolabel.mode4");
+                    if (this.coordinatesMode == 2) {
+                        return I18n.get("options.minimap.showcoordinates.mode2");
                     }
                     return "error";
                 }
@@ -467,11 +456,12 @@ public class MapSettingsManager implements ISettingsManager {
 
     public void setOptionValue(EnumOptionsMinimap par1EnumOptions) {
         switch (par1EnumOptions) {
+            case OLDNORTH -> this.oldNorth = !this.oldNorth;
+            case SHOWBIOMELABEL -> this.showBiomeLabel = !this.showBiomeLabel;
             case ROTATES -> this.rotates = !this.rotates;
             case CAVEMODE -> this.showCaves = !this.showCaves;
             case MOVESCOREBOARDDOWN -> this.moveScoreBoardDown = !this.moveScoreBoardDown;
             case MOVEMAPDOWNWHILESTATSUEFFECT -> this.moveMapDownWhileStatusEffect = !this.moveMapDownWhileStatusEffect;
-
             case LIGHTING -> this.lightmap = !this.lightmap;
             case FILTERING -> this.filtering = !this.filtering;
             case WATERTRANSPARENCY -> this.waterTransparency = !this.waterTransparency;
@@ -480,17 +470,13 @@ public class MapSettingsManager implements ISettingsManager {
             case CHUNKGRID -> this.chunkGrid = !this.chunkGrid;
             case SLIMECHUNKS -> this.slimeChunks = !this.slimeChunks;
             case WORLDBORDER -> this.worldborder = !this.worldborder;
-
             case DISTANCEUNITCONVERSION -> this.distanceUnitConversion = !this.distanceUnitConversion;
             case WAYPOINTNAMEBELOWICON -> this.waypointNameBelowIcon = !this.waypointNameBelowIcon;
             case WAYPOINTDISTANCEBELOWNAME -> this.waypointDistanceBelowName = !this.waypointDistanceBelowName;
-
             case WELCOME -> this.welcome = !this.welcome;
-            case OLDNORTH -> this.oldNorth = !this.oldNorth;
-
             case DISPLAY -> {
                 if (this.minimapAllowed) {
-                    this.displayMode++;
+                    ++this.displayMode;
                     if (this.displayMode > 3) {
                         this.displayMode = 0;
                     }
@@ -498,28 +484,26 @@ public class MapSettingsManager implements ISettingsManager {
                     this.displayMode = 0;
                 }
             }
-
-            case INFOLABEL -> {
-                this.infoLabelMode++;
-                if (this.infoLabelMode > 4) {
-                    this.infoLabelMode = 0;
+            case COORDS -> {
+                ++this.coordinatesMode;
+                if (this.coordinatesMode > 2) {
+                    this.coordinatesMode = 0;
                 }
             }
-
             case SIZE -> {
-                this.sizeModifier++;
+                ++this.sizeModifier;
                 if (this.sizeModifier > 4) {
                     this.sizeModifier = -1;
                 }
             }
             case SHAPE -> {
-                this.shape++;
+                ++this.shape;
                 if (this.shape > 1) {
                     this.shape = 0;
                 }
             }
             case LOCATION -> {
-                this.mapCorner++;
+                ++this.mapCorner;
                 if (this.mapCorner > 3) {
                     this.mapCorner = 0;
                 }

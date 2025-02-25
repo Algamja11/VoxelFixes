@@ -56,10 +56,8 @@ public class RadarSettingsManager implements ISubSettingsManager {
                     case "Filter Icons" -> this.filtering = Boolean.parseBoolean(curLine[1]);
                     case "Outline Icons" -> this.outlines = Boolean.parseBoolean(curLine[1]);
                     case "Show Facing" -> this.showFacing = Boolean.parseBoolean(curLine[1]);
-
                     case "Font Size" -> this.fontSize = Float.parseFloat(curLine[1]);
                     case "Show Names Only For Tagged Mobs" -> this.showNamesOnlyForTagged = Boolean.parseBoolean(curLine[1]);
-
                     case "Hidden Mobs" -> this.applyHiddenMobSettings(curLine[1]);
                 }
             }
@@ -103,18 +101,14 @@ public class RadarSettingsManager implements ISubSettingsManager {
         out.println("Filter Icons:" + this.filtering);
         out.println("Outline Icons:" + this.outlines);
         out.println("Show Facing:" + this.showFacing);
-
         out.println("Font Size:" + this.fontSize);
         out.println("Show Names Only For Tagged Mobs" + this.showNamesOnlyForTagged);
-
         out.print("Hidden Mobs:");
-
         for (EnumMobs mob : EnumMobs.values()) {
             if (!mob.enabled) {
                 out.print(mob.id + ",");
             }
         }
-
         for (CustomMob mob : CustomMobsManager.mobs) {
             if (!mob.enabled) {
                 out.print(mob.id + ",");
@@ -148,9 +142,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
             case RADAROUTLINE -> this.outlines;
             case RADARFILTERING -> this.filtering;
             case SHOWFACING -> this.showFacing;
-
             case SHOWNAMESONLYFORTAGGED -> this.showNamesOnlyForTagged;
-
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a boolean)");
         };
     }
@@ -204,12 +196,10 @@ public class RadarSettingsManager implements ISubSettingsManager {
             case RADAROUTLINE -> this.outlines = !this.outlines;
             case RADARFILTERING -> this.filtering = !this.filtering;
             case SHOWFACING -> this.showFacing = !this.showFacing;
-
             case SHOWNAMESONLYFORTAGGED -> this.showNamesOnlyForTagged = !this.showNamesOnlyForTagged;
-
             case RADARMODE -> {
-                this.radarMode++;
-                if (this.radarMode >= 4) {
+                ++this.radarMode;
+                if (this.radarMode > 3) {
                     this.radarMode = 1;
                 }
             }
@@ -222,10 +212,8 @@ public class RadarSettingsManager implements ISubSettingsManager {
                     this.showHostiles = true;
                 } else if (this.showHostiles) {
                     this.showNeutrals = true;
-                    this.showHostiles = true;
                 } else {
                     this.showNeutrals = true;
-                    this.showHostiles = false;
                 }
             }
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName());
