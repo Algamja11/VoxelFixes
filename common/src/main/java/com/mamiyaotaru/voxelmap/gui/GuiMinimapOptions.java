@@ -29,8 +29,6 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
             EnumOptionsMinimap.LOCATION,
             EnumOptionsMinimap.CAVEMODE,
             EnumOptionsMinimap.INGAMEWAYPOINTS,
-            EnumOptionsMinimap.MOVESCOREBOARDDOWN,
-            EnumOptionsMinimap.MOVEMAPDOWNWHILESTATSUEFFECT,
             EnumOptionsMinimap.LIGHTING,
             EnumOptionsMinimap.TERRAINDEPTH,
             EnumOptionsMinimap.WATERTRANSPARENCY,
@@ -39,8 +37,12 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
             EnumOptionsMinimap.FILTERING,
             EnumOptionsMinimap.CHUNKGRID,
             EnumOptionsMinimap.BIOMEOVERLAY,
+            EnumOptionsMinimap.MOVESCOREBOARDDOWN,
+            EnumOptionsMinimap.MOVEMAPDOWNWHILESTATSUEFFECT,
             EnumOptionsMinimap.SLIMECHUNKS,
-            EnumOptionsMinimap.WORLDBORDER
+            EnumOptionsMinimap.WORLDBORDER,
+            EnumOptionsMinimap.WORLDSEED,
+            EnumOptionsMinimap.TELEPORTCOMMAND
     };
     private int currentPage = 0;
     private GuiButtonText worldSeedButton;
@@ -59,42 +61,42 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
         int lastPage = (int) Math.ceil((float) relevantOptions.length / buttonsPerPage);
         this.screenTitle = I18n.get("options.minimap.title") + " [" + (this.currentPage + 1) + "/" + lastPage + "]";
         for (int i = pageStart; i < pageEnd; i++) {
+            int buttonPos = i - pageStart;
             EnumOptionsMinimap option = relevantOptions[i];
-            int buttonIdx = i - pageStart;
 
-            StringBuilder text = new StringBuilder().append(this.options.getKeyText(option));
-            if ((option == EnumOptionsMinimap.WATERTRANSPARENCY || option == EnumOptionsMinimap.BLOCKTRANSPARENCY || option == EnumOptionsMinimap.BIOMETINT) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
-                text.append("§c").append(text);
+            if (option == EnumOptionsMinimap.WORLDSEED) {
+                String worldSeedDisplay = VoxelConstants.getVoxelMapInstance().getWorldSeed();
+                if (worldSeedDisplay.isEmpty()) {
+                    worldSeedDisplay = I18n.get("selectWorld.versionUnknown");
+                }
+                String buttonSeedText = I18n.get("options.minimap.worldseed") + ": " + worldSeedDisplay;
+                this.worldSeedButton = new GuiButtonText(this.getFontRenderer(), getWidth() / 2 - 155 + buttonPos % 2 * 160, getHeight() / 6 + 24 * (buttonPos >> 1), 150, 20, Component.literal(buttonSeedText), button -> this.worldSeedButton.setEditing(true));
+                this.worldSeedButton.setText(VoxelConstants.getVoxelMapInstance().getWorldSeed());
+                this.worldSeedButton.active = !VoxelConstants.getMinecraft().hasSingleplayerServer();
+                this.addRenderableWidget(this.worldSeedButton);
+            } else if (option == EnumOptionsMinimap.TELEPORTCOMMAND) {
+                String buttonTeleportText = I18n.get("options.minimap.teleportcommand") + ": " + VoxelConstants.getVoxelMapInstance().getMapOptions().teleportCommand;
+                this.teleportCommandButton = new GuiButtonText(this.getFontRenderer(), getWidth() / 2 - 155 + buttonPos % 2 * 160, getHeight() / 6 + 24 * (buttonPos >> 1), 150, 20, Component.literal(buttonTeleportText), button -> this.teleportCommandButton.setEditing(true));
+                this.teleportCommandButton.setText(VoxelConstants.getVoxelMapInstance().getMapOptions().teleportCommand);
+                this.teleportCommandButton.active = VoxelConstants.getVoxelMapInstance().getMapOptions().serverTeleportCommand == null;
+                this.addRenderableWidget(this.teleportCommandButton);
+            } else {
+                StringBuilder text = new StringBuilder().append(this.options.getKeyText(option));
+                if ((option == EnumOptionsMinimap.WATERTRANSPARENCY || option == EnumOptionsMinimap.BLOCKTRANSPARENCY || option == EnumOptionsMinimap.BIOMETINT) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
+                    text.append("§c").append(text);
+                }
+
+                GuiOptionButtonMinimap optionButton = new GuiOptionButtonMinimap(getWidth() / 2 - 155 + buttonPos % 2 * 160, getHeight() / 6 + 24 * (buttonPos >> 1), option, Component.literal(text.toString()), this::optionClicked);
+                this.addRenderableWidget(optionButton);
+
+                if (option == EnumOptionsMinimap.DISPLAY) optionButton.active = this.options.minimapAllowed;
+                if (option == EnumOptionsMinimap.INGAMEWAYPOINTS) optionButton.active = this.options.waypointsAllowed;
+                if (option == EnumOptionsMinimap.CAVEMODE) optionButton.active = this.options.cavesAllowed;
+                if (option == EnumOptionsMinimap.SLIMECHUNKS) {
+                    this.slimeChunksButton = optionButton;
+                    this.slimeChunksButton.active = VoxelConstants.getMinecraft().hasSingleplayerServer() || !VoxelConstants.getVoxelMapInstance().getWorldSeed().isEmpty();
+                }
             }
-            GuiOptionButtonMinimap optionButton = new GuiOptionButtonMinimap(getWidth() / 2 - 155 + buttonIdx % 2 * 160, getHeight() / 6 + 24 * (buttonIdx >> 1), option, Component.literal(text.toString()), this::optionClicked);
-            this.addRenderableWidget(optionButton);
-
-            if (option == EnumOptionsMinimap.DISPLAY) optionButton.active = this.options.minimapAllowed;
-            if (option == EnumOptionsMinimap.INGAMEWAYPOINTS) optionButton.active = this.options.waypointsAllowed;
-            if (option == EnumOptionsMinimap.CAVEMODE) optionButton.active = this.options.cavesAllowed;
-            if (option == EnumOptionsMinimap.SLIMECHUNKS) {
-                this.slimeChunksButton = optionButton;
-                this.slimeChunksButton.active = VoxelConstants.getMinecraft().hasSingleplayerServer() || !VoxelConstants.getVoxelMapInstance().getWorldSeed().isEmpty();
-            }
-        }
-
-        if (currentPage == lastPage - 1) {
-            String worldSeedDisplay = VoxelConstants.getVoxelMapInstance().getWorldSeed();
-            if (worldSeedDisplay.isEmpty()) {
-                worldSeedDisplay = I18n.get("selectWorld.versionUnknown");
-            }
-
-            String buttonSeedText = I18n.get("options.minimap.worldseed") + ": " + worldSeedDisplay;
-            this.worldSeedButton = new GuiButtonText(this.getFontRenderer(), getWidth() / 2 - 155, this.getHeight() / 6 + 96, 150, 20, Component.literal(buttonSeedText), button -> this.worldSeedButton.setEditing(true));
-            this.worldSeedButton.setText(VoxelConstants.getVoxelMapInstance().getWorldSeed());
-            this.worldSeedButton.active = !VoxelConstants.getMinecraft().hasSingleplayerServer();
-            this.addRenderableWidget(this.worldSeedButton);
-
-            String buttonTeleportText = I18n.get("options.minimap.teleportcommand") + ": " + VoxelConstants.getVoxelMapInstance().getMapOptions().teleportCommand;
-            this.teleportCommandButton = new GuiButtonText(this.getFontRenderer(), getWidth() / 2 + 5, this.getHeight() / 6 + 96, 150, 20, Component.literal(buttonTeleportText), button -> this.teleportCommandButton.setEditing(true));
-            this.teleportCommandButton.setText(VoxelConstants.getVoxelMapInstance().getMapOptions().teleportCommand);
-            this.teleportCommandButton.active = VoxelConstants.getVoxelMapInstance().getMapOptions().serverTeleportCommand == null;
-            this.addRenderableWidget(this.teleportCommandButton);
         }
 
         Button radarOptionsButton = new Button.Builder(Component.translatable("options.minimap.radar"), button -> VoxelConstants.getMinecraft().setScreen(new GuiRadarOptions(this))).bounds(this.getWidth() / 2 - 155, this.getHeight() / 6 + 135 - 6, 150, 20).build();

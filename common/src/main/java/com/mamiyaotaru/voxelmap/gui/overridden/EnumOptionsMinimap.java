@@ -24,6 +24,8 @@ public enum EnumOptionsMinimap {
     CHUNKGRID("options.minimap.chunkgrid", false, true, false),
     SLIMECHUNKS("options.minimap.slimechunks", false, true, false),
     WORLDBORDER("options.minimap.worldborder", false, true, false),
+    WORLDSEED("", false, false, false),
+    TELEPORTCOMMAND("", false, false, false),
 
     // Radar Options
     SHOWRADAR("options.minimap.radar.showradar", false, true, false),
