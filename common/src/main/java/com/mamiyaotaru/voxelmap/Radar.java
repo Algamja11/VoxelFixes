@@ -1495,7 +1495,7 @@ public class Radar implements IRadar {
                     yOffset *= iconSize;
 
                     OpenGL.Utils.drawPre();
-                    OpenGL.Utils.setMap(contact.icon, x, y + yOffset, ((int) (contact.icon.getIconWidth() / 4.0F * iconSize)));
+                    OpenGL.Utils.setMap(contact.icon, x, y + yOffset, contact.icon.getIconWidth() / 4.0F * iconSize);
                     OpenGL.Utils.drawPost();
                     if ((this.options.showHelmetsPlayers && contact.type == EnumMobs.PLAYER || this.options.showHelmetsMobs && contact.type != EnumMobs.PLAYER || contact.type == EnumMobs.SHEEP) && contact.armorIcon != null) {
                         Sprite icon = contact.armorIcon;
@@ -1537,7 +1537,7 @@ public class Radar implements IRadar {
                         }
 
                         OpenGL.Utils.drawPre();
-                        OpenGL.Utils.setMap(icon, x, y + yOffset + armorOffset, ((int) (icon.getIconWidth() / 4.0F * armorScale)));
+                        OpenGL.Utils.setMap(icon, x, y + yOffset + armorOffset, icon.getIconWidth() / 4.0F * armorScale);
                         OpenGL.Utils.drawPost();
                         if (icon == this.leatherArmorIcon) {
                             if (wayY < 0) {
