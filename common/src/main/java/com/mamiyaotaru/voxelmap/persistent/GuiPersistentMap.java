@@ -144,7 +144,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     Waypoint selectedWaypoint;
     public boolean passEvents;
     private PopupGuiButton buttonWaypoints;
-    private boolean wpSelectionToggle = false;
+    private boolean waypointSelecting = false;
 
     public GuiPersistentMap(Screen parent) {
         this.parent = parent;
@@ -226,7 +226,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         if (!VoxelConstants.getMinecraft().hasSingleplayerServer() && !VoxelConstants.getVoxelMapInstance().getWaypointManager().receivedAutoSubworldName()) {
             this.addRenderableWidget(this.buttonMultiworld = new PopupGuiButton(this.sideMargin + (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, this.multiworldButtonName, buttonWidget_1 -> VoxelConstants.getMinecraft().setScreen(new GuiSubworldsSelect(this)), this));
         }
-        this.addRenderableWidget(new PopupGuiButton(this.sideMargin, this.getHeight() - 64, 20, 20, Component.literal(""), button -> this.wpSelectionToggle = !this.wpSelectionToggle, this));
+        this.addRenderableWidget(new PopupGuiButton(this.sideMargin, this.getHeight() - 64, 20, 20, Component.literal(""), button -> this.waypointSelecting = !this.waypointSelecting, this));
         this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 3 * (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, Component.translatable("menu.options"), null, this) {
             @Override
             public void onPress() {
@@ -916,7 +916,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         OpenGL.glColor4f(0f, 1f, 0f, 1f);
         this.drawTexturedModalRect(this.sideMargin + 1f, this.getHeight() - 63f, atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png"), 18f, 18f);
         OpenGL.glColor4f(1f, 1f, 1f, 1f);
-        if (VoxelMap.mapOptions.waypointsAllowed && this.options.showWaypoints && this.wpSelectionToggle) {
+        if (VoxelMap.mapOptions.waypointsAllowed && this.options.showWaypoints && this.waypointSelecting) {
             ArrayList<Waypoint> waypoints = this.waypointManager.getWaypoints();
             waypoints.sort((wp1, wp2) -> String.CASE_INSENSITIVE_ORDER.compare(wp1.name, wp2.name));
             int filteredCount = 0;
