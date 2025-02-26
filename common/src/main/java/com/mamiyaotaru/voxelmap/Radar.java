@@ -131,12 +131,15 @@ import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 import org.joml.Vector3f;
@@ -1008,8 +1011,12 @@ public class Radar implements IRadar {
                     ModelPartWithResourceLocation[] headBitsWithLocations = headPartsWithResourceLocationList.toArray(new ModelPartWithResourceLocation[0]);
                     boolean success = this.drawModel(scale, 1000, (LivingEntity) entity, model, headBitsWithLocations);
 
-                    if (success) { headImage = ImageUtils.createBufferedImageFromGLID(OpenGL.Utils.fboTextureId);}
-                    if (VoxelConstants.DEBUG) { ImageUtils.saveImage(type.id, OpenGL.Utils.fboTextureId, 0, 512, 512); }
+                    if (VoxelConstants.DEBUG) {
+                        ImageUtils.saveImage(type.id, OpenGL.Utils.fboTextureId, 0, 512, 512);
+                    }
+                    if (success) {
+                        headImage = ImageUtils.createBufferedImageFromGLID(OpenGL.Utils.fboTextureId);
+                    }
                 }
             } catch (Exception exception) {
                 VoxelConstants.getLogger().error(exception);
@@ -1195,7 +1202,9 @@ public class Radar implements IRadar {
         Integer checkCount;
         if (icon == this.textureAtlas.getMissingImage()) {
             checkCount = this.mpContactsSkinGetTries.get(playerName);
-            if (checkCount == null) { checkCount = 0; }
+            if (checkCount == null) {
+                checkCount = 0;
+            }
 
             if (checkCount < 5) {
                 AbstractTexture imageData; //TODO 1.21.4
@@ -1296,28 +1305,27 @@ public class Radar implements IRadar {
                     }
                 }
                 contact.setArmorColor(DyedItemColor.getOrDefault(stack, -1));
+            } else if (helmet instanceof BlockItem blockItem) {
+                Block block = blockItem.getBlock();
+                BlockState blockState = block.defaultBlockState();
+                int stateID = Block.getId(blockState);
+                icon = this.textureAtlas.getAtlasSprite("blockArmor " + stateID);
+                if (icon == this.textureAtlas.getMissingImage()) {
+                    BufferedImage blockImage = VoxelConstants.getVoxelMapInstance().getColorManager().getBlockImage(blockState, stack, entity.level(), 4.9473686F, -8.0F);
+                    if (blockImage != null) {
+                        int width = blockImage.getWidth();
+                        int height = blockImage.getHeight();
+                        ImageUtils.eraseArea(blockImage, width / 2 - 15, height / 2 - 15, 30, 30, width, height);
+                        BufferedImage blockImageFront = VoxelConstants.getVoxelMapInstance().getColorManager().getBlockImage(blockState, stack, entity.level(), 4.9473686F, 7.25F);
+                        blockImageFront = blockImageFront.getSubimage(width / 2 - 15, height / 2 - 15, 30, 30);
+                        ImageUtils.addImages(blockImage, blockImageFront, (width / 2f - 15), (height / 2f - 15), width, height);
+                        blockImageFront.flush();
+                        blockImage = ImageUtils.fillOutline(ImageUtils.pad(ImageUtils.trimCentered(blockImage)), this.options.outlines, true, 37.6F, 37.6F, 2);
+                        icon = this.textureAtlas.registerIconForBufferedImage("blockArmor " + stateID, blockImage);
+                        this.newMobs = true;
+                    }
+                }
             }
-
-                // } else if (helmet instanceof BlockItem blockItem) {
-                // Block block = blockItem.getBlock();
-                // BlockState blockState = block.defaultBlockState();
-                // int stateID = Block.getId(blockState);
-                // icon = this.textureAtlas.getAtlasSprite("blockArmor " + stateID);
-                // if (icon == this.textureAtlas.getMissingImage()) {
-                // BufferedImage blockImage = VoxelConstants.getVoxelMapInstance().getColorManager().getBlockImage(blockState, stack, entity.level(), 4.9473686F, -8.0F);
-                // if (blockImage != null) {
-                // int width = blockImage.getWidth();
-                // int height = blockImage.getHeight();
-                // ImageUtils.eraseArea(blockImage, width / 2 - 15, height / 2 - 15, 30, 30, width, height);
-                // BufferedImage blockImageFront = VoxelConstants.getVoxelMapInstance().getColorManager().getBlockImage(blockState, stack, entity.level(), 4.9473686F, 7.25F);
-                // blockImageFront = blockImageFront.getSubimage(width / 2 - 15, height / 2 - 15, 30, 30);
-                // ImageUtils.addImages(blockImage, blockImageFront, (width / 2f - 15), (height / 2f - 15), width, height);
-                // blockImageFront.flush();
-                // blockImage = ImageUtils.fillOutline(ImageUtils.pad(ImageUtils.trimCentered(blockImage)), this.options.outlines, true, 37.6F, 37.6F, 2);
-                // icon = this.textureAtlas.registerIconForBufferedImage("blockArmor " + stateID, blockImage);
-                // this.newMobs = true;
-                // }
-                // }
         }
 
         contact.armorIcon = icon;
