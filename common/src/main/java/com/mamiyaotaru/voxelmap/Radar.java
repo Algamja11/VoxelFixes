@@ -640,7 +640,11 @@ public class Radar implements IRadar {
                             case "minecraft:diamond_horse_armor" -> ResourceLocation.parse("textures/entity/equipment/horse_body/diamond.png");
                             default -> null;
                         };
-                        contact.setArmorColor(DyedItemColor.getOrDefault(itemStack, -1));
+                        if (armorName.equals("minecraft:leather_horse_armor")) {
+                            contact.setArmorColor(DyedItemColor.getOrDefault(itemStack, 0x7F4B3C));
+                        } else {
+                            contact.setArmorColor(DyedItemColor.getOrDefault(itemStack, -1));
+                        }
                     }
                 }
             }
@@ -1295,6 +1299,7 @@ public class Radar implements IRadar {
             } else if (helmet instanceof ArmorItem helmetArmor) {
                 if (this.isLeatherArmor(helmetArmor)) {
                     icon = this.textureAtlas.getAtlasSpriteIncludingYetToBeStitched("armor " + this.armorNames[0]);
+                    contact.setArmorColor(DyedItemColor.getOrDefault(stack, 0x7F4B3C));
                 } else {
                     boolean isPiglin = contact.type == EnumMobs.PIGLIN || contact.type == EnumMobs.ZOMBIFIED_PIGLIN;
                     icon = this.textureAtlas.getAtlasSpriteIncludingYetToBeStitched("armor " + helmet.getDescriptionId() + (isPiglin ? "_piglin" : ""));
@@ -1303,8 +1308,8 @@ public class Radar implements IRadar {
                     } else if (icon == this.textureAtlas.getFailedImage()) {
                         icon = null;
                     }
+                    contact.setArmorColor(DyedItemColor.getOrDefault(stack, -1));
                 }
-                contact.setArmorColor(DyedItemColor.getOrDefault(stack, -1));
             } else if (helmet instanceof BlockItem blockItem) {
                 Block block = blockItem.getBlock();
                 BlockState blockState = block.defaultBlockState();
