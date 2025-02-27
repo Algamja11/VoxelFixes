@@ -640,11 +640,7 @@ public class Radar implements IRadar {
                             case "minecraft:diamond_horse_armor" -> ResourceLocation.parse("textures/entity/equipment/horse_body/diamond.png");
                             default -> null;
                         };
-                        if (armorName.equals("minecraft:leather_horse_armor")) {
-                            contact.setArmorColor(DyedItemColor.getOrDefault(itemStack, 0x7F4B3C));
-                        } else {
-                            contact.setArmorColor(DyedItemColor.getOrDefault(itemStack, -1));
-                        }
+                        contact.setArmorColor(DyedItemColor.getOrDefault(itemStack, -1));
                     }
                 }
             }
