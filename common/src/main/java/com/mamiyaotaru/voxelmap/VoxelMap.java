@@ -17,7 +17,6 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
@@ -207,7 +206,7 @@ public class VoxelMap implements PreparableReloadListener {
             } else if (radarOptions.radarMode == 2) {
                 return this.radar;
             } else if (radarOptions.radarMode == 3) {
-                if (VoxelConstants.getAlternativeListKey().isDown()) {
+                if (VoxelConstants.getModifiedTabKey().isDown()) {
                     return this.radar;
                 } else {
                     return this.radarSimple;

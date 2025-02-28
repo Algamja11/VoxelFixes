@@ -199,8 +199,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
             this.waypointX.mouseClicked(mouseX, mouseY, button);
             this.waypointY.mouseClicked(mouseX, mouseY, button);
             this.waypointZ.mouseClicked(mouseX, mouseY, button);
-        }
-        else if (choosingColor) {
+        } else if (choosingColor) {
             int pickerSize = 200;
             int pickerCenterX = this.getWidth() / 2 - pickerSize / 2;
             int pickerCenterY = this.getHeight() / 2 - pickerSize / 2;
@@ -213,8 +212,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
                 this.waypoint.blue = (color & 0xFF) / 255.0f;
                 this.choosingColor = false;
             }
-        }
-        else if (choosingIcon) {
+        } else if (choosingIcon) {
             TextureAtlas chooser = waypointManager.getTextureAtlasChooser();
             float chooserCenterX = this.getWidth() / 2f - chooser.getWidth() / 2f;
             float chooserCenterY = this.getHeight() / 2f - chooser.getHeight() / 2f;
@@ -271,7 +269,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
         this.tooltip = null;
         this.buttonEnabled.setMessage(Component.literal(I18n.get("minimap.waypoints.enabled") + " " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
-        renderBackgroundTexture(drawContext);
+        this.renderBackgroundTexture(drawContext);
         drawContext.drawCenteredString(this.getFontRenderer(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("minimap.waypoints.new") : I18n.get("minimap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
         drawContext.drawString(this.getFontRenderer(), I18n.get("minimap.waypoints.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 16777215);
         drawContext.drawString(this.getFontRenderer(), I18n.get("X"), this.getWidth() / 2 - 100, this.getHeight() / 6 + 41, 16777215);
@@ -294,7 +292,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
         drawContext.flush();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         if (this.choosingColor || this.choosingIcon) {
-            renderBackgroundTexture(drawContext);
+            this.renderBackgroundTexture(drawContext);
 
             if (this.choosingColor) {
                 int pickerSize = 200;

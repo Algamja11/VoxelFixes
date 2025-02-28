@@ -32,6 +32,7 @@ public final class VoxelConstants {
     private static boolean initialized;
     private static Events events;
     private static PacketBridge packetBridge;
+    private static KeyMapping playerListKey;
 
     private VoxelConstants() {}
 
@@ -196,7 +197,10 @@ public final class VoxelConstants {
         VoxelConstants.packetBridge = packetBridge;
     }
 
-    public static KeyMapping getAlternativeListKey() {
-        return VoxelMap.mapOptions.keyBindListAlternative.isUnbound() ? KeyMapping.get("key.playerlist") : VoxelMap.mapOptions.keyBindListAlternative;
+    public static KeyMapping getModifiedTabKey() {
+        if (playerListKey == null) {
+            playerListKey = KeyMapping.get("key.playerlist");
+        }
+        return VoxelMap.mapOptions.keyBindListAlternative.isUnbound() ? playerListKey : VoxelMap.mapOptions.keyBindListAlternative;
     }
 }

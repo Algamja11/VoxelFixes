@@ -75,9 +75,10 @@ public class MapSettingsManager implements ISettingsManager {
     public boolean waypointsAllowed = true;
     public boolean deathWaypointAllowed = true;
 
+    public final KeyMapping keyBindMapToggle = new KeyMapping("key.minimap.togglemap", InputConstants.getKey("key.keyboard.o").getValue(), "controls.minimap.title");
     public final KeyMapping keyBindMenu = new KeyMapping("key.minimap.voxelmapmenu", InputConstants.getKey("key.keyboard.m").getValue(), "controls.minimap.title");
     public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.minimap.waypointmenu", InputConstants.getKey("key.keyboard.u").getValue(), "controls.minimap.title");
-    public final KeyMapping keyBindZoom = new KeyMapping("key.minimap.zoomin", InputConstants.getKey("key.keyboard.up").getValue(), "controls.minimap.title");
+    public final KeyMapping keyBindZoomIn = new KeyMapping("key.minimap.zoomin", InputConstants.getKey("key.keyboard.up").getValue(), "controls.minimap.title");
     public final KeyMapping keyBindZoomOut = new KeyMapping("key.minimap.zoomout", InputConstants.getKey("key.keyboard.down").getValue(), "controls.minimap.title");
     public final KeyMapping keyBindFullscreen = new KeyMapping("key.minimap.togglefullscreen", InputConstants.getKey("key.keyboard.z").getValue(), "controls.minimap.title");
     public final KeyMapping keyBindWaypoint = new KeyMapping("key.minimap.waypointhotkey", InputConstants.getKey("key.keyboard.n").getValue(), "controls.minimap.title");
@@ -92,7 +93,13 @@ public class MapSettingsManager implements ISettingsManager {
 
     public MapSettingsManager() {
         instance = this;
-        this.keyBindings = new KeyMapping[]{ this.keyBindMenu, this.keyBindWaypointMenu, this.keyBindZoom, this.keyBindZoomOut, this.keyBindFullscreen, this.keyBindWaypoint, this.keyBindWaypointToggle, this.keyBindRadarToggle, this.keyBindListAlternative };
+        this.keyBindings = new KeyMapping[]{
+                this.keyBindMapToggle, this.keyBindMenu,
+                this.keyBindZoomIn, this.keyBindWaypointMenu,
+                this.keyBindZoomOut, this.keyBindListAlternative,
+                this.keyBindWaypoint, this.keyBindFullscreen,
+                this.keyBindWaypointToggle, this.keyBindRadarToggle
+        };
     }
 
     public void addSecondaryOptionsManager(ISubSettingsManager secondarySettingsManager) {
@@ -141,14 +148,16 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Distance Unit Conversion" -> this.distanceUnitConversion = Boolean.parseBoolean(curLine[1]);
                         case "Waypoint Name Below Icon" -> this.waypointNameBelowIcon = Boolean.parseBoolean(curLine[1]);
                         case "Waypoint Distance Below Name" -> this.waypointDistanceBelowName  = Boolean.parseBoolean(curLine[1]);
+                        case "Map Toggle Key" -> this.bindKey(this.keyBindMapToggle, curLine[1]);
                         case "Menu Key" -> this.bindKey(this.keyBindMenu, curLine[1]);
                         case "Waypoint Menu Key" -> this.bindKey(this.keyBindWaypointMenu, curLine[1]);
-                        case "Zoom Key" -> this.bindKey(this.keyBindZoom, curLine[1]);
+                        case "Zoom In Key" -> this.bindKey(this.keyBindZoomIn, curLine[1]);
+                        case "Zoom Out Key" -> this.bindKey(this.keyBindZoomOut, curLine[1]);
                         case "Fullscreen Key" -> this.bindKey(this.keyBindFullscreen, curLine[1]);
                         case "Waypoint Key" -> this.bindKey(this.keyBindWaypoint, curLine[1]);
                         case "In-game Waypoint Key" -> this.bindKey(this.keyBindWaypointToggle, curLine[1]);
                         case "Radar Key" -> this.bindKey(this.keyBindRadarToggle, curLine[1]);
-                        case "Dynamic Rader Key" -> this.bindKey(this.keyBindListAlternative, curLine[1]);
+                        case "List Alternative Key" -> this.bindKey(this.keyBindListAlternative, curLine[1]);
                         case "Zoom Level" -> this.zoom = Math.max(0, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Welcome Message" -> this.welcome = Boolean.parseBoolean(curLine[1]);
 
@@ -222,14 +231,16 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Distance Unit Conversion:" + this.distanceUnitConversion);
             out.println("Waypoint Name Below Icon:" + this.waypointNameBelowIcon);
             out.println("Waypoint Distance Below Name:" + this.waypointDistanceBelowName);
+            out.println("Map Toggle Key:" + this.keyBindMapToggle.saveString());
             out.println("Menu Key:" + this.keyBindMenu.saveString());
             out.println("Waypoint Menu Key:" + this.keyBindWaypointMenu.saveString());
-            out.println("Zoom Key:" + this.keyBindZoom.saveString());
+            out.println("Zoom In Key:" + this.keyBindZoomIn.saveString());
+            out.println("Zoom Out Key:" + this.keyBindZoomOut.saveString());
             out.println("Fullscreen Key:" + this.keyBindFullscreen.saveString());
             out.println("Waypoint Key:" + this.keyBindWaypoint.saveString());
             out.println("In-game Waypoint Key:" + this.keyBindWaypointToggle.saveString());
             out.println("Radar Key:" + this.keyBindRadarToggle.saveString());
-            out.println("Dynamic Radar Key" + this.keyBindListAlternative.saveString());
+            out.println("List Alternative Key" + this.keyBindListAlternative.saveString());
             out.println("Zoom Level:" + this.zoom);
             out.println("Welcome Message:" + this.welcome);
 

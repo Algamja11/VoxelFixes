@@ -128,8 +128,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
     }
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        this.renderBlurredBackground();
-        this.renderMenuBackground(drawContext);
+        this.renderBackgroundTexture(drawContext);
         drawContext.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
         super.render(drawContext, mouseX, mouseY, delta);
     }

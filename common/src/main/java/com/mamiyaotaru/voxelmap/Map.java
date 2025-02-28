@@ -149,7 +149,8 @@ public class Map implements Runnable, IChangeObserver {
     private static double minTablistOffset;
     private static float statusIconOffset = 0.0F;
     private int deltaTime = 0;
-    private long deltaTimeBase = 0;
+    private long lastRealTime = 0;
+    private int lastDisplayMode = 0;
 
     public Map() {
         this.options = VoxelConstants.getVoxelMapInstance().getMapOptions();
@@ -331,7 +332,7 @@ public class Map implements Runnable, IChangeObserver {
             this.options.toggleIngameWaypoints();
         }
 
-        if (VoxelConstants.getMinecraft().screen == null && this.options.keyBindZoom.consumeClick()) {
+        if (VoxelConstants.getMinecraft().screen == null && this.options.keyBindZoomIn.consumeClick()) {
             this.changeZoom(-1);
         }
 
@@ -347,6 +348,16 @@ public class Map implements Runnable, IChangeObserver {
             } else {
                 this.fullscreenMap = !this.fullscreenMap;
                 this.showZoomLevel();
+            }
+        }
+
+        if (VoxelConstants.getMinecraft().screen == null && this.options.keyBindMapToggle.consumeClick()) {
+            if (this.lastDisplayMode != 0) {
+                this.options.displayMode = this.lastDisplayMode;
+                this.lastDisplayMode = 0;
+            } else {
+                this.lastDisplayMode = this.options.displayMode;
+                this.options.displayMode = 0;
             }
         }
 
@@ -407,8 +418,8 @@ public class Map implements Runnable, IChangeObserver {
             this.zTimer = 1500;
         }
 
-        this.deltaTime = Math.max(1, (int)(System.currentTimeMillis() - this.deltaTimeBase));
-        this.deltaTimeBase = System.currentTimeMillis();
+        this.deltaTime = Math.max(1, (int)(System.currentTimeMillis() - this.lastRealTime));
+        this.lastRealTime = System.currentTimeMillis();
         if (this.zTimer > 0) {
             this.zTimer -= this.deltaTime;
         }
@@ -2065,12 +2076,12 @@ public class Map implements Runnable, IChangeObserver {
             this.welcomeText[1] = Component.translatable("minimap.ui.welcome2");
             this.welcomeText[2] = Component.translatable("minimap.ui.welcome3");
             this.welcomeText[3] = Component.translatable("minimap.ui.welcome4");
-            this.welcomeText[4] = (Component.literal("")).append((Component.keybind(this.options.keyBindZoom.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome5aa"))
+            this.welcomeText[4] = (Component.literal("")).append((Component.keybind(this.options.keyBindZoomIn.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome5aa"))
                     .append(", ").append((Component.keybind(this.options.keyBindZoomOut.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome5ab"));
             this.welcomeText[5] = (Component.literal("")).append((Component.keybind(this.options.keyBindMenu.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome5b"))
                     .append(", ").append((Component.keybind(this.options.keyBindFullscreen.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome6"));
             this.welcomeText[6] = (Component.literal("")).append((Component.keybind(this.options.keyBindWaypoint.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome7"))
-                    .append(", ").append((Component.keybind(VoxelConstants.getAlternativeListKey().getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome7a"));;
+                    .append(", ").append((Component.keybind(VoxelConstants.getModifiedTabKey().getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome7a"));;
             this.welcomeText[7] = this.options.keyBindFullscreen.getTranslatedKeyMessage().copy().append(": ").append((Component.translatable("minimap.ui.welcome8")).withStyle(ChatFormatting.GRAY));
         }
 
