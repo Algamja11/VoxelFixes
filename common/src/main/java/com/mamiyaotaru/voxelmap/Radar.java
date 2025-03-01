@@ -161,6 +161,7 @@ public class Radar implements IRadar {
     public final HashMap<String, Integer> contactsSkinGetTries = new HashMap<>();
     public final HashMap<String, Integer> mpContactsSkinGetTries = new HashMap<>();
     private static final HashMap<String, BufferedImage> entityIconMap = new HashMap<>();
+    private static final HashMap<String, ResourceLocation> resourceLocationMap = new HashMap<>();
 
     private Sprite leatherArmorIcon;
     private SkullModel playerSkullModel;
@@ -195,6 +196,7 @@ public class Radar implements IRadar {
         this.completedLoading = false;
 
         try {
+            resourceLocationMap.clear();
             entityIconMap.clear();
             this.mpContactsSkinGetTries.clear();
             this.contactsSkinGetTries.clear();
@@ -487,27 +489,27 @@ public class Radar implements IRadar {
             InputStream is = null;
 
             try {
-                is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                is = VoxelConstants.getMinecraft().getResourceManager().getResource(this.getOrParseResourceLocation(fullPath)).get().open();
             } catch (IOException ignored) {}
 
             if (is == null) {
                 fullPath = ("textures/icons/" + identifierSimple + ".png").toLowerCase();
                 try {
-                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(this.getOrParseResourceLocation(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
             if (is == null) {
                 fullPath = ("textures/icons/" + identifier + "8.png").toLowerCase();
                 try {
-                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(this.getOrParseResourceLocation(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
             if (is == null) {
                 fullPath = ("textures/icons/" + identifierSimple + "8.png").toLowerCase();
                 try {
-                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(this.getOrParseResourceLocation(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
@@ -515,14 +517,14 @@ public class Radar implements IRadar {
                 intendedSize = 16;
                 fullPath = ("textures/icons/" + identifier + "16.png").toLowerCase();
                 try {
-                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(this.getOrParseResourceLocation(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
             if (is == null) {
                 fullPath = ("textures/icons/" + identifierSimple + "16.png").toLowerCase();
                 try {
-                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(this.getOrParseResourceLocation(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
@@ -530,14 +532,14 @@ public class Radar implements IRadar {
                 intendedSize = 32;
                 fullPath = ("textures/icons/" + identifier + "32.png").toLowerCase();
                 try {
-                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(this.getOrParseResourceLocation(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
             if (is == null) {
                 fullPath = ("textures/icons/" + identifierSimple + "32.png").toLowerCase();
                 try {
-                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse(fullPath)).get().open();
+                    is = VoxelConstants.getMinecraft().getResourceManager().getResource(this.getOrParseResourceLocation(fullPath)).get().open();
                 } catch (IOException ignored) {}
             }
 
@@ -572,23 +574,23 @@ public class Radar implements IRadar {
             case AXOLOTL -> {
                 Axolotl axolotl = (Axolotl) contact.entity;
                 resourceLocationPrimary = switch (axolotl.getVariant()) {
-                    case BLUE -> ResourceLocation.parse("textures/entity/axolotl/axolotl_blue.png");
-                    case CYAN -> ResourceLocation.parse("textures/entity/axolotl/axolotl_cyan.png");
-                    case GOLD -> ResourceLocation.parse("textures/entity/axolotl/axolotl_gold.png");
-                    case LUCY -> ResourceLocation.parse("textures/entity/axolotl/axolotl_lucy.png");
-                    case WILD -> ResourceLocation.parse("textures/entity/axolotl/axolotl_wild.png");
+                    case BLUE -> this.getOrParseResourceLocation("textures/entity/axolotl/axolotl_blue.png");
+                    case CYAN -> this.getOrParseResourceLocation("textures/entity/axolotl/axolotl_cyan.png");
+                    case GOLD -> this.getOrParseResourceLocation("textures/entity/axolotl/axolotl_gold.png");
+                    case LUCY -> this.getOrParseResourceLocation("textures/entity/axolotl/axolotl_lucy.png");
+                    case WILD -> this.getOrParseResourceLocation("textures/entity/axolotl/axolotl_wild.png");
                 };
             }
             case BEE -> {
                 Bee bee = (Bee)contact.entity;
-                if (bee.isAngry()) resourceLocationPrimary = ResourceLocation.parse("textures/entity/bee/bee_angry.png");
-                else resourceLocationPrimary = ResourceLocation.parse("textures/entity/bee/bee.png");
+                if (bee.isAngry()) resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/bee/bee_angry.png");
+                else resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/bee/bee.png");
             }
             case CAT -> {
                 Cat cat = (Cat) contact.entity;
                 String variant = cat.getVariant().getRegisteredName();
                 variant = variant.substring(variant.indexOf(':') + 1);
-                resourceLocationPrimary = ResourceLocation.parse("textures/entity/cat/" + variant + ".png");
+                resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/cat/" + variant + ".png");
             }
             case FOX -> {
                 Fox fox = (Fox)contact.entity;
@@ -599,45 +601,45 @@ public class Radar implements IRadar {
                 };
                 if (fox.isSleeping()) resLocationName += "_sleep";
                 resLocationName += ".png";
-                resourceLocationPrimary = ResourceLocation.parse(resLocationName);
+                resourceLocationPrimary = this.getOrParseResourceLocation(resLocationName);
             }
             case FROG -> {
                 Frog frog = (Frog) contact.entity;
                 String variant = frog.getVariant().getRegisteredName();
                 variant = variant.substring(variant.indexOf(':') + 1);
-                resourceLocationPrimary = ResourceLocation.parse("textures/entity/frog/" + variant + "_frog.png");
+                resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/frog/" + variant + "_frog.png");
             }
             case GHAST -> {
                 Ghast ghast = (Ghast) contact.entity;
-                if (ghast.isCharging()) resourceLocationPrimary = ResourceLocation.parse("textures/entity/ghast/ghast_shooting.png");
-                else resourceLocationPrimary = ResourceLocation.parse("textures/entity/ghast/ghast.png");
+                if (ghast.isCharging()) resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/ghast/ghast_shooting.png");
+                else resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/ghast/ghast.png");
             }
             case HORSE -> {
                 if (contact.entity instanceof Horse horse) {
                     resourceLocationPrimary = switch(horse.getVariant()) {
-                        case BLACK -> ResourceLocation.parse("textures/entity/horse/horse_black.png");
-                        case BROWN -> ResourceLocation.parse("textures/entity/horse/horse_brown.png");
-                        case CHESTNUT -> ResourceLocation.parse("textures/entity/horse/horse_chestnut.png");
-                        case CREAMY -> ResourceLocation.parse("textures/entity/horse/horse_creamy.png");
-                        case DARK_BROWN -> ResourceLocation.parse("textures/entity/horse/horse_darkbrown.png");
-                        case GRAY -> ResourceLocation.parse("textures/entity/horse/horse_gray.png");
-                        case WHITE -> ResourceLocation.parse("textures/entity/horse/horse_white.png");
+                        case BLACK -> this.getOrParseResourceLocation("textures/entity/horse/horse_black.png");
+                        case BROWN -> this.getOrParseResourceLocation("textures/entity/horse/horse_brown.png");
+                        case CHESTNUT -> this.getOrParseResourceLocation("textures/entity/horse/horse_chestnut.png");
+                        case CREAMY -> this.getOrParseResourceLocation("textures/entity/horse/horse_creamy.png");
+                        case DARK_BROWN -> this.getOrParseResourceLocation("textures/entity/horse/horse_darkbrown.png");
+                        case GRAY -> this.getOrParseResourceLocation("textures/entity/horse/horse_gray.png");
+                        case WHITE -> this.getOrParseResourceLocation("textures/entity/horse/horse_white.png");
                     };
                     resourceLocationSecondary = switch(horse.getMarkings()) {
                         case NONE -> null;
-                        case BLACK_DOTS -> ResourceLocation.parse("textures/entity/horse/horse_markings_blackdots.png");
-                        case WHITE -> ResourceLocation.parse("textures/entity/horse/horse_markings_white.png");
-                        case WHITE_DOTS -> ResourceLocation.parse("textures/entity/horse/horse_markings_whitedots.png");
-                        case WHITE_FIELD -> ResourceLocation.parse("textures/entity/horse/horse_markings_whitefield.png");
+                        case BLACK_DOTS -> this.getOrParseResourceLocation("textures/entity/horse/horse_markings_blackdots.png");
+                        case WHITE -> this.getOrParseResourceLocation("textures/entity/horse/horse_markings_white.png");
+                        case WHITE_DOTS -> this.getOrParseResourceLocation("textures/entity/horse/horse_markings_whitedots.png");
+                        case WHITE_FIELD -> this.getOrParseResourceLocation("textures/entity/horse/horse_markings_whitefield.png");
                     };
                     if (this.options.showHelmetsMobs) {
                         ItemStack itemStack = horse.getBodyArmorItem();
                         String armorName = itemStack.getItem().builtInRegistryHolder().getRegisteredName();
                         resourceLocationTertiary = switch (armorName) {
-                            case "minecraft:leather_horse_armor" -> ResourceLocation.parse("textures/entity/equipment/horse_body/leather.png");
-                            case "minecraft:iron_horse_armor" -> ResourceLocation.parse("textures/entity/equipment/horse_body/iron.png");
-                            case "minecraft:golden_horse_armor" -> ResourceLocation.parse("textures/entity/equipment/horse_body/gold.png");
-                            case "minecraft:diamond_horse_armor" -> ResourceLocation.parse("textures/entity/equipment/horse_body/diamond.png");
+                            case "minecraft:leather_horse_armor" -> this.getOrParseResourceLocation("textures/entity/equipment/horse_body/leather.png");
+                            case "minecraft:iron_horse_armor" -> this.getOrParseResourceLocation("textures/entity/equipment/horse_body/iron.png");
+                            case "minecraft:golden_horse_armor" -> this.getOrParseResourceLocation("textures/entity/equipment/horse_body/gold.png");
+                            case "minecraft:diamond_horse_armor" -> this.getOrParseResourceLocation("textures/entity/equipment/horse_body/diamond.png");
                             default -> null;
                         };
                         contact.setArmorColor(DyedItemColor.getOrDefault(itemStack, -1));
@@ -647,18 +649,18 @@ public class Radar implements IRadar {
             case MOOSHROOM -> {
                 MushroomCow mushroomCow = (MushroomCow)contact.entity;
                 resourceLocationPrimary = switch (mushroomCow.getVariant()) {
-                    case RED -> ResourceLocation.parse("textures/entity/cow/red_mooshroom.png");
-                    case BROWN -> ResourceLocation.parse("textures/entity/cow/brown_mooshroom.png");
+                    case RED -> this.getOrParseResourceLocation("textures/entity/cow/red_mooshroom.png");
+                    case BROWN -> this.getOrParseResourceLocation("textures/entity/cow/brown_mooshroom.png");
                 };
             }
             case PARROT -> {
                 Parrot parrot = (Parrot)contact.entity;
                 resourceLocationPrimary = switch (parrot.getVariant()) {
-                    case BLUE -> ResourceLocation.parse("textures/entity/parrot/parrot_blue.png");
-                    case GRAY -> ResourceLocation.parse("textures/entity/parrot/parrot_grey.png");
-                    case GREEN -> ResourceLocation.parse("textures/entity/parrot/parrot_green.png");
-                    case RED_BLUE -> ResourceLocation.parse("textures/entity/parrot/parrot_red_blue.png");
-                    case YELLOW_BLUE -> ResourceLocation.parse("textures/entity/parrot/parrot_yellow_blue.png");
+                    case BLUE -> this.getOrParseResourceLocation("textures/entity/parrot/parrot_blue.png");
+                    case GRAY -> this.getOrParseResourceLocation("textures/entity/parrot/parrot_grey.png");
+                    case GREEN -> this.getOrParseResourceLocation("textures/entity/parrot/parrot_green.png");
+                    case RED_BLUE -> this.getOrParseResourceLocation("textures/entity/parrot/parrot_red_blue.png");
+                    case YELLOW_BLUE -> this.getOrParseResourceLocation("textures/entity/parrot/parrot_yellow_blue.png");
                 };
             }
             case PUFFERFISH -> {
@@ -667,17 +669,17 @@ public class Radar implements IRadar {
             }
             case RABBIT -> {
                 if (contact.entity.hasCustomName() && contact.entity.getCustomName().getString().equals("Toast")) {
-                    resourceLocationPrimary = ResourceLocation.parse("textures/entity/rabbit/toast.png");
+                    resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/rabbit/toast.png");
                 } else {
                     Rabbit rabbit = (Rabbit) contact.entity;
                     resourceLocationPrimary = switch (rabbit.getVariant()) {
-                        case BLACK -> ResourceLocation.parse("textures/entity/rabbit/black.png");
-                        case BROWN -> ResourceLocation.parse("textures/entity/rabbit/brown.png");
-                        case EVIL -> ResourceLocation.parse("textures/entity/rabbit/caerbannog.png");
-                        case GOLD -> ResourceLocation.parse("textures/entity/rabbit/gold.png");
-                        case SALT -> ResourceLocation.parse("textures/entity/rabbit/salt.png");
-                        case WHITE -> ResourceLocation.parse("textures/entity/rabbit/white.png");
-                        case WHITE_SPLOTCHED -> ResourceLocation.parse("textures/entity/rabbit/white_splotched.png");
+                        case BLACK -> this.getOrParseResourceLocation("textures/entity/rabbit/black.png");
+                        case BROWN -> this.getOrParseResourceLocation("textures/entity/rabbit/brown.png");
+                        case EVIL -> this.getOrParseResourceLocation("textures/entity/rabbit/caerbannog.png");
+                        case GOLD -> this.getOrParseResourceLocation("textures/entity/rabbit/gold.png");
+                        case SALT -> this.getOrParseResourceLocation("textures/entity/rabbit/salt.png");
+                        case WHITE -> this.getOrParseResourceLocation("textures/entity/rabbit/white.png");
+                        case WHITE_SPLOTCHED -> this.getOrParseResourceLocation("textures/entity/rabbit/white_splotched.png");
                     };
                 }
             }
@@ -687,31 +689,31 @@ public class Radar implements IRadar {
             }
             case STRIDER -> {
                 Strider strider = (Strider) contact.entity;
-                if (strider.isSuffocating()) resourceLocationPrimary = ResourceLocation.parse("textures/entity/strider/strider_cold.png");
-                else resourceLocationPrimary = ResourceLocation.parse("textures/entity/strider/strider.png");
+                if (strider.isSuffocating()) resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/strider/strider_cold.png");
+                else resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/strider/strider.png");
             }
             case TROPICAL_FISH_A, TROPICAL_FISH_B -> {
                 TropicalFish fish = (TropicalFish) contact.entity;
                 resourceLocationSecondary = switch (fish.getVariant()) {
-                    case KOB -> ResourceLocation.parse("textures/entity/fish/tropical_a_pattern_1.png");
-                    case SUNSTREAK -> ResourceLocation.parse("textures/entity/fish/tropical_a_pattern_2.png");
-                    case SNOOPER -> ResourceLocation.parse("textures/entity/fish/tropical_a_pattern_3.png");
-                    case DASHER -> ResourceLocation.parse("textures/entity/fish/tropical_a_pattern_4.png");
-                    case BRINELY -> ResourceLocation.parse("textures/entity/fish/tropical_a_pattern_5.png");
-                    case SPOTTY -> ResourceLocation.parse("textures/entity/fish/tropical_a_pattern_6.png");
-                    case FLOPPER -> ResourceLocation.parse("textures/entity/fish/tropical_b_pattern_1.png");
-                    case STRIPEY -> ResourceLocation.parse("textures/entity/fish/tropical_b_pattern_2.png");
-                    case GLITTER -> ResourceLocation.parse("textures/entity/fish/tropical_b_pattern_3.png");
-                    case BLOCKFISH -> ResourceLocation.parse("textures/entity/fish/tropical_b_pattern_4.png");
-                    case BETTY -> ResourceLocation.parse("textures/entity/fish/tropical_b_pattern_5.png");
-                    case CLAYFISH -> ResourceLocation.parse("textures/entity/fish/tropical_b_pattern_6.png");
+                    case KOB -> this.getOrParseResourceLocation("textures/entity/fish/tropical_a_pattern_1.png");
+                    case SUNSTREAK -> this.getOrParseResourceLocation("textures/entity/fish/tropical_a_pattern_2.png");
+                    case SNOOPER -> this.getOrParseResourceLocation("textures/entity/fish/tropical_a_pattern_3.png");
+                    case DASHER -> this.getOrParseResourceLocation("textures/entity/fish/tropical_a_pattern_4.png");
+                    case BRINELY -> this.getOrParseResourceLocation("textures/entity/fish/tropical_a_pattern_5.png");
+                    case SPOTTY -> this.getOrParseResourceLocation("textures/entity/fish/tropical_a_pattern_6.png");
+                    case FLOPPER -> this.getOrParseResourceLocation("textures/entity/fish/tropical_b_pattern_1.png");
+                    case STRIPEY -> this.getOrParseResourceLocation("textures/entity/fish/tropical_b_pattern_2.png");
+                    case GLITTER -> this.getOrParseResourceLocation("textures/entity/fish/tropical_b_pattern_3.png");
+                    case BLOCKFISH -> this.getOrParseResourceLocation("textures/entity/fish/tropical_b_pattern_4.png");
+                    case BETTY -> this.getOrParseResourceLocation("textures/entity/fish/tropical_b_pattern_5.png");
+                    case CLAYFISH -> this.getOrParseResourceLocation("textures/entity/fish/tropical_b_pattern_6.png");
                 };
                 variantString = fish.getVariant().name() + fish.getBaseColor().getTextureDiffuseColor() + fish.getPatternColor().getTextureDiffuseColor();
             }
             case VEX -> {
                 Vex vex = (Vex) contact.entity;
-                if (vex.isCharging()) resourceLocationPrimary = ResourceLocation.parse("textures/entity/illager/vex_charging.png");
-                else resourceLocationPrimary = ResourceLocation.parse("textures/entity/illager/vex.png");
+                if (vex.isCharging()) resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/illager/vex_charging.png");
+                else resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/illager/vex.png");
             }
             case VILLAGER, ZOMBIE_VILLAGER -> {
                 VillagerData villagerData = ((VillagerDataHolder) contact.entity).getVillagerData();
@@ -719,15 +721,15 @@ public class Radar implements IRadar {
                 String iconLocation = contact.type == EnumMobs.ZOMBIE_VILLAGER ? "textures/entity/zombie_villager" : "textures/entity/villager";
 
                 resourceLocationSecondary = BuiltInRegistries.VILLAGER_TYPE.getKey(villagerData.getType());
-                resourceLocationSecondary = ResourceLocation.fromNamespaceAndPath(resourceLocationSecondary.getNamespace(), iconLocation + "/type/" + resourceLocationSecondary.getPath() + ".png");
+                resourceLocationSecondary = this.getOrParseResourceLocation(resourceLocationSecondary.getNamespace(), iconLocation + "/type/" + resourceLocationSecondary.getPath() + ".png");
 
                 if (villagerProfession != VillagerProfession.NONE && !contact.entity.isBaby()) {
                     resourceLocationTertiary = BuiltInRegistries.VILLAGER_PROFESSION.getKey(villagerProfession);
-                    resourceLocationTertiary = ResourceLocation.fromNamespaceAndPath(resourceLocationTertiary.getNamespace(), iconLocation + "/profession/" + resourceLocationTertiary.getPath() + ".png");
+                    resourceLocationTertiary = this.getOrParseResourceLocation(resourceLocationTertiary.getNamespace(), iconLocation + "/profession/" + resourceLocationTertiary.getPath() + ".png");
 
                     if (villagerProfession != VillagerProfession.NITWIT) {
                         resourceLocationQuaternary = villagerLevelID.get(Mth.clamp(villagerData.getLevel(), 1, villagerLevelID.size()));
-                        resourceLocationQuaternary = ResourceLocation.fromNamespaceAndPath(resourceLocationQuaternary.getNamespace(), iconLocation + "/profession_level/" + resourceLocationQuaternary.getPath() + ".png");
+                        resourceLocationQuaternary = this.getOrParseResourceLocation(resourceLocationQuaternary.getNamespace(), iconLocation + "/profession_level/" + resourceLocationQuaternary.getPath() + ".png");
                     }
                 }
 
@@ -740,8 +742,8 @@ public class Radar implements IRadar {
             }
             case WITHER -> {
                 WitherBoss witherBoss = (WitherBoss) contact.entity;
-                if (witherBoss.isInvulnerable()) resourceLocationPrimary = ResourceLocation.parse("textures/entity/wither/wither_invulnerable.png");
-                else resourceLocationPrimary = ResourceLocation.parse("textures/entity/wither/wither.png");
+                if (witherBoss.isInvulnerable()) resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/wither/wither_invulnerable.png");
+                else resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/wither/wither.png");
             }
             case WOLF -> {
                 Wolf wolf = (Wolf) contact.entity;
@@ -752,10 +754,10 @@ public class Radar implements IRadar {
                 if (wolf.isAngry()) resLocationName += "_angry";
                 else if (wolf.isTame()) resLocationName += "_tame";
                 resLocationName += ".png";
-                resourceLocationPrimary = ResourceLocation.parse(resLocationName);
+                resourceLocationPrimary = this.getOrParseResourceLocation(resLocationName);
                 if (this.options.showHelmetsMobs) {
                     String armorName = wolf.getBodyArmorItem().getItem().builtInRegistryHolder().getRegisteredName();
-                    if (armorName.equals("minecraft:wolf_armor")) resourceLocationSecondary = ResourceLocation.parse("textures/entity/equipment/wolf_body/armadillo_scute.png");
+                    if (armorName.equals("minecraft:wolf_armor")) resourceLocationSecondary = this.getOrParseResourceLocation("textures/entity/equipment/wolf_body/armadillo_scute.png");
                 }
             }
             default -> resourceLocationSecondary = contact.type.secondaryResourceLocation;
@@ -895,11 +897,11 @@ public class Radar implements IRadar {
                 String fullPath = ("textures/icons/" + fullName + ".properties").toLowerCase();
 
                 ResourceManager resourceManager = VoxelConstants.getMinecraft().getResourceManager();
-                Optional<Resource> resource = resourceManager.getResource(ResourceLocation.parse(fullPath));
+                Optional<Resource> resource = resourceManager.getResource(this.getOrParseResourceLocation(fullPath));
 
                 if (resource.isEmpty()) {
                     fullPath = ("textures/icons/" + simpleName + ".properties").toLowerCase();
-                    resource = resourceManager.getResource(ResourceLocation.parse(fullPath));
+                    resource = resourceManager.getResource(this.getOrParseResourceLocation(fullPath));
                 }
                 if (resource.isPresent()) {
                     try (InputStream is = resource.get().open()) {
@@ -1358,7 +1360,7 @@ public class Radar implements IRadar {
                     armorKey = "turtle_scute";
                 }
             }
-            resourceLocation = ResourceLocation.parse(namespace + ":textures/entity/equipment/humanoid/" + armorKey + ".png");
+            resourceLocation = this.getOrParseResourceLocation(namespace + ":textures/entity/equipment/humanoid/" + armorKey + ".png");
         }
         catch (RuntimeException ignored) {
         }
@@ -1660,5 +1662,28 @@ public class Radar implements IRadar {
     }
 
     private record ModelPartWithResourceLocation(ModelPart modelPart, ResourceLocation resourceLocation) {
+    }
+
+    private ResourceLocation getOrParseResourceLocation(String location) {
+        ResourceLocation cachedResLocation = resourceLocationMap.get(location);
+        if (cachedResLocation != null) {
+            return cachedResLocation;
+        } else {
+            ResourceLocation newResLocation = ResourceLocation.parse(location);
+            resourceLocationMap.put(location, newResLocation);
+            return newResLocation;
+        }
+    }
+    
+    private ResourceLocation getOrParseResourceLocation(String namespace, String location) {
+        String id = namespace + location;
+        ResourceLocation cachedResLocation = resourceLocationMap.get(id);
+        if (cachedResLocation != null) {
+            return cachedResLocation;
+        } else {
+            ResourceLocation newResLocation = ResourceLocation.parse(location);
+            resourceLocationMap.put(id, newResLocation);
+            return newResLocation;
+        }
     }
 }
