@@ -1674,14 +1674,14 @@ public class Radar implements IRadar {
             return newResLocation;
         }
     }
-    
+
     private ResourceLocation getOrParseResourceLocation(String namespace, String location) {
         String id = namespace + location;
         ResourceLocation cachedResLocation = resourceLocationMap.get(id);
         if (cachedResLocation != null) {
             return cachedResLocation;
         } else {
-            ResourceLocation newResLocation = ResourceLocation.parse(location);
+            ResourceLocation newResLocation = ResourceLocation.fromNamespaceAndPath(namespace, location);
             resourceLocationMap.put(id, newResLocation);
             return newResLocation;
         }
