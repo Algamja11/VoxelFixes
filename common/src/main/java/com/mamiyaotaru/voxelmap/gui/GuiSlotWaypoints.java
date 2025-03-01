@@ -169,21 +169,34 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            GuiSlotWaypoints.this.setSelected(this);
-            int leftEdge = this.parentGui.getWidth() / 2 - 92 - 16;
-            byte padding = 3;
-            byte iconWidth = 16;
-            int width = 215;
-            if (mouseX >= (leftEdge + width - iconWidth - padding) && mouseX <= (leftEdge + width + padding)) {
-                this.parentGui.toggleWaypointVisibility();
-            } else if (mouseX >= (leftEdge + padding) && mouseX <= (leftEdge + iconWidth + padding)) {
-                this.parentGui.setHighlightedWaypoint();
-            } else if (GuiSlotWaypoints.this.doubleClicked) {
-                this.parentGui.editWaypoint(this.parentGui.selectedWaypoint);
+        public int getItemY() {
+            int index = GuiSlotWaypoints.this.children().indexOf(this);
+            if (index == -1) {
+                return -1;
+            } else {
+                return GuiSlotWaypoints.this.getRowTop(index);
             }
+        }
 
-            return true;
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (this.getItemY() > GuiSlotWaypoints.this.getY() - GuiSlotWaypoints.this.itemHeight && this.getItemY() < GuiSlotWaypoints.this.getBottom()) {
+                GuiSlotWaypoints.this.setSelected(this);
+                int leftEdge = this.parentGui.getWidth() / 2 - 92 - 16;
+                byte padding = 3;
+                byte iconWidth = 16;
+                int width = 215;
+                if (mouseX >= (leftEdge + width - iconWidth - padding) && mouseX <= (leftEdge + width + padding)) {
+                    this.parentGui.toggleWaypointVisibility();
+                } else if (mouseX >= (leftEdge + padding) && mouseX <= (leftEdge + iconWidth + padding)) {
+                    this.parentGui.setHighlightedWaypoint();
+                } else if (GuiSlotWaypoints.this.doubleClicked) {
+                    this.parentGui.editWaypoint(this.parentGui.selectedWaypoint);
+                }
+
+                return true;
+            } else {
+                return false;
+            }
         }
 
         public int compareTo(WaypointItem o) {

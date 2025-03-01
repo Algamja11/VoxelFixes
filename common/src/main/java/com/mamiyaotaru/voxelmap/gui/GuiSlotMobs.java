@@ -165,17 +165,30 @@ class GuiSlotMobs extends AbstractSelectionList<GuiSlotMobs.MobItem> {
             drawContext.flush();
         }
 
+        public int getItemY() {
+            int index = GuiSlotMobs.this.children().indexOf(this);
+            if (index == -1) {
+                return -1;
+            } else {
+                return GuiSlotMobs.this.getRowTop(index);
+            }
+        }
+
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            GuiSlotMobs.this.setSelected(this);
-            int leftEdge = this.parentGui.getWidth() / 2 - 92 - 16;
-            byte padding = 3;
-            int width = 215;
-            if (mouseX >= (leftEdge + width - 16 - padding) && mouseX <= (leftEdge + width + padding)) {
-                this.parentGui.toggleMobVisibility();
-            }
+            if (this.getItemY() > GuiSlotMobs.this.getY() - GuiSlotMobs.this.itemHeight && this.getItemY() < GuiSlotMobs.this.getBottom()) {
+                GuiSlotMobs.this.setSelected(this);
+                int leftEdge = this.parentGui.getWidth() / 2 - 92 - 16;
+                byte padding = 3;
+                int width = 215;
+                if (mouseX >= (leftEdge + width - 16 - padding) && mouseX <= (leftEdge + width + padding)) {
+                    this.parentGui.toggleMobVisibility();
+                }
 
-            return true;
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 }

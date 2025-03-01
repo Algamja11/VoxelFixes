@@ -29,7 +29,7 @@ public class MapSettingsManager implements ISettingsManager {
     public final boolean multicore = this.availableProcessors > 1;
 
     public int displayMode = 3;
-    public int coordinatesMode = 2;
+    public int coordinatesMode = 1;
     public boolean oldNorth = false;
     public boolean showBiomeLabel = true;
     public int sizeModifier = 1;
