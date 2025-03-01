@@ -1295,7 +1295,7 @@ public class Radar implements IRadar {
             } else if (helmet instanceof ArmorItem helmetArmor) {
                 if (this.isLeatherArmor(helmetArmor)) {
                     icon = this.textureAtlas.getAtlasSpriteIncludingYetToBeStitched("armor " + this.armorNames[0]);
-                    contact.setArmorColor(DyedItemColor.getOrDefault(stack, 0xA06540));
+                    contact.setArmorColor(DyedItemColor.getOrDefault(stack, DyedItemColor.LEATHER_COLOR));
                 } else {
                     boolean isPiglin = contact.type == EnumMobs.PIGLIN || contact.type == EnumMobs.ZOMBIFIED_PIGLIN;
                     icon = this.textureAtlas.getAtlasSpriteIncludingYetToBeStitched("armor " + helmet.getDescriptionId() + (isPiglin ? "_piglin" : ""));
