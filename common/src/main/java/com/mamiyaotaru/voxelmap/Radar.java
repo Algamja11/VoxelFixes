@@ -1583,11 +1583,11 @@ public class Radar implements IRadar {
                         String mobName = contact.entity.getDisplayName().getString();
                         int halfStringWidth = VoxelConstants.getMinecraft().font.width(mobName) / 2;
                         int textColor;
-                        int textAlpha = (int) (contact.brightness * 255);
+                        int brightness = (int) (contact.brightness * 255);
                         if (wayY < 0) {
-                            textColor = (textAlpha << 24) | (255 << 16) | (255 << 8) | 255;
+                            textColor = (brightness << 24) | (255 << 16) | (255 << 8) | 255;
                         } else {
-                            textColor = (255 << 24) | (textAlpha << 16) | (textAlpha << 8) | textAlpha;
+                            textColor = (255 << 24) | (brightness << 16) | (brightness << 8) | brightness;
                         }
                         PoseStack textMatrixStack = drawContext.pose();
                         textMatrixStack.pushPose();
