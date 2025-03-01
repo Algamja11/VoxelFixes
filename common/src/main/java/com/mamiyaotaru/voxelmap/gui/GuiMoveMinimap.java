@@ -74,6 +74,8 @@ public class GuiMoveMinimap extends GuiScreenMinimap {
 
     @Override
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
+        int titleWidth = this.getFontRenderer().width(this.screenTitle);
+        drawContext.fill(this.width / 2 - titleWidth / 2 - 5, 18, this.width / 2 + titleWidth / 2 + 5, 30, -1073741824);
         drawContext.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
 
         int scScaleTemp = Math.min(VoxelConstants.getMinecraft().getWindow().getWidth() / 320, VoxelConstants.getMinecraft().getWindow().getHeight() / 240);
