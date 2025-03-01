@@ -623,19 +623,9 @@ public class Map implements Runnable, IChangeObserver {
         modelViewMatrixStack.identity();
         modelViewMatrixStack.translate(0.0f, 0.0f, -2000.0f);
         // Lighting.setupFor3DItems();
-        int mapX;
-        if (this.options.mapCorner != 0 && this.options.mapCorner != 3) {
-            mapX = this.scWidth - 37;
-        } else {
-            mapX = 37;
-        }
-
-        int mapY;
-        if (this.options.mapCorner != 0 && this.options.mapCorner != 1) {
-            mapY = this.scHeight - 37;
-        } else {
-            mapY = 37;
-        }
+        int border = 37;
+        int mapX = (int) (border + this.options.mapX / 320f * (this.scWidth - border * 2));
+        int mapY = (int) (border + this.options.mapY / 240f * (this.scHeight - border * 2));
 
         float statusIconOffset = 0.0F;
         if (VoxelMap.mapOptions.moveMapDownWhileStatusEffect) {
@@ -1975,8 +1965,14 @@ public class Map implements Runnable, IChangeObserver {
 
         PoseStack matrixStack = drawContext.pose();
         int textStart;
-        if (y > this.scHeight - 37 - 32 - 4 - 15) {
+        if (y > this.scHeight / 2) {
             textStart = y - 32 - 4 - 9;
+            if (this.options.showBiomeLabel) {
+                textStart -= 5;
+            }
+            if (this.options.coordinatesMode == 2) {
+                textStart += 5;
+            }
         } else {
             textStart = y + 32 + 4;
         }

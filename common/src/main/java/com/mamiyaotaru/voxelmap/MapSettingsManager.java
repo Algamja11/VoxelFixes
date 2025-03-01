@@ -36,6 +36,8 @@ public class MapSettingsManager implements ISettingsManager {
     public int shape = 1;
     public boolean rotates = true;
     public int mapCorner = 1;
+    public float mapX = 0;
+    public float mapY = 0;
     protected boolean showCaves = true;
     public boolean showBeacons;
     public boolean showWaypoints = true;
@@ -93,13 +95,7 @@ public class MapSettingsManager implements ISettingsManager {
 
     public MapSettingsManager() {
         instance = this;
-        this.keyBindings = new KeyMapping[]{
-                this.keyBindMapToggle, this.keyBindMenu,
-                this.keyBindZoomIn, this.keyBindWaypointMenu,
-                this.keyBindZoomOut, this.keyBindListAlternative,
-                this.keyBindWaypoint, this.keyBindFullscreen,
-                this.keyBindWaypointToggle, this.keyBindRadarToggle
-        };
+        this.keyBindings = new KeyMapping[]{ this.keyBindMapToggle, this.keyBindMenu, this.keyBindWaypointMenu, this.keyBindZoomIn, this.keyBindZoomOut, this.keyBindListAlternative, this.keyBindWaypoint, this.keyBindFullscreen, this.keyBindWaypointToggle, this.keyBindRadarToggle };
     }
 
     public void addSecondaryOptionsManager(ISubSettingsManager secondarySettingsManager) {
@@ -123,7 +119,7 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Map Size" -> this.sizeModifier = Math.max(-1, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Map Shape" -> this.shape = Math.max(0, Math.min(1, Integer.parseInt(curLine[1])));
                         case "Map Rotating" -> this.rotates = Boolean.parseBoolean(curLine[1]);
-                        case "Map Corner" -> this.mapCorner = Math.max(0, Math.min(3, Integer.parseInt(curLine[1])));
+                        case "Map Corner" -> this.mapCorner = Math.max(-1, Math.min(3, Integer.parseInt(curLine[1])));
                         case "Enable Cave Mode" -> this.showCaves = Boolean.parseBoolean(curLine[1]);
                         case "Waypoint Signs" -> this.showWaypoints = Boolean.parseBoolean(curLine[1]);
                         case "Waypoint Beacons" -> this.showBeacons = Boolean.parseBoolean(curLine[1]);
@@ -158,6 +154,8 @@ public class MapSettingsManager implements ISettingsManager {
                         case "In-game Waypoint Key" -> this.bindKey(this.keyBindWaypointToggle, curLine[1]);
                         case "Radar Key" -> this.bindKey(this.keyBindRadarToggle, curLine[1]);
                         case "List Alternative Key" -> this.bindKey(this.keyBindListAlternative, curLine[1]);
+                        case "Minimap X" -> this.mapX = Math.max(0f, Math.min(320f, Float.parseFloat(curLine[1])));
+                        case "Minimap Y" -> this.mapY = Math.max(0f, Math.min(240f, Float.parseFloat(curLine[1])));
                         case "Zoom Level" -> this.zoom = Math.max(0, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Welcome Message" -> this.welcome = Boolean.parseBoolean(curLine[1]);
 
@@ -241,6 +239,8 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("In-game Waypoint Key:" + this.keyBindWaypointToggle.saveString());
             out.println("Radar Key:" + this.keyBindRadarToggle.saveString());
             out.println("List Alternative Key:" + this.keyBindListAlternative.saveString());
+            out.println("Minimap X:" + this.mapX);
+            out.println("Minimap Y:" + this.mapY);
             out.println("Zoom Level:" + this.zoom);
             out.println("Welcome Message:" + this.welcome);
 
@@ -385,7 +385,9 @@ public class MapSettingsManager implements ISettingsManager {
                 }
             }
             case LOCATION -> {
-                if (this.mapCorner == 0) {
+                if (this.mapCorner == -1) {
+                    return I18n.get("options.minimap.location.custom");
+                } else if (this.mapCorner == 0) {
                     return I18n.get("options.minimap.location.topleft");
                 } else if (this.mapCorner == 1) {
                     return I18n.get("options.minimap.location.topright");
@@ -517,6 +519,19 @@ public class MapSettingsManager implements ISettingsManager {
                 ++this.mapCorner;
                 if (this.mapCorner > 3) {
                     this.mapCorner = 0;
+                }
+                if (this.mapCorner == 0) {
+                    this.mapX = 0f;
+                    this.mapY = 0f;
+                } else if (this.mapCorner == 1) {
+                    this.mapX = 320f;
+                    this.mapY = 0f;
+                } else if (this.mapCorner == 2) {
+                    this.mapX = 320f;
+                    this.mapY = 240f;
+                } else if (this.mapCorner == 3) {
+                    this.mapX = 0f;
+                    this.mapY = 240f;
                 }
             }
             case INGAMEWAYPOINTS -> {

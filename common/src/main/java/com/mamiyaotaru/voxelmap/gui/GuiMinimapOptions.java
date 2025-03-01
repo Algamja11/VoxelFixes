@@ -80,6 +80,11 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
                 this.teleportCommandButton.setText(VoxelConstants.getVoxelMapInstance().getMapOptions().teleportCommand);
                 this.teleportCommandButton.active = VoxelConstants.getVoxelMapInstance().getMapOptions().serverTeleportCommand == null;
                 this.addRenderableWidget(this.teleportCommandButton);
+            } else if(option == EnumOptionsMinimap.LOCATION) {
+                GuiOptionButtonMinimap optionButton = new GuiOptionButtonMinimap(getWidth() / 2 - 155 + buttonPos % 2 * 160, getHeight() / 6 + 24 * (buttonPos >> 1), 130, 20, option, Component.literal(this.options.getKeyText(option)), this::optionClicked);
+                GuiOptionButtonMinimap moveButton = new GuiOptionButtonMinimap(getWidth() / 2 - 155 + buttonPos % 2 * 290, getHeight() / 6 + 24 * (buttonPos >> 1), 20, 20, option, Component.literal("..."), button -> VoxelConstants.getMinecraft().setScreen(new GuiMoveMinimap(this)));
+                this.addRenderableWidget(optionButton);
+                this.addRenderableWidget(moveButton);
             } else {
                 StringBuilder text = new StringBuilder().append(this.options.getKeyText(option));
                 if ((option == EnumOptionsMinimap.WATERTRANSPARENCY || option == EnumOptionsMinimap.BLOCKTRANSPARENCY || option == EnumOptionsMinimap.BIOMETINT) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {

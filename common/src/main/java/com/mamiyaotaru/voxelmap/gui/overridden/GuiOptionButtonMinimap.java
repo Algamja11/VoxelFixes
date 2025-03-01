@@ -11,5 +11,10 @@ public class GuiOptionButtonMinimap extends Button {
         this.enumOptions = par4EnumOptions;
     }
 
+    public GuiOptionButtonMinimap(int x, int y, int width, int height, EnumOptionsMinimap par4EnumOptions, Component message, OnPress onPress) {
+        super (x, y, width, height, message, onPress, DEFAULT_NARRATION);
+        this.enumOptions = par4EnumOptions;
+    }
+
     public EnumOptionsMinimap returnEnumOptions() { return this.enumOptions; }
 }

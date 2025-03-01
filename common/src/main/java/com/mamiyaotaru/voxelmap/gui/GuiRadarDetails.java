@@ -89,6 +89,7 @@ public class GuiRadarDetails extends GuiScreenMinimap {
             }
         }
     }
+
     private void iterateSliderOptions() {
         for (GuiEventListener element : getButtonList()) {
             if (!(element instanceof GuiOptionSliderMinimap slider)) continue;

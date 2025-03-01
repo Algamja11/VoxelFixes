@@ -2,7 +2,6 @@ package com.mamiyaotaru.voxelmap.gui;
 
 import com.mamiyaotaru.voxelmap.MapSettingsManager;
 import com.mamiyaotaru.voxelmap.VoxelConstants;
-import com.mamiyaotaru.voxelmap.VoxelMap;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
@@ -21,17 +20,16 @@ public class GuiSlotKeyMapping extends AbstractSelectionList<GuiSlotKeyMapping.K
     private final GuiMinimapControls parentGui;
     private final ArrayList<KeyMappingItem> keyMappings;
     private final MapSettingsManager options;
-
     private KeyMapping editingKey;
-    private ArrayList<KeyMapping> duplicateKeys = new ArrayList<>();
+    private final ArrayList<KeyMapping> duplicateKeys = new ArrayList<>();
 
     public GuiSlotKeyMapping(GuiMinimapControls parentScreen, MapSettingsManager options) {
         super(VoxelConstants.getMinecraft(), parentScreen.getWidth(), parentScreen.getHeight() - 114, 40, 28);
         this.parentGui = parentScreen;
         this.options = options;
         this.keyMappings = new ArrayList<>();
-        for (int i = 0; i < VoxelMap.mapOptions.keyBindings.length; i++) {
-            this.keyMappings.add(new KeyMappingItem(this.parentGui, this.buildButton(i, false), this.buildButton(i, true), VoxelMap.mapOptions.keyBindings[i]));
+        for (int i = 0; i < this.options.keyBindings.length; i++) {
+            this.keyMappings.add(new KeyMappingItem(this.parentGui, this.buildButton(i, false), this.buildButton(i, true), this.options.keyBindings[i]));
         }
         this.keyMappings.sort(Comparator.comparing(entry -> entry.keyMapping));
         this.checkDuplicateKeys();
@@ -40,7 +38,7 @@ public class GuiSlotKeyMapping extends AbstractSelectionList<GuiSlotKeyMapping.K
 
     private Button buildButton(int index, boolean resetButton) {
         if (!resetButton) {
-            return new Button.Builder(Component.literal(""), button -> this.editingKey = VoxelMap.mapOptions.keyBindings[index]).bounds(0, 0, 70, 20).build();
+            return new Button.Builder(Component.literal(""), button -> this.editingKey = this.options.keyBindings[index]).bounds(0, 0, 70, 20).build();
         } else {
             return new Button.Builder(Component.literal("↻"), button -> this.resetKeyMapping(index)).bounds(0, 0, 20, 20).build();
         }
@@ -51,8 +49,8 @@ public class GuiSlotKeyMapping extends AbstractSelectionList<GuiSlotKeyMapping.K
     }
 
     private void resetKeyMapping(int index) {
-        KeyMapping key = VoxelMap.mapOptions.keyBindings[index];
-        VoxelMap.mapOptions.setKeyBinding(key, key.getDefaultKey());
+        KeyMapping key = this.options.keyBindings[index];
+        this.options.setKeyBinding(key, key.getDefaultKey());
         this.checkDuplicateKeys();
     }
 
@@ -70,7 +68,7 @@ public class GuiSlotKeyMapping extends AbstractSelectionList<GuiSlotKeyMapping.K
 
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (this.isKeyEditing()) {
-            boolean isMenuKey = this.editingKey.same(VoxelMap.mapOptions.keyBindMenu);
+            boolean isMenuKey = this.editingKey.same(this.options.keyBindMenu);
             if (keyCode == 256) {
                 if (!isMenuKey) {
                     this.options.setKeyBinding(editingKey, InputConstants.UNKNOWN);
