@@ -200,9 +200,9 @@ public class MapSettingsManager implements ISettingsManager {
             PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.settingsFile), StandardCharsets.UTF_8.newEncoder())));
 
             out.println("Display Mode:" + this.displayMode);
-            out.println("Coordinates Mode" + this.coordinatesMode);
+            out.println("Coordinates Mode:" + this.coordinatesMode);
             out.println("Old North:" + this.oldNorth);
-            out.println("Show Biome Label" + this.showBiomeLabel);
+            out.println("Show Biome Label:" + this.showBiomeLabel);
             out.println("Map Size:" + this.sizeModifier);
             out.println("Map Shape:" + this.shape);
             out.println("Map Rotating:" + this.rotates);
@@ -218,7 +218,7 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Filter Map:" + this.filtering);
             out.println("Water Transparency:" + this.waterTransparency);
             out.println("Block Transparency:" + this.blockTransparency);
-            out.println("Biome Tint" + this.biomes);
+            out.println("Biome Tint:" + this.biomes);
             out.println("Biome Overlay:" + this.biomeOverlay);
             out.println("Chunk Grid:" + this.chunkGrid);
             out.println("Slime Chunks:" + this.slimeChunks);
@@ -240,7 +240,7 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Waypoint Key:" + this.keyBindWaypoint.saveString());
             out.println("In-game Waypoint Key:" + this.keyBindWaypointToggle.saveString());
             out.println("Radar Key:" + this.keyBindRadarToggle.saveString());
-            out.println("List Alternative Key" + this.keyBindListAlternative.saveString());
+            out.println("List Alternative Key:" + this.keyBindListAlternative.saveString());
             out.println("Zoom Level:" + this.zoom);
             out.println("Welcome Message:" + this.welcome);
 

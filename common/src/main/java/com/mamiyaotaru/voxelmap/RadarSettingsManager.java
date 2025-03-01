@@ -102,7 +102,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
         out.println("Outline Icons:" + this.outlines);
         out.println("Show Facing:" + this.showFacing);
         out.println("Font Size:" + this.fontSize);
-        out.println("Show Names Only For Tagged Mobs" + this.showNamesOnlyForTagged);
+        out.println("Show Names Only For Tagged Mobs:" + this.showNamesOnlyForTagged);
         out.print("Hidden Mobs:");
         for (EnumMobs mob : EnumMobs.values()) {
             if (!mob.enabled) {
