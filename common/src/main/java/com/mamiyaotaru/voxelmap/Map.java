@@ -2077,7 +2077,7 @@ public class Map implements Runnable, IChangeObserver {
             this.welcomeText[5] = (Component.literal("")).append((Component.keybind(this.options.keyBindMenu.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome5b"))
                     .append(", ").append((Component.keybind(this.options.keyBindFullscreen.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome6"));
             this.welcomeText[6] = (Component.literal("")).append((Component.keybind(this.options.keyBindWaypoint.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome7"))
-                    .append(", ").append((Component.keybind(VoxelConstants.getModifiedTabKey().getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome7a"));;
+                    .append(", ").append((Component.keybind(this.options.keyBindMapToggle.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome7a"));;
             this.welcomeText[7] = this.options.keyBindFullscreen.getTranslatedKeyMessage().copy().append(": ").append((Component.translatable("minimap.ui.welcome8")).withStyle(ChatFormatting.GRAY));
         }
 

@@ -36,7 +36,7 @@ public class MapSettingsManager implements ISettingsManager {
     public int shape = 1;
     public boolean rotates = true;
     public int mapCorner = 1;
-    public float mapX = 0;
+    public float mapX = 320;
     public float mapY = 0;
     protected boolean showCaves = true;
     public boolean showBeacons;
