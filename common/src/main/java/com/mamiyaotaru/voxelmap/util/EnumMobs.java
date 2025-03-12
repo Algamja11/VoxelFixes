@@ -210,7 +210,7 @@ public enum EnumMobs {
     public static EnumMobs getMobTypeByEntity(Entity entity) {
         Class<? extends Entity> clazz = entity.getClass();
         if (clazz.equals(TropicalFish.class)) {
-            return ((TropicalFish) entity).getVariant().getPackedId() == 0 ? TROPICAL_FISH_A : TROPICAL_FISH_B;
+            return ((TropicalFish) entity).getPattern().getPackedId() == 0 ? TROPICAL_FISH_A : TROPICAL_FISH_B;
         } else {
             return getMobTypeByClass(clazz);
         }

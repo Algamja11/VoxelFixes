@@ -47,6 +47,8 @@ import net.minecraft.client.model.AxolotlModel;
 import net.minecraft.client.model.BeeModel;
 import net.minecraft.client.model.ChickenModel;
 import net.minecraft.client.model.CodModel;
+import net.minecraft.client.model.ColdCowModel;
+import net.minecraft.client.model.CowModel;
 import net.minecraft.client.model.CreakingModel;
 import net.minecraft.client.model.DolphinModel;
 import net.minecraft.client.model.DonkeyModel;
@@ -76,6 +78,7 @@ import net.minecraft.client.model.TropicalFishModelA;
 import net.minecraft.client.model.TropicalFishModelB;
 import net.minecraft.client.model.VillagerModel;
 import net.minecraft.client.model.WardenModel;
+import net.minecraft.client.model.WarmCowModel;
 import net.minecraft.client.model.WitherBossModel;
 import net.minecraft.client.model.WolfModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -106,9 +109,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.animal.Parrot;
+import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.animal.PolarBear;
 import net.minecraft.world.entity.animal.Pufferfish;
 import net.minecraft.world.entity.animal.Rabbit;
@@ -129,9 +134,9 @@ import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerDataHolder;
 import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -592,9 +597,11 @@ public class Radar implements IRadar {
             }
             case CAT -> {
                 Cat cat = (Cat) contact.entity;
-                String variant = cat.getVariant().getRegisteredName();
-                variant = variant.substring(variant.indexOf(':') + 1);
-                resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/cat/" + variant + ".png");
+                resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/cat/" + this.getVariantKey(cat.getVariant().getRegisteredName()) + ".png");
+            }
+            case COW -> {
+                Cow cow = (Cow) contact.entity;
+                resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/cow/" + this.getVariantKey(cow.getVariant().getRegisteredName()) + "_cow.png");
             }
             case FOX -> {
                 Fox fox = (Fox) contact.entity;
@@ -611,9 +618,7 @@ public class Radar implements IRadar {
             }
             case FROG -> {
                 Frog frog = (Frog) contact.entity;
-                String variant = frog.getVariant().getRegisteredName();
-                variant = variant.substring(variant.indexOf(':') + 1);
-                resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/frog/" + variant + "_frog.png");
+                resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/frog/" + this.getVariantKey(frog.getVariant().getRegisteredName()) + "_frog.png");
             }
             case GHAST -> {
                 Ghast ghast = (Ghast) contact.entity;
@@ -681,6 +686,10 @@ public class Radar implements IRadar {
                     case YELLOW_BLUE -> this.getOrParseResourceLocation("textures/entity/parrot/parrot_yellow_blue.png");
                 };
             }
+            case PIG -> {
+                Pig pig = (Pig) contact.entity;
+                resourceLocationPrimary = this.getOrParseResourceLocation("textures/entity/pig/" + this.getVariantKey(pig.getVariant().getRegisteredName()) + "_pig.png");
+            }
             case PUFFERFISH -> {
                 Pufferfish pufferfish = (Pufferfish) contact.entity;
                 variantString = Integer.toString(pufferfish.getPuffState());
@@ -714,8 +723,8 @@ public class Radar implements IRadar {
                 }
             }
             case TROPICAL_FISH_A, TROPICAL_FISH_B -> {
-                TropicalFish fish = (TropicalFish) contact.entity;
-                resourceLocationSecondary = switch (fish.getVariant()) {
+                TropicalFish tropicalFish = (TropicalFish) contact.entity;
+                resourceLocationSecondary = switch (tropicalFish.getPattern()) {
                     case KOB -> this.getOrParseResourceLocation("textures/entity/fish/tropical_a_pattern_1.png");
                     case SUNSTREAK -> this.getOrParseResourceLocation("textures/entity/fish/tropical_a_pattern_2.png");
                     case SNOOPER -> this.getOrParseResourceLocation("textures/entity/fish/tropical_a_pattern_3.png");
@@ -729,7 +738,7 @@ public class Radar implements IRadar {
                     case BETTY -> this.getOrParseResourceLocation("textures/entity/fish/tropical_b_pattern_5.png");
                     case CLAYFISH -> this.getOrParseResourceLocation("textures/entity/fish/tropical_b_pattern_6.png");
                 };
-                variantString = fish.getVariant().name() + fish.getBaseColor().getTextureDiffuseColor() + fish.getPatternColor().getTextureDiffuseColor();
+                variantString = tropicalFish.getPattern().name() + tropicalFish.getBaseColor().getTextureDiffuseColor() + tropicalFish.getPatternColor().getTextureDiffuseColor();
             }
             case VEX -> {
                 Vex vex = (Vex) contact.entity;
@@ -741,15 +750,16 @@ public class Radar implements IRadar {
             }
             case VILLAGER, ZOMBIE_VILLAGER -> {
                 VillagerData villagerData = ((VillagerDataHolder) contact.entity).getVillagerData();
-                VillagerProfession villagerProfession = villagerData.getProfession();
+                VillagerType villagerType = villagerData.type().value();
+                VillagerProfession villagerProfession = villagerData.profession().value();
                 String iconLocation = contact.type == EnumMobs.ZOMBIE_VILLAGER ? "textures/entity/zombie_villager" : "textures/entity/villager";
-                resourceLocationSecondary = BuiltInRegistries.VILLAGER_TYPE.getKey(villagerData.getType());
+                resourceLocationSecondary = BuiltInRegistries.VILLAGER_TYPE.getKey(villagerType);
                 resourceLocationSecondary = this.getOrParseResourceLocation(resourceLocationSecondary.getNamespace(), iconLocation + "/type/" + resourceLocationSecondary.getPath() + ".png");
-                if (villagerProfession != VillagerProfession.NONE && !contact.entity.isBaby()) {
+                if (villagerProfession != BuiltInRegistries.VILLAGER_PROFESSION.getValue(VillagerProfession.NONE) && !contact.entity.isBaby()) {
                     resourceLocationTertiary = BuiltInRegistries.VILLAGER_PROFESSION.getKey(villagerProfession);
                     resourceLocationTertiary = this.getOrParseResourceLocation(resourceLocationTertiary.getNamespace(), iconLocation + "/profession/" + resourceLocationTertiary.getPath() + ".png");
-                    if (villagerProfession != VillagerProfession.NITWIT) {
-                        resourceLocationQuaternary = villagerLevelID.get(Mth.clamp(villagerData.getLevel(), 1, villagerLevelID.size()));
+                    if (villagerProfession != BuiltInRegistries.VILLAGER_PROFESSION.getValue(VillagerProfession.NITWIT)) {
+                        resourceLocationQuaternary = villagerLevelID.get(Mth.clamp(villagerData.level(), 1, villagerLevelID.size()));
                         resourceLocationQuaternary = this.getOrParseResourceLocation(resourceLocationQuaternary.getNamespace(), iconLocation + "/profession_level/" + resourceLocationQuaternary.getPath() + ".png");
                     }
                 }
@@ -770,25 +780,7 @@ public class Radar implements IRadar {
             }
             case WOLF -> {
                 Wolf wolf = (Wolf) contact.entity;
-                String variant = wolf.getVariant().getRegisteredName();
-                variant = variant.substring(variant.indexOf(':') + 1);
-                String resLocationName = "textures/entity/wolf/wolf";
-                if (!variant.equals("pale")) {
-                    resLocationName += "_" + variant;
-                }
-                if (wolf.isAngry()) {
-                    resLocationName += "_angry";
-                } else if (wolf.isTame()) {
-                    resLocationName += "_tame";
-                }
-                resLocationName += ".png";
-                resourceLocationPrimary = this.getOrParseResourceLocation(resLocationName);
-                if (this.options.showHelmetsMobs) {
-                    String armorName = wolf.getBodyArmorItem().getItem().builtInRegistryHolder().getRegisteredName();
-                    if (armorName.equals("minecraft:wolf_armor")) {
-                        resourceLocationSecondary = this.getOrParseResourceLocation("textures/entity/equipment/wolf_body/armadillo_scute.png");
-                    }
-                }
+                resourceLocationPrimary = wolf.getTexture();
             }
             default -> resourceLocationSecondary = contact.type.secondaryResourceLocation;
         }
@@ -901,6 +893,10 @@ public class Radar implements IRadar {
         return hatType;
     }
 
+    private String getVariantKey(String name) {
+        return name.substring(name.indexOf(':') + 1);
+    }
+
     private BufferedImage createAutoIconImageFromResourceLocations(Contact contact, String entityID, EntityRenderer<LivingEntity, LivingEntityRenderState> entityRenderer, ResourceLocation... resourceLocations) {
         Entity entity = contact.entity;
         EnumMobs type = contact.type;
@@ -975,6 +971,9 @@ public class Radar implements IRadar {
                         case BeeModel beeModel -> headBits = new ModelPart[]{beeModel.bone.getChild("body")};
                         case ChickenModel chickenModel -> headBits = new ModelPart[]{chickenModel.head};
                         case CodModel codModel -> headBits = new ModelPart[]{codModel.root()};
+                        case WarmCowModel warmCowModel -> headBits = new ModelPart[]{warmCowModel.root()};
+                        case ColdCowModel coldCowModel -> headBits = new ModelPart[]{coldCowModel.root()};
+                        case CowModel cowModel -> headBits = new ModelPart[]{cowModel.getHead()};
                         case CreakingModel creakingModel -> headBits = new ModelPart[]{creakingModel.root().getChild("root").getChild("upper_body").getChild("head")};
                         case DolphinModel dolphinModel -> headBits = new ModelPart[]{dolphinModel.root()};
                         case DonkeyModel donkeyModel -> headBits = new ModelPart[]{donkeyModel.headParts};
@@ -999,7 +998,7 @@ public class Radar implements IRadar {
                         case WitherBossModel witherBossModel -> headBits = new ModelPart[]{witherBossModel.root().getChild("center_head"), witherBossModel.root().getChild("left_head"), witherBossModel.root().getChild("right_head")};
                         case WolfModel wolfModel -> headBits = new ModelPart[]{wolfModel.head};
 
-                        case PlayerModel playerModel -> {
+                        case PlayerModel ignored -> {
                             boolean showHat = true;
                             if (entity instanceof Player player) {
                                 showHat = player.isModelPartShown(PlayerModelPart.HAT);
@@ -1324,7 +1323,7 @@ public class Radar implements IRadar {
                         this.newMobs = true;
                     }
                 }
-            } else if (helmet instanceof ArmorItem helmetArmor) {
+            } else if (helmet instanceof Item helmetArmor) {
                 if (this.isLeatherArmor(helmetArmor)) {
                     icon = this.textureAtlas.getAtlasSpriteIncludingYetToBeStitched("armor " + this.armorNames[0]);
                     contact.setArmorColor(DyedItemColor.getOrDefault(stack, DyedItemColor.LEATHER_COLOR));
@@ -1462,7 +1461,7 @@ public class Radar implements IRadar {
         }
     }
 
-    private boolean isLeatherArmor(ArmorItem helmet) {
+    private boolean isLeatherArmor(Item helmet) {
         return helmet.getDescriptionId().equals("item.minecraft.leather_helmet");
     }
 
