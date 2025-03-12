@@ -12,6 +12,7 @@ import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
@@ -30,7 +31,6 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -170,7 +170,7 @@ public class ColorManager {
 
     public final BufferedImage getBlockImage(BlockState blockState, ItemStack stack, Level world, float iconScale, float captureDepth) {
         try {
-            BakedModel model = VoxelConstants.getMinecraft().getModelManager().getBlockModelShaper().getBlockModel(blockState);
+            BlockStateModel model = VoxelConstants.getMinecraft().getModelManager().getBlockModelShaper().getBlockModel(blockState);
             this.drawModel(Direction.EAST, model, stack, world, iconScale, captureDepth);
             BufferedImage blockImage = ImageUtils.createBufferedImageFromGLID(OpenGL.Utils.fboTextureId);
             if (VoxelConstants.DEBUG) {
@@ -183,18 +183,18 @@ public class ColorManager {
         }
     }
 
-    private void drawModel(Direction facing, BakedModel model, ItemStack stack, Level world, float scale, float captureDepth) {
+    private void drawModel(Direction facing, BlockStateModel model, ItemStack stack, Level world, float scale, float captureDepth) {
         float size = 8.0F * scale;
-        ItemTransforms transforms = model.getTransforms();
-        ItemTransform headTransforms = transforms.head();
-        Vector3f translations = headTransforms.translation;
-        float transX = -translations.x() * size + 0.5F * size;
-        float transY = translations.y() * size + 0.5F * size;
-        float transZ = -translations.z() * size + 0.5F * size;
-        Vector3f rotations = headTransforms.rotation;
-        float rotX = rotations.x();
-        float rotY = rotations.y();
-        float rotZ = rotations.z();
+//        ItemTransforms transforms = model.getTransforms();
+//        ItemTransform headTransforms = transforms.head();
+//        Vector3f translations = headTransforms.translation;
+//        float transX = -translations.x() * size + 0.5F * size;
+//        float transY = translations.y() * size + 0.5F * size;
+//        float transZ = -translations.z() * size + 0.5F * size;
+//        Vector3f rotations = headTransforms.rotation;
+//        float rotX = rotations.x();
+//        float rotY = rotations.y();
+//        float rotZ = rotations.z();
         OpenGL.glBindTexture(OpenGL.GL11_GL_TEXTURE_2D, OpenGL.Utils.fboTextureId);
         int width = OpenGL.glGetTexLevelParameteri(OpenGL.GL11_GL_TEXTURE_2D, 0, OpenGL.GL11_GL_TRANSFORM_BIT);
         int height = OpenGL.glGetTexLevelParameteri(OpenGL.GL11_GL_TEXTURE_2D, 0, OpenGL.GL11_GL_TEXTURE_HEIGHT);
@@ -219,17 +219,17 @@ public class ColorManager {
         OpenGL.glClear(OpenGL.GL11_GL_COLOR_BUFFER_BIT | OpenGL.GL11_GL_DEPTH_BUFFER_BIT);
         OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
         matrixStack.pushMatrix();
-        matrixStack.translate((width / 2f) - size / 2.0F + transX, (height / 2f) - size / 2.0F + transY, 0.0F + transZ);
-        matrixStack.scale(size, size, size);
+//        matrixStack.translate((width / 2f) - size / 2.0F + transX, (height / 2f) - size / 2.0F + transY, 0.0F + transZ);
+//        matrixStack.scale(size, size, size);
         VoxelConstants.getMinecraft().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
         OpenGL.Utils.img2(TextureAtlas.LOCATION_BLOCKS);
-        matrixStack.rotate(Axis.YP.rotationDegrees(180.0F));
-        matrixStack.rotate(Axis.YP.rotationDegrees(rotY));
-        matrixStack.rotate(Axis.XP.rotationDegrees(rotX));
-        matrixStack.rotate(Axis.ZP.rotationDegrees(rotZ));
-        if (facing == Direction.UP) {
-            matrixStack.rotate(Axis.XP.rotationDegrees(90.0F));
-        }
+//        matrixStack.rotate(Axis.YP.rotationDegrees(180.0F));
+//        matrixStack.rotate(Axis.YP.rotationDegrees(rotY));
+//        matrixStack.rotate(Axis.XP.rotationDegrees(rotX));
+//        matrixStack.rotate(Axis.ZP.rotationDegrees(rotZ));
+//        if (facing == Direction.UP) {
+//            matrixStack.rotate(Axis.XP.rotationDegrees(90.0F));
+//        }
 
         Vector4f fullbright2 = new Vector4f(this.fullbright.x, fullbright.y, fullbright.z, 0);
         fullbright2.mul(matrixStack);
@@ -272,7 +272,7 @@ public class ColorManager {
 
     private void loadTexturePackTerrainImage() {
         try {
-            VoxelConstants.getMinecraft().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).bind();
+//            VoxelConstants.getMinecraft().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).bind();
             BufferedImage terrainStitched = ImageUtils.createBufferedImageFromCurrentGLImage();
             this.terrainBuff = new BufferedImage(terrainStitched.getWidth(null), terrainStitched.getHeight(null), 6);
             Graphics gfx = this.terrainBuff.createGraphics();
@@ -401,10 +401,10 @@ public class ColorManager {
             RenderShape blockRenderType = blockState.getRenderShape();
             BlockRenderDispatcher blockRendererDispatcher = VoxelConstants.getMinecraft().getBlockRenderer();
             if (blockRenderType == RenderShape.MODEL) {
-                BakedModel iBakedModel = blockRendererDispatcher.getBlockModel(blockState);
+                BlockStateModel iBakedModel = blockRendererDispatcher.getBlockModel(blockState);
                 List<BakedQuad> quads = new ArrayList<>();
-                quads.addAll(iBakedModel.getQuads(blockState, facing, this.random));
-                quads.addAll(iBakedModel.getQuads(blockState, null, this.random));
+                quads.addAll(iBakedModel.collectParts(this.random).getFirst().getQuads(facing));
+                quads.addAll(iBakedModel.collectParts(this.random).getFirst().getQuads(null));
                 BlockModel model = new BlockModel(quads, this.failedToLoadX, this.failedToLoadY);
                 if (model.numberOfFaces() > 0) {
                     BufferedImage modelImage = model.getImage(this.terrainBuff);
@@ -425,7 +425,7 @@ public class ColorManager {
     private int getColorForTerrainSprite(BlockState blockState, BlockRenderDispatcher blockRendererDispatcher) {
         BlockModelShaper blockModelShapes = blockRendererDispatcher.getBlockModelShaper();
         TextureAtlasSprite icon = blockModelShapes.getParticleIcon(blockState);
-        if (icon == blockModelShapes.getModelManager().getMissingModel().getParticleIcon()) {
+        if (icon == blockModelShapes.getModelManager().getMissingBlockStateModel().particleIcon()) {
             Block block = blockState.getBlock();
             Block material = blockState.getBlock();
             if (block instanceof LiquidBlock) {
