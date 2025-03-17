@@ -223,7 +223,7 @@ public class RadarSimple implements IRadar {
             }
 
             boolean inRange;
-            if (this.minimapOptions.shape != 1 && !this.layoutVariables.fullscreenMap) {
+            if (this.minimapOptions.shape != 1) {
                 inRange = contact.distance < 31.0;
             } else {
                 double radLocate = Math.toRadians(contact.angle);

@@ -77,7 +77,7 @@ public class MapSettingsManager implements ISettingsManager {
     public boolean waypointsAllowed = true;
     public boolean deathWaypointAllowed = true;
 
-    public final KeyMapping keyBindMapToggle = new KeyMapping("key.minimap.togglemap", InputConstants.getKey("key.keyboard.o").getValue(), "controls.minimap.title");
+    public final KeyMapping keyBindMapToggle = new KeyMapping("key.minimap.togglemap", InputConstants.getKey("key.keyboard.h").getValue(), "controls.minimap.title");
     public final KeyMapping keyBindMenu = new KeyMapping("key.minimap.voxelmapmenu", InputConstants.getKey("key.keyboard.m").getValue(), "controls.minimap.title");
     public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.minimap.waypointmenu", InputConstants.getKey("key.keyboard.u").getValue(), "controls.minimap.title");
     public final KeyMapping keyBindZoomIn = new KeyMapping("key.minimap.zoomin", InputConstants.getKey("key.keyboard.up").getValue(), "controls.minimap.title");
@@ -518,7 +518,7 @@ public class MapSettingsManager implements ISettingsManager {
             case LOCATION -> {
                 ++this.mapCorner;
                 if (this.mapCorner > 3) {
-                    this.mapCorner = 0;
+                    this.mapCorner = -1;
                 }
                 if (this.mapCorner == 0) {
                     this.mapX = 0f;

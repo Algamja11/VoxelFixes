@@ -37,12 +37,7 @@ public class GuiMoveMinimap extends GuiScreenMinimap {
 
     public void init() {
         this.screenTitle = Component.translatable("options.minimap.moveminimap");
-
-        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> {
-            this.options.mapCorner = -1;
-            this.options.saveAll();
-            VoxelConstants.getMinecraft().setScreen(this.parent);
-        }).bounds(this.getWidth() / 2 - 100, this.getHeight() - 32, 200, 20).build());
+        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> VoxelConstants.getMinecraft().setScreen(this.parent)).bounds(this.getWidth() / 2 - 100, this.getHeight() - 32, 200, 20).build());
     }
 
     @Override
