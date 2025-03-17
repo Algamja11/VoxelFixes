@@ -518,7 +518,7 @@ public class MapSettingsManager implements ISettingsManager {
             case LOCATION -> {
                 ++this.mapCorner;
                 if (this.mapCorner > 3) {
-                    this.mapCorner = -1;
+                    this.mapCorner = 0;
                 }
                 if (this.mapCorner == 0) {
                     this.mapX = 0f;
