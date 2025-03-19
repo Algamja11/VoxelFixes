@@ -658,18 +658,20 @@ public class Map implements Runnable, IChangeObserver {
         modelViewMatrixStack.identity();
         modelViewMatrixStack.translate(0.0f, 0.0f, -2000.0f);
 
+        OpenGL.glDepthMask(false);
+        OpenGL.glDisable(OpenGL.GL11_GL_DEPTH_TEST);
         OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
         OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, 0);
         OpenGL.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        float scale = this.fullscreenMap ? 0.65f : 1.0f;
-        boolean hideMap = this.options.displayMode == 0 || (this.options.displayMode == 2 && !this.fullscreenMap);
-        if (!hideMap) {
+        float scale = this.fullscreenMap ? 0.5f : 1.0f;
+        boolean hideMinimap = this.options.displayMode == 0 || (this.options.displayMode == 2 && !this.fullscreenMap);
+        if (!hideMinimap) {
             this.renderMap(drawContext, modelViewMatrixStack, mapX, mapY, scScale, scale);
             this.drawArrow(modelViewMatrixStack, mapX, mapY, scale);
             this.drawDirections(drawContext, mapX, mapY, (float) (scScale / guiScale), scale * 0.5f);
         }
         if (this.options.coordinatesMode != 0) {
-            this.showCoords(drawContext, mapX, mapY, (float) (scScale / guiScale), scale * 0.5f, hideMap);
+            this.showCoords(drawContext, mapX, mapY, (float) (scScale / guiScale), scale * 0.5f, hideMinimap);
         }
 
         modelViewMatrixStack.popMatrix();
@@ -1508,19 +1510,16 @@ public class Map implements Runnable, IChangeObserver {
             scale = 1.4142F;
         }
 
-        Matrix4f backupProjectionMatrix = RenderSystem.getProjectionMatrix();
+        Matrix4f savedProjectionMatrix = RenderSystem.getProjectionMatrix();
         Matrix4f matrix4f = new Matrix4f().ortho(0.0F, 512.0F, 512.0F, 0.0F, 1000.0F, 3000.0F);
         RenderSystem.setProjectionMatrix(matrix4f, ProjectionType.ORTHOGRAPHIC);
         matrixStack.pushMatrix();
         matrixStack.identity();
         matrixStack.translate(0.0F, 0.0F, -2000.0F);
-
         RenderSystem.setShader(CoreShaders.POSITION_TEX);
         OpenGL.glBindTexture(OpenGL.GL11_GL_TEXTURE_2D, 0);
         OpenGL.Utils.bindFramebuffer();
         OpenGL.glViewport(0, 0, 512, 512);
-        OpenGL.glDepthMask(false);
-        OpenGL.glDisable(OpenGL.GL11_GL_DEPTH_TEST);
         OpenGL.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
         OpenGL.glClear(16384);
         OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, 0);
@@ -1561,19 +1560,15 @@ public class Map implements Runnable, IChangeObserver {
         OpenGL.Utils.ldrawthree(512.0, 0.0, 1.0, 1.0F, 1.0F);
         OpenGL.Utils.ldrawthree(0.0, 0.0, 1.0, 0.0F, 1.0F);
         OpenGL.Utils.drawPost();
-
         matrixStack.popMatrix();
-        OpenGL.glDepthMask(true);
-        OpenGL.glEnable(GL11C.GL_DEPTH_TEST);
         OpenGL.Utils.unbindFramebuffer();
         OpenGL.glViewport(0, 0, VoxelConstants.getMinecraft().getWindow().getWidth(), VoxelConstants.getMinecraft().getWindow().getHeight());
         matrixStack.popMatrix();
-        RenderSystem.setProjectionMatrix(backupProjectionMatrix, ProjectionType.ORTHOGRAPHIC);
+        RenderSystem.setProjectionMatrix(savedProjectionMatrix, ProjectionType.ORTHOGRAPHIC);
 
         matrixStack.pushMatrix();
         OpenGL.glBlendFunc(GL11C.GL_SRC_ALPHA, GL11C.GL_ZERO);
         OpenGL.Utils.disp2(OpenGL.Utils.fboTextureId);
-
         double guiScale = (double) VoxelConstants.getMinecraft().getWindow().getWidth() / this.scWidth;
         minTablistOffset = guiScale * 63;
         OpenGL.glEnable(GL11C.GL_SCISSOR_TEST);
@@ -1584,21 +1579,20 @@ public class Map implements Runnable, IChangeObserver {
         OpenGL.glDisable(GL11C.GL_SCISSOR_TEST);
         matrixStack.popMatrix();
 
-        OpenGL.glDisable(OpenGL.GL11_GL_DEPTH_TEST);
         if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
             this.layoutVariables.updateVars(scScale, x, y, this.zoomScale, this.zoomScaleAdjusted, this.canRotate);
             VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(drawContext, matrixStack, this.layoutVariables, (float) (scScale / VoxelConstants.getMinecraft().getWindow().getGuiScale()), iconScale);
         }
 
-        OpenGL.glBlendFunc(GL11C.GL_SRC_ALPHA, GL11C.GL_ONE_MINUS_SRC_ALPHA);
         OpenGL.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        OpenGL.glBlendFunc(GL11C.GL_SRC_ALPHA, GL11C.GL_ONE_MINUS_SRC_ALPHA);
         this.drawMapFrame(x, y, this.options.shape + (this.fullscreenMap ? 2 : 0), 128);
 
         double lastXDouble = GameVariableAccessShim.xCoordDouble();
         double lastZDouble = GameVariableAccessShim.zCoordDouble();
         TextureAtlas textureAtlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
         OpenGL.Utils.disp2(textureAtlas.getId());
-        OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
+//        OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
         OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
         if (VoxelMap.mapOptions.waypointsAllowed) {
             Waypoint highlightedPoint = this.waypointManager.getHighlightedWaypoint();
@@ -1621,10 +1615,9 @@ public class Map implements Runnable, IChangeObserver {
 
     private ResourceLocation getMapStencil(int mode) {
         return switch (mode) {
-            case 0 -> this.circleStencil;
             case 1 -> this.squareStencil;
-            case 2 -> this.circleStencil;
             case 3 -> this.squareStencilLarge;
+            case 0, 2 -> this.circleStencil;
             default -> null;
         };
     }
@@ -1778,7 +1771,6 @@ public class Map implements Runnable, IChangeObserver {
 
     private void drawDirections(GuiGraphics drawContext, int x, int y, float scaleProj, float fontSize) {
         PoseStack matrixStack = drawContext.pose();
-        boolean unicode = VoxelConstants.getMinecraft().options.forceUnicodeFont().get();
         float rotate;
         if (this.canRotate) {
             rotate = -this.direction - 90.0F - this.northRotate;

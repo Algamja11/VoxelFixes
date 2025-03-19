@@ -264,13 +264,16 @@ public class RadarSimple implements IRadar {
                         float scaleFactor = 1f / fontSize;
                         String mobName = contact.entity.getDisplayName().getString();
                         int halfStringWidth = VoxelConstants.getMinecraft().font.width(mobName) / 2;
-                        int textColor;
-                        int brightness = (int) (contact.brightness * 255);
+                        int textR = (contact.entity.getTeamColor() >> 16) & 0xFF;
+                        int textG = (contact.entity.getTeamColor() >> 8) & 0xFF;
+                        int textB = contact.entity.getTeamColor() & 0xFF;
                         if (wayY < 0) {
-                            textColor = (brightness << 24) | (255 << 16) | (255 << 8) | 255;
-                        } else {
-                            textColor = (255 << 24) | (brightness << 16) | (brightness << 8) | brightness;
+                            textR *= contact.brightness;
+                            textG *= contact.brightness;
+                            textB *= contact.brightness;
                         }
+                        int textAlpha = (int) (contact.brightness * 255);
+                        int textColor = (textAlpha << 24) | (textR << 16) | (textG << 8) | textB;
                         PoseStack textMatrixStack = drawContext.pose();
                         textMatrixStack.pushPose();
                         textMatrixStack.setIdentity();
