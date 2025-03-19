@@ -1592,7 +1592,6 @@ public class Map implements Runnable, IChangeObserver {
         double lastZDouble = GameVariableAccessShim.zCoordDouble();
         TextureAtlas textureAtlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
         OpenGL.Utils.disp2(textureAtlas.getId());
-//        OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
         OpenGL.glBlendFunc(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
         if (VoxelMap.mapOptions.waypointsAllowed) {
             Waypoint highlightedPoint = this.waypointManager.getHighlightedWaypoint();

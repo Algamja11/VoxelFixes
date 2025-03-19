@@ -191,7 +191,7 @@ public enum EnumMobs {
 
     ZOGLIN(Zoglin.class, "Zoglin", 0.0F, "textures/entity/hoglin/zoglin.png", "", true, false),
     ZOMBIE(Zombie.class, "Zombie", 0.0F, "textures/entity/zombie/zombie.png", "", true, false),
-    ZOMBIE_VILLAGER(ZombieVillager.class, "Zombie_villager", 0.0F, "textures/entity/zombie_villager/zombie_villager.png", "", true, false),
+    ZOMBIE_VILLAGER(ZombieVillager.class, "Zombie_Villager", 0.0F, "textures/entity/zombie_villager/zombie_villager.png", "", true, false),
     ZOMBIFIED_PIGLIN(ZombifiedPiglin.class, "Zombified_Piglin", 0.0F, "textures/entity/piglin/zombified_piglin.png", "", true, true);
 
     public final Class<? extends Entity> clazz;

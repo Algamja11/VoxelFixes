@@ -576,8 +576,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         } else {
             long timeSinceRelease = System.currentTimeMillis() - this.timeOfRelease;
             if (timeSinceRelease < 700.0F) {
-                this.deltaX = this.deltaXonRelease * ((700 - timeSinceRelease) / 700.0F);
-                this.deltaY = this.deltaYonRelease * ((700 - timeSinceRelease) / 700.0F);
+                this.deltaX = this.deltaXonRelease * ((700.0F - timeSinceRelease) / 700.0F);
+                this.deltaY = this.deltaYonRelease * ((700.0F - timeSinceRelease) / 700.0F);
             } else {
                 this.deltaX = 0.0F;
                 this.deltaY = 0.0F;
