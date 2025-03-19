@@ -1329,8 +1329,7 @@ public class Radar implements IRadar {
                     icon = this.textureAtlas.getAtlasSpriteIncludingYetToBeStitched("armor " + this.armorNames[0]);
                     contact.setArmorColor(DyedItemColor.getOrDefault(stack, DyedItemColor.LEATHER_COLOR));
                 } else {
-                    boolean isPiglin = contact.type == EnumMobs.PIGLIN || contact.type == EnumMobs.ZOMBIFIED_PIGLIN;
-                    icon = this.textureAtlas.getAtlasSpriteIncludingYetToBeStitched("armor " + helmet.getDescriptionId() + (isPiglin ? "_piglin" : ""));
+                    icon = this.textureAtlas.getAtlasSpriteIncludingYetToBeStitched("armor " + helmet.getDescriptionId() + (this.isPiglin(contact) ? "_piglin" : ""));
                     if (icon == this.textureAtlas.getMissingImage()) {
                         icon = this.createUnknownArmorIcons(contact, helmet);
                     } else if (icon == this.textureAtlas.getFailedImage()) {
@@ -1397,7 +1396,7 @@ public class Radar implements IRadar {
 
         float intendedWidth = 9.0F;
         float intendedHeight = 9.0F;
-        boolean isPiglin = contact.type == EnumMobs.PIGLIN || contact.type == EnumMobs.ZOMBIFIED_PIGLIN;
+        boolean isPiglin = this.isPiglin(contact);
         HumanoidModel<HumanoidRenderState> armorModel;
 
         if (isPiglin) {
@@ -1464,6 +1463,10 @@ public class Radar implements IRadar {
 
     private boolean isLeatherArmor(ArmorItem helmet) {
         return helmet.getDescriptionId().equals("item.minecraft.leather_helmet");
+    }
+
+    private boolean isPiglin(Contact contact) {
+        return contact.type == EnumMobs.PIGLIN || contact.type == EnumMobs.PIGLIN_BRUTE || contact.type == EnumMobs.ZOMBIFIED_PIGLIN;
     }
 
     public void renderMapMobs(GuiGraphics drawContext, Matrix4fStack matrixStack, int x, int y, float scaleProj, float iconSize) {
