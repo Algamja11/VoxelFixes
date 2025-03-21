@@ -268,11 +268,6 @@ public class RadarSimple implements IRadar {
                         int textR = ARGB.red(contact.entity.getTeamColor());
                         int textG = ARGB.green(contact.entity.getTeamColor());
                         int textB = ARGB.blue(contact.entity.getTeamColor());
-                        if (wayY < 0) {
-                            textR *= contact.brightness;
-                            textG *= contact.brightness;
-                            textB *= contact.brightness;
-                        }
                         int textAlpha = (int) (contact.brightness * 255);
                         PoseStack textMatrixStack = drawContext.pose();
                         textMatrixStack.pushPose();
