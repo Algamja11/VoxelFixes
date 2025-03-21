@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 
 import java.util.HashMap;
 
@@ -53,7 +54,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
     private final String suffix;
     private final boolean enabled;
     private final boolean editing;
-    private HashMap<String, ResourceLocation> waypointIconMap = new HashMap<>();
+    private final HashMap<String, ResourceLocation> waypointIconMap = new HashMap<>();
 
     public GuiAddWaypoint(IGuiWaypoints par1GuiScreen, Waypoint par2Waypoint, boolean editing) {
         this.waypointManager = VoxelConstants.getVoxelMapInstance().getWaypointManager();
@@ -207,9 +208,9 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
                 int pickPointX = (int) ((mouseX - pickerCenterX) / (float) pickerSize * 255f);
                 int pickPointY = (int) ((mouseY - pickerCenterY) / (float) pickerSize * 255f);
                 int color = this.colorManager.getColorPicker().getRGB(pickPointX, pickPointY);
-                this.waypoint.red = (color >> 16 & 0xFF) / 255.0f;
-                this.waypoint.green = (color >> 8 & 0xFF) / 255.0f;
-                this.waypoint.blue = (color & 0xFF) / 255.0f;
+                this.waypoint.red = ARGB.red(color) / 255.0f;
+                this.waypoint.green = ARGB.green(color) / 255.0f;
+                this.waypoint.blue = ARGB.blue(color) / 255.0f;
                 this.choosingColor = false;
             }
         } else if (choosingIcon) {
@@ -303,9 +304,9 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
                     int pickPointX = (int) ((mouseX - pickerCenterX) / (float) pickerSize * 255f);
                     int pickPointY = (int) ((mouseY - pickerCenterY) / (float) pickerSize * 255f);
                     int color = this.colorManager.getColorPicker().getRGB(pickPointX, pickPointY);
-                    int curR = (color >> 16 & 0xFF);
-                    int curG = (color >> 8 & 0xFF);
-                    int curB = (color & 0xFF);
+                    int curR = ARGB.red(color);
+                    int curG = ARGB.green(color);
+                    int curB = ARGB.blue(color);
                     drawContext.blit(RenderType::guiTextured, TARGET, mouseX - 8, mouseY - 8, 0f, 0f, 16, 16, 16, 16);
                     drawContext.drawCenteredString(this.getFontRenderer(), "R: " + curR + ", G: " + curG + ", B: " + curB, this.getWidth() / 2, this.getHeight() / 2 + pickerSize / 2 + 8, color);
                 }

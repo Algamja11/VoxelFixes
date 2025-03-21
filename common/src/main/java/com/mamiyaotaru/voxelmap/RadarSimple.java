@@ -17,6 +17,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
@@ -264,16 +265,15 @@ public class RadarSimple implements IRadar {
                         float scaleFactor = 1f / fontSize;
                         String mobName = contact.entity.getDisplayName().getString();
                         int halfStringWidth = VoxelConstants.getMinecraft().font.width(mobName) / 2;
-                        int textR = (contact.entity.getTeamColor() >> 16) & 0xFF;
-                        int textG = (contact.entity.getTeamColor() >> 8) & 0xFF;
-                        int textB = contact.entity.getTeamColor() & 0xFF;
+                        int textR = ARGB.red(contact.entity.getTeamColor());
+                        int textG = ARGB.green(contact.entity.getTeamColor());
+                        int textB = ARGB.blue(contact.entity.getTeamColor());
                         if (wayY < 0) {
                             textR *= contact.brightness;
                             textG *= contact.brightness;
                             textB *= contact.brightness;
                         }
                         int textAlpha = (int) (contact.brightness * 255);
-                        int textColor = (textAlpha << 24) | (textR << 16) | (textG << 8) | textB;
                         PoseStack textMatrixStack = drawContext.pose();
                         textMatrixStack.pushPose();
                         textMatrixStack.setIdentity();
@@ -281,7 +281,7 @@ public class RadarSimple implements IRadar {
                         wayX = Math.sin(Math.toRadians(contact.angle)) * contact.distance;
                         wayZ = Math.cos(Math.toRadians(contact.angle)) * contact.distance;
                         textMatrixStack.translate(-wayX * scaleFactor, -wayZ * scaleFactor, 900.0f);
-                        drawContext.drawString(VoxelConstants.getMinecraft().font, mobName, (int) (x * scaleFactor - halfStringWidth), (int) (y * scaleFactor + 10.0f), textColor);
+                        drawContext.drawString(VoxelConstants.getMinecraft().font, mobName, (int) (x * scaleFactor - halfStringWidth), (int) (y * scaleFactor + 10.0f), ARGB.color(textAlpha, textR, textG, textB));
                         textMatrixStack.popPose();
                     }
                 } catch (Exception e) {
