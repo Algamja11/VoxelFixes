@@ -45,7 +45,9 @@ public enum EnumOptionsMinimap {
     MOVESCOREBOARDDOWN("options.minimap.movescoreboarddown", false, true, false),
     DISTANCEUNITCONVERSION("options.minimap.waypoints.distanceunitconversion", false, true, false),
     WAYPOINTNAMEBELOWICON("options.minimap.waypoints.waypointnamebelowicon", false, true, false),
-    WAYPOINTDISTANCEBELOWNAME("options.minimap.waypoints.waypointdistancebelowname", false, true, false);
+    WAYPOINTDISTANCEBELOWNAME("options.minimap.waypoints.waypointdistancebelowname", false, true, false),
+    WORLDSEED("", false, false, false),
+    TELEPORTCOMMAND("", false, false, false);
 
     private final boolean isFloat;
     private final boolean isBoolean;
