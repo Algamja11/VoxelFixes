@@ -12,7 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiWaypointsOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINTDISTANCE, EnumOptionsMinimap.DISTANCEUNITCONVERSION, EnumOptionsMinimap.WAYPOINTNAMEBELOWICON, EnumOptionsMinimap.WAYPOINTDISTANCEBELOWNAME, EnumOptionsMinimap.DEATHPOINTS};
+    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.DISTANCE_UNIT_CONVERSION, EnumOptionsMinimap.NAME_LABEL_BELOW_ICON, EnumOptionsMinimap.DISTANCE_LABEL_BELOW_NAME, EnumOptionsMinimap.DEATHPOINTS};
     private final Screen parent;
     private final MapSettingsManager options;
     protected Component screenTitle;
