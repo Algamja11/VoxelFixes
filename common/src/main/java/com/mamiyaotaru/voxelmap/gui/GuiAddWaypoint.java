@@ -10,14 +10,15 @@ import com.mamiyaotaru.voxelmap.gui.overridden.PopupGuiButton;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
 import com.mamiyaotaru.voxelmap.util.DimensionContainer;
+import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
-import java.util.HashMap;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 
 public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen {
     private static final ResourceLocation BLANK = ResourceLocation.parse("textures/misc/white.png");
@@ -44,7 +45,6 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
     private final String suffix;
     private final boolean enabled;
     private final boolean editing;
-    private HashMap<String, ResourceLocation> waypointIconMap = new HashMap<>();
 
     public GuiAddWaypoint(IGuiWaypoints par1GuiScreen, Waypoint par2Waypoint, boolean editing) {
         this.waypointManager = VoxelConstants.getVoxelMapInstance().getWaypointManager();
@@ -199,9 +199,9 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
                 int pickPointX = (int) ((mouseX - pickerCenterX) / pickerSize * 255f);
                 int pickPointY = (int) ((mouseY - pickerCenterY) / pickerSize * 255f);
                 int color = this.colorManager.getColorPicker().getRGB(pickPointX, pickPointY);
-                this.waypoint.red = (color >> 16 & 0xFF) / 255.0f;
-                this.waypoint.green = (color >> 8 & 0xFF) / 255.0f;
-                this.waypoint.blue = (color & 0xFF) / 255.0f;
+                this.waypoint.red = ARGB.redFloat(color);
+                this.waypoint.green = ARGB.greenFloat(color);
+                this.waypoint.blue = ARGB.blueFloat(color);
                 this.choosingColor = false;
             }
         }
@@ -262,7 +262,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
         this.tooltip = null;
         this.buttonEnabled.setMessage(Component.literal(I18n.get("minimap.waypoints.enabled") + " " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
-        renderBackgroundTexture(drawContext);
+        this.renderDefaultBackground(drawContext);
         drawContext.drawCenteredString(this.getFontRenderer(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("minimap.waypoints.new") : I18n.get("minimap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
         drawContext.drawString(this.getFontRenderer(), I18n.get("minimap.waypoints.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 16777215);
         drawContext.drawString(this.getFontRenderer(), I18n.get("X"), this.getWidth() / 2 - 100, this.getHeight() / 6 + 41, 16777215);
@@ -271,35 +271,25 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
         super.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
 
         int buttonListY = this.getHeight() / 6 + 88;
-        String iconLocation = "voxelmap:images/waypoints/waypoint" + this.waypoint.imageSuffix + ".png";
-        ResourceLocation waypointIcon;
-        if (this.waypointIconMap.containsKey(iconLocation)) {
-            waypointIcon = this.waypointIconMap.get(iconLocation);
-        } else {
-            waypointIcon = ResourceLocation.parse(iconLocation);
-            this.waypointIconMap.put(iconLocation, waypointIcon);
-        }
         int color = this.waypoint.getUnifiedColor();
         drawContext.blit(RenderType::guiTextured, BLANK, this.getWidth() / 2 - 25, buttonListY + 24 + 5, 0, 0, 16, 10, 16, 10, color);
-        drawContext.blit(RenderType::guiTextured, waypointIcon, this.getWidth() / 2 - 25, buttonListY + 48 + 2, 0.0F, 0.0F, 16, 16, 16, 16, color);
+        Sprite waypointSprite = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/waypoint" + waypoint.imageSuffix + ".png");
+        waypointSprite.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, this.getWidth() / 2 - 25, buttonListY + 48 + 2, 16, 16, color);
         drawContext.pose().translate(0, 0, 20);
         if (this.choosingColor || this.choosingIcon) {
-            renderBackgroundTexture(drawContext);
+            this.renderDefaultBackground(drawContext);
 
             if (this.choosingColor) {
                 int pickerSize = 200;
                 int pickerCenterX = this.getWidth() / 2 - pickerSize / 2;
                 int pickerCenterY = this.getHeight() / 2 - pickerSize / 2;
-                drawContext.blit(RenderType::guiTextured, PICKER, pickerCenterX, pickerCenterY, 0f, 0f, pickerSize, pickerSize, pickerSize, pickerSize);
+                drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, PICKER, pickerCenterX, pickerCenterY, 0f, 0f, pickerSize, pickerSize, pickerSize, pickerSize);
                 if (mouseX >= pickerCenterX && mouseX <= pickerCenterX + pickerSize && mouseY >= pickerCenterY && mouseY <= pickerCenterY + pickerSize){
                     int pickPointX = (int) ((mouseX - pickerCenterX) / (float) pickerSize * 255f);
                     int pickPointY = (int) ((mouseY - pickerCenterY) / (float) pickerSize * 255f);
                     color = this.colorManager.getColorPicker().getRGB(pickPointX, pickPointY);
-                    int curR = (color >> 16 & 0xFF);
-                    int curG = (color >> 8 & 0xFF);
-                    int curB = (color & 0xFF);
-                    drawContext.blit(RenderType::guiTextured, TARGET, mouseX - 8, mouseY - 8, 0f, 0f, 16, 16, 16, 16);
-                    drawContext.drawCenteredString(this.getFontRenderer(), "R: " + curR + ", G: " + curG + ", B: " + curB, this.getWidth() / 2, this.getHeight() / 2 + pickerSize / 2 + 8, color);
+                    drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, TARGET, mouseX - 8, mouseY - 8, 0f, 0f, 16, 16, 16, 16);
+                    drawContext.drawCenteredString(this.getFontRenderer(), "R: " + ARGB.red(color) + ", G: " + ARGB.green(color) + ", B: " + ARGB.blue(color), this.getWidth() / 2, this.getHeight() / 2 + pickerSize / 2 + 8, color);
                 }
             }
 
@@ -309,22 +299,15 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
                 int chooserCenterY = (int) (this.getHeight() / 2f - chooser.getHeight() / 2f);
                 Sprite icon = chooser.getIconAt(mouseX - chooserCenterX, mouseY - chooserCenterY);
 
-                drawContext.blit(RenderType::guiTextured, WaypointManager.resourceTextureAtlasWaypointChooser, chooserCenterX, chooserCenterY, 0f, 0f, chooser.getWidth(), chooser.getHeight(), chooser.getWidth(), chooser.getHeight());
+                drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, WaypointManager.resourceTextureAtlasWaypointChooser, chooserCenterX, chooserCenterY, 0f, 0f, chooser.getWidth(), chooser.getHeight(), chooser.getWidth(), chooser.getHeight(), 0xBFFFFFFF);
 
                 if (icon != chooser.getMissingImage()){
-                    iconLocation = ((String) icon.getIconName());
-                    if (this.waypointIconMap.containsKey(iconLocation)) {
-                        waypointIcon = this.waypointIconMap.get(iconLocation);
-                    } else {
-                        waypointIcon = ResourceLocation.parse(iconLocation);
-                        this.waypointIconMap.put(iconLocation, waypointIcon);
-                    }
-                    int iconSnappedX = icon.getOriginX() + chooserCenterX;
-                    int iconSnappedY = icon.getOriginY() + chooserCenterY;
-                    drawContext.blit(RenderType::guiTextured, waypointIcon, iconSnappedX - 4, iconSnappedY - 4, 0f, 0f, 40, 40, 40, 40, color);
+                    int iconX = icon.getOriginX() + chooserCenterX;
+                    int iconY = icon.getOriginY() + chooserCenterY;
+                    icon.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, iconX - 4, iconY - 4, 40, 40, color);
 
                     String iconName = ((String) icon.getIconName()).replace("voxelmap:images/waypoints/waypoint", "").replace(".png", "");
-                    if (iconName.length() > 1){
+                    if (iconName.length() > 1) {
                         iconName = iconName.substring(0, 1).toUpperCase() + iconName.substring(1).toLowerCase();
                     }
                     this.tooltip = Component.literal(iconName);

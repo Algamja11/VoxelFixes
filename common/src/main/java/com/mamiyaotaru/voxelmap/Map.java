@@ -1646,31 +1646,20 @@ public class Map implements Runnable, IChangeObserver {
                 if (pt.isActive() || pt == highlightedPoint) {
                     double distanceSq = pt.getDistanceSqToEntity(minecraft.getCameraEntity());
                     if (distanceSq < (this.options.maxWaypointDisplayDistance * this.options.maxWaypointDisplayDistance) || this.options.maxWaypointDisplayDistance < 0 || pt == highlightedPoint) {
-                        this.drawWaypoint(guiGraphics, pt, textureAtlas, x, y, scScale, lastXDouble, lastZDouble, null, null, null, null);
+                        this.drawWaypoint(guiGraphics, pt, textureAtlas, x, y, scScale, lastXDouble, lastZDouble, null);
                     }
                 }
             }
 
             if (highlightedPoint != null) {
-                this.drawWaypoint(guiGraphics, highlightedPoint, textureAtlas, x, y, scScale, lastXDouble, lastZDouble, textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png"), 1.0F, 0.0F, 0.0F);
+                this.drawWaypoint(guiGraphics, highlightedPoint, textureAtlas, x, y, scScale, lastXDouble, lastZDouble, textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png"));
             }
         }
         guiGraphics.pose().popPose();
     }
 
-    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, TextureAtlas textureAtlas, int x, int y, int scScale, double lastXDouble, double lastZDouble, Sprite icon, Float r, Float g, Float b) {
+    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, TextureAtlas textureAtlas, int x, int y, int scScale, double lastXDouble, double lastZDouble, Sprite icon) {
         boolean uprightIcon = icon != null;
-        if (r == null) {
-            r = pt.red;
-        }
-
-        if (g == null) {
-            g = pt.green;
-        }
-
-        if (b == null) {
-            b = pt.blue;
-        }
 
         double wayX = lastXDouble - pt.getX() - 0.5;
         double wayY = lastZDouble - pt.getZ() - 0.5;

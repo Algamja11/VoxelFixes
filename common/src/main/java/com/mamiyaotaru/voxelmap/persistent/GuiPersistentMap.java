@@ -23,7 +23,6 @@ import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -109,17 +108,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     private float mapPixelsX;
     private float mapPixelsY;
     private final Object closedLock = new Object();
-    private final KeyMapping keyBindForward = new KeyMapping("key.forward.fake", 17, "key.categories.movement");
-    private final KeyMapping keyBindLeft = new KeyMapping("key.left.fake", 30, "key.categories.movement");
-    private final KeyMapping keyBindBack = new KeyMapping("key.back.fake", 31, "key.categories.movement");
-    private final KeyMapping keyBindRight = new KeyMapping("key.right.fake", 32, "key.categories.movement");
-    private final KeyMapping keyBindSprint = new KeyMapping("key.sprint.fake", 29, "key.categories.movement");
-    private final InputConstants.Key forwardCode;
-    private final InputConstants.Key leftCode;
-    private final InputConstants.Key backCode;
-    private final InputConstants.Key rightCode;
-    private final InputConstants.Key sprintCode;
-    final InputConstants.Key nullInput = InputConstants.getKey("key.keyboard.unknown");
     private Component multiworldButtonName;
     private MutableComponent multiworldButtonNameRed;
     int sideMargin = 10;
@@ -135,6 +123,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     private PopupGuiButton buttonWaypoints;
     private final Minecraft minecraft = Minecraft.getInstance();
     private final ResourceLocation voxelmapSkinLocation = ResourceLocation.fromNamespaceAndPath("voxelmap", "persistentmap/playerskin");
+    private final ResourceLocation crosshairResource = ResourceLocation.parse("textures/gui/sprites/hud/crosshair.png");
 
     public GuiPersistentMap(Screen parent) {
         this.parent = parent;
@@ -149,12 +138,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         if (!gotSkin) {
             this.getSkin();
         }
-
-        this.forwardCode = InputConstants.getKey(minecraft.options.keyUp.saveString());
-        this.leftCode = InputConstants.getKey(minecraft.options.keyLeft.saveString());
-        this.backCode = InputConstants.getKey(minecraft.options.keyDown.saveString());
-        this.rightCode = InputConstants.getKey(minecraft.options.keyRight.saveString());
-        this.sprintCode = InputConstants.getKey(minecraft.options.keySprint.saveString());
     }
 
     private void getSkin() {
@@ -229,16 +212,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         this.mapPixelsY = (minecraft.getWindow().getHeight() - (int) (64.0F * this.scScale));
         this.lastStill = false;
         this.timeAtLastTick = System.currentTimeMillis();
-        this.keyBindForward.setKey(this.forwardCode);
-        this.keyBindLeft.setKey(this.leftCode);
-        this.keyBindBack.setKey(this.backCode);
-        this.keyBindRight.setKey(this.rightCode);
-        this.keyBindSprint.setKey(this.sprintCode);
-        minecraft.options.keyUp.setKey(this.nullInput);
-        minecraft.options.keyLeft.setKey(this.nullInput);
-        minecraft.options.keyDown.setKey(this.nullInput);
-        minecraft.options.keyRight.setKey(this.nullInput);
-        minecraft.options.keySprint.setKey(this.nullInput);
         KeyMapping.resetMapping();
     }
 
@@ -539,7 +512,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         this.mapToGui = 1.0F / this.scScale * scaledZoom;
         this.mouseDirectToMap = 1.0F / scaledZoom;
         this.guiToDirectMouse = this.scScale;
-        this.renderBackground(guiGraphics);
+        guiGraphics.fill(0, 0, this.width, this.height, 0xFF000000);
         if (minecraft.mouseHandler.isLeftPressed()) {
             if (!this.leftMouseButtonDown && this.overPopup(mouseX, mouseY)) {
                 this.deltaX = 0.0F;
@@ -575,26 +548,26 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         this.timeAtLastTick = System.currentTimeMillis();
         if (!this.editingCoordinates) {
             int kbDelta = 5;
-            if (this.keyBindSprint.isDown()) {
+            if (minecraft.options.keySprint.isDown()) {
                 kbDelta = 10;
             }
 
-            if (this.keyBindForward.isDown()) {
+            if (minecraft.options.keyUp.isDown()) {
                 this.deltaY -= kbDelta / scaledZoom * timeSinceLastTick / 12.0F;
                 this.switchToKeyboardInput();
             }
 
-            if (this.keyBindBack.isDown()) {
+            if (minecraft.options.keyDown.isDown()) {
                 this.deltaY += kbDelta / scaledZoom * timeSinceLastTick / 12.0F;
                 this.switchToKeyboardInput();
             }
 
-            if (this.keyBindLeft.isDown()) {
+            if (minecraft.options.keyLeft.isDown()) {
                 this.deltaX -= kbDelta / scaledZoom * timeSinceLastTick / 12.0F;
                 this.switchToKeyboardInput();
             }
 
-            if (this.keyBindRight.isDown()) {
+            if (minecraft.options.keyRight.isDown()) {
                 this.deltaX += kbDelta / scaledZoom * timeSinceLastTick / 12.0F;
                 this.switchToKeyboardInput();
             }
@@ -712,11 +685,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
             if (VoxelMap.mapOptions.waypointsAllowed && this.options.showWaypoints) {
                 for (Waypoint pt : this.waypointManager.getWaypoints()) {
-                    this.drawWaypoint(guiGraphics, pt, cursorCoordX, cursorCoordZ, null, null, null, null);
+                    this.drawWaypoint(guiGraphics, pt, cursorCoordX, cursorCoordZ, null);
                 }
 
                 if (this.waypointManager.getHighlightedWaypoint() != null) {
-                    this.drawWaypoint(guiGraphics, this.waypointManager.getHighlightedWaypoint(), cursorCoordX, cursorCoordZ, VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/target.png"), 1.0F, 0.0F, 0.0F);
+                    this.drawWaypoint(guiGraphics, this.waypointManager.getHighlightedWaypoint(), cursorCoordX, cursorCoordZ, VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/target.png"));
                 }
             }
 
@@ -730,14 +703,14 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                     guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-90.0F));
                     guiGraphics.pose().translate(-(playerX * this.mapToGui), -(playerZ * this.mapToGui), 0.0f);
                 }
-                float x = -10.0F / this.scScale + playerX * this.mapToGui;
-                float y = -10.0F / this.scScale + playerZ * this.mapToGui;
-                float width = 20.0F / this.scScale;
-                float height = 20.0F / this.scScale;
+                float x = -7.0F + playerX * this.mapToGui;
+                float y = -7.0F + playerZ * this.mapToGui;
+                float width = 14.0F;
+                float height = 14.0F;
                 guiGraphics.drawSpecial(bufferSource -> {
                     Matrix4f matrix4f = guiGraphics.pose().last().pose();
 
-                    RenderType renderType = GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_FILTER_MIN.apply(voxelmapSkinLocation);
+                    RenderType renderType = GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH.apply(voxelmapSkinLocation);
                     VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
 
                     vertexConsumer.addVertex(matrix4f, x + 0.0F, y + height, 0).setUv(0.0F, 1.0F).setColor(0xffffffff);
@@ -837,8 +810,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         if (System.currentTimeMillis() - this.timeOfLastKBInput < 2000L) {
             int scWidth = minecraft.getWindow().getGuiScaledWidth();
             int scHeight = minecraft.getWindow().getGuiScaledHeight();
-            ResourceLocation GUI_ICONS_TEXTURE = ResourceLocation.parse("textures/gui/sprites/hud/crosshair.png");
-            guiGraphics.blit(RenderType::guiTextured, GUI_ICONS_TEXTURE, scWidth / 2 - 7, scHeight / 2 - 7, 0, 0, 15, 15, 15, 15);
+            guiGraphics.blit(RenderType::crosshair, crosshairResource, scWidth / 2 - 8, scHeight / 2 - 8, 0.0f, 0.0f, 15, 15, 15, 15);
         } else {
             this.switchToMouseInput();
         }
@@ -886,7 +858,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         // nothing
     }
 
-    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, float cursorCoordX, float cursorCoordZ, Sprite icon, Float r, Float g, Float b) {
+    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, float cursorCoordX, float cursorCoordZ, Sprite icon) {
         if (!(pt.inWorld && pt.inDimension && this.isOnScreen(pt.getX(), pt.getZ()))) {
             return;
         }
@@ -898,20 +870,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
         PoseStack poseStack = guiGraphics.pose();
         String name = pt.name;
-        if (r == null) {
-            r = pt.red;
-        }
-        if (g == null) {
-            g = pt.green;
-        }
-        if (b == null) {
-            b = pt.blue;
-        }
 
         ptX += 0.5F;
         ptZ += 0.5F;
-        boolean hover = cursorCoordX > ptX - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordX < ptX + 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordZ > ptZ - 18.0F * this.guiToMap / this.guiToDirectMouse
-                && cursorCoordZ < ptZ + 18.0F * this.guiToMap / this.guiToDirectMouse;
+        boolean hover = cursorCoordX > ptX - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordX < ptX + 18.0F * this.guiToMap / this.guiToDirectMouse
+                && cursorCoordZ > ptZ - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordZ < ptZ + 18.0F * this.guiToMap / this.guiToDirectMouse;
         boolean target = false;
         TextureAtlas atlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
         if (icon == null) {
@@ -932,15 +895,15 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             poseStack.translate(-(ptX), -(ptZ), 0.0);
         }
 
-        icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, -4.0F / this.mapToGui + ptX, -4.0F / this.mapToGui + ptZ, 8.0F / this.mapToGui, 8.0F / this.mapToGui, color);
+        icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, -8.0F / this.mapToGui + ptX, -8.0F / this.mapToGui + ptZ, 16.0F / this.mapToGui, 16.0F / this.mapToGui, color);
 
         if (this.oldNorth) {
             poseStack.popPose();
         }
 
         if (mapOptions.biomeOverlay == 0 && this.options.showWaypointNames || target || hover) {
-            float fontScale = 2.0F / this.scScale;
-            int m = this.chkLen(name) / 2;
+            float fontScale = 1.0F;
+            int labelWidth = this.chkLen(name) / 2;
             poseStack.pushPose();
             poseStack.scale(this.guiToMap, this.guiToMap, 1);
             poseStack.scale(fontScale, fontScale, 1.0F);
@@ -949,7 +912,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
                 poseStack.translate(-(ptX / fontScale), -(ptZ / fontScale), 0.0);
             }
-            this.write(guiGraphics, name, ptX * this.mapToGui / fontScale - m, ptZ * this.mapToGui / fontScale + 8, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFF);
+            this.write(guiGraphics, name, ptX * this.mapToGui / fontScale - labelWidth, ptZ * this.mapToGui / fontScale + 8, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFF);
             poseStack.popPose();
         }
     }
@@ -974,10 +937,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         return x > left && x < right && z > top && z < bottom;
     }
 
-    public void renderBackground(GuiGraphics drawContext) {
-        drawContext.fill(0, 0, this.getWidth(), this.getHeight(), 0xff000000);
-    }
-
     protected void overlayBackground(GuiGraphics guiGraphics, int startY, int endY, int startAlpha, int endAlpha) {
         guiGraphics.drawSpecial(bufferSource -> {
             Matrix4f matrix4f = guiGraphics.pose().last().pose();
@@ -997,18 +956,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
     @Override
     public void removed() {
-        minecraft.options.keyUp.setKey(this.forwardCode);
-        minecraft.options.keyLeft.setKey(this.leftCode);
-        minecraft.options.keyDown.setKey(this.backCode);
-        minecraft.options.keyRight.setKey(this.rightCode);
-        minecraft.options.keySprint.setKey(this.sprintCode);
-        this.keyBindForward.setKey(this.nullInput);
-        this.keyBindLeft.setKey(this.nullInput);
-        this.keyBindBack.setKey(this.nullInput);
-        this.keyBindRight.setKey(this.nullInput);
-        this.keyBindSprint.setKey(this.nullInput);
-        KeyMapping.resetMapping();
-        KeyMapping.releaseAll();
         synchronized (this.closedLock) {
             this.closed = true;
             this.persistentMap.getRegions(0, -1, 0, -1);
