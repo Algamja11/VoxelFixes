@@ -24,7 +24,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
     }
 
     public void init() {
-        EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.SHOWWAYPOINTS, EnumOptionsMinimap.SHOWWAYPOINTNAMES };
+        EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.SHOW_WAYPOINTS, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES};
 
         int counter = 0;
 
@@ -32,12 +32,12 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
             GuiOptionButtonMinimap optionButton = new GuiOptionButtonMinimap(this.getWidth() / 2 - 155 + counter % 2 * 160, this.getHeight() / 6 + 24 * (counter >> 1), option, Component.literal(this.options.getKeyText(option)), this::optionClicked);
             this.addRenderableWidget(optionButton);
             
-            if (option == EnumOptionsMinimap.SHOWWAYPOINTS) optionButton.active = VoxelMap.mapOptions.waypointsAllowed;
-            if (option == EnumOptionsMinimap.SHOWWAYPOINTNAMES) optionButton.active = VoxelMap.mapOptions.waypointsAllowed;
+            if (option == EnumOptionsMinimap.SHOW_WAYPOINTS) optionButton.active = VoxelMap.mapOptions.waypointsAllowed;
+            if (option == EnumOptionsMinimap.SHOW_WAYPOINT_NAMES) optionButton.active = VoxelMap.mapOptions.waypointsAllowed;
             counter++;
         }
 
-        EnumOptionsMinimap[] relevantOptions2 = { EnumOptionsMinimap.MINZOOM, EnumOptionsMinimap.MAXZOOM, EnumOptionsMinimap.CACHESIZE };
+        EnumOptionsMinimap[] relevantOptions2 = { EnumOptionsMinimap.MIN_ZOOM, EnumOptionsMinimap.MAX_ZOOM, EnumOptionsMinimap.CACHE_SIZE};
         counter += 2;
 
         for (EnumOptionsMinimap option : relevantOptions2) {
@@ -45,8 +45,8 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
                 float sValue = this.options.getOptionFloatValue(option);
 
                 this.addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 - 155 + counter % 2 * 160, this.getHeight() / 6 + 24 * (counter >> 1), option, switch (option) {
-                    case MINZOOM, MAXZOOM -> (sValue + 3.0F) / (5 + 3);
-                    case CACHESIZE -> sValue / 5000.0F;
+                    case MIN_ZOOM, MAX_ZOOM -> (sValue + 3.0F) / (5 + 3);
+                    case CACHE_SIZE -> sValue / 5000.0F;
                     default ->
                             throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName() + ". (possibly not a float value applicable to persistent map)");
                 }, this.options));
@@ -61,7 +61,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 
         for (Object buttonObj : this.getButtonList()) {
             if (buttonObj instanceof GuiOptionButtonMinimap button) {
-                if (button.returnEnumOptions() == EnumOptionsMinimap.SHOWWAYPOINTNAMES) {
+                if (button.returnEnumOptions() == EnumOptionsMinimap.SHOW_WAYPOINT_NAMES) {
                     button.active = this.options.showWaypoints && VoxelMap.mapOptions.waypointsAllowed;
                 }
             }
@@ -76,7 +76,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 
         for (Object buttonObj : this.getButtonList()) {
             if (buttonObj instanceof GuiOptionButtonMinimap button) {
-                if (button.returnEnumOptions() == EnumOptionsMinimap.SHOWWAYPOINTNAMES) {
+                if (button.returnEnumOptions() == EnumOptionsMinimap.SHOW_WAYPOINT_NAMES) {
                     button.active = this.options.showWaypoints && VoxelMap.mapOptions.waypointsAllowed;
                 }
             }
@@ -92,8 +92,8 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
                 float fValue;
 
                 fValue = switch (option) {
-                    case MINZOOM, MAXZOOM -> (sValue + 3.0F) / (5 + 3);
-                    case CACHESIZE -> sValue / 5000.0F;
+                    case MIN_ZOOM, MAX_ZOOM -> (sValue + 3.0F) / (5 + 3);
+                    case CACHE_SIZE -> sValue / 5000.0F;
                     default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName() + ". (possibly not a float value applicable to persistent map)");
                 };
                 if (this.getFocused() != slider) {

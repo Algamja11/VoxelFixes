@@ -17,17 +17,17 @@ import org.lwjgl.glfw.GLFW;
 
 public class GuiMinimapOptions extends GuiScreenMinimap {
     private static final EnumOptionsMinimap[] relevantOptions = {
-            EnumOptionsMinimap.COORDS, EnumOptionsMinimap.HIDE,
+            EnumOptionsMinimap.SHOW_COORDINATES, EnumOptionsMinimap.HIDE_MINIMAP,
             EnumOptionsMinimap.LOCATION, EnumOptionsMinimap.SIZE,
-            EnumOptionsMinimap.SQUARE, EnumOptionsMinimap.ROTATES,
-            EnumOptionsMinimap.BEACONS, EnumOptionsMinimap.CAVEMODE,
-            EnumOptionsMinimap.MOVEMAPDOWNWHILESTATSUEFFECT, EnumOptionsMinimap.MOVESCOREBOARDDOWN,
-            EnumOptionsMinimap.LIGHTING, EnumOptionsMinimap.TERRAIN,
-            EnumOptionsMinimap.WATERTRANSPARENCY, EnumOptionsMinimap.BLOCKTRANSPARENCY,
-            EnumOptionsMinimap.BIOMES, EnumOptionsMinimap.FILTERING,
-            EnumOptionsMinimap.CHUNKGRID, EnumOptionsMinimap.BIOMEOVERLAY,
-            EnumOptionsMinimap.SLIMECHUNKS, EnumOptionsMinimap.WORLDBORDER,
-            EnumOptionsMinimap.WORLDSEED, EnumOptionsMinimap.TELEPORTCOMMAND
+            EnumOptionsMinimap.SHAPE, EnumOptionsMinimap.ROTATES,
+            EnumOptionsMinimap.INGAME_WAYPOINTS, EnumOptionsMinimap.CAVE_MODE,
+            EnumOptionsMinimap.MOVE_MAP_BELOW_STATUS_EFFECT, EnumOptionsMinimap.MOVE_SCOREBOARD_BELOW_MAP,
+            EnumOptionsMinimap.DYNAMIC_LIGHTING, EnumOptionsMinimap.TERRAIN_DEPTH,
+            EnumOptionsMinimap.WATER_TRANSPARENCY, EnumOptionsMinimap.BLOCK_TRANSPARENCY,
+            EnumOptionsMinimap.BIOME_TINT, EnumOptionsMinimap.FILTERING,
+            EnumOptionsMinimap.CHUNK_GRID, EnumOptionsMinimap.BIOME_OVERLAY,
+            EnumOptionsMinimap.SLIME_CHUNKS, EnumOptionsMinimap.WORLD_BORDER,
+            EnumOptionsMinimap.WORLD_SEED, EnumOptionsMinimap.TELEPORT_COMMAND
     };
     private GuiButtonText worldSeedButton;
     private GuiButtonText teleportCommandButton;
@@ -56,7 +56,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
             int buttonPos = i - buttonStart;
             EnumOptionsMinimap option = relevantOptions[i];
 
-            if (option == EnumOptionsMinimap.WORLDSEED) {
+            if (option == EnumOptionsMinimap.WORLD_SEED) {
                 String worldSeedDisplay = VoxelConstants.getVoxelMapInstance().getWorldSeed();
                 if (worldSeedDisplay.isEmpty()) {
                     worldSeedDisplay = I18n.get("selectWorld.versionUnknown");
@@ -66,7 +66,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
                 this.worldSeedButton.setText(VoxelConstants.getVoxelMapInstance().getWorldSeed());
                 this.worldSeedButton.active = !VoxelConstants.getMinecraft().hasSingleplayerServer();
                 this.addRenderableWidget(this.worldSeedButton);
-            } else if (option == EnumOptionsMinimap.TELEPORTCOMMAND) {
+            } else if (option == EnumOptionsMinimap.TELEPORT_COMMAND) {
                 String buttonTeleportText = I18n.get("options.minimap.teleportcommand") + ": " + VoxelConstants.getVoxelMapInstance().getMapOptions().teleportCommand;
                 this.teleportCommandButton = new GuiButtonText(this.getFontRenderer(), getWidth() / 2 - 155 + buttonPos % 2 * 160, getHeight() / 6 + 24 * (buttonPos >> 1), 150, 20, Component.literal(buttonTeleportText), button -> this.teleportCommandButton.setEditing(true));
                 this.teleportCommandButton.setText(VoxelConstants.getVoxelMapInstance().getMapOptions().teleportCommand);
@@ -74,21 +74,21 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
                 this.addRenderableWidget(this.teleportCommandButton);
             } else {
                 StringBuilder text = new StringBuilder().append(this.options.getKeyText(option));
-                if ((option == EnumOptionsMinimap.WATERTRANSPARENCY || option == EnumOptionsMinimap.BLOCKTRANSPARENCY || option == EnumOptionsMinimap.BIOMES) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
+                if ((option == EnumOptionsMinimap.WATER_TRANSPARENCY || option == EnumOptionsMinimap.BLOCK_TRANSPARENCY || option == EnumOptionsMinimap.BIOME_TINT) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
                     text.append("§c").append(text);
                 }
 
                 GuiOptionButtonMinimap optionButton = new GuiOptionButtonMinimap(getWidth() / 2 - 155 + buttonPos % 2 * 160, getHeight() / 6 + 24 * (buttonPos >> 1), option, Component.literal(text.toString()), this::optionClicked);
                 this.addRenderableWidget(optionButton);
 
-                if (option == EnumOptionsMinimap.SLIMECHUNKS) {
+                if (option == EnumOptionsMinimap.SLIME_CHUNKS) {
                     this.slimeChunksButton = optionButton;
                     this.slimeChunksButton.active = VoxelConstants.getMinecraft().hasSingleplayerServer() || !VoxelConstants.getVoxelMapInstance().getWorldSeed().isEmpty();
-                } else if (option == EnumOptionsMinimap.HIDE) {
+                } else if (option == EnumOptionsMinimap.HIDE_MINIMAP) {
                     optionButton.active = this.options.minimapAllowed;
-                } else if (option == EnumOptionsMinimap.BEACONS) {
+                } else if (option == EnumOptionsMinimap.INGAME_WAYPOINTS) {
                     optionButton.active = this.options.waypointsAllowed;
-                } else if (option == EnumOptionsMinimap.CAVEMODE) {
+                } else if (option == EnumOptionsMinimap.CAVE_MODE) {
                     optionButton.active = this.options.cavesAllowed;
                 }
             }
@@ -118,7 +118,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
         EnumOptionsMinimap option = ((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions();
         this.options.setOptionValue(option);
         String warningTint = "";
-        if ((option == EnumOptionsMinimap.WATERTRANSPARENCY || option == EnumOptionsMinimap.BLOCKTRANSPARENCY || option == EnumOptionsMinimap.BIOMES) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
+        if ((option == EnumOptionsMinimap.WATER_TRANSPARENCY || option == EnumOptionsMinimap.BLOCK_TRANSPARENCY || option == EnumOptionsMinimap.BIOME_TINT) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
             warningTint = "§c";
         }
 
