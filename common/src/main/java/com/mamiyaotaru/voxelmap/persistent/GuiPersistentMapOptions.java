@@ -14,9 +14,9 @@ import net.minecraft.network.chat.Component;
 public class GuiPersistentMapOptions extends GuiScreenMinimap {
     private final Screen parent;
     private final PersistentMapSettingsManager options;
-    private final Component screenTitle = Component.translatable("options.worldmap.title");
-    private final Component cacheSettings = Component.translatable("options.worldmap.cachesettings");
-    private final Component warning = Component.translatable("options.worldmap.warning");
+    private final Component screenTitle = Component.translatable("options.voxelmap.worldmap.title");
+    private final Component cacheSettings = Component.translatable("options.voxelmap.worldmap.cachesettings");
+    private final Component warning = Component.translatable("options.voxelmap.worldmap.warning");
 
     public GuiPersistentMapOptions(Screen parent) {
         this.parent = parent;

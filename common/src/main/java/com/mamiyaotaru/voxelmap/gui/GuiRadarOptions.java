@@ -29,7 +29,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
         getButtonList().clear();
         children().clear();
 
-        this.screenTitle = Component.translatable("options.minimap.radar.title");
+        this.screenTitle = Component.translatable("options.voxelmap.radar.title");
 
         EnumOptionsMinimap[] relevantOptions = options.radarMode == 2 ? FULL_RELEVANT_OPTIONS : SIMPLE_RELEVANT_OPTIONS;
 
@@ -42,7 +42,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 
         iterateButtonOptions();
 
-        if (options.radarMode == 2) addRenderableWidget(new Button.Builder(Component.translatable("options.minimap.radar.selectmobs"), x -> VoxelConstants.getMinecraft().setScreen(new GuiMobs(this, options))).bounds(getWidth() / 2 + 5, getHeight() / 6 + 120, 150, 20).build());
+        if (options.radarMode == 2) addRenderableWidget(new Button.Builder(Component.translatable("options.voxelmap.selectmobs"), x -> VoxelConstants.getMinecraft().setScreen(new GuiMobs(this, options))).bounds(getWidth() / 2 + 5, getHeight() / 6 + 120, 150, 20).build());
 
         addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), x -> VoxelConstants.getMinecraft().setScreen(parent)).bounds(getWidth() / 2 - 100, getHeight() / 6 + 168, 200, 20).build());
     }

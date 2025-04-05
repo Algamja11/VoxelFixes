@@ -68,13 +68,13 @@ public class MapSettingsManager implements ISettingsManager {
     public boolean waypointDistanceBelowName = true;
     public int sort = 1;
     protected boolean realTimeTorches;
-    public final KeyMapping keyBindZoom = new KeyMapping("key.minimap.zoom", InputConstants.getKey("key.keyboard.z").getValue(), "controls.minimap.title");
-    public final KeyMapping keyBindFullscreen = new KeyMapping("key.minimap.togglefullscreen", InputConstants.getKey("key.keyboard.x").getValue(), "controls.minimap.title");
-    public final KeyMapping keyBindMenu = new KeyMapping("key.minimap.voxelmapmenu", InputConstants.getKey("key.keyboard.m").getValue(), "controls.minimap.title");
-    public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.minimap.waypointmenu", -1, "controls.minimap.title");
-    public final KeyMapping keyBindWaypoint = new KeyMapping("key.minimap.waypointhotkey", InputConstants.getKey("key.keyboard.n").getValue(), "controls.minimap.title");
-    public final KeyMapping keyBindMobToggle = new KeyMapping("key.minimap.togglemobs", -1, "controls.minimap.title");
-    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.minimap.toggleingamewaypoints", -1, "controls.minimap.title");
+    public final KeyMapping keyBindZoom = new KeyMapping("key.voxelmap.zoom", InputConstants.getKey("key.keyboard.z").getValue(), "controls.voxelmap.title");
+    public final KeyMapping keyBindFullscreen = new KeyMapping("key.voxelmap.togglefullscreen", InputConstants.getKey("key.keyboard.x").getValue(), "controls.voxelmap.title");
+    public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmapmenu", InputConstants.getKey("key.keyboard.m").getValue(), "controls.voxelmap.title");
+    public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypointmenu", -1, "controls.voxelmap.title");
+    public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypointhotkey", InputConstants.getKey("key.keyboard.n").getValue(), "controls.voxelmap.title");
+    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.togglemobs", -1, "controls.voxelmap.title");
+    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggleingamewaypoints", -1, "controls.voxelmap.title");
     public final KeyMapping[] keyBindings;
     private boolean somethingChanged;
     public static MapSettingsManager instance;
@@ -236,7 +236,7 @@ public class MapSettingsManager implements ISettingsManager {
             if (options == EnumOptionsMinimap.ZOOM_LEVEL) {
                 return s + (int) f;
             } else if (options == EnumOptionsMinimap.WAYPOINT_DISTANCE) {
-                return f < 0.0F ? s + I18n.get("options.minimap.waypoints.infinite") : s + (int) f;
+                return f < 0.0F ? s + I18n.get("options.voxelmap.waypoints.infinite") : s + (int) f;
             } else {
                 return f == 0.0F ? s + I18n.get("options.off") : s + (int) f + "%";
             }
@@ -290,34 +290,34 @@ public class MapSettingsManager implements ISettingsManager {
         switch (par1EnumOptions) {
             case TERRAIN_DEPTH -> {
                 if (this.slopemap && this.heightmap) {
-                    return I18n.get("options.minimap.terrain.both");
+                    return I18n.get("options.voxelmap.terrain.both");
                 } else if (this.heightmap) {
-                    return I18n.get("options.minimap.terrain.height");
+                    return I18n.get("options.voxelmap.terrain.height");
                 } else if (this.slopemap) {
-                    return I18n.get("options.minimap.terrain.slope");
+                    return I18n.get("options.voxelmap.terrain.slope");
                 }
                 return I18n.get("options.off");
             }
             case INGAME_WAYPOINTS -> {
                 if (this.waypointsAllowed && this.showBeacons && this.showWaypoints) {
-                    return I18n.get("options.minimap.ingamewaypoints.both");
+                    return I18n.get("options.voxelmap.ingamewaypoints.both");
                 } else if (this.waypointsAllowed && this.showBeacons) {
-                    return I18n.get("options.minimap.ingamewaypoints.beacons");
+                    return I18n.get("options.voxelmap.ingamewaypoints.beacons");
                 } else if (this.waypointsAllowed && this.showWaypoints) {
-                    return I18n.get("options.minimap.ingamewaypoints.signs");
+                    return I18n.get("options.voxelmap.ingamewaypoints.signs");
                 }
                 return I18n.get("options.off");
             }
             case LOCATION -> {
                 if (this.mapCorner == 0) {
-                    return I18n.get("options.minimap.location.topleft");
+                    return I18n.get("options.voxelmap.location.topleft");
                 } else if (this.mapCorner == 1) {
-                    return I18n.get("options.minimap.location.topright");
+                    return I18n.get("options.voxelmap.location.topright");
                 } else if (this.mapCorner == 2) {
-                    return I18n.get("options.minimap.location.bottomright");
+                    return I18n.get("options.voxelmap.location.bottomright");
                 } else {
                     if (this.mapCorner == 3) {
-                        return I18n.get("options.minimap.location.bottomleft");
+                        return I18n.get("options.voxelmap.location.bottomleft");
                     }
 
                     return "Error";
@@ -325,18 +325,18 @@ public class MapSettingsManager implements ISettingsManager {
             }
             case SIZE -> {
                 if (this.sizeModifier == -1) {
-                    return I18n.get("options.minimap.size.small");
+                    return I18n.get("options.voxelmap.size.small");
                 } else if (this.sizeModifier == 0) {
-                    return I18n.get("options.minimap.size.medium");
+                    return I18n.get("options.voxelmap.size.medium");
                 } else if (this.sizeModifier == 1) {
-                    return I18n.get("options.minimap.size.large");
+                    return I18n.get("options.voxelmap.size.large");
                 } else if (this.sizeModifier == 2) {
-                    return I18n.get("options.minimap.size.xl");
+                    return I18n.get("options.voxelmap.size.xl");
                 } else if (this.sizeModifier == 3) {
-                    return I18n.get("options.minimap.size.xxl");
+                    return I18n.get("options.voxelmap.size.xxl");
                 } else {
                     if (this.sizeModifier == 4) {
-                        return I18n.get("options.minimap.size.xxxl");
+                        return I18n.get("options.voxelmap.size.xxxl");
                     }
 
                     return "error";
@@ -346,10 +346,10 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.biomeOverlay == 0) {
                     return I18n.get("options.off");
                 } else if (this.biomeOverlay == 1) {
-                    return I18n.get("options.minimap.biomeoverlay.solid");
+                    return I18n.get("options.voxelmap.biomeoverlay.solid");
                 } else {
                     if (this.biomeOverlay == 2) {
-                        return I18n.get("options.minimap.biomeoverlay.transparent");
+                        return I18n.get("options.voxelmap.biomeoverlay.transparent");
                     }
 
                     return "error";
@@ -359,10 +359,10 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.deathpoints == 0) {
                     return I18n.get("options.off");
                 } else if (this.deathpoints == 1) {
-                    return I18n.get("options.minimap.waypoints.deathpoints.mostrecent");
+                    return I18n.get("options.voxelmap.waypoints.deathpoints.mostrecent");
                 } else {
                     if (this.deathpoints == 2) {
-                        return I18n.get("options.minimap.waypoints.deathpoints.all");
+                        return I18n.get("options.voxelmap.waypoints.deathpoints.all");
                     }
 
                     return "error";
@@ -469,7 +469,7 @@ public class MapSettingsManager implements ISettingsManager {
     }
 
     public String getKeyBindingDescription(int keybindIndex) {
-        return this.keyBindings[keybindIndex].getName().equals("key.minimap.voxelmapmenu") ? I18n.get("key.minimap.menu") : I18n.get(this.keyBindings[keybindIndex].getName());
+        return this.keyBindings[keybindIndex].getName().equals("key.voxelmap.voxelmapmenu") ? I18n.get("key.voxelmap.menu") : I18n.get(this.keyBindings[keybindIndex].getName());
     }
 
     public Component getKeybindDisplayString(int keybindIndex) {

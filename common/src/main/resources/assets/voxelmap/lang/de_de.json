@@ -63,8 +63,8 @@
   "options.voxelmap.worldborder": "Weltbarriere",
   "options.voxelmap.worldseed": "Weltstartwert",
   "options.voxelmap.teleportcommand": "Teleport Befehl",
-  "options.voxelmap.movescoreboarddown": "Schiebe Scoreboard unter die Map",
-  "options.voxelmap.movemapdownwhilestatuseffect": "Schiebe Map unter Statuseffekt-Icons",
+  "options.voxelmap.movescoreboardbelowmap": "Schiebe Scoreboard unter die Map",
+  "options.voxelmap.movemapbelowstatuseffect": "Schiebe Map unter Statuseffekt-Icons",
 
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Radaroptionenen",
