@@ -704,10 +704,6 @@ public class Map implements Runnable, IChangeObserver {
                 this.drawArrow(drawContext, this.scWidth / 2, this.scHeight / 2, scaleProj);
             } else {
                 this.renderMap(drawContext, mapX, mapY, scScale, scaleProj);
-                if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
-                    this.layoutVariables.updateVars(scScale, mapX, mapY, this.zoomScale, this.zoomScaleAdjusted);
-                    VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(drawContext, this.layoutVariables, scaleProj);
-                }
                 this.drawDirections(drawContext, mapX, mapY, scaleProj);
                 this.drawArrow(drawContext, mapX, mapY, scaleProj);
             }
@@ -1631,10 +1627,15 @@ public class Map implements Runnable, IChangeObserver {
         // guiGraphics.blit(RenderType::guiTextured, resourceFboTexture, x - 32, y - 32, 0, 0, 64, 64, 64, 64);
         guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, resourceFboTexture, x - 32, y - 32, 0, 0, 64, 64, 64, 64);
 
-        double guiScale = (double) minecraft.getWindow().getWidth() / this.scWidth;
-        minTablistOffset = guiScale * 63;
+        if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
+            this.layoutVariables.updateVars(scScale, x, y, this.zoomScale, this.zoomScaleAdjusted);
+            VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(guiGraphics, this.layoutVariables, 1.0F);
+        }
+
         this.drawMapFrame(guiGraphics, x, y, this.options.squareMap);
 
+        double guiScale = (double) minecraft.getWindow().getWidth() / this.scWidth;
+        minTablistOffset = guiScale * 63;
 
         double lastXDouble = GameVariableAccessShim.xCoordDouble();
         double lastZDouble = GameVariableAccessShim.zCoordDouble();

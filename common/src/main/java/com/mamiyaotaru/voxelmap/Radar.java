@@ -160,7 +160,6 @@ public class Radar implements IRadar {
     public void renderMapMobs(GuiGraphics guiGraphics, int x, int y, float scaleProj) {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(scaleProj, scaleProj, 1.0F);
-        guiGraphics.pose().translate(0, 0, 125);
         double max = this.layoutVariables.zoomScaleAdjusted * 32.0;
         double lastX = GameVariableAccessShim.xCoordDouble();
         double lastZ = GameVariableAccessShim.zCoordDouble();
@@ -261,16 +260,15 @@ public class Radar implements IRadar {
                     contact.icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - imageSize / 2, y + yOffset - imageSize / 2, imageSize, imageSize, color);
 
                     if (contact.name != null && ((this.options.showPlayerNames && contact.category == MobCategory.PLAYER) || (this.options.showMobNames && contact.category != MobCategory.PLAYER && contact.entity.hasCustomName()))) {
-
                         float scaleFactor = this.layoutVariables.scScale / this.options.fontScale;
                         guiGraphics.pose().scale(1.0F / scaleFactor, 1.0F / scaleFactor, 1.0F);
 
-                        int m = minecraft.font.width(contact.name) / 2;
-
-                        guiGraphics.pose().pushPose();
-                        guiGraphics.pose().translate(0, 0, 900);
-                        guiGraphics.drawString(minecraft.font, contact.name, (int) (x * scaleFactor - m), (int) ((y + 3) * scaleFactor), 0xffffffff, false);
-                        guiGraphics.pose().popPose();
+                        float labelRed = ARGB.redFloat(contact.entity.getTeamColor());
+                        float labelGreen = ARGB.greenFloat(contact.entity.getTeamColor());
+                        float labelBlue = ARGB.blueFloat(contact.entity.getTeamColor());
+                        int labelColor = ARGB.colorFromFloat(contact.brightness, labelRed, labelGreen, labelBlue);
+                        int halfStringWidth = minecraft.font.width(contact.name) / 2;
+                        guiGraphics.drawString(minecraft.font, contact.name, (int) (x * scaleFactor - halfStringWidth), (int) ((y + 3) * scaleFactor), labelColor, true);
                     }
                 } catch (Exception e) {
                     VoxelConstants.getLogger().error("Error rendering mob icon! " + e.getLocalizedMessage() + " contact type " + BuiltInRegistries.ENTITY_TYPE.getKey(contact.entity.getType()), e);
