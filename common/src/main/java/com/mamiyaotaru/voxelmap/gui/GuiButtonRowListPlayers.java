@@ -22,9 +22,9 @@ public class GuiButtonRowListPlayers extends AbstractSelectionList<GuiButtonRowL
     private ArrayList<PlayerInfo> playersFiltered;
     final GuiSelectPlayer parentGui;
     final Row everyoneRow;
-    static final Component ALL = Component.translatable("minimap.waypointshare.all");
-    static final Component TITLE = Component.translatable("minimap.waypointshare.sharewitheveryone");
-    static final Component EXPLANATION = Component.translatable("minimap.waypointshare.sharewitheveryone2");
+    static final Component ALL = Component.translatable("voxelmap.waypointshare.all");
+    static final Component TITLE = Component.translatable("voxelmap.waypointshare.sharewitheveryone");
+    static final Component EXPLANATION = Component.translatable("voxelmap.waypointshare.sharewitheveryone2");
     static final Component AFFIRM = Component.translatable("gui.yes");
     static final Component DENY = Component.translatable("gui.cancel");
 
@@ -147,7 +147,7 @@ public class GuiButtonRowListPlayers extends AbstractSelectionList<GuiButtonRowL
                 }
 
                 if (button.isHovered() && mouseY >= GuiButtonRowListPlayers.this.getY() && mouseY <= GuiButtonRowListPlayers.this.getBottom()) {
-                    Component tooltip = Component.translatable("minimap.waypointshare.sharewithname", button.getMessage());
+                    Component tooltip = Component.translatable("voxelmap.waypointshare.sharewithname", button.getMessage());
                     GuiSelectPlayer.setTooltip(GuiButtonRowListPlayers.this.parentGui, tooltip);
                 }
             }

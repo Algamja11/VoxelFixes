@@ -83,8 +83,8 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
         this.addRenderableWidget(this.waypointZ);
         int buttonListY = this.getHeight() / 6 + 82 + 6;
         this.addRenderableWidget(this.buttonEnabled = new PopupGuiButton(this.getWidth() / 2 - 101, buttonListY, 100, 20, Component.literal("Enabled: " + (this.waypoint.enabled ? "On" : "Off")), button -> this.waypoint.enabled = !this.waypoint.enabled, this));
-        this.addRenderableWidget(new PopupGuiButton(this.getWidth() / 2 - 101, buttonListY + 24, 100, 20, Component.literal(I18n.get("minimap.waypoints.sortbycolor") + ":     "), button -> this.choosingColor = true, this));
-        this.addRenderableWidget(new PopupGuiButton(this.getWidth() / 2 - 101, buttonListY + 48, 100, 20, Component.literal(I18n.get("minimap.waypoints.sortbyicon") + ":     "), button -> this.choosingIcon = true, this));
+        this.addRenderableWidget(new PopupGuiButton(this.getWidth() / 2 - 101, buttonListY + 24, 100, 20, Component.literal(I18n.get("voxelmap.waypoints.sortbycolor") + ":     "), button -> this.choosingColor = true, this));
+        this.addRenderableWidget(new PopupGuiButton(this.getWidth() / 2 - 101, buttonListY + 48, 100, 20, Component.literal(I18n.get("voxelmap.waypoints.sortbyicon") + ":     "), button -> this.choosingIcon = true, this));
         this.doneButton = new PopupGuiButton(this.getWidth() / 2 - 155, this.getHeight() / 6 + 168, 150, 20, Component.translatable("addServer.add"), button -> this.acceptWaypoint(), this);
         this.addRenderableWidget(this.doneButton);
         this.addRenderableWidget(new PopupGuiButton(this.getWidth() / 2 + 5, this.getHeight() / 6 + 168, 150, 20, Component.translatable("gui.cancel"), button -> this.cancelWaypoint(), this));
@@ -260,11 +260,11 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
     @Override
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
         this.tooltip = null;
-        this.buttonEnabled.setMessage(Component.literal(I18n.get("minimap.waypoints.enabled") + " " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
+        this.buttonEnabled.setMessage(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
         this.renderDefaultBackground(drawContext);
-        drawContext.drawCenteredString(this.getFontRenderer(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("minimap.waypoints.new") : I18n.get("minimap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
-        drawContext.drawString(this.getFontRenderer(), I18n.get("minimap.waypoints.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 16777215);
+        drawContext.drawCenteredString(this.getFontRenderer(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("voxelmap.waypoints.new") : I18n.get("voxelmap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
+        drawContext.drawString(this.getFontRenderer(), I18n.get("voxelmap.waypoints.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 16777215);
         drawContext.drawString(this.getFontRenderer(), I18n.get("X"), this.getWidth() / 2 - 100, this.getHeight() / 6 + 41, 16777215);
         drawContext.drawString(this.getFontRenderer(), I18n.get("Y"), this.getWidth() / 2 - 28, this.getHeight() / 6 + 41, 16777215);
         drawContext.drawString(this.getFontRenderer(), I18n.get("Z"), this.getWidth() / 2 + 44, this.getHeight() / 6 + 41, 16777215);

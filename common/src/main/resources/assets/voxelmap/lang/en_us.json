@@ -66,8 +66,9 @@
   "options.voxelmap.worldborder": "World Border",
   "options.voxelmap.worldseed": "Seed",
   "options.voxelmap.teleportcommand": "Teleport command",
-  "options.voxelmap.movescoreboarddown": "Move Scoreboard below map",
-  "options.voxelmap.movemapdownwhilestatuseffect": "Move map below status effect icons",
+  "options.voxelmap.movescoreboardbelowmap": "Move Scoreboard below map",
+  "options.voxelmap.movemapbelowstatuseffect": "Move map below status effect icons",
+  "options.voxelmap.showbiomelabel": "Show Biome Label",
 
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Radar Options",

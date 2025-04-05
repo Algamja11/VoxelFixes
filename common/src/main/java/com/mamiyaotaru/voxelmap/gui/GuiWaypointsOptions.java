@@ -24,7 +24,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 
     public void init() {
         int var2 = 0;
-        this.screenTitle = Component.translatable("options.minimap.waypoints.title");
+        this.screenTitle = Component.translatable("options.voxelmap.waypoints.title");
 
         for (EnumOptionsMinimap option : relevantOptions) {
             if (option.isFloat()) {

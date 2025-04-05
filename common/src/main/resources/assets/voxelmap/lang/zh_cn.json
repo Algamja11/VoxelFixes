@@ -63,8 +63,8 @@
   "options.voxelmap.worldborder": "世界边界",
   "options.voxelmap.worldseed": "地图种子",
   "options.voxelmap.teleportcommand": "传送命令",
-  "options.voxelmap.movescoreboarddown": "移动计分板至小地图下",
-  "options.voxelmap.movemapdownwhilestatuseffect": "移动小地图至状态效果图标下",
+  "options.voxelmap.movescoreboardbelowmap": "移动计分板至小地图下",
+  "options.voxelmap.movemapbelowstatuseffect": "移动小地图至状态效果图标下",
 
   "options.voxelmap.radar": "雷达…",
   "options.voxelmap.radar.title": "雷达选项",

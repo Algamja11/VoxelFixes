@@ -63,8 +63,8 @@
   "options.voxelmap.worldborder": "世界邊界",
   "options.voxelmap.worldseed": "地圖種子",
   "options.voxelmap.teleportcommand": "傳送指令",
-  "options.voxelmap.movescoreboarddown": "將計分板移動到地圖下方",
-  "options.voxelmap.movemapdownwhilestatuseffect": "當狀態效果圖示出現時，將地圖移至下方",
+  "options.voxelmap.movescoreboardbelowmap": "將計分板移動到地圖下方",
+  "options.voxelmap.movemapbelowstatuseffect": "當狀態效果圖示出現時，將地圖移至下方",
 
   "options.voxelmap.radar": "雷達...",
   "options.voxelmap.radar.title": "雷達選項",

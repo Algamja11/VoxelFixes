@@ -187,10 +187,10 @@ public class Map implements Runnable, IChangeObserver {
 
         java.util.Map<String, Integer> categoryOrder = KeyMapping.CATEGORY_SORT_ORDER;
         VoxelConstants.getLogger().warn("CATEGORY ORDER IS " + categoryOrder.size());
-        Integer categoryPlace = categoryOrder.get("controls.minimap.title");
+        Integer categoryPlace = categoryOrder.get("controls.voxelmap.title");
         if (categoryPlace == null) {
             int currentSize = categoryOrder.size();
-            categoryOrder.put("controls.minimap.title", currentSize + 1);
+            categoryOrder.put("controls.voxelmap.title", currentSize + 1);
         }
 
         this.showWelcomeScreen = this.options.welcome;
@@ -312,7 +312,7 @@ public class Map implements Runnable, IChangeObserver {
 
     public void newWorldName() {
         String subworldName = this.waypointManager.getCurrentSubworldDescriptor(true);
-        StringBuilder subworldNameBuilder = (new StringBuilder("§r")).append(I18n.get("worldmap.multiworld.newworld")).append(":").append(" ");
+        StringBuilder subworldNameBuilder = (new StringBuilder("§r")).append(I18n.get("voxelmap.worldmap.multiworld.newworld")).append(":").append(" ");
         if (subworldName.isEmpty() && this.waypointManager.isMultiworld()) {
             subworldNameBuilder.append("???");
         } else if (!subworldName.isEmpty()) {
@@ -402,15 +402,15 @@ public class Map implements Runnable, IChangeObserver {
         if (minecraft.screen == null && this.options.keyBindFullscreen.consumeClick()) {
             this.fullscreenMap = !this.fullscreenMap;
             if (this.zoom == 4) {
-                this.error = I18n.get("minimap.ui.zoomlevel") + " (0.25x)";
+                this.error = I18n.get("voxelmap.ui.zoomlevel") + ": (0.25x)";
             } else if (this.zoom == 3) {
-                this.error = I18n.get("minimap.ui.zoomlevel") + " (0.5x)";
+                this.error = I18n.get("voxelmap.ui.zoomlevel") + ": (0.5x)";
             } else if (this.zoom == 2) {
-                this.error = I18n.get("minimap.ui.zoomlevel") + " (1.0x)";
+                this.error = I18n.get("voxelmap.ui.zoomlevel") + ": (1.0x)";
             } else if (this.zoom == 1) {
-                this.error = I18n.get("minimap.ui.zoomlevel") + " (2.0x)";
+                this.error = I18n.get("voxelmap.ui.zoomlevel") + ": (2.0x)";
             } else {
-                this.error = I18n.get("minimap.ui.zoomlevel") + " (4.0x)";
+                this.error = I18n.get("voxelmap.ui.zoomlevel") + ": (4.0x)";
             }
         }
 
@@ -489,19 +489,19 @@ public class Map implements Runnable, IChangeObserver {
     private void cycleZoomLevel() {
         if (this.options.zoom == 4) {
             this.options.zoom = 3;
-            this.error = I18n.get("minimap.ui.zoomlevel") + " (0.5x)";
+            this.error = I18n.get("voxelmap.ui.zoomlevel") + ": (0.5x)";
         } else if (this.options.zoom == 3) {
             this.options.zoom = 2;
-            this.error = I18n.get("minimap.ui.zoomlevel") + " (1.0x)";
+            this.error = I18n.get("voxelmap.ui.zoomlevel") + ": (1.0x)";
         } else if (this.options.zoom == 2) {
             this.options.zoom = 1;
-            this.error = I18n.get("minimap.ui.zoomlevel") + " (2.0x)";
+            this.error = I18n.get("voxelmap.ui.zoomlevel") + ": (2.0x)";
         } else if (this.options.zoom == 1) {
             this.options.zoom = 0;
-            this.error = I18n.get("minimap.ui.zoomlevel") + " (4.0x)";
+            this.error = I18n.get("voxelmap.ui.zoomlevel") + ": (4.0x)";
         } else if (this.options.zoom == 0) {
             this.options.zoom = 4;
-            this.error = I18n.get("minimap.ui.zoomlevel") + " (0.25x)";
+            this.error = I18n.get("voxelmap.ui.zoomlevel") + ": (0.25x)";
         }
 
         this.options.saveAll();
@@ -1963,16 +1963,16 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private void drawWelcomeScreen(GuiGraphics drawContext, int scWidth, int scHeight) {
-        if (this.welcomeText[1] == null || this.welcomeText[1].getString().equals("minimap.ui.welcome2")) {
-            this.welcomeText[0] = (Component.literal("")).append((Component.literal("VoxelMap! ")).withStyle(ChatFormatting.RED)).append(Component.translatable("minimap.ui.welcome1"));
-            this.welcomeText[1] = Component.translatable("minimap.ui.welcome2");
-            this.welcomeText[2] = Component.translatable("minimap.ui.welcome3");
-            this.welcomeText[3] = Component.translatable("minimap.ui.welcome4");
-            this.welcomeText[4] = (Component.literal("")).append((Component.keybind(this.options.keyBindZoom.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome5a")).append(", ")
-                    .append((Component.keybind(this.options.keyBindMenu.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome5b"));
-            this.welcomeText[5] = (Component.literal("")).append((Component.keybind(this.options.keyBindFullscreen.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome6"));
-            this.welcomeText[6] = (Component.literal("")).append((Component.keybind(this.options.keyBindWaypoint.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("minimap.ui.welcome7"));
-            this.welcomeText[7] = this.options.keyBindZoom.getTranslatedKeyMessage().copy().append(": ").append((Component.translatable("minimap.ui.welcome8")).withStyle(ChatFormatting.GRAY));
+        if (this.welcomeText[1] == null || this.welcomeText[1].getString().equals("voxelmap.ui.welcome2")) {
+            this.welcomeText[0] = (Component.literal("")).append((Component.literal("VoxelMap! ")).withStyle(ChatFormatting.RED)).append(Component.translatable("voxelmap.ui.welcome1"));
+            this.welcomeText[1] = Component.translatable("voxelmap.ui.welcome2");
+            this.welcomeText[2] = Component.translatable("voxelmap.ui.welcome3");
+            this.welcomeText[3] = Component.translatable("voxelmap.ui.welcome4");
+            this.welcomeText[4] = (Component.literal("")).append((Component.keybind(this.options.keyBindZoom.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("voxelmap.ui.welcome5a")).append(", ")
+                    .append((Component.keybind(this.options.keyBindMenu.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("voxelmap.ui.welcome5b"));
+            this.welcomeText[5] = (Component.literal("")).append((Component.keybind(this.options.keyBindFullscreen.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("voxelmap.ui.welcome6"));
+            this.welcomeText[6] = (Component.literal("")).append((Component.keybind(this.options.keyBindWaypoint.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("voxelmap.ui.welcome7"));
+            this.welcomeText[7] = this.options.keyBindZoom.getTranslatedKeyMessage().copy().append(": ").append((Component.translatable("voxelmap.ui.welcome8")).withStyle(ChatFormatting.GRAY));
         }
 
         int maxSize = 0;
