@@ -532,8 +532,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         } else {
             long timeSinceRelease = System.currentTimeMillis() - this.timeOfRelease;
             if (timeSinceRelease < 700.0F) {
-                this.deltaX = this.deltaXonRelease * (float) Math.exp((-timeSinceRelease) / 350.0F);
-                this.deltaY = this.deltaYonRelease * (float) Math.exp((-timeSinceRelease) / 350.0F);
+                this.deltaX = this.easeOut(timeSinceRelease, this.deltaXonRelease, -this.deltaXonRelease, 700.0F);
+                this.deltaY = this.easeOut(timeSinceRelease, this.deltaYonRelease, -this.deltaYonRelease, 700.0F);
             } else {
                 this.deltaX = 0.0F;
                 this.deltaY = 0.0F;
@@ -703,10 +703,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                     guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-90.0F));
                     guiGraphics.pose().translate(-(playerX * this.mapToGui), -(playerZ * this.mapToGui), 0.0f);
                 }
-                float x = -7.0F + playerX * this.mapToGui;
-                float y = -7.0F + playerZ * this.mapToGui;
-                float width = 14.0F;
-                float height = 14.0F;
+                float x = -6.0F + playerX * this.mapToGui;
+                float y = -6.0F + playerZ * this.mapToGui;
+                float width = 12.0F;
+                float height = 12.0F;
                 guiGraphics.drawSpecial(bufferSource -> {
                     Matrix4f matrix4f = guiGraphics.pose().last().pose();
 
