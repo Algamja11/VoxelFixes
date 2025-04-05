@@ -241,8 +241,8 @@ public class WaypointContainer {
 
         Font fontRenderer = minecraft.font;
         if (isPointedAt && fontRenderer != null) {
-            byte elevateBy = this.options.waypointNameBelowIcon ? (byte) 10 : (byte) -19;
-            byte elevateDistBy = this.options.waypointNameBelowIcon ? (byte) 30 : (byte) -39;
+            byte nameLabelElevation = this.options.waypointNameBelowIcon ? (byte) 10 : (byte) -19;
+            byte distLabelElevation = this.options.waypointNameBelowIcon ? (byte) 30 : (byte) -39;
             float distTextScale = 0.65F;
 
             rt = GLUtils.WAYPOINT_TEXT_BACKGROUND;
@@ -257,17 +257,17 @@ public class WaypointContainer {
             // OpenGL.glDepthMask(distance < maxDistance);
             // OpenGL.glPolygonOffset(1.0F, 7.0F);
             // BufferBuilder vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-            vertexBackground.addVertex(poseStack.last(), (-halfStringWidth - 2), (-2 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-            vertexBackground.addVertex(poseStack.last(), (-halfStringWidth - 2), (9 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-            vertexBackground.addVertex(poseStack.last(), (halfStringWidth + 2), (9 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-            vertexBackground.addVertex(poseStack.last(), (halfStringWidth + 2), (-2 + elevateBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+            vertexBackground.addVertex(poseStack.last(), (-halfStringWidth - 2), (-2 + nameLabelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+            vertexBackground.addVertex(poseStack.last(), (-halfStringWidth - 2), (9 + nameLabelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+            vertexBackground.addVertex(poseStack.last(), (halfStringWidth + 2), (9 + nameLabelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+            vertexBackground.addVertex(poseStack.last(), (halfStringWidth + 2), (-2 + nameLabelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
             // BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
             // OpenGL.glPolygonOffset(1.0F, 5.0F);
             // vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-            vertexBackground.addVertex(poseStack.last(), (-halfStringWidth - 1), (-1 + elevateBy), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-            vertexBackground.addVertex(poseStack.last(), (-halfStringWidth - 1), (8 + elevateBy), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-            vertexBackground.addVertex(poseStack.last(), (halfStringWidth + 1), (8 + elevateBy), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-            vertexBackground.addVertex(poseStack.last(), (halfStringWidth + 1), (-1 + elevateBy), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+            vertexBackground.addVertex(poseStack.last(), (-halfStringWidth - 1), (-1 + nameLabelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+            vertexBackground.addVertex(poseStack.last(), (-halfStringWidth - 1), (8 + nameLabelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+            vertexBackground.addVertex(poseStack.last(), (halfStringWidth + 1), (8 + nameLabelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+            vertexBackground.addVertex(poseStack.last(), (halfStringWidth + 1), (-1 + nameLabelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
             // BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
             //
             if (this.options.waypointDistanceBelowName) {
@@ -275,17 +275,17 @@ public class WaypointContainer {
                 poseStack.scale(distTextScale, distTextScale, distTextScale);
                 // OpenGL.glPolygonOffset(1.0F, 7.0F);
                 // vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                vertexBackground.addVertex(poseStack.last(), (-halfDistStringWidth - 2), (-2 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexBackground.addVertex(poseStack.last(), (-halfDistStringWidth - 2), (9 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexBackground.addVertex(poseStack.last(), (halfDistStringWidth + 2), (9 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexBackground.addVertex(poseStack.last(), (halfDistStringWidth + 2), (-2 + elevateDistBy), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexBackground.addVertex(poseStack.last(), (-halfDistStringWidth - 2), (-2 + distLabelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexBackground.addVertex(poseStack.last(), (-halfDistStringWidth - 2), (9 + distLabelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexBackground.addVertex(poseStack.last(), (halfDistStringWidth + 2), (9 + distLabelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexBackground.addVertex(poseStack.last(), (halfDistStringWidth + 2), (-2 + distLabelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
                 // BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
                 // OpenGL.glPolygonOffset(1.0F, 5.0F);
                 // vertexBuffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                vertexBackground.addVertex(poseStack.last(), (-halfDistStringWidth - 1), (-1 + elevateDistBy), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexBackground.addVertex(poseStack.last(), (-halfDistStringWidth - 1), (8 + elevateDistBy), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexBackground.addVertex(poseStack.last(), (halfDistStringWidth + 1), (8 + elevateDistBy), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexBackground.addVertex(poseStack.last(), (halfDistStringWidth + 1), (-1 + elevateDistBy), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexBackground.addVertex(poseStack.last(), (-halfDistStringWidth - 1), (-1 + distLabelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexBackground.addVertex(poseStack.last(), (-halfDistStringWidth - 1), (8 + distLabelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexBackground.addVertex(poseStack.last(), (halfDistStringWidth + 1), (8 + distLabelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexBackground.addVertex(poseStack.last(), (halfDistStringWidth + 1), (-1 + distLabelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
                 // BufferUploader.drawWithShader(vertexBuffer.buildOrThrow());
                 poseStack.popPose();
             }
@@ -336,11 +336,11 @@ public class WaypointContainer {
             // if (withoutDepth) {
             int textColor = (int) (255.0F * fade) << 24 | 0x00cccccc;
             // OpenGL.glDisable(OpenGL.GL11_GL_DEPTH_TEST);
-            fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), elevateBy, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00f000f0);
+            fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), nameLabelElevation, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00f000f0);
             if (this.options.waypointDistanceBelowName) {
                 poseStack.pushPose();
                 poseStack.scale(distTextScale, distTextScale, distTextScale);
-                fontRenderer.drawInBatch(Component.literal(distStr), (-fontRenderer.width(distStr) / 2f), elevateDistBy, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00f000f0);
+                fontRenderer.drawInBatch(Component.literal(distStr), (-fontRenderer.width(distStr) / 2f), distLabelElevation, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00f000f0);
                 poseStack.popPose();
             }
             // vertexConsumerProvider.endBatch();

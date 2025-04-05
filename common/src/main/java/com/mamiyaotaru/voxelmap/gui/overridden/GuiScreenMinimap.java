@@ -34,7 +34,7 @@ public class GuiScreenMinimap extends Screen {
     public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {
     }
 
-    public void renderBackgroundTexture(GuiGraphics context) {
+    public void renderDefaultBackground(GuiGraphics context) {
         this.renderBlurredBackground();
         this.renderMenuBackground(context);
     }

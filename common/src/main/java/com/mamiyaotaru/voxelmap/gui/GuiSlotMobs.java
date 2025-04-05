@@ -4,6 +4,7 @@ import com.mamiyaotaru.voxelmap.RadarSettingsManager;
 import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.VoxelMap;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
+import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.MobCategory;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -134,7 +135,7 @@ class GuiSlotMobs extends AbstractSelectionList<GuiSlotMobs.MobItem> {
             }
             Sprite sprite = VoxelConstants.getVoxelMapInstance().getNotSimpleRadar().getEntityMapImageManager().requestImageForMobType(type);
             if (sprite != null) {
-                sprite.blit(drawContext, RenderType::guiTextured, x + 2, y - 2, 18, 18);
+                sprite.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, x + 2, y - 2, 18, 18);
             }
             drawContext.blit(RenderType::guiTextured, isEnabled ? GuiSlotMobs.this.visibleIconIdentifier : GuiSlotMobs.this.invisibleIconIdentifier, x + 198, y - 2, 0.0F, 0.0F, 18, 18, 18, 18);
             drawContext.flush();
