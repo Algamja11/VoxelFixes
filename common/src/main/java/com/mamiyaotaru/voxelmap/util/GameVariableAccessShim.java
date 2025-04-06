@@ -3,7 +3,10 @@ package com.mamiyaotaru.voxelmap.util;
 import com.mamiyaotaru.voxelmap.VoxelConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.biome.Biome;
 
 public class GameVariableAccessShim {
     public static ClientLevel getWorld() {
@@ -36,5 +39,10 @@ public class GameVariableAccessShim {
 
     public static float rotationYaw() {
         return VoxelConstants.getMinecraft().getCameraEntity().yRotO + (VoxelConstants.getMinecraft().getCameraEntity().getYRot() - VoxelConstants.getMinecraft().getCameraEntity().yRotO) * VoxelConstants.getMinecraft().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+    }
+
+    public static String getCurrentBiomeId() {
+        ResourceLocation biomeResource = VoxelConstants.getMinecraft().level.getBiome(VoxelConstants.getMinecraft().player.blockPosition()).unwrapKey().get().location();
+        return "biome." + biomeResource.getNamespace() + "." + biomeResource.getPath();
     }
 }

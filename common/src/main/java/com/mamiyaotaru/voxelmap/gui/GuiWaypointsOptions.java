@@ -12,13 +12,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiWaypointsOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.DISTANCE_UNIT_CONVERSION, EnumOptionsMinimap.NAME_LABEL_BELOW_ICON, EnumOptionsMinimap.DISTANCE_LABEL_BELOW_NAME, EnumOptionsMinimap.DEATHPOINTS};
-    private final Screen parent;
+    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.DISTANCE_UNIT_CONVERSION, EnumOptionsMinimap.NAME_LABEL_BELOW_ICON, EnumOptionsMinimap.DISTANCE_LABEL_BELOW_NAME, EnumOptionsMinimap.DEATHPOINTS };
     private final MapSettingsManager options;
     protected Component screenTitle;
 
     public GuiWaypointsOptions(Screen parent, MapSettingsManager options) {
-        this.parent = parent;
+        this.parentScreen = parent;
         this.options = options;
     }
 
@@ -43,7 +42,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
             ++var2;
         }
 
-        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> VoxelConstants.getMinecraft().setScreen(this.parent)).bounds(this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, 200, 20).build());
+        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, 200, 20).build());
     }
 
     protected void optionClicked(Button par1GuiButton) {

@@ -14,6 +14,7 @@ import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -57,6 +58,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
         this.suffix = this.waypoint.imageSuffix;
         this.enabled = this.waypoint.enabled;
         this.editing = editing;
+        this.parentScreen = (Screen) par1GuiScreen;
     }
 
     @Override
@@ -111,7 +113,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
             return;
         }
 
-        VoxelConstants.getMinecraft().setScreen(null);
+        VoxelConstants.getMinecraft().setScreen(parentScreen);
     }
 
     protected void acceptWaypoint() {
@@ -128,13 +130,13 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
 
         if (editing) {
             waypointManager.saveWaypoints();
-            VoxelConstants.getMinecraft().setScreen(null);
+            VoxelConstants.getMinecraft().setScreen(parentScreen);
 
             return;
         }
 
         waypointManager.addWaypoint(waypoint);
-        VoxelConstants.getMinecraft().setScreen(null);
+        VoxelConstants.getMinecraft().setScreen(parentScreen);
     }
 
     @Override
