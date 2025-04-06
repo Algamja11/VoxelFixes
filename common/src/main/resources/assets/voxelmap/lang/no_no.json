@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Legg til et landemerke hurtig.",
   "voxelmap.ui.welcome8": "Skjul denne meldingen",
   "voxelmap.ui.zoomlevel": "Zoom Level",
-
   "controls.voxelmap.title": "Minimap-Kontroller",
   "controls.voxelmap.unbind1": "For å løskoble en tast, velg den og trykk 'Escape'.",
   "controls.voxelmap.unbind2": "(Unntak for Menyknappen - den kan ikke bli løskoblet)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Fullskjermkart av/på",
   "key.voxelmap.menu": "Meny",
   "key.voxelmap.waypointhotkey": "Hurtigtast Landemerke",
   "key.voxelmap.togglemobs": "Mobs av/på",
   "key.voxelmap.waypointmenu": "Landemerkemeny",
-
   "options.voxelmap.title": "Minimap-Instillinger",
   "options.voxelmap.showcoordinates": "Vis Koordinater",
   "options.voxelmap.hideminimap": "Skjul Minimap",
   "options.voxelmap.cavemode": "Skru på Hulemodus",
   "options.voxelmap.dynamiclighting": "Dynamisk Lyssetting",
   "options.voxelmap.terraindepth": "Terrengdybde",
+  "options.voxelmap.squaremap": "Firkantet Kart",
   "options.voxelmap.oldnorth": "Gammel Nord",
   "options.voxelmap.ingamewaypoints": "Spill-Landemerker",
   "options.voxelmap.location": "Plassering",
@@ -52,7 +50,6 @@
   "options.voxelmap.terrain.height": "Høyde",
   "options.voxelmap.terrain.slope": "Skråning",
   "options.voxelmap.terrain.both": "Begge",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Radarvalg",
   "options.voxelmap.radar.showradar": "Radar",
@@ -61,7 +58,6 @@
   "options.voxelmap.radar.showplayerhelmets": "Vis Spillerenes Hjelmer",
   "options.voxelmap.radar.iconoutlines": "Ikonkanter",
   "options.voxelmap.radar.iconfiltering": "Ikonfiltrering",
-
   "options.voxelmap.waypoints": "Landemerker...",
   "options.voxelmap.waypoints.title": "Landemerke-Valg",
   "options.voxelmap.waypoints.distance": "Maks Avstand",
@@ -70,7 +66,6 @@
   "options.voxelmap.waypoints.deathpoints.mostrecent": "Nyligst",
   "options.voxelmap.waypoints.deathpoints.all": "Alle",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Aktiveres neste død",
-
   "voxelmap.waypoints.title": "Landemerker",
   "voxelmap.waypoints.teleportto": "Teleporter Til",
   "voxelmap.waypoints.highlight": "Lys opp",

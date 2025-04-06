@@ -9,23 +9,21 @@
   "voxelmap.ui.welcome7": "Adicão rápida de waypoint.",
   "voxelmap.ui.welcome8": "Ocultar esta mensagem",
   "voxelmap.ui.zoomlevel": "Nível de Zoom",
-
   "controls.voxelmap.title": "Controles de Minimapa",
   "controls.voxelmap.unbind1": "Para desassociar uma tecla, pressione 'Esc'.",
   "controls.voxelmap.unbind2": "(Exceto a tecla de Menu - Não é permitido desassociá-la)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Alternar mapa em tela cheia",
   "key.voxelmap.menu": "Menu",
   "key.voxelmap.waypointhotkey": "Atalho para Waypoints",
   "key.voxelmap.togglemobs": "Alternar Mobs",
-
   "options.voxelmap.title": "Opções de Minimapa",
   "options.voxelmap.showcoordinates": "Mostrar coordenadas",
   "options.voxelmap.hideminimap": "Ocultar Minimapa",
   "options.voxelmap.cavemode": "Habilitar modo caverna",
   "options.voxelmap.dynamiclighting": "Iluminação Dinâmica",
   "options.voxelmap.terraindepth": "Nível de terreno",
+  "options.voxelmap.squaremap": "Mapa Quadrado",
   "options.voxelmap.oldnorth": "Norte velho",
   "options.voxelmap.ingamewaypoints": "Waypoints In-game",
   "options.voxelmap.ingamewaypoints.beacons": "Beacons",
@@ -51,7 +49,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Transparência",
   "options.voxelmap.biomeoverlay.solid": "Sólido",
   "options.voxelmap.chunkgrid": "Grade de Chunks",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Opções de Radar",
   "options.voxelmap.radar.showradar": "Radar",
@@ -60,7 +57,6 @@
   "options.voxelmap.radar.showplayerhelmets": "Mostar elmos de jogadores",
   "options.voxelmap.radar.iconoutlines": "Contorno de ícone",
   "options.voxelmap.radar.iconfiltering": "Filtragem de ícone",
-
   "options.voxelmap.waypoints": "Waypoints...",
   "options.voxelmap.waypoints.title": "Opções de Waypoints",
   "options.voxelmap.waypoints.distance": "Distância Máxima",
@@ -69,7 +65,6 @@
   "options.voxelmap.waypoints.deathpoints.mostrecent": "Más recente",
   "options.voxelmap.waypoints.deathpoints.all": "Todos",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Tem efeito na próxima morte",
-
   "voxelmap.waypoints.title": "Waypoints",
   "voxelmap.waypoints.teleportto": "Teleportar para",
   "voxelmap.waypoints.highlight": "Escolher",

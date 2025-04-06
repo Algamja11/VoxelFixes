@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Rýchlo pridať waypoint.",
   "voxelmap.ui.welcome8": "Schovať túto správu",
   "voxelmap.ui.zoomlevel": "Priblíženie",
-
   "controls.voxelmap.title": "Ovládanie Minimapy",
   "controls.voxelmap.unbind1": "Pre zrušenie nastavenej klávesy stlačte 'Escape'.",
   "controls.voxelmap.unbind2": "(S výnimkou klávesy Menu, ktorá nejde zrušiť)",
-
   "key.voxelmap.zoom": "Priblíženie",
   "key.voxelmap.togglefullscreen": "Prepnúť mapu na celú obrazovku",
   "key.voxelmap.menu": "Menu",
   "key.voxelmap.togglemobs": "Prepnúť zobrazenie Mobov",
   "key.voxelmap.waypointhotkey": "Tlačidlo na Waypointy",
   "key.voxelmap.waypointmenu": "Menu Waypointov",
-
   "options.voxelmap.title": "Možnosti Minimapy",
   "options.voxelmap.showcoordinates": "Zobraziť Súradnice",
   "options.voxelmap.hideminimap": "Schovať Minimapu",
   "options.voxelmap.cavemode": "Povoliť Jaskynný Mód",
   "options.voxelmap.dynamiclighting": "Vyhladené Tieňe",
   "options.voxelmap.terraindepth": "Hĺbka Terénu",
+  "options.voxelmap.squaremap": "Štvorcová Mapa",
   "options.voxelmap.oldnorth": "Starý Sever",
   "options.voxelmap.ingamewaypoints": "In-game Waypointy",
   "options.voxelmap.ingamewaypoints.beacons": "Majáky",
@@ -53,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Priehľadné",
   "options.voxelmap.biomeoverlay.solid": "Nepriehľadné",
   "options.voxelmap.chunkgrid": "Mriežka Chunkov",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Možnosti Radaru",
   "options.voxelmap.radar.showradar": "Radar",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Zobraziť Helmy Hráčov",
   "options.voxelmap.radar.iconoutlines": "Obrysy Ikôn",
   "options.voxelmap.radar.iconfiltering": "Filtrovanie Ikôn",
-
   "options.voxelmap.selectmobs": "Mobovia na zobrazenie...",
   "options.voxelmap.selectmobs.title": "Zobraziť alebo Skryť Individúalne Typy Mobov",
   "options.voxelmap.selectmobs.enable": "Povoliť Ikonku Mobov",
   "options.voxelmap.selectmobs.disable": "Zakázať Ikonku Mobov",
   "options.voxelmap.selectmobs.enabled": "Táto Ikona je Zobrazená",
   "options.voxelmap.selectmobs.disabled": "Táto Ikona nieje Zobrazená",
-
   "options.voxelmap.waypoints": "Waypointy...",
   "options.voxelmap.waypoints.title": "Nastavenie Waypointov",
   "options.voxelmap.waypoints.distance": "Maximálna Vzdialenosť",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Všetky",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Bude mať vplyv od budúcej smrti",
   "options.voxelmap.waypoints.showwaypointnames": "Zobraziť Názvy na Mape",
-
   "voxelmap.waypoints.title": "Waypointy",
   "voxelmap.waypoints.teleportto": "Teleportovať",
   "voxelmap.waypoints.highlight": "Zvýrazniť",

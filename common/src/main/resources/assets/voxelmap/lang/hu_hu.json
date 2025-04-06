@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Útpont gyots hozzáadása",
   "voxelmap.ui.welcome8": "Üzenet elrejtése",
   "voxelmap.ui.zoomlevel": "Nagyítási szint",
-
   "controls.voxelmap.title": "Minitérkép kezelés",
   "controls.voxelmap.unbind1": "Törléshez válasszd ki a gombot, es nyomj 'ESC'-et.",
   "controls.voxelmap.unbind2": "(Kivéve a Menü-gomb, az nem változtatható)",
-
   "key.voxelmap.zoom": "Nagyítás",
   "key.voxelmap.togglefullscreen": "Teljes képernyős térkép",
   "key.voxelmap.menu": "Menü",
   "key.voxelmap.togglemobs": "Lények kapcsolása",
   "key.voxelmap.waypointhotkey": "Útpont gyorsbillentyű",
   "key.voxelmap.waypointmenu": "Útpont menü",
-
   "options.voxelmap.title": "Minitérkép beállítások",
   "options.voxelmap.showcoordinates": "Koordináták kijelzése",
   "options.voxelmap.hideminimap": "Minitérkép rejtése",
   "options.voxelmap.cavemode": "Barlang mód engedélyezése",
   "options.voxelmap.dynamiclighting": "Dinamikus fények",
   "options.voxelmap.terraindepth": "Terep mélység",
+  "options.voxelmap.squaremap": "Szögletes térkép",
   "options.voxelmap.oldnorth": "Régi Észak",
   "options.voxelmap.ingamewaypoints": "Útpontok a játékban",
   "options.voxelmap.ingamewaypoints.beacons": "Jelzőfények",
@@ -52,7 +50,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Átlátszó",
   "options.voxelmap.biomeoverlay.solid": "Átlátszatlan",
   "options.voxelmap.chunkgrid": "Darab rács",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Radar beállítások\"",
   "options.voxelmap.radar.showradar": "Radar",
@@ -60,7 +57,6 @@
   "options.voxelmap.radar.showplayerhelmets": "Játékos páncélzat mutatása",
   "options.voxelmap.radar.iconoutlines": "Ikon körvonal",
   "options.voxelmap.radar.iconfiltering": "Ikon szűrés",
-
   "options.voxelmap.waypoints": "Útpontok...",
   "options.voxelmap.waypoints.title": "Útpont beállítások",
   "options.voxelmap.waypoints.distance": "Max. távolság",
@@ -69,7 +65,6 @@
   "options.voxelmap.waypoints.deathpoints.mostrecent": "Legutóbbi",
   "options.voxelmap.waypoints.deathpoints.all": "Mind",
   "options.voxelmap.waypoints.deathpoints.tooltip": "A kövelkető haláltól érvényes",
-
   "voxelmap.waypoints.title": "Útpontok",
   "voxelmap.waypoints.teleportto": "Teleportálás ide",
   "voxelmap.waypoints.highlight": "Kiemelés",

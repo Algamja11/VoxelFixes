@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Pievienot punktu",
   "voxelmap.ui.welcome8": "Paslēpt šo ziņu ",
   "voxelmap.ui.zoomlevel": "Pietuvināšanas līmenis",
-
   "controls.voxelmap.title": "Minimapes kontroles ",
   "controls.voxelmap.unbind1": "Lai atbindotu taustiņu, izvēlaties to un spiežat 'Escape'. ",
   "controls.voxelmap.unbind2": "(Izņemot izvēlnes taustiņu - to nevar atbindot) ",
-
   "key.voxelmap.zoom": "Pietuvināt ",
   "key.voxelmap.togglefullscreen": "Iespējot pilnekrāna karti ",
   "key.voxelmap.menu": "Izvēlne ",
   "key.voxelmap.togglemobs": "Ispējot dzīvniekus ",
   "key.voxelmap.waypointhotkey": "Punktu ātrpievienošanas taustiņš",
   "key.voxelmap.waypointmenu": "Punktu izvēlne ",
-
   "options.voxelmap.title": "Minimapes uzstādijumi ",
   "options.voxelmap.showcoordinates": "Rādīt koordinātes ",
   "options.voxelmap.hideminimap": "Paslēpt minimapi ",
   "options.voxelmap.cavemode": "Iespējot alu režīmu",
   "options.voxelmap.dynamiclighting": "Dinamiskais apgaismojums ",
   "options.voxelmap.terraindepth": "Augsnes \"dziļums\" ",
+  "options.voxelmap.squaremap": "Kvadrāta mape",
   "options.voxelmap.oldnorth": "\"Vecie ziemeļi\" ",
   "options.voxelmap.ingamewaypoints": "Iekš-spēles punki ",
   "options.voxelmap.ingamewaypoints.beacons": "Bākas ",
@@ -53,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Caurspīdīgs ",
   "options.voxelmap.biomeoverlay.solid": "Blīvs ",
   "options.voxelmap.chunkgrid": "Chunk skala",
-
   "options.voxelmap.radar": "Radars... ",
   "options.voxelmap.radar.title": "Radara Uzstādījumi ",
   "options.voxelmap.radar.showradar": "Radars ",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Rādīt spēlētāju ķiveres",
   "options.voxelmap.radar.iconoutlines": "Ikonu ārlīnijas ",
   "options.voxelmap.radar.iconfiltering": "Ikonu filtrēšana ",
-
   "options.voxelmap.selectmobs": "Dzīvnieki kurus rādīt... ",
   "options.voxelmap.selectmobs.title": "Rādīt/paslēpt individuālus dzīvnieku tipus ",
   "options.voxelmap.selectmobs.enable": "Iespējot dzīvnieku ",
   "options.voxelmap.selectmobs.disable": "Atspējot dzīvnieku ",
   "options.voxelmap.selectmobs.enabled": "Dzīvnieka rādīšana iespējota",
   "options.voxelmap.selectmobs.disabled": "Dzīvnieka rādīšana atspējota ",
-
   "options.voxelmap.waypoints": "Punkti... ",
   "options.voxelmap.waypoints.title": "Puktu uzstādījumi ",
   "options.voxelmap.waypoints.distance": "Maksimālais attālums ",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Visi",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Iespējojas nākamajā nāvē ",
   "options.voxelmap.waypoints.showwaypointnames": "Rādīt vārdus kartē ",
-
   "voxelmap.waypoints.title": "Punkti",
   "voxelmap.waypoints.teleportto": "Teleportēt uz ",
   "voxelmap.waypoints.highlight": "Izcelt ",

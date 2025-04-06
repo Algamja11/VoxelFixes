@@ -9,11 +9,9 @@
   "voxelmap.ui.welcome7": "Добавить маркер",
   "voxelmap.ui.welcome8": "Спрятать это сообщение",
   "voxelmap.ui.zoomlevel": "Масштаб",
-
   "controls.voxelmap.title": "Контроль карты",
   "controls.voxelmap.unbind1": "Для отмены привязки клавиши, выделите его и нажмите 'Esc'",
   "controls.voxelmap.unbind2": "(За исключением клавиши Меню - она не может быть отменена)",
-
   "key.voxelmap.zoom": "Увеличение",
   "key.voxelmap.togglefullscreen": "Включить полноэкранный режим карты",
   "key.voxelmap.voxelmapmenu": "Меню VoxelMap",
@@ -22,13 +20,13 @@
   "key.voxelmap.waypointhotkey": "Установка маркера",
   "key.voxelmap.togglemobs": "Отображение существ",
   "key.voxelmap.toggleingamewaypoints": "Переключить маркеры",
-
   "options.voxelmap.title": "Настройки карты",
   "options.voxelmap.showcoordinates": "Вкл. координаты",
   "options.voxelmap.hideminimap": "Скрыть карту",
   "options.voxelmap.cavemode": "Режим пещер",
   "options.voxelmap.dynamiclighting": "Динамичное освещение",
   "options.voxelmap.terraindepth": "Ландшафт",
+  "options.voxelmap.squaremap": "Квадратная карта",
   "options.voxelmap.rotation": "Вращение",
   "options.voxelmap.oldnorth": "Старый север (beta)",
   "options.voxelmap.ingamewaypoints": "Маркеры в игре",
@@ -62,11 +60,12 @@
   "options.voxelmap.slimechunks": "Слаймовые чанки",
   "options.voxelmap.worldseed": "Seed",
   "options.voxelmap.teleportcommand": "Команда перемещения",
-
   "options.voxelmap.radar": "Радар...",
   "options.voxelmap.radar.title": "Настройки радара",
-  "options.voxelmap.radar.radarmode": "Режим радара",
   "options.voxelmap.radar.showradar": "Радар",
+  "options.voxelmap.radar.radarmode": "Режим радара",
+  "options.voxelmap.radar.radarmode.simple": "Простой",
+  "options.voxelmap.radar.radarmode.full": "Полный",
   "options.voxelmap.radar.showmobnames": "Имена мобов",
   "options.voxelmap.radar.showmobhelmets": "Шлемы существ",
   "options.voxelmap.radar.showplayers": "Показать игроков",
@@ -75,14 +74,12 @@
   "options.voxelmap.radar.showfacing": "Look Direction",
   "options.voxelmap.radar.iconoutlines": "Рамка иконки",
   "options.voxelmap.radar.iconfiltering": "Прозрачность иконки",
-
   "options.voxelmap.selectmobs": "Отображение мобов...",
   "options.voxelmap.selectmobs.title": "Показать/скрыть отдельные типы мобов",
   "options.voxelmap.selectmobs.enable": "Включить иконки",
   "options.voxelmap.selectmobs.disable": "Выключить иконки",
   "options.voxelmap.selectmobs.enabled": "Эта иконка отображается.",
   "options.voxelmap.selectmobs.disabled": "Эта иконка не отображается.",
-
   "options.voxelmap.worldmap": "Карта мира...",
   "options.voxelmap.worldmap.title": "Опции карты мира",
   "options.voxelmap.worldmap.cachesettings": "Настройки зума/кэша",
@@ -94,7 +91,6 @@
   "options.voxelmap.worldmap.cachesize": "Размер кэша регионов",
   "options.voxelmap.worldmap.multiworld": "Multiworld...",
   "options.voxelmap.worldmap.multiworld.auto": "Открыть автоматически",
-
   "options.voxelmap.waypoints": "Маркеры...",
   "options.voxelmap.waypoints.title": "Настройки маркеров",
   "options.voxelmap.waypoints.distance": "Макс. дистанция",
@@ -104,7 +100,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Все",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Вступит в силу после следующей смерти",
   "options.voxelmap.waypoints.showwaypointnames": "Имена маркеров на карте",
-
   "voxelmap.waypoints.title": "Маркеры (Waypoints)",
   "voxelmap.waypoints.teleportto": "Перейти к...",
   "voxelmap.waypoints.highlight": "Выделение",
@@ -126,7 +121,6 @@
   "voxelmap.waypoints.sortbycreated": "Создан",
   "voxelmap.waypoints.sortbycolor": "Цвет ",
   "voxelmap.waypoints.sortbyicon": "Иконка",
-
   "voxelmap.waypointshare.title": "Поделиться маркером",
   "voxelmap.waypointshare.titlecoordinate": "Поделиться координатами",
   "voxelmap.waypointshare.sharemessage": "Добавить сообщение (опционально)",
@@ -137,7 +131,6 @@
   "voxelmap.waypointshare.all": "Все",
   "voxelmap.waypointshare.tooltip1": "Нажмите для подсветки координат,",
   "voxelmap.waypointshare.tooltip2": "или ctrl-click для добавления/редактирования маркера.",
-
   "voxelmap.worldmap.title": "VoxelMap",
   "voxelmap.worldmap.multiworld.title": "VoxelMap - выбор мира Multiworld",
   "voxelmap.worldmap.multiworld.select": "В каком мире вы находитесь?",

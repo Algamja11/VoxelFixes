@@ -9,11 +9,9 @@
   "voxelmap.ui.welcome7": "快速新增一個記錄點.",
   "voxelmap.ui.welcome8": "隱藏此訊息",
   "voxelmap.ui.zoomlevel": "縮放等級",
-
   "controls.voxelmap.title": "小地圖按鍵選項",
   "controls.voxelmap.unbind1": "如果要解除按鍵設置，請在選擇該項目後按「Esc」。",
   "controls.voxelmap.unbind2": "(除了選單鍵 - 它是不能解除的)",
-
   "key.voxelmap.zoom": "縮放",
   "key.voxelmap.togglefullscreen": "全螢幕地圖",
   "key.voxelmap.voxelmapmenu": "VoxelMap 選單",
@@ -22,13 +20,13 @@
   "key.voxelmap.waypointhotkey": "記錄點熱鍵",
   "key.voxelmap.togglemobs": "切換顯示生物",
   "key.voxelmap.toggleingamewaypoints": "切換顯示記錄點",
-
   "options.voxelmap.title": "小地圖選項",
   "options.voxelmap.showcoordinates": "顯示座標",
   "options.voxelmap.hideminimap": "隱藏地圖",
   "options.voxelmap.cavemode": "洞窟模式",
   "options.voxelmap.dynamiclighting": "動態光照",
   "options.voxelmap.terraindepth": "地形深度",
+  "options.voxelmap.squaremap": "方形地圖",
   "options.voxelmap.rotation": "方向旋轉",
   "options.voxelmap.oldnorth": "日落為北",
   "options.voxelmap.ingamewaypoints": "在遊戲中的記錄點",
@@ -65,10 +63,11 @@
   "options.voxelmap.teleportcommand": "傳送指令",
   "options.voxelmap.movescoreboardbelowmap": "將計分板移動到地圖下方",
   "options.voxelmap.movemapbelowstatuseffect": "當狀態效果圖示出現時，將地圖移至下方",
-
   "options.voxelmap.radar": "雷達...",
   "options.voxelmap.radar.title": "雷達選項",
   "options.voxelmap.radar.radarmode": "雷達模式",
+  "options.voxelmap.radar.radarmode.simple": "簡單",
+  "options.voxelmap.radar.radarmode.full": "全部",
   "options.voxelmap.radar.showradar": "雷達",
   "options.voxelmap.radar.showmobnames": "顯示怪物名稱",
   "options.voxelmap.radar.showmobhelmets": "顯示怪物頭盔",
@@ -78,14 +77,12 @@
   "options.voxelmap.radar.showfacing": "朝向",
   "options.voxelmap.radar.iconoutlines": "圖示輪廓",
   "options.voxelmap.radar.iconfiltering": "過濾圖示",
-
   "options.voxelmap.selectmobs": "怪物顯示...",
   "options.voxelmap.selectmobs.title": "顯示或隱藏個別怪物類型",
   "options.voxelmap.selectmobs.enable": "顯示怪物圖示",
   "options.voxelmap.selectmobs.disable": "關閉怪物圖示",
   "options.voxelmap.selectmobs.enabled": "此圖示已經設定顯示",
   "options.voxelmap.selectmobs.disabled": "此圖示已經設定不顯示.",
-
   "options.voxelmap.waypoints": "記錄點...",
   "options.voxelmap.waypoints.title": "記錄點選項",
   "options.voxelmap.waypoints.distance": "最大距離",
@@ -95,7 +92,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "全部",
   "options.voxelmap.waypoints.deathpoints.tooltip": "下次死亡後將會產生效果",
   "options.voxelmap.waypoints.showwaypointnames": "顯示座標名稱",
-
   "options.voxelmap.worldmap": "世界地圖...",
   "options.voxelmap.worldmap.title": "世界地圖選項",
   "options.voxelmap.worldmap.cachesettings": "縮放/快取 設定",
@@ -107,7 +103,6 @@
   "options.voxelmap.worldmap.cachesize": "區域快取大小",
   "options.voxelmap.worldmap.multiworld": "多世界...",
   "options.voxelmap.worldmap.multiworld.auto": "自動開啟",
-
   "voxelmap.waypoints.title": "記錄點清單",
   "voxelmap.waypoints.teleportto": "瞬移到選擇的記錄點",
   "voxelmap.waypoints.highlight": "高亮",
@@ -139,7 +134,6 @@
   "voxelmap.waypointshare.all": "所有人",
   "voxelmap.waypointshare.tooltip1": "單擊以高亮顯示座標，",
   "voxelmap.waypointshare.tooltip2": "或者單擊 新增/編輯 記錄點.",
-
   "voxelmap.worldmap.title": "VoxelMap",
   "voxelmap.worldmap.disabled": "此伺服器已停用世界地圖。",
   "voxelmap.worldmap.multiworld.title": "VoxelMap - 多世界選擇",

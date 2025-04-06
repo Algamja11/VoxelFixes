@@ -9,23 +9,21 @@
   "voxelmap.ui.welcome7": "Aggiungi velocemente un punto di interesse.",
   "voxelmap.ui.welcome8": "Nascondi questo messaggio",
   "voxelmap.ui.zoomlevel": "Livello di zoom",
-
   "controls.voxelmap.title": "Controlli della minimappa",
   "controls.voxelmap.unbind1": "Per deselezionare un tasto, selezionarlo e premere 'Escape'.",
   "controls.voxelmap.unbind2": "(Eccetto per il Tasto Menu - non può essere deselezionato)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Seleziona mappa a tutto schermo",
   "key.voxelmap.menu": "Menu",
   "key.voxelmap.waypointhotkey": "Tasto chiave dei punti di interesse",
   "key.voxelmap.togglemobs": "Seleziona Mob",
-
   "options.voxelmap.title": "Opzioni della minimappa",
   "options.voxelmap.showcoordinates": "Mostra coordinate",
   "options.voxelmap.hideminimap": "Nascondi minimappa",
   "options.voxelmap.cavemode": "Abilità modalità caverna",
   "options.voxelmap.dynamiclighting": "Illuminazione dinamica",
   "options.voxelmap.terraindepth": "Profondità del terreno",
+  "options.voxelmap.squaremap": "Mappa quadrata",
   "options.voxelmap.oldnorth": "Vecchio Nord",
   "options.voxelmap.ingamewaypoints": "Punti di interesse in gioco",
   "options.voxelmap.ingamewaypoints.beacons": "Beacons",
@@ -51,16 +49,13 @@
   "options.voxelmap.terrain.height": "Altezza",
   "options.voxelmap.terrain.slope": "Inclinazione",
   "options.voxelmap.terrain.both": "Entrambe",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.showradar": "Radar",
   "options.voxelmap.radar.showplayers": "Mostra Giocatori",
   "options.voxelmap.radar.iconoutlines": "Contorni delle icone",
   "options.voxelmap.radar.iconfiltering": "Filtraggio delle icone",
   "options.voxelmap.radar.showplayerhelmets": "Mostra elmi dei giocatori",
-
   "options.voxelmap.waypoints": "Punti di interesse...",
-
   "voxelmap.waypoints.title": "Punti di interesse",
   "voxelmap.waypoints.teleportto": "Teletrasporta a",
   "voxelmap.waypoints.newwaypoint": "Nuovo punto di interesse",

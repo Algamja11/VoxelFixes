@@ -9,11 +9,9 @@
   "voxelmap.ui.welcome7": "Neuen Wegpunkt schnell erstellen",
   "voxelmap.ui.welcome8": "Diesen Hinweis Verstecken",
   "voxelmap.ui.zoomlevel": "Zoomstufe",
-
   "controls.voxelmap.title": "Kartensteuerung",
   "controls.voxelmap.unbind1": "Um eine Kontrolle loszubinden, sie auswählen und 'Esc' Taste drücken.",
   "controls.voxelmap.unbind2": "(Außer der Menütaste - sie kann nicht losgebunden werden)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Vollbildkarte Schalten",
   "key.voxelmap.voxelmapmenu": "VoxelMap Menü",
@@ -22,13 +20,13 @@
   "key.voxelmap.toggleingamewaypoints": "Wegpunkte Schalten",
   "key.voxelmap.waypointmenu": "Wegpunktmenü",
   "key.voxelmap.waypointhotkey": "Wegpunkt Hotkey",
-
   "options.voxelmap.title": "Kartenoptionen",
   "options.voxelmap.showcoordinates": "Koordinaten Zeigen",
   "options.voxelmap.hideminimap": "Karte Verstecken",
   "options.voxelmap.cavemode": "Höhlenmodus",
   "options.voxelmap.dynamiclighting": "Beleuchtung",
   "options.voxelmap.terraindepth": "Gelände",
+  "options.voxelmap.squaremap": "Rechteckige Karte",
   "options.voxelmap.rotation": "Drehend",
   "options.voxelmap.oldnorth": "Original Nord",
   "options.voxelmap.ingamewaypoints": "In-game Wegpunkte",
@@ -65,11 +63,12 @@
   "options.voxelmap.teleportcommand": "Teleport Befehl",
   "options.voxelmap.movescoreboardbelowmap": "Schiebe Scoreboard unter die Map",
   "options.voxelmap.movemapbelowstatuseffect": "Schiebe Map unter Statuseffekt-Icons",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Radaroptionenen",
   "options.voxelmap.radar.showradar": "Radar",
   "options.voxelmap.radar.radarmode": "Radarmodus",
+  "options.voxelmap.radar.radarmode.simple": "Einfach",
+  "options.voxelmap.radar.radarmode.full": "Voll",
   "options.voxelmap.radar.showmobhelmets": "Mobhelme Zeigen",
   "options.voxelmap.radar.showplayers": "Spieler Zeigen",
   "options.voxelmap.radar.showplayernames": "Spielernamen Zeigen",
@@ -77,14 +76,12 @@
   "options.voxelmap.radar.showfacing": "Guckrichtung",
   "options.voxelmap.radar.iconoutlines": "Symbolen Umrissen",
   "options.voxelmap.radar.iconfiltering": "Symbolen Filtern",
-
   "options.voxelmap.selectmobs": "Gezeigte Mobs..",
   "options.voxelmap.selectmobs.title": "Zeig bzw. Verbirg Spezifische Mobsorten",
   "options.voxelmap.selectmobs.enable": "Symbol Zeigen",
   "options.voxelmap.selectmobs.disable": "Symbol Verbergen",
   "options.voxelmap.selectmobs.enabled": "Dieses Symbol wird gezeigt.",
   "options.voxelmap.selectmobs.disabled": "Dieses Symbol wird nicht gezeigt.",
-
   "options.voxelmap.waypoints": "Wegpunkte...",
   "options.voxelmap.waypoints.title": "Wegpunktoptionen",
   "options.voxelmap.waypoints.distance": "Maximalabstand",
@@ -94,7 +91,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Alle",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Wirksam beim nächsten Tod",
   "options.voxelmap.waypoints.showwaypointnames": "Karte hat Wegpunktnamen",
-
   "options.voxelmap.worldmap": "Weltkarte...",
   "options.voxelmap.worldmap.title": "Weltkartenoptionen",
   "options.voxelmap.worldmap.cachesettings": "Zoom/Puffer Einstellungen",
@@ -106,7 +102,6 @@
   "options.voxelmap.worldmap.cachesize": "Regionpuffer Größe",
   "options.voxelmap.worldmap.multiworld": "Multiworld...",
   "options.voxelmap.worldmap.multiworld.auto": "Automatisch öffnen",
-
   "voxelmap.waypoints.title": "Wegpunkte",
   "voxelmap.waypoints.teleportto": "Teleportieren",
   "voxelmap.waypoints.highlight": "Ziel Setzen",
@@ -127,7 +122,6 @@
   "voxelmap.waypoints.sortbydistance": "Entfernung",
   "voxelmap.waypoints.sortbycreated": "Datum",
   "voxelmap.waypoints.sortbycolor": "Farbe",
-
   "voxelmap.waypointshare.title": "Waypoint Senden",
   "voxelmap.waypointshare.titlecoordinate": "Ordinate Senden",
   "voxelmap.waypointshare.sharemessage": "Nachricht (wahlweise) hinzufügen",
@@ -138,7 +132,6 @@
   "voxelmap.waypointshare.all": "Alle",
   "voxelmap.waypointshare.tooltip1": "Klick, Ordinate zu zielen",
   "voxelmap.waypointshare.tooltip2": "oder ctrl-klick, Wegpunkt zu speichern/bearbeiten",
-
   "voxelmap.worldmap.title": "VoxelMap",
   "voxelmap.worldmap.disabled": "Die Weltkarte ist auf diesem Server deaktiviert.",
   "voxelmap.worldmap.multiworld.title": "VoxelMap - Multiworld Wählen",

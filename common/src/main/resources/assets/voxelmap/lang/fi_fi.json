@@ -9,25 +9,22 @@
   "voxelmap.ui.welcome7": "Lisää reittipiste nopeasti.",
   "voxelmap.ui.welcome8": "Piilota tämä viesti",
   "voxelmap.ui.zoomlevel": "Zoomin taso",
-
   "controls.voxelmap.title": "Kartan näppäimet",
   "controls.voxelmap.unbind1": "Avataksesi näppäimen, valitse ja paina 'Escape'.",
   "controls.voxelmap.unbind2": "(Paitsi Valikko-näppäintä - sitä ei voi purkaa)",
-
-
   "key.voxelmap.zoom": "Zoomaus",
   "key.voxelmap.togglefullscreen": "Vaihda koko-ruudun karttaan",
   "key.voxelmap.menu": "Valikko",
   "key.voxelmap.togglemobs": "Aktivoi/Deaktivoi olennot",
   "key.voxelmap.waypointhotkey": "Reittipisteiden pikanäppäin",
   "key.voxelmap.waypointmenu": "Reittipiste-valikko",
-
   "options.voxelmap.title": "Kartan asetukset",
   "options.voxelmap.showcoordinates": "Näytä koordinaatit",
   "options.voxelmap.hideminimap": "Piilota kartta",
   "options.voxelmap.cavemode": "Kytke Luola-Moodi",
   "options.voxelmap.dynamiclighting": "Dynaaminen valaistus",
   "options.voxelmap.terraindepth": "Maaston syvyys",
+  "options.voxelmap.squaremap": "Neliö-kartta",
   "options.voxelmap.oldnorth": "Wanha Pohjoinen",
   "options.voxelmap.ingamewaypoints": "Pelin sisäiset reittipisteet",
   "options.voxelmap.ingamewaypoints.beacons": "Merkkivalot",
@@ -54,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Läpinäkyvä",
   "options.voxelmap.biomeoverlay.solid": "Kiinteä",
   "options.voxelmap.chunkgrid": "Pala-verkosto",
-
   "options.voxelmap.radar": "Tutka...",
   "options.voxelmap.radar.title": "Tutkan asetukset",
   "options.voxelmap.radar.showradar": "Tutka",
@@ -64,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Näytä pelaajien kypärät",
   "options.voxelmap.radar.iconoutlines": "Ikoni-rajaus",
   "options.voxelmap.radar.iconfiltering": "Ikoni-filtterointi",
-
   "options.voxelmap.selectmobs": "Näytettävät olennot...",
   "options.voxelmap.selectmobs.title": "Näytä ja piilota tietyt olento-tyypit",
   "options.voxelmap.selectmobs.enable": "Aktivoi olento",
   "options.voxelmap.selectmobs.disable": "Deaktivoi olento",
   "options.voxelmap.selectmobs.enabled": "Olento-näkymä aktivoitu",
   "options.voxelmap.selectmobs.disabled": "Olento-näkymä deaktivoitu",
-
   "options.voxelmap.waypoints": "Reittipisteet...",
   "options.voxelmap.waypoints.title": "Reittipiste-asetukset",
   "options.voxelmap.waypoints.distance": "Maximi-etäisuus",
@@ -81,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Kaikki",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Astuu voimaan seuraavan kuoleman jälkeen",
   "options.voxelmap.waypoints.showwaypointnames": "Osoita nimi kartalla",
-
   "voxelmap.waypoints.title": "Reittipisteet",
   "voxelmap.waypoints.teleportto": "Teleporttaa",
   "voxelmap.waypoints.highlight": "Korosta",

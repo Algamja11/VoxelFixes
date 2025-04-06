@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Thêm nhanh một điểm chỉ đường.",
   "voxelmap.ui.welcome8": "Ẩn tin nhắn này",
   "voxelmap.ui.zoomlevel": "Mức độ phóng đại",
-
   "controls.voxelmap.title": "Điều khiển bản đồ",
   "controls.voxelmap.unbind1": "Để hủy gán một phím, chọn nó và ấn phím \"ESC\".",
   "controls.voxelmap.unbind2": "(Ngoại trừ phím Menu - Nó không thể bị hủy gán)",
-
   "key.voxelmap.zoom": "Phóng đại",
   "key.voxelmap.togglefullscreen": "Chuyển đổi bản đồ toàn màn hình",
   "key.voxelmap.voxelmapmenu": "VoxelMap Menu",
   "key.voxelmap.menu": "Menu",
   "key.voxelmap.waypointhotkey": "Phím tắt chỉ đường",
   "key.voxelmap.togglemobs": "Chuyển đổi hiển thị Mob",
-
   "options.voxelmap.title": "Tùy chọn cho bản đồ",
   "options.voxelmap.showcoordinates": "Hiển thị tọa độ",
   "options.voxelmap.hideminimap": "Ẩn bản đồ",
   "options.voxelmap.cavemode": "Kích hoạt chế độ hang động",
   "options.voxelmap.dynamiclighting": "Ánh sáng động",
   "options.voxelmap.terraindepth": "Chiều sâu địa hình",
+  "options.voxelmap.squaremap": "Bản đồ vuông",
   "options.voxelmap.oldnorth": "Phía bắc kiểu cũ",
   "options.voxelmap.ingamewaypoints": "Điểm chỉ đường trong game",
   "options.voxelmap.ingamewaypoints.beacons": "Cột sáng",
@@ -53,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Trong suốt",
   "options.voxelmap.biomeoverlay.solid": "Dày đặc",
   "options.voxelmap.chunkgrid": "Tách đoạn",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Tùy chọn Radar",
   "options.voxelmap.radar.showradar": "Radar",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Hiển thị giáp người chơi",
   "options.voxelmap.radar.iconoutlines": "Viền ngoài biểu tượng",
   "options.voxelmap.radar.iconfiltering": "Lọc biểu tưởng",
-
   "options.voxelmap.selectmobs": "Mob được hiển thị...",
   "options.voxelmap.selectmobs.title": "Hiển thị hoặc ẩn các loại Mob",
   "options.voxelmap.selectmobs.enable": "Hiển thị biểu tưởng Mob",
   "options.voxelmap.selectmobs.disable": "Ẩn biểu tượng Mob",
   "options.voxelmap.selectmobs.enabled": "Biểu tượng này đã được hiển thị",
   "options.voxelmap.selectmobs.disabled": "Biểu tượng này chưa được hiển thị.",
-
   "options.voxelmap.waypoints": "Điểm chỉ đường...",
   "options.voxelmap.waypoints.title": "Tùy chọn",
   "options.voxelmap.waypoints.distance": "Khoảng cách tối đa",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Tất cả",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Có hiệu lực từ lần tử vong sau",
   "options.voxelmap.waypoints.showwaypointnames": "Hiện tên điểm trên bản đồ",
-
   "voxelmap.waypoints.title": "Điểm chỉ đường",
   "voxelmap.waypoints.teleportto": "Dịch chuyển đến",
   "voxelmap.waypoints.highlight": "Làm nổi bật",
