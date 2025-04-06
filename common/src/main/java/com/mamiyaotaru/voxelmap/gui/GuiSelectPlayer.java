@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 public class GuiSelectPlayer extends GuiScreenMinimap implements BooleanConsumer {
-    private final Screen parentScreen;
     protected Component screenTitle = Component.literal("players");
     private final boolean sharingWaypoint;
     private GuiButtonRowListPlayers playerList;

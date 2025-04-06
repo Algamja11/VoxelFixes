@@ -13,7 +13,6 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 
 public class GuiMinimapControls extends GuiScreenMinimap {
-    private final Screen parentScreen;
     protected String screenTitle = "Controls";
     private final MapSettingsManager options;
     public KeyMapping buttonId;

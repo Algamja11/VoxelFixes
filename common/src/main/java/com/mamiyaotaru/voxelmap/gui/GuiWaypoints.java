@@ -21,7 +21,6 @@ import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.Component;
 
 public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
-    private final Screen parentScreen;
     protected final MapSettingsManager options;
     protected final WaypointManager waypointManager;
     protected Component screenTitle;

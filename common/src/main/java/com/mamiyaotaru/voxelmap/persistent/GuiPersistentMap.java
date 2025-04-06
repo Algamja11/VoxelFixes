@@ -55,7 +55,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     private final Random generator = new Random();
     private final PersistentMap persistentMap;
     private final WaypointManager waypointManager;
-    private final Screen parent;
     private final MapSettingsManager mapOptions;
     private final PersistentMapSettingsManager options;
     protected String screenTitle = "World Map";
@@ -126,7 +125,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     private final ResourceLocation crosshairResource = ResourceLocation.parse("textures/gui/sprites/hud/crosshair.png");
 
     public GuiPersistentMap(Screen parent) {
-        this.parent = parent;
+        this.parentScreen = parent;
         this.waypointManager = VoxelConstants.getVoxelMapInstance().getWaypointManager();
         mapOptions = VoxelConstants.getVoxelMapInstance().getMapOptions();
         this.persistentMap = VoxelConstants.getVoxelMapInstance().getPersistentMap();
@@ -199,7 +198,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 4 * (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, Component.translatable("gui.done"), null, this) {
             @Override
             public void onPress() {
-                minecraft.setScreen(GuiPersistentMap.this.parent);
+                minecraft.setScreen(GuiPersistentMap.this.parentScreen);
             }
         });
         this.coordinates = new EditBox(this.getFontRenderer(), this.sideMargin, 10, 140, 20, null);
@@ -821,7 +820,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             guiGraphics.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 16, 0xFFFFFF);
             int x = (int) Math.floor(cursorCoordX);
             int z = (int) Math.floor(cursorCoordZ);
-            if (VoxelConstants.getVoxelMapInstance().getMapOptions().coords) {
+            if (VoxelConstants.getVoxelMapInstance().getMapOptions().coordsMode != 0) {
                 if (!this.editingCoordinates) {
                     guiGraphics.drawString(this.getFontRenderer(), "X: " + x, this.sideMargin, 16, 0xFFFFFF);
                     guiGraphics.drawString(this.getFontRenderer(), "Z: " + z, this.sideMargin + 64, 16, 0xFFFFFF);

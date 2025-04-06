@@ -2,11 +2,11 @@ package com.mamiyaotaru.voxelmap.gui.overridden;
 
 public enum EnumOptionsMinimap {
     HIDE_MINIMAP("options.voxelmap.hideminimap", false, true, false),
-    SHOW_COORDINATES("options.voxelmap.showcoordinates", false, true, false),
+    SHOW_COORDINATES("options.voxelmap.showcoordinates", false, false, true),
     OLD_NORTH("options.voxelmap.oldnorth", false, true, false),
     SHOW_BIOME_LABEL("options.voxelmap.showbiomelabel", false, true, false),
     SIZE("options.voxelmap.size", false, false, true),
-    SHAPE("options.voxelmap.shape", false, true, false),
+    SQUAREMAP("options.voxelmap.squaremap", false, true, false),
     ROTATES("options.voxelmap.rotation", false, true, false),
     LOCATION("options.voxelmap.location", false, false, true),
     CAVE_MODE("options.voxelmap.cavemode", false, true, false),
@@ -28,8 +28,7 @@ public enum EnumOptionsMinimap {
 
     SHOW_RADAR("options.voxelmap.radar.showradar", false, true, false),
     RADAR_MODE("options.voxelmap.radar.radarmode", false, false, true),
-    SHOW_NEUTRALS("options.voxelmap.radar.showneutrals", false, true, false),
-    SHOW_HOSTILES("options.voxelmap.radar.showhostiles", false, true, false),
+    SHOW_MOBS("options.voxelmap.radar.showmobs", false, false, true),
     SHOW_MOB_HELMETS("options.voxelmap.radar.showmobhelmets", false, true, false),
     SHOW_MOB_NAMES("options.voxelmap.radar.showmobnames", false, true, false),
     SHOW_PLAYERS("options.voxelmap.radar.showplayers", false, true, false),

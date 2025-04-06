@@ -13,7 +13,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class GuiMobs extends GuiScreenMinimap {
-    private final Screen parentScreen;
     protected final RadarSettingsManager options;
     protected Component screenTitle;
     private GuiSlotMobs mobsList;

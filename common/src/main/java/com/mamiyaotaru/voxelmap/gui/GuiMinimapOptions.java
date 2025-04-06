@@ -17,11 +17,12 @@ import org.lwjgl.glfw.GLFW;
 
 public class GuiMinimapOptions extends GuiScreenMinimap {
     private static final EnumOptionsMinimap[] relevantOptions = {
-            EnumOptionsMinimap.SHOW_COORDINATES, EnumOptionsMinimap.HIDE_MINIMAP,
-            EnumOptionsMinimap.LOCATION, EnumOptionsMinimap.SIZE,
-            EnumOptionsMinimap.SHAPE, EnumOptionsMinimap.ROTATES,
-            EnumOptionsMinimap.INGAME_WAYPOINTS, EnumOptionsMinimap.CAVE_MODE,
-            EnumOptionsMinimap.MOVE_MAP_BELOW_STATUS_EFFECT, EnumOptionsMinimap.MOVE_SCOREBOARD_BELOW_MAP,
+            EnumOptionsMinimap.HIDE_MINIMAP, EnumOptionsMinimap.SHOW_COORDINATES,
+            EnumOptionsMinimap.OLD_NORTH, EnumOptionsMinimap.SHOW_BIOME_LABEL,
+            EnumOptionsMinimap.SIZE, EnumOptionsMinimap.SQUAREMAP,
+            EnumOptionsMinimap.ROTATES, EnumOptionsMinimap.LOCATION,
+            EnumOptionsMinimap.CAVE_MODE, EnumOptionsMinimap.INGAME_WAYPOINTS,
+            EnumOptionsMinimap.MOVE_SCOREBOARD_BELOW_MAP, EnumOptionsMinimap.MOVE_MAP_BELOW_STATUS_EFFECT,
             EnumOptionsMinimap.DYNAMIC_LIGHTING, EnumOptionsMinimap.TERRAIN_DEPTH,
             EnumOptionsMinimap.WATER_TRANSPARENCY, EnumOptionsMinimap.BLOCK_TRANSPARENCY,
             EnumOptionsMinimap.BIOME_TINT, EnumOptionsMinimap.FILTERING,
@@ -33,12 +34,11 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
     private GuiButtonText teleportCommandButton;
     private GuiOptionButtonMinimap slimeChunksButton;
     private int page = 0;
-    private final Screen parent;
     private final MapSettingsManager options;
     protected String screenTitle = "Minimap Options";
 
     public GuiMinimapOptions(Screen parent) {
-        this.parent = parent;
+        this.parentScreen = parent;
         this.options = VoxelConstants.getVoxelMapInstance().getMapOptions();
     }
 
@@ -111,7 +111,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
             VoxelConstants.getMinecraft().setScreen(this);
         }).bounds(this.getWidth() / 2 + 100, this.getHeight() / 6 + 144, 60, 20).build());
 
-        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> VoxelConstants.getMinecraft().setScreen(this.parent)).bounds(this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, 200, 20).build());
+        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, 200, 20).build());
     }
 
     protected void optionClicked(Button par1GuiButton) {

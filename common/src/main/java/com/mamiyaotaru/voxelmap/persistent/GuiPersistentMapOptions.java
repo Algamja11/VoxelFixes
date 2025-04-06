@@ -12,14 +12,13 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiPersistentMapOptions extends GuiScreenMinimap {
-    private final Screen parent;
     private final PersistentMapSettingsManager options;
     private final Component screenTitle = Component.translatable("options.voxelmap.worldmap.title");
     private final Component cacheSettings = Component.translatable("options.voxelmap.worldmap.cachesettings");
     private final Component warning = Component.translatable("options.voxelmap.worldmap.warning");
 
     public GuiPersistentMapOptions(Screen parent) {
-        this.parent = parent;
+        this.parentScreen = parent;
         this.options = VoxelConstants.getVoxelMapInstance().getPersistentMapOptions();
     }
 
@@ -57,7 +56,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
             counter++;
         }
 
-        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), buttonx -> VoxelConstants.getMinecraft().setScreen(this.parent)).bounds(this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, 200, 20).build());
+        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), buttonx -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, 200, 20).build());
 
         for (Object buttonObj : this.getButtonList()) {
             if (buttonObj instanceof GuiOptionButtonMinimap button) {

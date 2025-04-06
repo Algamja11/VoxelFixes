@@ -12,15 +12,14 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiRadarOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] FULL_RELEVANT_OPTIONS = { EnumOptionsMinimap.SHOW_RADAR, EnumOptionsMinimap.RADAR_MODE,  EnumOptionsMinimap.SHOW_NEUTRALS, EnumOptionsMinimap.SHOW_HOSTILES, EnumOptionsMinimap.SHOW_PLAYERS, EnumOptionsMinimap.SHOW_MOB_NAMES, EnumOptionsMinimap.SHOW_PLAYER_NAMES, EnumOptionsMinimap.SHOW_MOB_HELMETS, EnumOptionsMinimap.SHOW_PLAYER_HELMETS, EnumOptionsMinimap.ICON_FILTERING, EnumOptionsMinimap.ICON_OUTLINES};
-    private static final EnumOptionsMinimap[] SIMPLE_RELEVANT_OPTIONS = { EnumOptionsMinimap.SHOW_RADAR, EnumOptionsMinimap.RADAR_MODE, EnumOptionsMinimap.SHOW_NEUTRALS, EnumOptionsMinimap.SHOW_HOSTILES, EnumOptionsMinimap.SHOW_PLAYERS, EnumOptionsMinimap.SHOW_FACING};
+    private static final EnumOptionsMinimap[] FULL_RELEVANT_OPTIONS = { EnumOptionsMinimap.SHOW_RADAR, EnumOptionsMinimap.RADAR_MODE,  EnumOptionsMinimap.SHOW_MOBS, EnumOptionsMinimap.SHOW_PLAYERS, EnumOptionsMinimap.SHOW_MOB_NAMES, EnumOptionsMinimap.SHOW_PLAYER_NAMES, EnumOptionsMinimap.SHOW_MOB_HELMETS, EnumOptionsMinimap.SHOW_PLAYER_HELMETS, EnumOptionsMinimap.ICON_FILTERING, EnumOptionsMinimap.ICON_OUTLINES};
+    private static final EnumOptionsMinimap[] SIMPLE_RELEVANT_OPTIONS = { EnumOptionsMinimap.SHOW_RADAR, EnumOptionsMinimap.RADAR_MODE, EnumOptionsMinimap.SHOW_MOBS, EnumOptionsMinimap.SHOW_PLAYERS, EnumOptionsMinimap.SHOW_FACING};
 
-    private final Screen parent;
     private final RadarSettingsManager options;
     protected Component screenTitle;
 
     public GuiRadarOptions(Screen parent) {
-        this.parent = parent;
+        this.parentScreen = parent;
         this.options = VoxelConstants.getVoxelMapInstance().getRadarOptions();
     }
 
@@ -44,7 +43,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 
         if (options.radarMode == 2) addRenderableWidget(new Button.Builder(Component.translatable("options.voxelmap.selectmobs"), x -> VoxelConstants.getMinecraft().setScreen(new GuiMobs(this, options))).bounds(getWidth() / 2 + 5, getHeight() / 6 + 120, 150, 20).build());
 
-        addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), x -> VoxelConstants.getMinecraft().setScreen(parent)).bounds(getWidth() / 2 - 100, getHeight() / 6 + 168, 200, 20).build());
+        addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), x -> VoxelConstants.getMinecraft().setScreen(parentScreen)).bounds(getWidth() / 2 - 100, getHeight() / 6 + 168, 200, 20).build());
     }
 
     protected void optionClicked(Button buttonClicked) {
@@ -81,17 +80,19 @@ public class GuiRadarOptions extends GuiScreenMinimap {
                 continue;
             }
 
-            if (!(button.returnEnumOptions() != EnumOptionsMinimap.SHOW_NEUTRALS && button.returnEnumOptions() != EnumOptionsMinimap.SHOW_HOSTILES)) {
+            if (button.returnEnumOptions() == EnumOptionsMinimap.SHOW_MOBS) {
                 button.active = button.active && (options.radarAllowed || options.radarMobsAllowed);
                 continue;
             }
 
-            if (!(button.returnEnumOptions() != EnumOptionsMinimap.SHOW_PLAYER_HELMETS && button.returnEnumOptions() != EnumOptionsMinimap.SHOW_PLAYER_NAMES)) {
+            if (button.returnEnumOptions() != EnumOptionsMinimap.SHOW_PLAYER_HELMETS || button.returnEnumOptions() == EnumOptionsMinimap.SHOW_PLAYER_NAMES) {
                 button.active = button.active && options.showPlayers && (options.radarAllowed || options.radarPlayersAllowed);
                 continue;
             }
 
-            if (button.returnEnumOptions() == EnumOptionsMinimap.SHOW_MOB_HELMETS && button.returnEnumOptions() != EnumOptionsMinimap.SHOW_MOB_NAMES) button.active = button.active && (options.showNeutrals || options.showHostiles) && (options.radarAllowed || options.radarMobsAllowed);
+            if (button.returnEnumOptions() == EnumOptionsMinimap.SHOW_MOB_HELMETS && button.returnEnumOptions() == EnumOptionsMinimap.SHOW_MOB_NAMES) {
+                button.active = button.active && (options.showNeutrals || options.showHostiles) && (options.radarAllowed || options.radarMobsAllowed);
+            }
         }
     }
 }

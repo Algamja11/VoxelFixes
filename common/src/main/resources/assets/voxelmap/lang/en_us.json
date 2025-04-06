@@ -22,6 +22,8 @@
   "key.voxelmap.toggleingamewaypoints": "Toggle Waypoints",
   "options.voxelmap.title": "Minimap Options",
   "options.voxelmap.showcoordinates": "Display Coordinates",
+  "options.voxelmap.showcoordinates.mode1": "Mode 1",
+  "options.voxelmap.showcoordinates.mode2": "Mode 2",
   "options.voxelmap.hideminimap": "Hide Minimap",
   "options.voxelmap.cavemode": "Enable Cave Mode",
   "options.voxelmap.dynamiclighting": "Dynamic Lighting",
