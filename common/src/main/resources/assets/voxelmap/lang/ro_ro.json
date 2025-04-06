@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Marcheaza rapid un Punct de Referinta pe harta.",
   "voxelmap.ui.welcome8": "Ascunde acest mesaj.",
   "voxelmap.ui.zoomlevel": "Nivelul maririi",
-
   "controls.voxelmap.title": "Controalele Minihartii",
   "controls.voxelmap.unbind1": "Pentru a dezlega un buton,selecteazal si apasa 'Escape'.",
   "controls.voxelmap.unbind2": "(Înafara de Butonul Meniului - nu poate fi dezlegat!)",
-
   "key.voxelmap.zoom": "Mareste",
   "key.voxelmap.togglefullscreen": "Arata Harta pe tot Ecranul",
   "key.voxelmap.menu": "Meniu",
   "key.voxelmap.togglemobs": "Arata Monstrii",
   "key.voxelmap.waypointhotkey": "Buton pentru Punct de Referinta",
   "key.voxelmap.waypointmenu": "Meniul Punctelor de Referinta",
-
   "options.voxelmap.title": "Optiunile Minihartii",
   "options.voxelmap.showcoordinates": "Arata coordonatele",
   "options.voxelmap.hideminimap": "Ascunde Miniharta",
   "options.voxelmap.cavemode": "Permite modul Subteran",
   "options.voxelmap.dynamiclighting": "Lumini miscatoare",
   "options.voxelmap.terraindepth": "Adâncimea terenului",
+  "options.voxelmap.squaremap": "Harta Patrata",
   "options.voxelmap.oldnorth": "Nord Vechi",
   "options.voxelmap.ingamewaypoints": "Punct de Referinta În-Joc",
   "options.voxelmap.ingamewaypoints.beacons": "Faruri",
@@ -52,7 +50,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Transparent",
   "options.voxelmap.biomeoverlay.solid": "Solid",
   "options.voxelmap.chunkgrid": "Grila Chunk-urilor",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Optiunile Radarului",
   "options.voxelmap.radar.showradar": "Radar",
@@ -61,7 +58,6 @@
   "options.voxelmap.radar.showplayerhelmets": "Arata Castile Jucatorilor",
   "options.voxelmap.radar.iconoutlines": "Pictograma contururi",
   "options.voxelmap.radar.iconfiltering": "Pictograma de filtrare",
-
   "options.voxelmap.waypoints": "Punct",
   "options.voxelmap.waypoints.title": "Optiunile Punctelor",
   "options.voxelmap.waypoints.distance": "Distanta Maxima",
@@ -70,7 +66,6 @@
   "options.voxelmap.waypoints.deathpoints.mostrecent": "Cel mai Recent",
   "options.voxelmap.waypoints.deathpoints.all": "Toate",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Ia efect la urmatoare moarte",
-
   "voxelmap.waypoints.title": "Punct de Referinta",
   "voxelmap.waypoints.teleportto": "Teleportare la",
   "voxelmap.waypoints.highlight": "Evidentia",

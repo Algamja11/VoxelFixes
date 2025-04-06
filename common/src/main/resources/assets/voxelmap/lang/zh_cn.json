@@ -9,11 +9,9 @@
   "voxelmap.ui.welcome7": "快速添加一个导航点",
   "voxelmap.ui.welcome8": "隐藏此信息",
   "voxelmap.ui.zoomlevel": "缩放等级",
-
   "controls.voxelmap.title": "小地图按键选项",
   "controls.voxelmap.unbind1": "要解除一个按键的绑定，先选择它，然后按下Escape键",
   "controls.voxelmap.unbind2": "(除了菜单键 - 它不能被解除绑定)",
-
   "key.voxelmap.zoom": "缩放",
   "key.voxelmap.togglefullscreen": "切换大地图",
   "key.voxelmap.voxelmapmenu": "VoxelMap菜单",
@@ -22,13 +20,13 @@
   "key.voxelmap.waypointhotkey": "导航点快捷键",
   "key.voxelmap.togglemobs": "切换显示生物",
   "key.voxelmap.toggleingamewaypoints": "切换显示导航点",
-
   "options.voxelmap.title": "小地图选项",
   "options.voxelmap.showcoordinates": "坐标显示",
   "options.voxelmap.hideminimap": "隐藏小地图",
   "options.voxelmap.cavemode": "洞穴模式",
   "options.voxelmap.dynamiclighting": "动态光照",
   "options.voxelmap.terraindepth": "地形深度",
+  "options.voxelmap.squaremap": "方形地图",
   "options.voxelmap.rotation": "方向旋转",
   "options.voxelmap.oldnorth": "日落北方",
   "options.voxelmap.ingamewaypoints": "导航点显示类型",
@@ -65,10 +63,11 @@
   "options.voxelmap.teleportcommand": "传送命令",
   "options.voxelmap.movescoreboardbelowmap": "移动计分板至小地图下",
   "options.voxelmap.movemapbelowstatuseffect": "移动小地图至状态效果图标下",
-
   "options.voxelmap.radar": "雷达…",
   "options.voxelmap.radar.title": "雷达选项",
   "options.voxelmap.radar.radarmode": "雷达模式",
+  "options.voxelmap.radar.radarmode.simple": "简单",
+  "options.voxelmap.radar.radarmode.full": "完整",
   "options.voxelmap.radar.showradar": "雷达",
   "options.voxelmap.radar.showmobnames": "显示生物名称",
   "options.voxelmap.radar.showmobhelmets": "显示生物头盔",
@@ -78,14 +77,12 @@
   "options.voxelmap.radar.showfacing": "朝向",
   "options.voxelmap.radar.iconoutlines": "图标轮廓",
   "options.voxelmap.radar.iconfiltering": "过滤图标",
-
   "options.voxelmap.selectmobs": "显示生物…",
   "options.voxelmap.selectmobs.title": "显示或隐藏个别生物",
   "options.voxelmap.selectmobs.enable": "显示生物图标",
   "options.voxelmap.selectmobs.disable": "隐藏生物图标",
   "options.voxelmap.selectmobs.enabled": "生物显示已启用",
   "options.voxelmap.selectmobs.disabled": "生物显示已禁用",
-
   "options.voxelmap.waypoints": "导航点…",
   "options.voxelmap.waypoints.title": "导航点选项",
   "options.voxelmap.waypoints.distance": "最远距离",
@@ -95,7 +92,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "全部",
   "options.voxelmap.waypoints.deathpoints.tooltip": "在下一次死亡时生效",
   "options.voxelmap.waypoints.showwaypointnames": "在地图上显示名称",
-
   "options.voxelmap.worldmap": "世界地图…",
   "options.voxelmap.worldmap.title": "世界地图选项",
   "options.voxelmap.worldmap.cachesettings": "缩放/缓存设置",
@@ -107,7 +103,6 @@
   "options.voxelmap.worldmap.cachesize": "区域缓存大小",
   "options.voxelmap.worldmap.multiworld": "多世界…",
   "options.voxelmap.worldmap.multiworld.auto": "自动开启",
-
   "voxelmap.waypoints.title": "导航点",
   "voxelmap.waypoints.teleportto": "传送到该导航点",
   "voxelmap.waypoints.highlight": "高亮",
@@ -129,7 +124,6 @@
   "voxelmap.waypoints.sortbycreated": "创建时间",
   "voxelmap.waypoints.sortbycolor": "颜色",
   "voxelmap.waypoints.sortbyicon": "图标",
-
   "voxelmap.waypointshare.title": "分享导航点",
   "voxelmap.waypointshare.titlecoordinate": "分享坐标",
   "voxelmap.waypointshare.sharemessage": "添加信息(可选)",
@@ -140,7 +134,6 @@
   "voxelmap.waypointshare.all": "所有人",
   "voxelmap.waypointshare.tooltip1": "单击以高亮显示坐标,",
   "voxelmap.waypointshare.tooltip2": "或者按住Control键单击以添加/编辑导航点",
-
   "voxelmap.worldmap.title": "VoxelMap",
   "voxelmap.worldmap.multiworld.title": "VoxelMap - 多世界选择",
   "voxelmap.worldmap.multiworld.select": "你在哪个世界?",

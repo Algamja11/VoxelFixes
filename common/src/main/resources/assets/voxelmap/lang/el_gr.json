@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "προσθέσετε γρήγορα ένα σημείο.",
   "voxelmap.ui.welcome8": "Απόκρυψη αυτού του μηνύματος",
   "voxelmap.ui.zoomlevel": "Επίπεδο Ζουμ",
-
   "controls.voxelmap.title": "Μικρός ελέγχου",
   "controls.voxelmap.unbind1": "Για να αποσυνδέσετε ένα κλειδί, επιλέξτε το και πατήστε «Escape».",
   "controls.voxelmap.unbind2": "(Εκτός από το πλήκτρο μενού - δεν μπορεί να είναι λυμένο)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Εναλλαγή Fullscreen Χάρτης",
   "key.voxelmap.menu": "Μενού",
   "key.voxelmap.togglemobs": "Εναλλαγή όχλος",
   "key.voxelmap.waypointhotkey": "Waypoint Hotkey",
   "key.voxelmap.waypointmenu": "Waypoint Menu",
-
   "options.voxelmap.title": "Μικρός Επιλογές",
   "options.voxelmap.showcoordinates": "Display Συντεταγμένες",
   "options.voxelmap.hideminimap": "Απόκρυψη Minimap",
   "options.voxelmap.cavemode": "Ενεργοποίηση Cave Λειτουργία",
   "options.voxelmap.dynamiclighting": "Dynamic Lighting",
   "options.voxelmap.terraindepth": "Terrain Βάθος",
+  "options.voxelmap.squaremap": "Square Χάρτης",
   "options.voxelmap.oldnorth": "Old North",
   "options.voxelmap.ingamewaypoints": "Σε παιχνίδι Σημεία",
   "options.voxelmap.ingamewaypoints.beacons": "Beacons",
@@ -52,7 +50,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Διαφανής",
   "options.voxelmap.biomeoverlay.solid": "Solid",
   "options.voxelmap.chunkgrid": "κομμάτι Grid",
-
   "options.voxelmap.radar": "Ραντάρ ...",
   "options.voxelmap.radar.title": "Επιλογές Radar",
   "options.voxelmap.radar.showradar": "Radar",
@@ -61,7 +58,6 @@
   "options.voxelmap.radar.showplayerhelmets": "Εμφάνιση Player Κράνη",
   "options.voxelmap.radar.iconoutlines": "Icon Περιγράμματα",
   "options.voxelmap.radar.iconfiltering": "Icon φιλτράρισμα",
-
   "options.voxelmap.waypoints": "Σημεία ...",
   "options.voxelmap.waypoints.title": "σημείου Επιλογές",
   "options.voxelmap.waypoints.distance": "Μέγιστη Απόσταση",
@@ -70,7 +66,6 @@
   "options.voxelmap.waypoints.deathpoints.mostrecent": "Πιο Πρόσφατα",
   "options.voxelmap.waypoints.deathpoints.all": "Όλα",
   "options.voxelmap.waypoints.deathpoints.tooltip": "έναρξη ισχύος την επόμενη θανάτου",
-
   "voxelmap.waypoints.title": "Σημεία",
   "voxelmap.waypoints.teleportto": "teleport σε",
   "voxelmap.waypoints.highlight": "Highlight",

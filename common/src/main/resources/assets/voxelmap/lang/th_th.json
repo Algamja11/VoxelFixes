@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "เพิ่มจุดเวย์พอยต์ทันที. ",
   "voxelmap.ui.welcome8": "ซ่อนข้อความนี้ ",
   "voxelmap.ui.zoomlevel": "ระดับการซูม",
-
   "controls.voxelmap.title": "ควบคุมแผนที่ขนาดเล็ก ",
   "controls.voxelmap.unbind1": "หากต้องการนำปุ่มออก เลือกมันและกดปุ่ม 'Escape'",
   "controls.voxelmap.unbind2": "(ยกเว้นปุ่มเมนูเพราะมันไม่สามารถนำออกได้) ",
-
   "key.voxelmap.zoom": "ซูม ",
   "key.voxelmap.togglefullscreen": "สลับเป็นแผนที่เต็มหน้าจอ ",
   "key.voxelmap.menu": "เมนู ",
   "key.voxelmap.togglemobs": "สลับม็อบ ",
   "key.voxelmap.waypointhotkey": "ปุ่มลัดเวย์พอยต์",
   "key.voxelmap.waypointmenu": "เมนูเวย์พอยต์",
-
   "options.voxelmap.title": "ตัวเลือกแผนที่ขนาดย่อ ",
   "options.voxelmap.showcoordinates": "แสดงพิกัด",
   "options.voxelmap.hideminimap": "ซ่อนแผนที่ขนาดย่อ",
   "options.voxelmap.cavemode": "แสดงแผนที่ภายในถ่ำ ",
   "options.voxelmap.dynamiclighting": "แสงแบบไดนามิก",
   "options.voxelmap.terraindepth": "แสดงความลึกของภูมิประเทศ ",
+  "options.voxelmap.squaremap": "แผนที่แบบวงกลม ",
   "options.voxelmap.oldnorth": "ทิศเหนือเก่า",
   "options.voxelmap.ingamewaypoints": "จุดเวย์พอยต์ในเกม",
   "options.voxelmap.ingamewaypoints.beacons": "แสงดวงประทีป (บีคอน) ",
@@ -53,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "ความโปร่งใส ",
   "options.voxelmap.biomeoverlay.solid": "ของแข็ง ",
   "options.voxelmap.chunkgrid": "ตาราง Chunk",
-
   "options.voxelmap.radar": "เรดาร์... ",
   "options.voxelmap.radar.title": "ตัวเลือกเรดาร์ ",
   "options.voxelmap.radar.showradar": "เรดาร์ ",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "แสดงหมวกผู้เล่นในแผนที่",
   "options.voxelmap.radar.iconoutlines": "แสดงลายเส้นบนไอคอน ",
   "options.voxelmap.radar.iconfiltering": "กรองไอคอน",
-
   "options.voxelmap.selectmobs": "เลือกม็อบที่จะแสดง... ",
   "options.voxelmap.selectmobs.title": "แสดงหรือซ่อนม็อบแต่ละชนิด ",
   "options.voxelmap.selectmobs.enable": "เปิดม็อบ ",
   "options.voxelmap.selectmobs.disable": "ปิดม็อบ ",
   "options.voxelmap.selectmobs.enabled": "เปิดระบบแสดงม็อบ",
   "options.voxelmap.selectmobs.disabled": "ปิดระบบแสดงม็อบ ",
-
   "options.voxelmap.waypoints": "เวย์พอยต์... ",
   "options.voxelmap.waypoints.title": "ตัวเลือกเวย์พอยต์",
   "options.voxelmap.waypoints.distance": "ระยะสูงสุด ",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "ทั้งหมด ",
   "options.voxelmap.waypoints.deathpoints.tooltip": "มีผลในการตายครั้งต่อไป ",
   "options.voxelmap.waypoints.showwaypointnames": "ชื่อจุดบนแผนที่ ",
-
   "voxelmap.waypoints.title": "เวย์พอยต์ ",
   "voxelmap.waypoints.teleportto": "วาร์ปไป ",
   "voxelmap.waypoints.highlight": "จุดเด่น ",

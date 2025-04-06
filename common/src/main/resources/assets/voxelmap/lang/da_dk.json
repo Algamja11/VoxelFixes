@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Tilføj et hurtigt vejpunkt.",
   "voxelmap.ui.welcome8": "Skjul denne besked",
   "voxelmap.ui.zoomlevel": "Zoom Niveau",
-
   "controls.voxelmap.title": "Minimap Styring",
   "controls.voxelmap.unbind1": "For at ubinde en Tast, vælg den og tryk på 'Escape'.",
   "controls.voxelmap.unbind2": "(Undtagen for Menu Tasten - den kan ikke blive ubundet)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Sæt Fullscreen Map til/fra",
   "key.voxelmap.menu": "Menu",
   "key.voxelmap.togglemobs": "Sæt Mobsne til/fra",
   "key.voxelmap.waypointhotkey": "Vejpunkts Hotkey",
   "key.voxelmap.waypointmenu": "Vejpunktets Menu",
-
   "options.voxelmap.title": "Minimap Indstillinger",
   "options.voxelmap.showcoordinates": "Vis Koordinater",
   "options.voxelmap.hideminimap": "Skjul Minimap",
   "options.voxelmap.cavemode": "Sæt Grotte Mode til/fra",
   "options.voxelmap.dynamiclighting": "Dynamisk Belysning",
   "options.voxelmap.terraindepth": "Terræn Dybde",
+  "options.voxelmap.squaremap": "Firkantet Kort",
   "options.voxelmap.oldnorth": "Gammel Nord",
   "options.voxelmap.ingamewaypoints": "In-game Vejpunkt",
   "options.voxelmap.ingamewaypoints.beacons": "Fyr",
@@ -53,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Gennemsigtig",
   "options.voxelmap.biomeoverlay.solid": "Solid",
   "options.voxelmap.chunkgrid": "Chunk Gitter",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Radar Indstillinger",
   "options.voxelmap.radar.showradar": "Vis Radar",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayernames": "Vis Spillernes navne",
   "options.voxelmap.radar.showplayerhelmets": "Vis Spillernes hjelme",
   "options.voxelmap.radar.showmobhelmets": "Vis Fjendtliges hjelme",
-
   "options.voxelmap.selectmobs": "Fjendtlige at Vise...",
   "options.voxelmap.selectmobs.title": "Vis/Skjul Individuelle Mob Typer",
   "options.voxelmap.selectmobs.enable": "Sæt Mobsne på kortet",
   "options.voxelmap.selectmobs.disable": "Få de Mobs væk fra mit kort",
   "options.voxelmap.selectmobs.enabled": "Mob Display Sat til",
   "options.voxelmap.selectmobs.disabled": "Mob Display Taget fra",
-
   "options.voxelmap.waypoints": "Vejpunkter...",
   "options.voxelmap.waypoints.title": "Vejpunkt indstillinger",
   "options.voxelmap.waypoints.distance": "Max Distance",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Alle",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Tag effekt næste gang jeg dør",
   "options.voxelmap.waypoints.showwaypointnames": "Punkters Navne på Kortet",
-
   "voxelmap.waypoints.title": "Vejpunkter",
   "voxelmap.waypoints.teleportto": "Teleporter Til",
   "voxelmap.waypoints.highlight": "Highlight",

@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Dodaj putanju.",
   "voxelmap.ui.welcome8": "Sakrij ovu poruku",
   "voxelmap.ui.zoomlevel": "Nivo zumiranja",
-
   "controls.voxelmap.title": "Kontrole Minimape",
   "controls.voxelmap.unbind1": "Da raskoraćite dugme, izaberite ga i pritisnite 'Escape'.",
   "controls.voxelmap.unbind2": "(Osim za Meni dugme - ne može se raskoračiti)",
-
   "key.voxelmap.zoom": "Zumiraj",
   "key.voxelmap.togglefullscreen": "Omogući Mapu Preko Celog Ekrana",
   "key.voxelmap.menu": "Meni",
   "key.voxelmap.togglemobs": "Omogući Rulje",
   "key.voxelmap.waypointhotkey": "Dugme za Putanje",
   "key.voxelmap.waypointmenu": "Meni Putanji",
-
   "options.voxelmap.title": "Podešavanja Minimape",
   "options.voxelmap.showcoordinates": "Prikaz Putanja",
   "options.voxelmap.hideminimap": "Sakrij Minimapu",
   "options.voxelmap.cavemode": "Omogući Prikaz Pećina",
   "options.voxelmap.dynamiclighting": "Dinamičko Osvetljenje",
   "options.voxelmap.terraindepth": "Dubina Terena",
+  "options.voxelmap.squaremap": "Kvadratna Mapa",
   "options.voxelmap.oldnorth": "Stari Sever",
   "options.voxelmap.ingamewaypoints": "Putanje u Igri",
   "options.voxelmap.ingamewaypoints.beacons": "Svetionici",
@@ -53,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Providan",
   "options.voxelmap.biomeoverlay.solid": "Čvrst",
   "options.voxelmap.chunkgrid": "Chunk Grid",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Podešavanje Radara",
   "options.voxelmap.radar.showradar": "Radar",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Prikaži Šlemove Igrača",
   "options.voxelmap.radar.iconoutlines": "Nacrti Ikona",
   "options.voxelmap.radar.iconfiltering": "Filtriranje Ikona",
-
   "options.voxelmap.selectmobs": "Rulje za Prikaz...",
   "options.voxelmap.selectmobs.title": "Prikaži ili Sakrij Vrste Rulja",
   "options.voxelmap.selectmobs.enable": "Omogući Rulje",
   "options.voxelmap.selectmobs.disable": "Onemogući Rulje",
   "options.voxelmap.selectmobs.enabled": "Omogućeno Prikazivanje Rulja",
   "options.voxelmap.selectmobs.disabled": "Onemogućeno Prikazivanje Rulja",
-
   "options.voxelmap.waypoints": "Putanje...",
   "options.voxelmap.waypoints.title": "Podešavanje Putanje",
   "options.voxelmap.waypoints.distance": "Najveća Razdaljina",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Sve",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Ima uticaj na sledecu smrt",
   "options.voxelmap.waypoints.showwaypointnames": "Prikaži imena na mapi",
-
   "voxelmap.waypoints.title": "Putanje",
   "voxelmap.waypoints.teleportto": "Teleportuj se",
   "voxelmap.waypoints.highlight": "Osvetljenje",

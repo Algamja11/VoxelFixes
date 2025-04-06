@@ -9,11 +9,9 @@
   "voxelmap.ui.welcome7": "ウェイポイントを追加。",
   "voxelmap.ui.welcome8": "このメッセージを非表示",
   "voxelmap.ui.zoomlevel": "ズームレベル",
-
   "controls.voxelmap.title": "ミニマップコントロール",
   "controls.voxelmap.unbind1": "キーバインドを解除するには、それを選択して\"Escキー\"を押してください。",
   "controls.voxelmap.unbind2": "(メニューキーを除く - それはアンバインドできません)",
-
   "key.voxelmap.zoom": "ズーム",
   "key.voxelmap.togglefullscreen": "フルスクリーンマップを切り替える",
   "key.voxelmap.voxelmapmenu": "VoxelMap メニュー",
@@ -22,13 +20,13 @@
   "key.voxelmap.waypointhotkey": "ウェイポイント登録",
   "key.voxelmap.togglemobs": "Mob表示のON/OFF",
   "key.voxelmap.toggleingamewaypoints": "ウェイポイントのON/OFF",
-
   "options.voxelmap.title": "ミニマップのオプション",
   "options.voxelmap.showcoordinates": "表示座標",
   "options.voxelmap.hideminimap": "ミニマップを隠す",
   "options.voxelmap.cavemode": "洞窟モードを有効にする",
   "options.voxelmap.dynamiclighting": "ダイナミックライティング",
   "options.voxelmap.terraindepth": "地形の深さ",
+  "options.voxelmap.squaremap": "スクエア地図",
   "options.voxelmap.rotation": "回転",
   "options.voxelmap.oldnorth": "旧バージョンの北",
   "options.voxelmap.ingamewaypoints": "ゲーム内のウェイポイント",
@@ -62,10 +60,11 @@
   "options.voxelmap.slimechunks": "スライムチャンク",
   "options.voxelmap.worldseed": "Seed",
   "options.voxelmap.teleportcommand": "テレポートコマンド",
-
   "options.voxelmap.radar": "レーダー...",
   "options.voxelmap.radar.title": "レーダーオプション",
   "options.voxelmap.radar.radarmode": "レーダーモード",
+  "options.voxelmap.radar.radarmode.simple": "シンプル",
+  "options.voxelmap.radar.radarmode.full": "フル",
   "options.voxelmap.radar.showradar": "レーダー",
   "options.voxelmap.radar.showmobhelmets": "Mobのヘルメットの表示",
   "options.voxelmap.radar.showplayers": "プレーヤーの表示",
@@ -74,14 +73,12 @@
   "options.voxelmap.radar.showfacing": "見てる方向",
   "options.voxelmap.radar.iconoutlines": "アイコンの輪郭",
   "options.voxelmap.radar.iconfiltering": "アイコンフィルタリング",
-
   "options.voxelmap.selectmobs": "Mob表示の詳細...",
   "options.voxelmap.selectmobs.title": "Mobのアイコンの表示個別設定",
   "options.voxelmap.selectmobs.enable": "Mobを表示する",
   "options.voxelmap.selectmobs.disable": "Mobを非表示にする",
   "options.voxelmap.selectmobs.enabled": "このMobは表示されます",
   "options.voxelmap.selectmobs.disabled": "このMobは表示されません",
-
   "options.voxelmap.waypoints": "ウェイポイント...",
   "options.voxelmap.waypoints.title": "ウェイポイントオプション",
   "options.voxelmap.waypoints.distance": "表示される距離",
@@ -91,7 +88,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "すべて",
   "options.voxelmap.waypoints.deathpoints.tooltip": "次回の死亡から有効になります",
   "options.voxelmap.waypoints.showwaypointnames": "ウェイポイント名をマップに表示",
-
   "options.voxelmap.worldmap": "ワールドマップ...",
   "options.voxelmap.worldmap.title": "ワールドマップオプション",
   "options.voxelmap.worldmap.cachesettings": "ズームとキャッシュの設定",
@@ -103,7 +99,6 @@
   "options.voxelmap.worldmap.cachesize": "Regionのキャッシュサイズ",
   "options.voxelmap.worldmap.multiworld": "Multiworld...",
   "options.voxelmap.worldmap.multiworld.auto": "Open Automatically",
-
   "voxelmap.waypoints.title": "ウェイポイント",
   "voxelmap.waypoints.teleportto": "にテレポート",
   "voxelmap.waypoints.highlight": "ハイライト",
@@ -125,7 +120,6 @@
   "voxelmap.waypoints.sortbycreated": "作成順",
   "voxelmap.waypoints.sortbycolor": "色順 ",
   "voxelmap.waypoints.sortbyicon": "アイコン",
-
   "voxelmap.waypointshare.title": "ウェイポイントの共有",
   "voxelmap.waypointshare.titlecoordinate": "Share Coordinate",
   "voxelmap.waypointshare.sharemessage": "追加のメッセージ(オプション)",
@@ -136,7 +130,6 @@
   "voxelmap.waypointshare.all": "全員",
   "voxelmap.waypointshare.tooltip1": "クリックして座標をハイライト表示",
   "voxelmap.waypointshare.tooltip2": "またはControlキーを押しながらクリックすると、ウェイポイントを追加/編集できます。",
-
   "voxelmap.worldmap.title": "VoxelMap",
   "voxelmap.worldmap.multiworld.title": "VoxelMap - Multiworld Selection",
   "voxelmap.worldmap.multiworld.select": "Which world are you in?",

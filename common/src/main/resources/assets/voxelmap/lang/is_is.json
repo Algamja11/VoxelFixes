@@ -9,23 +9,21 @@
   "voxelmap.ui.welcome7": "bæta Fljótt waypoint.",
   "voxelmap.ui.welcome8": "Fela þessi skilaboð",
   "voxelmap.ui.zoomlevel": "Zoom Level",
-
   "controls.voxelmap.title": "minimap Stýrir",
   "controls.voxelmap.unbind1": "Til unbind lykil, velja það og ýta á 'Escape'.",
   "controls.voxelmap.unbind2": "(Nema fyrir á Valmynd takkann - það getur ekki verið óbundið)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Víxla Fullscreen Kort",
   "key.voxelmap.menu": "Valmynd",
   "key.voxelmap.waypointhotkey": "Waypoint Hotkey",
   "key.voxelmap.togglemobs": "Víxla lýði",
-
   "options.voxelmap.title": "minimap Valkostir",
   "options.voxelmap.showcoordinates": "Display Hnit",
   "options.voxelmap.hideminimap": "Fela minimap",
   "options.voxelmap.cavemode": "Virkja Cave Mode",
   "options.voxelmap.dynamiclighting": "Dynamic Lýsing",
   "options.voxelmap.terraindepth": "Terrain Dýpt",
+  "options.voxelmap.squaremap": "Square Map",
   "options.voxelmap.oldnorth": "Old North",
   "options.voxelmap.ingamewaypoints": "In-leikur punktar",
   "options.voxelmap.ingamewaypoints.beacons": "Beacons",
@@ -51,7 +49,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Gegnsætt",
   "options.voxelmap.biomeoverlay.solid": "Solid",
   "options.voxelmap.chunkgrid": "Klumpur Grid",
-
   "options.voxelmap.radar": "Radar ...",
   "options.voxelmap.radar.title": "Ratsjá Valkostir",
   "options.voxelmap.radar.showradar": "Radar",
@@ -60,7 +57,6 @@
   "options.voxelmap.radar.showplayerhelmets": "Sýna Player Hjálmar",
   "options.voxelmap.radar.iconoutlines": "Táknmynd lýsir",
   "options.voxelmap.radar.iconfiltering": "Icon sía",
-
   "options.voxelmap.waypoints": "punktar ...",
   "options.voxelmap.waypoints.title": "Waypoint Valkostir",
   "options.voxelmap.waypoints.distance": "Max Fjarlægð",
@@ -69,7 +65,6 @@
   "options.voxelmap.waypoints.deathpoints.mostrecent": "Nýjasta",
   "options.voxelmap.waypoints.deathpoints.all": "All",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Tekur gildi á næstu dauða",
-
   "voxelmap.waypoints.title": "punktar",
   "voxelmap.waypoints.teleportto": "teleport til",
   "voxelmap.waypoints.highlight": "Hápunktur",

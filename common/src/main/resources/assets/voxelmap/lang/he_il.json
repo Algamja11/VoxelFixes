@@ -8,24 +8,22 @@
   "voxelmap.ui.welcome7": "הוספת נקודת ציון.",
   "voxelmap.ui.welcome8": "הסתר הודעה זו.",
   "voxelmap.ui.zoomlevel": "רמת זום",
-
   "controls.voxelmap.title": "לחצני מפה",
   "controls.voxelmap.unbind1": ".'Escape' בשביל התרת מקש, יש לבחור בו וללחוץ",
   "controls.voxelmap.unbind2": "(חוץ ממקש התפריט - הוא בלתי-אפשרי לביטול)",
-
   "key.voxelmap.zoom": "זום",
   "key.voxelmap.togglefullscreen": "הפעל מפה במסך מלא",
   "key.voxelmap.voxelmapmenu": "VoxelMap תפריט",
   "key.voxelmap.menu": "תפריט",
   "key.voxelmap.waypointhotkey": "מקש חם לנקודת ציון",
   "key.voxelmap.togglemobs": "הפעל מפלצות",
-
   "options.voxelmap.title": "אפשרויות מפה",
   "options.voxelmap.showcoordinates": "הצג קואורדינטות",
   "options.voxelmap.hideminimap": "הסתר מפה",
   "options.voxelmap.cavemode": "הפעל מצב מערות",
   "options.voxelmap.dynamiclighting": "תאורה דינאמית",
   "options.voxelmap.terraindepth": "עומק שטח",
+  "options.voxelmap.squaremap": "מפה מרובעת",
   "options.voxelmap.oldnorth": "צפון ישן",
   "options.voxelmap.ingamewaypoints": "נקודות ציון בתוך המשחק",
   "options.voxelmap.ingamewaypoints.beacons": "משואות",
@@ -52,7 +50,6 @@
   "options.voxelmap.biomeoverlay.transparent": "שקוף",
   "options.voxelmap.biomeoverlay.solid": "מוצק",
   "options.voxelmap.chunkgrid": "רשת צ'אנק",
-
   "options.voxelmap.radar": "מכ\"ם...",
   "options.voxelmap.radar.title": "אפשרויות מכ\"ם",
   "options.voxelmap.radar.showradar": "מכ\"ם",
@@ -62,14 +59,12 @@
   "options.voxelmap.radar.showplayerhelmets": "הצג קסדות שחקן",
   "options.voxelmap.radar.iconoutlines": "קווי מתאר של אייקונים",
   "options.voxelmap.radar.iconfiltering": "מסנני אייקון",
-
   "options.voxelmap.selectmobs": "מפלצות להצגה...",
   "options.voxelmap.selectmobs.title": "הצג או הסתיר סוגי מפלצות ספציפיות",
   "options.voxelmap.selectmobs.enable": "הפעל אייקון מפלצת",
   "options.voxelmap.selectmobs.disable": "בטל אייקון מפלצת",
   "options.voxelmap.selectmobs.enabled": "האייקון הזה מוצג.",
   "options.voxelmap.selectmobs.disabled": "האייקון הזה לא מוצג.",
-
   "options.voxelmap.waypoints": "נקודות ציון...",
   "options.voxelmap.waypoints.title": "אפשרויות נקודת ציון",
   "options.voxelmap.waypoints.distance": "מרחק מקסימאלי",
@@ -79,7 +74,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "הכל",
   "options.voxelmap.waypoints.deathpoints.tooltip": "השפעה במוות הבא",
   "options.voxelmap.waypoints.showwaypointnames": "שם נקודה על מפה",
-
   "voxelmap.waypoints.title": "נקודות ציון",
   "voxelmap.waypoints.teleportto": "השתגר אל",
   "voxelmap.waypoints.highlight": "דגש",

@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Snabbt lägga till en waypoint.",
   "voxelmap.ui.welcome8": "Dölj det här meddelandet",
   "voxelmap.ui.zoomlevel": "Zoom nivå",
-
   "controls.voxelmap.title": "Minimap Kontroller",
   "controls.voxelmap.unbind1": "För att ta bort en kontroll, markera den och tryck på \"esc\" knappen.",
   "controls.voxelmap.unbind2": "(Med undantag för menyknappen - Den kan inte tas bort.)",
-
   "key.voxelmap.zoom": "Zooma",
   "key.voxelmap.togglefullscreen": "Aktivera helskärmskarta",
   "key.voxelmap.menu": "Meny",
   "key.voxelmap.waypointhotkey": "Waypoint-knapp",
   "key.voxelmap.togglemobs": "Aktivera Mobs",
   "key.voxelmap.waypointmenu": "Vägpunkts Meny",
-
   "options.voxelmap.title": "Minimap Inställningar",
   "options.voxelmap.showcoordinates": "Visa Koordinater",
   "options.voxelmap.hideminimap": "Dölj Minimap",
   "options.voxelmap.cavemode": "Sätt på Cave Mode",
   "options.voxelmap.dynamiclighting": "Dynamisk belysning",
   "options.voxelmap.terraindepth": "Terrängdjup",
+  "options.voxelmap.squaremap": "Fyrkantig Minimap",
   "options.voxelmap.oldnorth": "Gamla Norr",
   "options.voxelmap.ingamewaypoints": "I-spelet Waypoints",
   "options.voxelmap.ingamewaypoints.beacons": "Fyrtorn",
@@ -53,7 +51,6 @@
   "options.voxelmap.terrain.height": "Höjd",
   "options.voxelmap.terrain.slope": "Lutning",
   "options.voxelmap.terrain.both": "Båda",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Radar Alternativ",
   "options.voxelmap.radar.showradar": "Radar",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Visa spelarhjälmar",
   "options.voxelmap.radar.iconoutlines": "Ikonbeskrivning",
   "options.voxelmap.radar.iconfiltering": "Ikonfiltering",
-
   "options.voxelmap.selectmobs": "Monster att Visa...",
   "options.voxelmap.selectmobs.title": "Visa eller Göm Individuella Monstertyper",
   "options.voxelmap.selectmobs.enable": "Aktivera Monster",
   "options.voxelmap.selectmobs.disable": "Inaktivera Monster",
   "options.voxelmap.selectmobs.enabled": "Visa Monster Aktiverat",
   "options.voxelmap.selectmobs.disabled": "Visa Monster Inaktiverat",
-
   "options.voxelmap.waypoints": "Waypoints...",
   "options.voxelmap.waypoints.title": "Vägpunkts Alternativ",
   "options.voxelmap.waypoints.distance": "Max Avstånd",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Alla",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Verkställs vid nästa död",
   "options.voxelmap.waypoints.showwaypointnames": "Punktnamn på Karta",
-
   "voxelmap.waypoints.title": "Waypoints",
   "voxelmap.waypoints.teleportto": "Teleportera till",
   "voxelmap.waypoints.highlight": "Markera",

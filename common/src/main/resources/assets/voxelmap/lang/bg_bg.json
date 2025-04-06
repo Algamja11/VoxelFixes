@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Бързо добавяне на точка",
   "voxelmap.ui.welcome8": "Скрий това съобщение",
   "voxelmap.ui.zoomlevel": "Ниво на zoom",
-
   "controls.voxelmap.title": "Минимап контроли",
   "controls.voxelmap.unbind1": "За да премахнете копче, изберете го и натиснете \"Escape\".",
   "controls.voxelmap.unbind2": "(С изключение на клавиша за менюто - той не може да няма бутон)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Голяма карта",
   "key.voxelmap.menu": "Меню",
   "key.voxelmap.togglemobs": "Превключи чудовища",
   "key.voxelmap.waypointhotkey": "Бутон за нова точка",
   "key.voxelmap.waypointmenu": "Меню (точки)",
-
   "options.voxelmap.title": "Опции на минимапа",
   "options.voxelmap.showcoordinates": "Показвай координати",
   "options.voxelmap.hideminimap": "Скрий минимапа",
   "options.voxelmap.cavemode": "Позволи Cave Mode",
   "options.voxelmap.dynamiclighting": "Динамична светлина",
   "options.voxelmap.terraindepth": "Ширина на терена",
+  "options.voxelmap.squaremap": "Квадратна карта",
   "options.voxelmap.oldnorth": "Old North",
   "options.voxelmap.ingamewaypoints": "Игрови точки",
   "options.voxelmap.ingamewaypoints.beacons": "Beacons",
@@ -52,7 +50,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Прозрачен",
   "options.voxelmap.biomeoverlay.solid": "Солиден",
   "options.voxelmap.chunkgrid": "Chunk Grid",
-
   "options.voxelmap.radar": "Радар...",
   "options.voxelmap.radar.title": "Опции на радара",
   "options.voxelmap.radar.showradar": "Радар",
@@ -60,7 +57,6 @@
   "options.voxelmap.radar.showplayerhelmets": "Показвай хората",
   "options.voxelmap.radar.iconoutlines": "Очертаване на икони",
   "options.voxelmap.radar.iconfiltering": "Филтриране на икони",
-
   "options.voxelmap.waypoints": "Точки...",
   "options.voxelmap.waypoints.title": "Опции",
   "options.voxelmap.waypoints.distance": "Максимално разстояние",
@@ -69,7 +65,6 @@
   "options.voxelmap.waypoints.deathpoints.mostrecent": "Последна смърт",
   "options.voxelmap.waypoints.deathpoints.all": "Всички",
   "options.voxelmap.waypoints.deathpoints.tooltip": "В сила при следващо умиране",
-
   "voxelmap.waypoints.title": "Точки",
   "voxelmap.waypoints.teleportto": "Телепортирай в ...",
   "voxelmap.waypoints.highlight": "Маркиране",

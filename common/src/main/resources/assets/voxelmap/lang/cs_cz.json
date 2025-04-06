@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Rychlé přidání bodu.",
   "voxelmap.ui.welcome8": "Skrýt zprávu",
   "voxelmap.ui.zoomlevel": "Úroveň měřítka",
-
   "controls.voxelmap.title": "Ovládání Minimapy",
   "controls.voxelmap.unbind1": "Pro odpojení klávesy ji vyber a stiskni 'Escape'.",
   "controls.voxelmap.unbind2": "(Vyjma klávesy pro Nabídku - ta nemůže být odpojena)",
-
   "key.voxelmap.zoom": "Změna měřítka",
   "key.voxelmap.togglefullscreen": "Přepínání na celou obrazovku",
   "key.voxelmap.menu": "Nabídka",
   "key.voxelmap.togglemobs": "Přepnout moby",
   "key.voxelmap.waypointhotkey": "Klávesová zkratka pro body",
   "key.voxelmap.waypointmenu": "Nabídka bodů",
-
   "options.voxelmap.title": "Možnosti Minimapy",
   "options.voxelmap.showcoordinates": "Zobrazit souřadnice",
   "options.voxelmap.hideminimap": "Skrýt Minimapu",
   "options.voxelmap.cavemode": "Povolit jeskynní mód",
   "options.voxelmap.dynamiclighting": "Dynamické osvětlení",
   "options.voxelmap.terraindepth": "Hloubka terénu",
+  "options.voxelmap.squaremap": "Čtvercová mapa",
   "options.voxelmap.oldnorth": "Starý sever",
   "options.voxelmap.ingamewaypoints": "Body ve hře",
   "options.voxelmap.ingamewaypoints.beacons": "Světelné signály",
@@ -53,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Průhledný",
   "options.voxelmap.biomeoverlay.solid": "Plný",
   "options.voxelmap.chunkgrid": "Hranice úseků",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Možnosti radaru",
   "options.voxelmap.radar.showradar": "Radar",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Ukázat hráčské přilby",
   "options.voxelmap.radar.iconoutlines": "Obrys ikony",
   "options.voxelmap.radar.iconfiltering": "Filtr ikon",
-
   "options.voxelmap.selectmobs": "Mobové k ukázání...",
   "options.voxelmap.selectmobs.title": "Ukázat nebo skrýt jednotlivé typy mobů",
   "options.voxelmap.selectmobs.enable": "Povolit moba",
   "options.voxelmap.selectmobs.disable": "Zakázat moba",
   "options.voxelmap.selectmobs.enabled": "Zobrazení moba povoleno",
   "options.voxelmap.selectmobs.disabled": "Zobrazení moba zakázáno",
-
   "options.voxelmap.waypoints": "Body...",
   "options.voxelmap.waypoints.title": "Možnosti bodů",
   "options.voxelmap.waypoints.distance": "Max. vzdálenost",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Všechny",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Nabývá platnosti při další smrti",
   "options.voxelmap.waypoints.showwaypointnames": "Názvy bodů na mapě",
-
   "voxelmap.waypoints.title": "Body",
   "voxelmap.waypoints.teleportto": "Teleportovat na",
   "voxelmap.waypoints.highlight": "Zvýraznit",

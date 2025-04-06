@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Voeg snel een waypoint aan.",
   "voxelmap.ui.welcome8": "Verberg dit bericht",
   "voxelmap.ui.zoomlevel": "Zoomniveau",
-
   "controls.voxelmap.title": "Minimap Controles",
   "controls.voxelmap.unbind1": "Om een toets te ontbinden, selecteer het en druk op \"Escape\".",
   "controls.voxelmap.unbind2": "(Behalve de menu-toets - dat kan niet worden ongebonden)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Schakel volledig scerm kaart.",
   "key.voxelmap.menu": "Menu",
   "key.voxelmap.togglemobs": "Schakel Mobs",
   "key.voxelmap.waypointhotkey": "Waypoint Sneltoets",
   "key.voxelmap.waypointmenu": "Routepunt Menu",
-
   "options.voxelmap.title": "Minimap Opties",
   "options.voxelmap.showcoordinates": "Toon coordinaten",
   "options.voxelmap.hideminimap": "Verberg Minimap",
   "options.voxelmap.cavemode": "Schakel Grot Mode",
   "options.voxelmap.dynamiclighting": "Dynamische Verlighting",
   "options.voxelmap.terraindepth": "Terrein Diepte",
+  "options.voxelmap.squaremap": "Vierkante Map",
   "options.voxelmap.oldnorth": "Oude Noorden",
   "options.voxelmap.ingamewaypoints": "In-spel Waypoints",
   "options.voxelmap.ingamewaypoints.beacons": "Bakens",
@@ -51,7 +49,6 @@
   "options.voxelmap.terrain.height": "Hoogte",
   "options.voxelmap.terrain.slope": "Helling",
   "options.voxelmap.terrain.both": "Beide",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Radar Opties",
   "options.voxelmap.radar.showradar": "Radar",
@@ -61,14 +58,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Toon Speler Helmen",
   "options.voxelmap.radar.iconoutlines": "Icoon schetst",
   "options.voxelmap.radar.iconfiltering": "Icoon Filtering",
-
   "options.voxelmap.selectmobs": "Mobs weer te geven...",
   "options.voxelmap.selectmobs.title": "Toon of verberg individuele Mob types",
   "options.voxelmap.selectmobs.enable": "Schakel Mob aan",
   "options.voxelmap.selectmobs.disable": "Schakel Mob uit",
   "options.voxelmap.selectmobs.enabled": "Mob weergave is ingeschakeld",
   "options.voxelmap.selectmobs.disabled": "Mob weergave is uitgeschakeld",
-
   "options.voxelmap.waypoints": "Waypoints...",
   "options.voxelmap.waypoints.title": "Waypoint Opties",
   "options.voxelmap.waypoints.distance": "Max Afstand",
@@ -78,7 +73,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Alle",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Treedt in werking op de volgende sterfte/dood.",
   "options.voxelmap.waypoints.showwaypointnames": "Punt namen op de kaart",
-
   "voxelmap.waypoints.title": "Waypoints",
   "voxelmap.waypoints.teleportto": "Teleporteer Naar",
   "voxelmap.waypoints.highlight": "Markeer",

@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Creación rápida de waypoint.",
   "voxelmap.ui.welcome8": "Ocultar este mensaje",
   "voxelmap.ui.zoomlevel": "Nivel de Zoom",
-
   "controls.voxelmap.title": "Controles de Minimapa",
   "controls.voxelmap.unbind1": "Para desasociar una clave, pulse 'Escape'.",
   "controls.voxelmap.unbind2": "(Excepto por la clave de Menú - No la puede desasociar)",
-
   "key.voxelmap.zoom": "Zoom de Minimapa",
   "key.voxelmap.togglefullscreen": "Mostrar mapa en pantalla completa",
   "key.voxelmap.voxelmapmenu": "Menú de Minimapa",
   "key.voxelmap.menu": "Menú",
   "key.voxelmap.waypointhotkey": "Tecla para waypoints",
   "key.voxelmap.togglemobs": "Activar Mobs",
-
   "options.voxelmap.title": "Opciones de Mapa",
   "options.voxelmap.showcoordinates": "Mostrar coordenadas",
   "options.voxelmap.hideminimap": "Ocultar Minimapa",
   "options.voxelmap.cavemode": "Activar modo caverna",
   "options.voxelmap.dynamiclighting": "Iluminación dinámica",
   "options.voxelmap.terraindepth": "Desnivel de terreno",
+  "options.voxelmap.squaremap": "Mapa cuadrado",
   "options.voxelmap.oldnorth": "Norte viejo",
   "options.voxelmap.ingamewaypoints": "Waypoints In-game",
   "options.voxelmap.ingamewaypoints.beacons": "Faros",
@@ -53,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Transparencia",
   "options.voxelmap.biomeoverlay.solid": "Sólido",
   "options.voxelmap.chunkgrid": "Cuadrícula de Chunks",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Opciones de Radar",
   "options.voxelmap.radar.showradar": "Radar",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Mostrar Cascos de jugadores",
   "options.voxelmap.radar.showmobhelmets": "Mostrar Cascos de mobs",
   "options.voxelmap.radar.showplayernames": "Mostrar Nombres de jugadores",
-
   "options.voxelmap.selectmobs": "Mobs que Mostrar...",
   "options.voxelmap.selectmobs.title": "Mostrar o Esconder Tipos de Mob.",
   "options.voxelmap.selectmobs.enable": "Activar ícono de Mob",
   "options.voxelmap.selectmobs.disable": "Desactivar ícono de Mob",
   "options.voxelmap.selectmobs.enabled": "Este ícono se está mostrando.",
   "options.voxelmap.selectmobs.disabled": "Este ícono no se está mostrando.",
-
   "options.voxelmap.waypoints": "Waypoints...",
   "options.voxelmap.waypoints.title": "Opciones de Waypoints",
   "options.voxelmap.waypoints.distance": "Distancia Máxima",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Todos",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Tiene efecto en la próxima muerte",
   "options.voxelmap.waypoints.showwaypointnames": "Nombres de Puntos en el Mapa",
-
   "voxelmap.waypoints.title": "Waypoints",
   "voxelmap.waypoints.teleportto": "Teletransportar a",
   "voxelmap.waypoints.highlight": "Elegir",

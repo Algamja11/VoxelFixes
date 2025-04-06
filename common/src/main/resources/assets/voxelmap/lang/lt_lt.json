@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Greitas Kelio taško pasirinkimas.",
   "voxelmap.ui.welcome8": "Slėpti šita žinutę",
   "voxelmap.ui.zoomlevel": "Pritraukimo Lygis",
-
   "controls.voxelmap.title": "Žemėlapio Kontrolė",
   "controls.voxelmap.unbind1": "Kad atrinktum mygtuką, Pasarink jį ir spausk'Escape'.",
   "controls.voxelmap.unbind2": "(To negalima padaryti su Menu Mygtuku - nes jis neatrinkamas)",
-
   "key.voxelmap.zoom": "Pritraukimas",
   "key.voxelmap.togglefullscreen": "Pasirinkti žemėlapi per visą ekraną",
   "key.voxelmap.menu": "Menių",
   "key.voxelmap.togglemobs": "Įjungti Monstrus/Gyvūnus",
   "key.voxelmap.waypointhotkey": "Kelio taško greitasis Mygtukas",
   "key.voxelmap.waypointmenu": "Kelio taško Meniu",
-
   "options.voxelmap.title": "Žemėlapio Parinktys",
   "options.voxelmap.showcoordinates": "Rodyti Koordinates",
   "options.voxelmap.hideminimap": "Slėpti Žemėlapį",
   "options.voxelmap.cavemode": "Įjungti Požemius.",
   "options.voxelmap.dynamiclighting": "Dynamic Lighting",
   "options.voxelmap.terraindepth": "Terrain Depth",
+  "options.voxelmap.squaremap": "Keturkampis Žemėlapis",
   "options.voxelmap.oldnorth": "Sena Šiaurė",
   "options.voxelmap.ingamewaypoints": "Kelio taškai žaidime.",
   "options.voxelmap.ingamewaypoints.beacons": "Šviesos",
@@ -53,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Matomumas",
   "options.voxelmap.biomeoverlay.solid": "Solidus",
   "options.voxelmap.chunkgrid": "Chunk'u skirstymas",
-
   "options.voxelmap.radar": "Radaras...",
   "options.voxelmap.radar.title": "Radaro Parinktys",
   "options.voxelmap.radar.showradar": "Radaras",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Rodyti Žaidėjų kepures",
   "options.voxelmap.radar.iconoutlines": "Paryškintos Ikonos",
   "options.voxelmap.radar.iconfiltering": "Ikonų Filtravimas",
-
   "options.voxelmap.selectmobs": "Rodyti Monstrus...",
   "options.voxelmap.selectmobs.title": "Rodyti ar Slėpti atsikur Monstrų rūšys",
   "options.voxelmap.selectmobs.enable": "Leisti monstrą",
   "options.voxelmap.selectmobs.disable": "neleisti monstrą",
   "options.voxelmap.selectmobs.enabled": "Monstrų rodymas - leidžiama",
   "options.voxelmap.selectmobs.disabled": "Monstrų rodymas - neleidžiama",
-
   "options.voxelmap.waypoints": "Kelio Taškai...",
   "options.voxelmap.waypoints.title": "Kelio Taškų Parinktys",
   "options.voxelmap.waypoints.distance": "Didžiausias Atsumas",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Visi",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Pasikeičia po kitos mirties",
   "options.voxelmap.waypoints.showwaypointnames": "Taškų pavadinimai žemėlapyje",
-
   "voxelmap.waypoints.title": "Kelio taškai",
   "voxelmap.waypoints.teleportto": "Teleportuotis į",
   "voxelmap.waypoints.highlight": "Paryškinti",

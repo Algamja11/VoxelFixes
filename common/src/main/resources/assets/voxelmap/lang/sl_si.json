@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Hitro dodaj lokacijo.",
   "voxelmap.ui.welcome8": "Skrij to sporočilo",
   "voxelmap.ui.zoomlevel": "Velikost zooma",
-
   "controls.voxelmap.title": "Kontrole mini-zemljevida",
   "controls.voxelmap.unbind1": "Da izbrišeš bližnjico, jo izberi in pritisni 'Escape'.",
   "controls.voxelmap.unbind2": "(Razen za tipko za meni - te ne moreš spremeniti)",
-
   "key.voxelmap.zoom": "Približaj",
   "key.voxelmap.togglefullscreen": "Priključi ali izključi celozaslonski zemljevid",
   "key.voxelmap.menu": "Meni",
   "key.voxelmap.togglemobs": "Priključi ali izključi kazanje sovražnikov",
   "key.voxelmap.waypointhotkey": "Bližnjica za lokacijo",
   "key.voxelmap.waypointmenu": "Meni za lokacije",
-
   "options.voxelmap.title": "Nastavitve Mini-zemljevida",
   "options.voxelmap.showcoordinates": "Pokaži koordinate",
   "options.voxelmap.hideminimap": "Skrij Mini-zemljevid",
   "options.voxelmap.cavemode": "Izključi ali priključi način z jamami",
   "options.voxelmap.dynamiclighting": "Dinamična osvetlitev",
   "options.voxelmap.terraindepth": "Globina terena",
+  "options.voxelmap.squaremap": "Kvadraten zemljevid",
   "options.voxelmap.oldnorth": "Stari sever",
   "options.voxelmap.ingamewaypoints": "Lokacije v igri",
   "options.voxelmap.ingamewaypoints.beacons": "Luči",
@@ -53,7 +51,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Transparentnos",
   "options.voxelmap.biomeoverlay.solid": "Trdota",
   "options.voxelmap.chunkgrid": "Mreža",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Nastavitve Radarja",
   "options.voxelmap.radar.showradar": "Radar",
@@ -63,14 +60,12 @@
   "options.voxelmap.radar.showplayerhelmets": "Pokaži čelade igralcev",
   "options.voxelmap.radar.iconoutlines": "Rob ikon",
   "options.voxelmap.radar.iconfiltering": "Filter ikon",
-
   "options.voxelmap.selectmobs": "Pokažem katere sovražnike",
   "options.voxelmap.selectmobs.title": "Pokaži ali skrij tipe sovražnikov",
   "options.voxelmap.selectmobs.enable": "Dovoli sovražnike",
   "options.voxelmap.selectmobs.disable": "Odstrani sovražnike",
   "options.voxelmap.selectmobs.enabled": "Kazanje sovražnikov priključeno",
   "options.voxelmap.selectmobs.disabled": "Kazanje sovražnikov izključeno",
-
   "options.voxelmap.waypoints": "Lokacije...",
   "options.voxelmap.waypoints.title": "Nastavitve lokacij",
   "options.voxelmap.waypoints.distance": "Maksimalna dolžina",
@@ -80,7 +75,6 @@
   "options.voxelmap.waypoints.deathpoints.all": "Vse",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Se ponastavi pri naslednji smrti",
   "options.voxelmap.waypoints.showwaypointnames": "Imena lokacij na zemljevidu",
-
   "voxelmap.waypoints.title": "Lokacija",
   "voxelmap.waypoints.teleportto": "Teleportiraj se do",
   "voxelmap.waypoints.highlight": "Izberi",

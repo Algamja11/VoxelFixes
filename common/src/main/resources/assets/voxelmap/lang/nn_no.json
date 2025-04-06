@@ -9,11 +9,9 @@
   "voxelmap.ui.welcome7": "Legg snøgt til et landemerke.",
   "voxelmap.ui.welcome8": "Skjul denne meldinga",
   "voxelmap.ui.zoomlevel": "Zoomnivå",
-
   "controls.voxelmap.title": "Minimap-Kontroller",
   "controls.voxelmap.unbind1": "For å lauskople ein tast, vel den og trykk 'Escape'.",
   "controls.voxelmap.unbind2": "(Unntak for Menyknappen - den kan ikkje bli lauskopla)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Fullskjermkart av/på",
   "key.voxelmap.menu": "Meny",
@@ -21,13 +19,13 @@
   "key.voxelmap.togglemobs": "Mobs av/på",
   "key.voxelmap.waypointmenu": "Landemerkemeny",
   "voxelmap.waypoints.title": "Landemerker",
-
   "options.voxelmap.title": "Minimap-Instillingar",
   "options.voxelmap.showcoordinates": "Vis Koordinatar",
   "options.voxelmap.hideminimap": "Skjul Minimap",
   "options.voxelmap.cavemode": "Skru på Hulemodus",
   "options.voxelmap.dynamiclighting": "Dynamisk Lyssetjing",
   "options.voxelmap.terraindepth": "Terrengdjupn",
+  "options.voxelmap.squaremap": "Firkanta Kart",
   "options.voxelmap.oldnorth": "Gammal Nord",
   "options.voxelmap.ingamewaypoints": "Spill-Landemerker",
   "options.voxelmap.location": "Plassering",
@@ -40,7 +38,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Gjennomsiktig",
   "options.voxelmap.biomeoverlay.solid": "Solid",
   "options.voxelmap.chunkgrid": "Chunk-Ruter",
-
   "options.voxelmap.terrain.height": "Høgde",
   "options.voxelmap.terrain.slope": "Skråning",
   "options.voxelmap.terrain.both": "Båe",
@@ -54,7 +51,6 @@
   "options.voxelmap.size.small": "Liten",
   "options.voxelmap.size.medium": "Standard",
   "options.voxelmap.size.large": "Stor",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Radarval",
   "options.voxelmap.radar.showradar": "Radar",
@@ -63,7 +59,6 @@
   "options.voxelmap.radar.showplayerhelmets": "Vis Spillarane sine Hjelmer",
   "options.voxelmap.radar.iconoutlines": "Ikonkantar",
   "options.voxelmap.radar.iconfiltering": "Ikonfiltrering",
-
   "options.voxelmap.waypoints": "Landemerker...",
   "options.voxelmap.waypoints.title": "Landemerke-Val",
   "options.voxelmap.waypoints.distance": "Maks Avstand",
@@ -72,7 +67,6 @@
   "options.voxelmap.waypoints.deathpoints.mostrecent": "Nyligst",
   "options.voxelmap.waypoints.deathpoints.all": "Alle",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Aktiverast neste død",
-
   "voxelmap.waypoints.teleportto": "Teleporter Til",
   "voxelmap.waypoints.highlight": "Lys opp",
   "voxelmap.waypoints.newwaypoint": "Nytt Landemerke",

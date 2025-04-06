@@ -9,24 +9,22 @@
   "voxelmap.ui.welcome7": "Çabucak bir waypoint ekle.",
   "voxelmap.ui.welcome8": "Bu mesajı gizle",
   "voxelmap.ui.zoomlevel": "Zoom seviyesi",
-
   "controls.voxelmap.title": "Miniharita Kontrolleri",
   "controls.voxelmap.unbind1": "Bir tuşun bağlantısını kaldırmak için,tuşu seçin ve \"ESC\" tuşuna basın.",
   "controls.voxelmap.unbind2": "(Menü butonu dışında-onun bağlantısı kaldırılamaz)",
-
   "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Tam Ekran Haritayı Aç/Kapa",
   "key.voxelmap.menu": "Menü",
   "key.voxelmap.togglemobs": "Mobları Aç/Kapa",
   "key.voxelmap.waypointhotkey": "Waypoint Kısayol Tuşu",
   "key.voxelmap.waypointmenu": "Waypoint Menusu",
-
   "options.voxelmap.title": "Miniharita Ayarları",
   "options.voxelmap.showcoordinates": "Koordinatları Goster",
   "options.voxelmap.hideminimap": "Minimap'i Gizle",
   "options.voxelmap.cavemode": "Mağara Modu",
   "options.voxelmap.dynamiclighting": "Dinamik Işıklandirma",
   "options.voxelmap.terraindepth": "Arazi yuksekligi",
+  "options.voxelmap.squaremap": "Kare harita",
   "options.voxelmap.oldnorth": "Eski Kuzey",
   "options.voxelmap.ingamewaypoints": "Oyun içi Waypoint'ler",
   "options.voxelmap.ingamewaypoints.beacons": "Fenerler",
@@ -52,7 +50,6 @@
   "options.voxelmap.biomeoverlay.transparent": "Şaydam",
   "options.voxelmap.biomeoverlay.solid": "Katı",
   "options.voxelmap.chunkgrid": "Toprak Izgarası",
-
   "options.voxelmap.radar": "Radar...",
   "options.voxelmap.radar.title": "Radar Ayarları",
   "options.voxelmap.radar.showradar": "Radar",
@@ -61,7 +58,6 @@
   "options.voxelmap.radar.showplayerhelmets": "Oyuncu Kasklari Göster",
   "options.voxelmap.radar.iconoutlines": "Simge Çerçevesi",
   "options.voxelmap.radar.iconfiltering": "Simge Filtreleme",
-
   "options.voxelmap.waypoints": "Waypointlerim...",
   "options.voxelmap.waypoints.title": "Waypoint Ayarlari",
   "options.voxelmap.waypoints.distance": "Max Uzaklik",
@@ -70,7 +66,6 @@
   "options.voxelmap.waypoints.deathpoints.mostrecent": "En Yeni",
   "options.voxelmap.waypoints.deathpoints.all": "Hepsi",
   "options.voxelmap.waypoints.deathpoints.tooltip": "Oldugunuz yeri gosterir",
-
   "voxelmap.waypoints.title": "Waypointler",
   "voxelmap.waypoints.teleportto": "Şuna ışınlan",
   "voxelmap.waypoints.highlight": "Highlight",
