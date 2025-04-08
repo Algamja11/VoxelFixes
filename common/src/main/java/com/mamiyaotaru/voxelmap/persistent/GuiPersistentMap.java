@@ -629,8 +629,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             for (CachedRegion region : this.regions) {
                 ResourceLocation resource = region.getTextureLocation();
                 if (resource != null) {
-                    Function<ResourceLocation, RenderType> renderType = this.mapOptions.filtering ? GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH : GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_FILTER_MIN;
-                    guiGraphics.blit(renderType, resource, region.getX() * 256, region.getZ() * 256, 0, 0, region.getWidth(), region.getWidth(), region.getWidth(), region.getWidth());
+                    guiGraphics.blit(this.mapOptions.filtering ? GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH : GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_FILTER_MIN, resource, region.getX() * 256, region.getZ() * 256, 0, 0, region.getWidth(), region.getWidth(), region.getWidth(), region.getWidth());
                 }
             }
 
@@ -862,7 +861,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     }
 
     private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, float cursorCoordX, float cursorCoordZ, Sprite icon) {
-        if (!(pt.inWorld && pt.inDimension && this.isOnScreen(pt.getX(), pt.getZ()))) {
+        if (!pt.inWorld || !pt.inDimension) {
             return;
         }
         float ptX = pt.getX();
@@ -918,26 +917,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             this.write(guiGraphics, name, ptX * this.mapToGui / fontScale - labelWidth, ptZ * this.mapToGui / fontScale + 8, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFF);
             poseStack.popPose();
         }
-    }
-
-    private boolean isOnScreen(int x, int z) {
-        int left;
-        int right;
-        int top;
-        int bottom;
-        if (this.oldNorth) {
-            left = (int) Math.floor(this.mapCenterZ - (this.centerY * this.guiToMap) * 1.1);
-            right = (int) Math.floor(this.mapCenterZ + (this.centerY * this.guiToMap) * 1.1);
-            top = (int) Math.floor((-this.mapCenterX) - (this.centerX * this.guiToMap) * 1.1);
-            bottom = (int) Math.floor((-this.mapCenterX) + (this.centerX * this.guiToMap) * 1.1);
-        } else {
-            left = (int) Math.floor(this.mapCenterX - (this.centerX * this.guiToMap) * 1.1);
-            right = (int) Math.floor(this.mapCenterX + (this.centerX * this.guiToMap) * 1.1);
-            top = (int) Math.floor(this.mapCenterZ - (this.centerY * this.guiToMap) * 1.1);
-            bottom = (int) Math.floor(this.mapCenterZ + (this.centerY * this.guiToMap) * 1.1);
-        }
-
-        return x > left && x < right && z > top && z < bottom;
     }
 
     protected void overlayBackground(GuiGraphics guiGraphics) {
