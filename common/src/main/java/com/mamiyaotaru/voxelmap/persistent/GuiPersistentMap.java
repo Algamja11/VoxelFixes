@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -123,6 +125,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     private final Minecraft minecraft = Minecraft.getInstance();
     private final ResourceLocation voxelmapSkinLocation = ResourceLocation.fromNamespaceAndPath("voxelmap", "persistentmap/playerskin");
     private final ResourceLocation crosshairResource = ResourceLocation.parse("textures/gui/sprites/hud/crosshair.png");
+    private final ResourceLocation screenHeaderResource = ResourceLocation.parse("textures/gui/inworld_header_separator.png");
+    private final ResourceLocation screenFooterResource = ResourceLocation.parse("textures/gui/inworld_footer_separator.png");
 
     public GuiPersistentMap(Screen parent) {
         this.parentScreen = parent;
@@ -625,7 +629,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             for (CachedRegion region : this.regions) {
                 ResourceLocation resource = region.getTextureLocation();
                 if (resource != null) {
-                    guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_FILTER_MIN, resource, region.getX() * 256, region.getZ() * 256, 0, 0, region.getWidth(), region.getWidth(), region.getWidth(), region.getWidth());
+                    Function<ResourceLocation, RenderType> renderType = this.mapOptions.filtering ? GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH : GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_FILTER_MIN;
+                    guiGraphics.blit(renderType, resource, region.getX() * 256, region.getZ() * 256, 0, 0, region.getWidth(), region.getWidth(), region.getWidth(), region.getWidth());
                 }
             }
 
@@ -814,8 +819,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             this.switchToMouseInput();
         }
 
-        this.overlayBackground(guiGraphics, 0, this.top, 255, 255);
-        this.overlayBackground(guiGraphics, this.bottom, this.getHeight(), 255, 255);
+        this.overlayBackground(guiGraphics);
         if (VoxelMap.mapOptions.worldmapAllowed) {
             guiGraphics.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 16, 0xFFFFFF);
             int x = (int) Math.floor(cursorCoordX);
@@ -936,16 +940,37 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         return x > left && x < right && z > top && z < bottom;
     }
 
-    protected void overlayBackground(GuiGraphics guiGraphics, int startY, int endY, int startAlpha, int endAlpha) {
+    protected void overlayBackground(GuiGraphics guiGraphics) {
         guiGraphics.drawSpecial(bufferSource -> {
             Matrix4f matrix4f = guiGraphics.pose().last().pose();
-            RenderType renderType = RenderType.guiTextured(VoxelConstants.getOptionsBackgroundTexture());
-            VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
-            float renderedTextureSize = 32.0F;
-            vertexConsumer.addVertex(matrix4f, 0.0F, endY, 0.0F).setUv(0.0F, endY / renderedTextureSize).setColor(64, 64, 64, endAlpha);
-            vertexConsumer.addVertex(matrix4f, this.getWidth(), endY, 0.0F).setUv(this.width / renderedTextureSize, endY / renderedTextureSize).setColor(64, 64, 64, endAlpha);
-            vertexConsumer.addVertex(matrix4f, this.getWidth(), startY, 0.0F).setUv(this.width / renderedTextureSize, startY / renderedTextureSize).setColor(64, 64, 64, startAlpha);
-            vertexConsumer.addVertex(matrix4f, 0.0F, startY, 0.0F).setUv(0.0F, startY / renderedTextureSize).setColor(64, 64, 64, startAlpha);
+            float renderedTextureSize = this.width / 32.0F;
+
+            // background-header
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.gui());
+            vertexConsumer.addVertex(matrix4f, 0.0F, 32.0F, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, this.width, 32.0F, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, this.width, 0.0F, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, 0.0F, 0.0F, 0.0F).setColor(0, 0, 0, 127);
+
+            // background-footer
+            vertexConsumer.addVertex(matrix4f, 0.0F, this.height, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, this.width, this.height, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, this.width, this.height - 32.0F, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, 0.0F, this.height - 32.0F, 0.0F).setColor(0, 0, 0, 127);
+
+            // header
+            vertexConsumer = bufferSource.getBuffer(RenderType.guiTextured(screenHeaderResource));
+            vertexConsumer.addVertex(matrix4f, 0.0F, 32.0F + 2.0F, 0.0F).setUv(0.0F, 1.0F).setColor(255, 255, 255, 255);
+            vertexConsumer.addVertex(matrix4f, this.width, 32.0F + 2.0F, 0.0F).setUv(renderedTextureSize, 1.0F).setColor(255, 255, 255, 255);
+            vertexConsumer.addVertex(matrix4f, this.width, 32.0F, 0.0F).setUv(renderedTextureSize, 0.0F).setColor(255, 255, 255, 255);
+            vertexConsumer.addVertex(matrix4f, 0.0F, 32.0F, 0.0F).setUv(0.0F, 0.0F).setColor(255, 255, 255, 255);
+
+            // footer
+            vertexConsumer = bufferSource.getBuffer(RenderType.guiTextured(screenFooterResource));
+            vertexConsumer.addVertex(matrix4f, 0.0F, this.height - 32.0F, 0.0F).setUv(0.0F, 1.0F).setColor(255, 255, 255, 255);
+            vertexConsumer.addVertex(matrix4f, this.width, this.height - 32.0F, 0.0F).setUv(renderedTextureSize, 1.0F).setColor(255, 255, 255, 255);
+            vertexConsumer.addVertex(matrix4f, this.width, this.height - 32.0F - 2.0F, 0.0F).setUv(renderedTextureSize, 0.0F).setColor(255, 255, 255, 255);
+            vertexConsumer.addVertex(matrix4f, 0.0F, this.height - 32.0F - 2.0F, 0.0F).setUv(0.0F, 0.0F).setColor(255, 255, 255, 255);
         });
     }
 
