@@ -43,6 +43,10 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
     }
 
     public void init() {
+        clearWidgets();
+        getButtonList().clear();
+        children().clear();
+
         int buttonCount = 10;
         int buttonStart = page * buttonCount;
         int buttonEnd = buttonStart + buttonCount;
@@ -104,11 +108,11 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 
         this.addRenderableWidget(new Button.Builder(Component.translatable("<"), button -> {
             if (--page < 0) page = maxPages - 1;
-            VoxelConstants.getMinecraft().setScreen(this);
+            init();
         }).bounds(this.getWidth() / 2 - 160, this.getHeight() / 6 + 144, 60, 20).build());
         this.addRenderableWidget(new Button.Builder(Component.translatable(">"), button -> {
             if (++page >= maxPages) page = 0;
-            VoxelConstants.getMinecraft().setScreen(this);
+            init();
         }).bounds(this.getWidth() / 2 + 100, this.getHeight() / 6 + 144, 60, 20).build());
 
         this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, 200, 20).build());
