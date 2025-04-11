@@ -36,7 +36,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.AbstractEquineModel;
 import net.minecraft.client.model.CamelModel;
 import net.minecraft.client.model.CodModel;
+import net.minecraft.client.model.DolphinModel;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.GuardianModel;
 import net.minecraft.client.model.LavaSlimeModel;
 import net.minecraft.client.model.LlamaModel;
 import net.minecraft.client.model.SalmonModel;
@@ -49,6 +51,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
 import net.minecraft.client.renderer.entity.CodRenderer;
+import net.minecraft.client.renderer.entity.DolphinRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.GoatRenderer;
 import net.minecraft.client.renderer.entity.HoglinRenderer;
@@ -204,25 +207,24 @@ public class EntityMapImageManager {
         // } else if (facing == Direction.UP) {
         // pose.mulPose(Axis.XP.rotationDegrees(90.0F));
 
-        if (baseRenderer instanceof AbstractHorseRenderer<?, ?, ?>) {
-            pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
-            pose.mulPose(Axis.XP.rotationDegrees(35.0F));
-        }
-        if (baseRenderer instanceof SalmonRenderer || baseRenderer instanceof CodRenderer || baseRenderer instanceof TropicalFishRenderer) {
-            pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
-        }
-        if (baseRenderer instanceof ParrotRenderer) {
-            pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
-        }
-        if (baseRenderer instanceof HoglinRenderer || baseRenderer instanceof ZoglinRenderer) {
-            pose.mulPose(Axis.XP.rotationDegrees(30.0F));
-        }
-        if (baseRenderer instanceof GoatRenderer) {
-            pose.mulPose(Axis.XP.rotationDegrees(-30.0F));
+        switch (baseRenderer) {
+            case AbstractHorseRenderer<?, ?, ?> ignored -> {
+                pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+                pose.mulPose(Axis.XP.rotationDegrees(35.0F));
+            }
+            case CodRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+            case DolphinRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+            case GoatRenderer ignored -> pose.mulPose(Axis.XP.rotationDegrees(20.0F));
+            case HoglinRenderer ignored -> pose.mulPose(Axis.XP.rotationDegrees(60.0F));
+            case ParrotRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+            case SalmonRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+            case ZoglinRenderer ignored -> pose.mulPose(Axis.XP.rotationDegrees(60.0F));
+            default -> {}
         }
 
         EntityModel model = ((LivingEntityRenderer) baseRenderer).getModel();
-        model.setupAnim((LivingEntityRenderState) renderState);
+        model.resetPose();
+        
         for (ModelPart part : getPartToRender(model)) {
             part.xRot = 0;
             part.yRot = 0;
@@ -333,9 +335,14 @@ public class EntityMapImageManager {
     }
 
     private ModelPart[] getPartToRender(EntityModel<?> model) {
-        if (model instanceof TropicalFishModelA || model instanceof TropicalFishModelB || model instanceof SalmonModel || model instanceof CodModel || model instanceof SlimeModel) {
-            return new ModelPart[] { model.root() };
-        }
+
+        if (model instanceof CodModel) return new ModelPart[] { model.root() };
+        else if (model instanceof DolphinModel) return new ModelPart[] { model.root() };
+        else if (model instanceof SalmonModel) return new ModelPart[] { model.root() };
+        else if (model instanceof SlimeModel) return new ModelPart[] { model.root() };
+        else if (model instanceof TropicalFishModelA) return new ModelPart[] { model.root() };
+        else if (model instanceof TropicalFishModelB) return new ModelPart[] { model.root() };
+
         // horses
         for (ModelPart part : model.allParts()) {
             if (part.hasChild("head_parts")) {
@@ -374,6 +381,7 @@ public class EntityMapImageManager {
         if (model instanceof LavaSlimeModel slime) {
             return slime.bodyCubes;
         }
+
         return new ModelPart[] { model.root() };
     }
 
