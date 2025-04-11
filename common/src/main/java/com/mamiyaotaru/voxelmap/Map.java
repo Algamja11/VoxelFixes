@@ -1675,7 +1675,7 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, TextureAtlas textureAtlas, int x, int y, double lastXDouble, double lastZDouble, Sprite icon) {
-        boolean lockIconRotation = icon != null || pt.isDeathpoint;
+        boolean lockRotation = icon != null || pt.isDeathpoint;
 
         double wayX = lastXDouble - pt.getX() - 0.5;
         double wayY = lastZDouble - pt.getZ() - 0.5;
@@ -1693,12 +1693,12 @@ public class Map implements Runnable, IChangeObserver {
             double radLocate = Math.toRadians(locate);
             double dispX = hypot * Math.cos(radLocate);
             double dispY = hypot * Math.sin(radLocate);
-            far = Math.abs(dispX) > 30.0 || Math.abs(dispY) > 30.0;
+            far = Math.abs(dispX) > 28.5 || Math.abs(dispY) > 28.5;
             if (far) {
                 hypot = (float) (hypot / Math.max(Math.abs(dispX), Math.abs(dispY)) * 30.0);
             }
         } else {
-            far = hypot >= 34.0f;
+            far = hypot >= 31.0f;
             if (far) {
                 hypot = 34.0f;
             }
@@ -1721,7 +1721,7 @@ public class Map implements Runnable, IChangeObserver {
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate(x, y, 0.0f);
                 guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-locate));
-                if (lockIconRotation) {
+                if (lockRotation) {
                     guiGraphics.pose().translate(0.0f, -hypot, 0.0f);
                     guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(locate));
                     guiGraphics.pose().translate(-x, -y, 0.0f);
