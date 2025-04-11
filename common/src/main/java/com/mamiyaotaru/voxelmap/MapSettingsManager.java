@@ -28,33 +28,54 @@ public class MapSettingsManager implements ISettingsManager {
     public boolean showUnderMenus;
     private final int availableProcessors = Runtime.getRuntime().availableProcessors();
     public final boolean multicore = this.availableProcessors > 1;
-    public boolean hide;
-    public int coordsMode = 1;
-    protected boolean showCaves = true;
-    public boolean lightmap = true;
-    public boolean heightmap = this.multicore;
-    public boolean slopemap = true;
-    public boolean filtering;
-    public boolean waterTransparency = this.multicore;
-    public boolean blockTransparency = this.multicore;
-    public boolean biomes = this.multicore;
-    public int biomeOverlay;
-    public boolean chunkGrid;
-    public boolean slimeChunks;
-    public boolean worldborder = true;
-    public boolean squareMap = true;
-    public boolean rotates = true;
-    public boolean oldNorth;
-    public boolean showBeacons;
-    public boolean showWaypoints = true;
-    private boolean preToggleBeacons;
-    private boolean preToggleSigns = true;
-    public int deathpoints = 1;
-    public int maxWaypointDisplayDistance = 1000;
-    protected boolean welcome = true;
-    public int zoom = 2;
-    public int sizeModifier = 1;
-    public int mapCorner = 1;
+    public boolean hide = false; // "Hide Minimap"
+    public int coordsMode = 1; // "Coordinates Mode"
+    public boolean oldNorth = false; // "Old North"
+    public boolean showBiomeLabel = true; // "Show Biome Label"
+    public int sizeModifier = 1; // "Map Size"
+    public boolean squareMap = true; // "Square Map"
+    public boolean rotates = true; // "Rotation"
+    public int mapCorner = 1; // "Map Corner"
+    protected boolean showCaves = true; // "Enable Cave Mode"
+    public boolean showWaypointBeacons = false; // "Waypoint Beacons"
+    public boolean showWaypointSigns = true; // "Waypoint Signs"
+    private boolean preToggleWaypointBeacons = false;
+    private boolean preToggleWaypointSigns = true;
+    public boolean moveScoreboardBelowMap = true; // "Move Scoreboard Below Map"
+    public boolean moveMapBelowStatusEffect = true; // "Move Map Below Status Effect"
+    public boolean lightmap = true; // "Dynamic Lighting"
+    public boolean heightmap = this.multicore; // "Height Map"
+    public boolean slopemap = true; // "Slope Map"
+    public boolean filtering = false; // "Filtering"
+    public boolean waterTransparency = this.multicore; // "Water Transparency"
+    public boolean blockTransparency = this.multicore; // "Block Transparency"
+    public boolean biomes = this.multicore; // "Biomes"
+    public int biomeOverlay = 0; // "Biome Overlay"
+    public boolean chunkGrid = false; // "Chunk Grid"
+    public boolean slimeChunks = false; // "Slime Chunks"
+    public boolean worldborder = true; // "World Border"
+    public String teleportCommand = "tp %p %x %y %z"; // "Teleport Command"
+    public String serverTeleportCommand = null;
+
+    public int maxWaypointDisplayDistance = 1000; // "Waypoint Max Distance"
+    public int deathpoints = 1; // "Deathpoints"
+    public boolean distanceUnitConversion = true; // "Distance Unit Conversion"
+    public boolean waypointNameBelowIcon = true; // "Waypoint Name Below Icon"
+    public boolean waypointDistanceBelowName = true; // "Waypoint Distance Below Name"
+    public int sort = 1; // "Waypoint Sort By"
+
+    public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoomin", GLFW.GLFW_KEY_UP, "controls.voxelmap.title"); // "Zoom In Key"
+    public final KeyMapping keyBindZoomOut = new KeyMapping("key.voxelmap.zoomout", GLFW.GLFW_KEY_DOWN, "controls.voxelmap.title"); // "Zoom Out Key"
+    public final KeyMapping keyBindFullscreen = new KeyMapping("key.voxelmap.togglefullscreen", GLFW.GLFW_KEY_Z, "controls.voxelmap.title"); // "Fullscreen Key"
+    public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmapmenu", GLFW.GLFW_KEY_M, "controls.voxelmap.title"); // "Menu Key"
+    public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypointmenu", GLFW.GLFW_KEY_U, "controls.voxelmap.title"); // "Waypoint Menu Key"
+    public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypointhotkey", GLFW.GLFW_KEY_N, "controls.voxelmap.title"); // "Waypoint Key"
+    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.togglemobs", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title"); // "Mob Key"
+    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggleingamewaypoints", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title"); // "In-game Waypoint Key"
+    public final KeyMapping[] keyBindings;
+
+    protected boolean welcome = true; // "Welcome Message"
+    public int zoom = 2; // "Zoom Level"
 
     public Boolean cavesAllowed = true;
     public boolean worldmapAllowed = true;
@@ -62,28 +83,9 @@ public class MapSettingsManager implements ISettingsManager {
     public boolean waypointsAllowed = true;
     public boolean deathWaypointAllowed = true;
 
-    public boolean moveMapBelowStatusEffect = true;
-    public boolean moveScoreboardBelowMap = true;
-    public boolean distanceUnitConversion = true;
-    public boolean waypointNameBelowIcon = true;
-    public boolean waypointDistanceBelowName = true;
-    public boolean showBiomeLabel = true;
-    public int sort = 1;
-    public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoomin", GLFW.GLFW_KEY_UP, "controls.voxelmap.title");
-    public final KeyMapping keyBindZoomOut = new KeyMapping("key.voxelmap.zoomout", GLFW.GLFW_KEY_DOWN, "controls.voxelmap.title");
-    public final KeyMapping keyBindFullscreen = new KeyMapping("key.voxelmap.togglefullscreen", GLFW.GLFW_KEY_Z, "controls.voxelmap.title");
-    public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmapmenu", GLFW.GLFW_KEY_M, "controls.voxelmap.title");
-    public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypointmenu", GLFW.GLFW_KEY_U, "controls.voxelmap.title");
-    public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypointhotkey", GLFW.GLFW_KEY_N, "controls.voxelmap.title");
-    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.togglemobs", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title");
-    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggleingamewaypoints", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title");
-    public final KeyMapping[] keyBindings;
     private boolean somethingChanged;
     public static MapSettingsManager instance;
     private final List<ISubSettingsManager> subSettingsManagers = new ArrayList<>();
-
-    public String teleportCommand = "tp %p %x %y %z";
-    public String serverTeleportCommand;
 
     public MapSettingsManager() {
         instance = this;
@@ -113,8 +115,8 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Rotation" -> this.rotates = Boolean.parseBoolean(curLine[1]);
                         case "Map Corner" -> this.mapCorner = Math.max(0, Math.min(3, Integer.parseInt(curLine[1])));
                         case "Enable Cave Mode" -> this.showCaves = Boolean.parseBoolean(curLine[1]);
-                        case "Waypoint Beacons" -> this.showBeacons = Boolean.parseBoolean(curLine[1]);
-                        case "Waypoint Signs" -> this.showWaypoints = Boolean.parseBoolean(curLine[1]);
+                        case "Waypoint Beacons" -> this.showWaypointBeacons = Boolean.parseBoolean(curLine[1]);
+                        case "Waypoint Signs" -> this.showWaypointSigns = Boolean.parseBoolean(curLine[1]);
                         case "Move Scoreboard Below Map" -> this.moveScoreboardBelowMap = Boolean.parseBoolean(curLine[1]);
                         case "Move Map Below Status Effect" -> this.moveMapBelowStatusEffect = Boolean.parseBoolean(curLine[1]);
                         case "Dynamic Lighting" -> this.lightmap = Boolean.parseBoolean(curLine[1]);
@@ -190,8 +192,8 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Rotation:" + this.rotates);
             out.println("Map Corner:" + this.mapCorner);
             out.println("Enable Cave Mode:" + this.showCaves);
-            out.println("Waypoint Beacons:" + this.showBeacons);
-            out.println("Waypoint Signs:" + this.showWaypoints);
+            out.println("Waypoint Beacons:" + this.showWaypointBeacons);
+            out.println("Waypoint Signs:" + this.showWaypointSigns);
             out.println("Move Scoreboard Below Map" + this.moveScoreboardBelowMap);
             out.println("Move Map Below Status Effect" + this.moveMapBelowStatusEffect);
             out.println("Dynamic Lighting:" + this.lightmap);
@@ -341,11 +343,11 @@ public class MapSettingsManager implements ISettingsManager {
                 }
             }
             case INGAME_WAYPOINTS -> {
-                if (this.waypointsAllowed && this.showBeacons && this.showWaypoints) {
+                if (this.waypointsAllowed && this.showWaypointBeacons && this.showWaypointSigns) {
                     return I18n.get("options.voxelmap.ingamewaypoints.both");
-                } else if (this.waypointsAllowed && this.showBeacons) {
+                } else if (this.waypointsAllowed && this.showWaypointBeacons) {
                     return I18n.get("options.voxelmap.ingamewaypoints.beacons");
-                } else if (this.waypointsAllowed && this.showWaypoints) {
+                } else if (this.waypointsAllowed && this.showWaypointSigns) {
                     return I18n.get("options.voxelmap.ingamewaypoints.signs");
                 }
                 return I18n.get("options.off");
@@ -446,16 +448,16 @@ public class MapSettingsManager implements ISettingsManager {
                 }
             }
             case INGAME_WAYPOINTS -> {
-                if (this.showBeacons && this.showWaypoints) {
-                    this.showBeacons = false;
-                    this.showWaypoints = false;
-                } else if (this.showBeacons) {
-                    this.showBeacons = false;
-                    this.showWaypoints = true;
-                } else if (this.showWaypoints) {
-                    this.showBeacons = true;
+                if (this.showWaypointBeacons && this.showWaypointSigns) {
+                    this.showWaypointBeacons = false;
+                    this.showWaypointSigns = false;
+                } else if (this.showWaypointBeacons) {
+                    this.showWaypointBeacons = false;
+                    this.showWaypointSigns = true;
+                } else if (this.showWaypointSigns) {
+                    this.showWaypointBeacons = true;
                 } else {
-                    this.showBeacons = true;
+                    this.showWaypointBeacons = true;
                 }
             }
             case TERRAIN_DEPTH -> {
@@ -491,14 +493,14 @@ public class MapSettingsManager implements ISettingsManager {
     }
 
     public void toggleIngameWaypoints() {
-        if (!this.showBeacons && !this.showWaypoints) {
-            this.showBeacons = this.preToggleBeacons;
-            this.showWaypoints = this.preToggleSigns;
+        if (!this.showWaypointBeacons && !this.showWaypointSigns) {
+            this.showWaypointBeacons = this.preToggleWaypointBeacons;
+            this.showWaypointSigns = this.preToggleWaypointSigns;
         } else {
-            this.preToggleBeacons = this.showBeacons;
-            this.preToggleSigns = this.showWaypoints;
-            this.showBeacons = false;
-            this.showWaypoints = false;
+            this.preToggleWaypointBeacons = this.showWaypointBeacons;
+            this.preToggleWaypointSigns = this.showWaypointSigns;
+            this.showWaypointBeacons = false;
+            this.showWaypointSigns = false;
         }
     }
 

@@ -36,13 +36,13 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.math.Axis;
-import java.awt.Color;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.OptionalInt;
 import java.util.Random;
 import java.util.TreeSet;
-import net.minecraft.ChatFormatting;
+
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -376,7 +376,7 @@ public class Map implements Runnable, IChangeObserver {
                 TreeSet<DimensionContainer> dimensions = new TreeSet<>();
                 dimensions.add(VoxelConstants.getVoxelMapInstance().getDimensionManager().getDimensionContainerByWorld(VoxelConstants.getPlayer().level()));
                 double dimensionScale = VoxelConstants.getPlayer().level().dimensionType().coordinateScale();
-                Waypoint newWaypoint = new Waypoint("", (int) (GameVariableAccessShim.xCoord() * dimensionScale), (int) (GameVariableAccessShim.zCoord() * dimensionScale), GameVariableAccessShim.yCoord(), true, r, g, b, "",
+                Waypoint newWaypoint = new Waypoint("", (int) (GameVariableAccessShim.xCoord() * dimensionScale), (int) (GameVariableAccessShim.zCoord() * dimensionScale), GameVariableAccessShim.yCoord(), true, r, g, b, false, "",
                         VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentSubworldDescriptor(false), dimensions);
                 minecraft.setScreen(new GuiAddWaypoint(null, newWaypoint, false));
             }
@@ -1708,18 +1708,10 @@ public class Map implements Runnable, IChangeObserver {
         boolean target = false;
         if (far) {
             if (icon == null) {
-                if (scScale >= 3) {
-                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker" + pt.imageSuffix + ".png");
+                if (pt.isDeathpoint) {
+                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypointskull.png");
                 } else {
-                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker" + pt.imageSuffix + "Small.png");
-                }
-
-                if (icon == textureAtlas.getMissingImage()) {
-                    if (scScale >= 3) {
-                        icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
-                    } else {
-                        icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/markerSmall.png");
-                    }
+                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
                 }
             } else {
                 target = true;
@@ -1747,18 +1739,10 @@ public class Map implements Runnable, IChangeObserver {
             }
         } else {
             if (icon == null) {
-                if (scScale >= 3) {
-                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
-                } else {
-                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + "Small.png");
-                }
+                icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
 
                 if (icon == textureAtlas.getMissingImage()) {
-                    if (scScale >= 3) {
-                        icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
-                    } else {
-                        icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypointSmall.png");
-                    }
+                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
                 }
             } else {
                 target = true;

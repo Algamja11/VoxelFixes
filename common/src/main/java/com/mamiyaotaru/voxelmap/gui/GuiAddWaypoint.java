@@ -264,6 +264,8 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
         this.tooltip = null;
         this.buttonEnabled.setMessage(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
+        drawContext.drawString(this.getFontRenderer(), "DEBUG: DEATHPOINT?" + this.waypoint.isDeathpoint, 50, 50, 0xFFFFFFFF);
+
         this.renderDefaultBackground(drawContext);
         drawContext.drawCenteredString(this.getFontRenderer(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("voxelmap.waypoints.new") : I18n.get("voxelmap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
         drawContext.drawString(this.getFontRenderer(), I18n.get("voxelmap.waypoints.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 16777215);

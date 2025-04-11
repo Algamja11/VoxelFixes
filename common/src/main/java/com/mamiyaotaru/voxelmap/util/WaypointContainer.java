@@ -55,7 +55,7 @@ public class WaypointContainer {
         double renderPosY = cameraPos.y;
         double renderPosZ = cameraPos.z;
         // OpenGL.glEnable(OpenGL.GL11_GL_CULL_FACE);
-        if (this.options.showBeacons) {
+        if (this.options.showWaypointBeacons) {
             // OpenGL.glEnable(OpenGL.GL11_GL_DEPTH_TEST);
             // OpenGL.glDepthMask(false);
             // OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
@@ -78,7 +78,7 @@ public class WaypointContainer {
             // OpenGL.glDepthMask(true);
         }
 
-        if (this.options.showWaypoints) {
+        if (this.options.showWaypointSigns) {
             // OpenGL.glEnable(OpenGL.GL11_GL_BLEND);
             // OpenGL.glBlendFuncSeparate(OpenGL.GL11_GL_SRC_ALPHA, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA, 1, OpenGL.GL11_GL_ONE_MINUS_SRC_ALPHA);
 

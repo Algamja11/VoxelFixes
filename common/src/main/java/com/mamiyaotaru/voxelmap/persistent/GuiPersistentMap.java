@@ -1083,7 +1083,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 TreeSet<DimensionContainer> dimensions = new TreeSet<>();
                 dimensions.add(VoxelConstants.getVoxelMapInstance().getDimensionManager().getDimensionContainerByWorld(VoxelConstants.getPlayer().level()));
                 y = y > VoxelConstants.getPlayer().level().getMinY() ? y : 64;
-                this.newWaypoint = new Waypoint("", (int) (x * dimensionScale), (int) (z * dimensionScale), y, true, r, g, b, "", VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentSubworldDescriptor(false), dimensions);
+                this.newWaypoint = new Waypoint("", (int) (x * dimensionScale), (int) (z * dimensionScale), y,
+                        true, r, g, b, false, "", VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentSubworldDescriptor(false), dimensions);
                 minecraft.setScreen(new GuiAddWaypoint(this, this.newWaypoint, false));
             }
             case 1 -> {
@@ -1093,7 +1094,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                     y = y > VoxelConstants.getPlayer().level().getMinY() ? y : 64;
                     TreeSet<DimensionContainer> dimensions2 = new TreeSet<>();
                     dimensions2.add(VoxelConstants.getVoxelMapInstance().getDimensionManager().getDimensionContainerByWorld(VoxelConstants.getPlayer().level()));
-                    Waypoint fakePoint = new Waypoint("", (int) (x * dimensionScale), (int) (z * dimensionScale), y, true, 1.0F, 0.0F, 0.0F, "", VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentSubworldDescriptor(false), dimensions2);
+                    Waypoint fakePoint = new Waypoint("", (int) (x * dimensionScale), (int) (z * dimensionScale), y,
+                            true, 1.0F, 0.0F, 0.0F, false, "", VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentSubworldDescriptor(false), dimensions2);
                     this.waypointManager.setHighlightedWaypoint(fakePoint, true);
                 }
             }

@@ -27,8 +27,9 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
     public float red;
     public float green;
     public float blue;
+    public boolean isDeathpoint;
 
-    public Waypoint(String name, int x, int z, int y, boolean enabled, float red, float green, float blue, String suffix, String world, TreeSet<DimensionContainer> dimensions) {
+    public Waypoint(String name, int x, int z, int y, boolean enabled, float red, float green, float blue, boolean deathpoint, String suffix, String world, TreeSet<DimensionContainer> dimensions) {
         this.name = name;
         this.x = x;
         this.z = z;
@@ -37,6 +38,7 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
         this.red = red;
         this.green = green;
         this.blue = blue;
+        this.isDeathpoint = deathpoint;
         this.imageSuffix = suffix.toLowerCase(Locale.ROOT);
         this.world = world;
         this.dimensions = dimensions;
@@ -105,7 +107,17 @@ public class Waypoint implements Serializable, Comparable<Waypoint> {
         } else if (!(obj instanceof Waypoint otherWaypoint)) {
             return false;
         } else {
-            return this.name.equals(otherWaypoint.name) && this.imageSuffix.equals(otherWaypoint.imageSuffix) && this.world.equals(otherWaypoint.world) && this.x == otherWaypoint.x && this.y == otherWaypoint.y && this.z == otherWaypoint.z && this.red == otherWaypoint.red && this.green == otherWaypoint.green && this.blue == otherWaypoint.blue && this.dimensions.equals(otherWaypoint.dimensions);
+            return this.name.equals(otherWaypoint.name)
+                    && this.imageSuffix.equals(otherWaypoint.imageSuffix)
+                    && this.world.equals(otherWaypoint.world)
+                    && this.x == otherWaypoint.x
+                    && this.y == otherWaypoint.y
+                    && this.z == otherWaypoint.z
+                    && this.red == otherWaypoint.red
+                    && this.green == otherWaypoint.green
+                    && this.blue == otherWaypoint.blue
+                    && this.isDeathpoint == otherWaypoint.isDeathpoint
+                    && this.dimensions.equals(otherWaypoint.dimensions);
         }
     }
 }
