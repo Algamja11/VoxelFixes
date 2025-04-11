@@ -70,8 +70,8 @@ public class MapSettingsManager implements ISettingsManager {
     public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmapmenu", GLFW.GLFW_KEY_M, "controls.voxelmap.title"); // "Menu Key"
     public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypointmenu", GLFW.GLFW_KEY_U, "controls.voxelmap.title"); // "Waypoint Menu Key"
     public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypointhotkey", GLFW.GLFW_KEY_N, "controls.voxelmap.title"); // "Waypoint Key"
-    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.togglemobs", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title"); // "Mob Key"
-    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggleingamewaypoints", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title"); // "In-game Waypoint Key"
+    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.togglemobs", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title"); // "Mob Toggle Key"
+    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggleingamewaypoints", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title"); // "Waypoint Toggle Key"
     public final KeyMapping[] keyBindings;
 
     protected boolean welcome = true; // "Welcome Message"
@@ -143,8 +143,8 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Menu Key" -> this.bindKey(this.keyBindMenu, curLine[1]);
                         case "Waypoint Menu Key" -> this.bindKey(this.keyBindWaypointMenu, curLine[1]);
                         case "Waypoint Key" -> this.bindKey(this.keyBindWaypoint, curLine[1]);
-                        case "Mob Key" -> this.bindKey(this.keyBindMobToggle, curLine[1]);
-                        case "In-game Waypoint Key" -> this.bindKey(this.keyBindWaypointToggle, curLine[1]);
+                        case "Mob Toggle Key" -> this.bindKey(this.keyBindMobToggle, curLine[1]);
+                        case "Waypoint Toggle Key" -> this.bindKey(this.keyBindWaypointToggle, curLine[1]);
                         case "Welcome Message" -> this.welcome = Boolean.parseBoolean(curLine[1]);
                         case "Zoom Level" -> this.zoom = Math.max(0, Math.min(4, Integer.parseInt(curLine[1])));
                     }
@@ -220,8 +220,8 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Menu Key:" + this.keyBindMenu.saveString());
             out.println("Waypoint Menu Key:" + this.keyBindWaypointMenu.saveString());
             out.println("Waypoint Key:" + this.keyBindWaypoint.saveString());
-            out.println("Mob Key:" + this.keyBindMobToggle.saveString());
-            out.println("In-game Waypoint Key:" + this.keyBindWaypointToggle.saveString());
+            out.println("Mob Toggle Key:" + this.keyBindMobToggle.saveString());
+            out.println("Waypoint Toggle Key:" + this.keyBindWaypointToggle.saveString());
             out.println("Welcome Message:" + this.welcome);
             out.println("Zoom Level:" + this.zoom);
 

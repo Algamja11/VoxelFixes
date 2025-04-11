@@ -1656,7 +1656,7 @@ public class Map implements Runnable, IChangeObserver {
         double lastXDouble = GameVariableAccessShim.xCoordDouble();
         double lastZDouble = GameVariableAccessShim.zCoordDouble();
         TextureAtlas textureAtlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
-        if (VoxelMap.mapOptions.waypointsAllowed) {
+        if (VoxelMap.mapOptions.waypointsAllowed && (this.options.showWaypointBeacons || this.options.showWaypointSigns)) {
             Waypoint highlightedPoint = this.waypointManager.getHighlightedWaypoint();
 
             for (Waypoint pt : this.waypointManager.getWaypoints()) {
