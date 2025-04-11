@@ -1577,7 +1577,7 @@ public class Map implements Runnable, IChangeObserver {
                 this.lastImageZ = this.lastZ;
             }
         }
-        //
+
         float multi = (float) (1.0 / this.zoomScale);
         this.percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX);
         this.percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ);
@@ -1640,7 +1640,6 @@ public class Map implements Runnable, IChangeObserver {
 
         guiGraphics.pose().popPose();
 
-        // guiGraphics.blit(RenderType::guiTextured, resourceFboTexture, x - 32, y - 32, 0, 0, 64, 64, 64, 64);
         guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, resourceFboTexture, x - 32, y - 32, 0, 0, 64, 64, 64, 64);
 
         if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
@@ -1663,20 +1662,20 @@ public class Map implements Runnable, IChangeObserver {
                 if (pt.isActive() || pt == highlightedPoint) {
                     double distanceSq = pt.getDistanceSqToEntity(minecraft.getCameraEntity());
                     if (distanceSq < (this.options.maxWaypointDisplayDistance * this.options.maxWaypointDisplayDistance) || this.options.maxWaypointDisplayDistance < 0 || pt == highlightedPoint) {
-                        this.drawWaypoint(guiGraphics, pt, textureAtlas, x, y, scScale, lastXDouble, lastZDouble, null);
+                        this.drawWaypoint(guiGraphics, pt, textureAtlas, x, y, lastXDouble, lastZDouble, null);
                     }
                 }
             }
 
             if (highlightedPoint != null) {
-                this.drawWaypoint(guiGraphics, highlightedPoint, textureAtlas, x, y, scScale, lastXDouble, lastZDouble, textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png"));
+                this.drawWaypoint(guiGraphics, highlightedPoint, textureAtlas, x, y, lastXDouble, lastZDouble, textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png"));
             }
         }
         guiGraphics.pose().popPose();
     }
 
-    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, TextureAtlas textureAtlas, int x, int y, int scScale, double lastXDouble, double lastZDouble, Sprite icon) {
-        boolean uprightIcon = icon != null;
+    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, TextureAtlas textureAtlas, int x, int y, double lastXDouble, double lastZDouble, Sprite icon) {
+        boolean lockIconRotation = icon != null || pt.isDeathpoint;
 
         double wayX = lastXDouble - pt.getX() - 0.5;
         double wayY = lastZDouble - pt.getZ() - 0.5;
@@ -1694,12 +1693,12 @@ public class Map implements Runnable, IChangeObserver {
             double radLocate = Math.toRadians(locate);
             double dispX = hypot * Math.cos(radLocate);
             double dispY = hypot * Math.sin(radLocate);
-            far = Math.abs(dispX) > 28.5 || Math.abs(dispY) > 28.5;
+            far = Math.abs(dispX) > 30.0 || Math.abs(dispY) > 30.0;
             if (far) {
                 hypot = (float) (hypot / Math.max(Math.abs(dispX), Math.abs(dispY)) * 30.0);
             }
         } else {
-            far = hypot >= 31.0f;
+            far = hypot >= 34.0f;
             if (far) {
                 hypot = 34.0f;
             }
@@ -1708,10 +1707,10 @@ public class Map implements Runnable, IChangeObserver {
         boolean target = false;
         if (far) {
             if (icon == null) {
-                if (pt.isDeathpoint) {
-                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypointskull.png");
-                } else {
+                if (!pt.isDeathpoint) {
                     icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
+                } else {
+                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypointskull.png");
                 }
             } else {
                 target = true;
@@ -1722,7 +1721,7 @@ public class Map implements Runnable, IChangeObserver {
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate(x, y, 0.0f);
                 guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-locate));
-                if (uprightIcon) {
+                if (lockIconRotation) {
                     guiGraphics.pose().translate(0.0f, -hypot, 0.0f);
                     guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(locate));
                     guiGraphics.pose().translate(-x, -y, 0.0f);
