@@ -866,55 +866,66 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         }
         float ptX = pt.getX();
         float ptZ = pt.getZ();
-        if (!(this.backGroundImageInfo != null && this.backGroundImageInfo.isInRange((int) ptX, (int) ptZ) || this.persistentMap.isRegionLoaded((int) ptX, (int) ptZ))) {
-            return;
-        }
 
         PoseStack poseStack = guiGraphics.pose();
         String name = pt.name;
 
         ptX += 0.5F;
         ptZ += 0.5F;
-        boolean hover = cursorCoordX > ptX - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordX < ptX + 18.0F * this.guiToMap / this.guiToDirectMouse
-                && cursorCoordZ > ptZ - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordZ < ptZ + 18.0F * this.guiToMap / this.guiToDirectMouse;
         boolean target = false;
+
+        int screenX = (int) ((ptX - this.mapCenterX) * this.mapToGui);
+        int screenZ = (int) ((ptZ - this.mapCenterZ) * this.mapToGui);
+        int borderX = this.width / 2 - 4;
+        int borderZ = this.height / 2 - 32 - 4;
+        boolean far = !(screenX >= -borderX && screenX <= borderX && screenZ >= -borderZ && screenZ <= borderZ);
+        float lookingDegrees = 0.0f;
+
         TextureAtlas atlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
-        if (icon == null) {
+        if (icon != null) {
+            name = "";
+            target = true;
+        } else if (far) {
+            if (!pt.isDeathpoint) {
+                icon = atlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
+            } else {
+                icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
+
+                if (icon == atlas.getMissingImage()) {
+                    icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
+                }
+            }
+
+            ptX = Math.max(this.mapCenterX - (borderX * this.guiToMap), Math.min(this.mapCenterX + (borderX * this.guiToMap), ptX));
+            ptZ = Math.max(this.mapCenterZ - (borderZ * this.guiToMap), Math.min(this.mapCenterZ + (borderZ * this.guiToMap), ptZ));
+            lookingDegrees = (float) Math.toDegrees(Math.atan2(pt.getX() - ptX, -(pt.getZ() - ptZ)));
+        } else {
             icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
             if (icon == atlas.getMissingImage()) {
                 icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
             }
-        } else {
-            name = "";
-            target = true;
         }
+
+        boolean hover = cursorCoordX > ptX - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordX < ptX + 18.0F * this.guiToMap / this.guiToDirectMouse
+                && cursorCoordZ > ptZ - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordZ < ptZ + 18.0F * this.guiToMap / this.guiToDirectMouse;
 
         int color = pt.getUnifiedColor(!pt.enabled && !target && !hover ? 0.3F : 1.0F);
-        if (this.oldNorth) {
-            poseStack.pushPose();
-            poseStack.translate(ptX, ptZ, 0.0);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
-            poseStack.translate(-(ptX), -(ptZ), 0.0);
+
+        poseStack.pushPose();
+        poseStack.scale(this.guiToMap, this.guiToMap, 1.0f);
+        poseStack.translate(ptX * this.mapToGui, ptZ * this.mapToGui, 0.0f);
+        if (!target && !pt.isDeathpoint) {
+            poseStack.mulPose(Axis.ZP.rotationDegrees(lookingDegrees));
         }
+        icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, -8.0f, -8.0f, 16.0f, 16.0f, color);
 
-        icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, -8.0F / this.mapToGui + ptX, -8.0F / this.mapToGui + ptZ, 16.0F / this.mapToGui, 16.0F / this.mapToGui, color);
+        poseStack.popPose();
 
-        if (this.oldNorth) {
-            poseStack.popPose();
-        }
-
-        if (mapOptions.biomeOverlay == 0 && this.options.showWaypointNames || target || hover) {
-            float fontScale = 1.0F;
+        if (this.options.showWaypointNames && !far) {
             int labelWidth = this.chkLen(name) / 2;
             poseStack.pushPose();
             poseStack.scale(this.guiToMap, this.guiToMap, 1);
-            poseStack.scale(fontScale, fontScale, 1.0F);
-            if (this.oldNorth) {
-                poseStack.translate(ptX / fontScale, ptZ / fontScale, 0.0);
-                poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
-                poseStack.translate(-(ptX / fontScale), -(ptZ / fontScale), 0.0);
-            }
-            this.write(guiGraphics, name, ptX * this.mapToGui / fontScale - labelWidth, ptZ * this.mapToGui / fontScale + 8, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFF);
+            this.write(guiGraphics, name, ptX * this.mapToGui - labelWidth, ptZ * this.mapToGui + 8, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFFFF);
             poseStack.popPose();
         }
     }
@@ -924,21 +935,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             Matrix4f matrix4f = guiGraphics.pose().last().pose();
             float renderedTextureSize = this.width / 32.0F;
 
-            // background-header
-            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.gui());
-            vertexConsumer.addVertex(matrix4f, 0.0F, 32.0F, 0.0F).setColor(0, 0, 0, 127);
-            vertexConsumer.addVertex(matrix4f, this.width, 32.0F, 0.0F).setColor(0, 0, 0, 127);
-            vertexConsumer.addVertex(matrix4f, this.width, 0.0F, 0.0F).setColor(0, 0, 0, 127);
-            vertexConsumer.addVertex(matrix4f, 0.0F, 0.0F, 0.0F).setColor(0, 0, 0, 127);
-
-            // background-footer
-            vertexConsumer.addVertex(matrix4f, 0.0F, this.height, 0.0F).setColor(0, 0, 0, 127);
-            vertexConsumer.addVertex(matrix4f, this.width, this.height, 0.0F).setColor(0, 0, 0, 127);
-            vertexConsumer.addVertex(matrix4f, this.width, this.height - 32.0F, 0.0F).setColor(0, 0, 0, 127);
-            vertexConsumer.addVertex(matrix4f, 0.0F, this.height - 32.0F, 0.0F).setColor(0, 0, 0, 127);
-
             // header
-            vertexConsumer = bufferSource.getBuffer(RenderType.guiTextured(screenHeaderResource));
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.guiTextured(screenHeaderResource));
             vertexConsumer.addVertex(matrix4f, 0.0F, 32.0F + 2.0F, 0.0F).setUv(0.0F, 1.0F).setColor(255, 255, 255, 255);
             vertexConsumer.addVertex(matrix4f, this.width, 32.0F + 2.0F, 0.0F).setUv(renderedTextureSize, 1.0F).setColor(255, 255, 255, 255);
             vertexConsumer.addVertex(matrix4f, this.width, 32.0F, 0.0F).setUv(renderedTextureSize, 0.0F).setColor(255, 255, 255, 255);
@@ -950,6 +948,19 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             vertexConsumer.addVertex(matrix4f, this.width, this.height - 32.0F, 0.0F).setUv(renderedTextureSize, 1.0F).setColor(255, 255, 255, 255);
             vertexConsumer.addVertex(matrix4f, this.width, this.height - 32.0F - 2.0F, 0.0F).setUv(renderedTextureSize, 0.0F).setColor(255, 255, 255, 255);
             vertexConsumer.addVertex(matrix4f, 0.0F, this.height - 32.0F - 2.0F, 0.0F).setUv(0.0F, 0.0F).setColor(255, 255, 255, 255);
+
+            // header background
+            vertexConsumer = bufferSource.getBuffer(RenderType.gui());
+            vertexConsumer.addVertex(matrix4f, 0.0F, 32.0F, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, this.width, 32.0F, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, this.width, 0.0F, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, 0.0F, 0.0F, 0.0F).setColor(0, 0, 0, 127);
+
+            // footer background
+            vertexConsumer.addVertex(matrix4f, 0.0F, this.height, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, this.width, this.height, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, this.width, this.height - 32.0F, 0.0F).setColor(0, 0, 0, 127);
+            vertexConsumer.addVertex(matrix4f, 0.0F, this.height - 32.0F, 0.0F).setColor(0, 0, 0, 127);
         });
     }
 
