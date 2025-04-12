@@ -1710,7 +1710,11 @@ public class Map implements Runnable, IChangeObserver {
                 if (!pt.isDeathpoint) {
                     icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
                 } else {
-                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypointskull.png");
+                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
+
+                    if (icon == textureAtlas.getMissingImage()) {
+                        icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
+                    }
                 }
             } else {
                 target = true;
