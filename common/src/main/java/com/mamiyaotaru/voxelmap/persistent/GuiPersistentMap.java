@@ -874,12 +874,21 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         ptZ += 0.5F;
         boolean target = false;
 
+        boolean hover = cursorCoordX > ptX - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordX < ptX + 18.0F * this.guiToMap / this.guiToDirectMouse
+                && cursorCoordZ > ptZ - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordZ < ptZ + 18.0F * this.guiToMap / this.guiToDirectMouse;
+
         int screenX = (int) ((ptX - this.mapCenterX) * this.mapToGui);
         int screenZ = (int) ((ptZ - this.mapCenterZ) * this.mapToGui);
         int borderX = this.width / 2 - 4;
         int borderZ = this.height / 2 - 32 - 4;
         boolean far = !(screenX >= -borderX && screenX <= borderX && screenZ >= -borderZ && screenZ <= borderZ);
         float lookingDegrees = 0.0f;
+
+        if (far) {
+            ptX = Math.max(this.mapCenterX - (borderX * this.guiToMap), Math.min(this.mapCenterX + (borderX * this.guiToMap), ptX));
+            ptZ = Math.max(this.mapCenterZ - (borderZ * this.guiToMap), Math.min(this.mapCenterZ + (borderZ * this.guiToMap), ptZ));
+            lookingDegrees = (float) Math.toDegrees(Math.atan2(pt.getX() - ptX, -(pt.getZ() - ptZ)));
+        }
 
         TextureAtlas atlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
         if (icon != null) {
@@ -895,19 +904,13 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                     icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
                 }
             }
-
-            ptX = Math.max(this.mapCenterX - (borderX * this.guiToMap), Math.min(this.mapCenterX + (borderX * this.guiToMap), ptX));
-            ptZ = Math.max(this.mapCenterZ - (borderZ * this.guiToMap), Math.min(this.mapCenterZ + (borderZ * this.guiToMap), ptZ));
-            lookingDegrees = (float) Math.toDegrees(Math.atan2(pt.getX() - ptX, -(pt.getZ() - ptZ)));
         } else {
             icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
+
             if (icon == atlas.getMissingImage()) {
                 icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
             }
         }
-
-        boolean hover = cursorCoordX > ptX - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordX < ptX + 18.0F * this.guiToMap / this.guiToDirectMouse
-                && cursorCoordZ > ptZ - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordZ < ptZ + 18.0F * this.guiToMap / this.guiToDirectMouse;
 
         int color = pt.getUnifiedColor(!pt.enabled && !target && !hover ? 0.3F : 1.0F);
 
