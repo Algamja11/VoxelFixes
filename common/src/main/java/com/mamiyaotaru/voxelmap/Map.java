@@ -147,8 +147,6 @@ public class Map implements Runnable, IChangeObserver {
     private int lastImageZ;
     private boolean lastFullscreen;
     private float direction;
-    private float percentX;
-    private float percentY;
     private int northRotate;
     private Thread zCalc = new Thread(this, "Voxelmap LiveMap Calculation Thread");
     private int zCalcTicker;
@@ -258,14 +256,6 @@ public class Map implements Runnable, IChangeObserver {
     public void forceFullRender(boolean forceFullRender) {
         this.doFullRender = forceFullRender;
         VoxelConstants.getVoxelMapInstance().getSettingsAndLightingChangeNotifier().notifyOfChanges();
-    }
-
-    public float getPercentX() {
-        return this.percentX;
-    }
-
-    public float getPercentY() {
-        return this.percentY;
     }
 
     @Override
@@ -714,7 +704,7 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (this.showWelcomeScreen) {
-//            this.drawWelcomeScreen(drawContext, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight()); TODO VoxelFixes 21.5
+//            this.drawWelcomeScreen(drawContext, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
         }
     }
 
@@ -1562,10 +1552,10 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         float multi = (float) (1.0 / this.zoomScale);
-        this.percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX);
-        this.percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ);
-        this.percentX *= multi;
-        this.percentY *= multi;
+        float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX);
+        float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ);
+        percentX *= multi;
+        percentY *= multi;
         guiGraphics.pose().pushPose();
         guiGraphics.pose().setIdentity();
 
@@ -1577,7 +1567,7 @@ public class Map implements Runnable, IChangeObserver {
         }
         guiGraphics.pose().scale(scale, scale, 1);
         guiGraphics.pose().translate(-256, -256, 0);
-        guiGraphics.pose().translate(-this.percentX * 512.0F / 64.0F, this.percentY * 512.0F / 64.0F, 0.0f);
+        guiGraphics.pose().translate(-percentX * 512.0F / 64.0F, percentY * 512.0F / 64.0F, 0.0f);
 
         guiGraphics.flush();
 
@@ -1774,41 +1764,53 @@ public class Map implements Runnable, IChangeObserver {
                 this.lastImageZ = this.lastZ;
             }
         }
-        PoseStack matrixStack = guiGraphics.pose();
-        matrixStack.pushPose();
-        matrixStack.scale(scaleProj, scaleProj, 1.0F);
-        matrixStack.translate(scWidth / 2.0F, scHeight / 2.0F, -0.0);
-        matrixStack.mulPose(Axis.ZP.rotationDegrees(this.northRotate));
-        matrixStack.translate(-(scWidth / 2.0F), -(scHeight / 2.0F), -0.0);
-        int left = scWidth / 2 - 128;
-        int top = scHeight / 2 - 128;
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, mapResources[this.zoom], left, top, 0, 0, 256, 256, 256, 256);
-        matrixStack.popPose();
 
-        if (this.options.biomeOverlay != 0) {
-            double factor = Math.pow(2.0, 3 - this.zoom);
-            int minimumSize = (int) Math.pow(2.0, this.zoom);
-            minimumSize *= minimumSize;
-            ArrayList<AbstractMapData.BiomeLabel> labels = this.mapData[this.zoom].getBiomeLabels();
-            matrixStack.pushPose();
-            matrixStack.translate(0.0, 0.0, 1160.0);
+        int size = Math.min(scWidth, scHeight);
+        int left = scWidth / 2 - size / 2;
+        int top = scHeight / 2 - size / 2;
+        float multi = (float) (1.0 / this.zoomScale);
+        float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX);
+        float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ);
+        percentX *= multi;
+        percentY *= multi;
 
-            for (AbstractMapData.BiomeLabel o : labels) {
-                if (o.segmentSize > minimumSize) {
-                    String name = o.name;
-                    int nameWidth = this.textWidth(name);
-                    float x = (float) (o.x * factor);
-                    float z = (float) (o.z * factor);
-                    if (this.options.oldNorth) {
-                        this.write(guiGraphics, name, (left + 256) - z - (nameWidth / 2f), top + x - 3.0F, 16777215);
-                    } else {
-                        this.write(guiGraphics, name, left + x - (nameWidth / 2f), top + z - 3.0F, 16777215);
-                    }
-                }
-            }
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(scaleProj, scaleProj, 1.0F);
 
-            matrixStack.popPose();
-        }
+        guiGraphics.blit(RenderType::guiTextured, this.squareStencil, left, top, 0.0F, 0.0F, size, size, size, size);
+
+        guiGraphics.pose().translate(scWidth / 2.0F, scHeight / 2.0F, 0.0f);
+        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(this.northRotate));
+        guiGraphics.pose().translate(-(scWidth / 2.0F), -(scHeight / 2.0F), 0.0F);
+        guiGraphics.pose().translate(-percentX * size / 64.0F, -percentY * size / 64.0F, 0.0f);
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, mapResources[this.zoom], left, top, 0.0F, 0.0F, size, size, size, size);
+
+        guiGraphics.pose().popPose();
+
+//        if (this.options.biomeOverlay != 0) {
+//            double factor = Math.pow(2.0, 3 - this.zoom);
+//            int minimumSize = (int) Math.pow(2.0, this.zoom);
+//            minimumSize *= minimumSize;
+//            ArrayList<AbstractMapData.BiomeLabel> labels = this.mapData[this.zoom].getBiomeLabels();
+//            matrixStack.pushPose();
+//            matrixStack.translate(0.0, 0.0, 1160.0);
+//
+//            for (AbstractMapData.BiomeLabel o : labels) {
+//                if (o.segmentSize > minimumSize) {
+//                    String name = o.name;
+//                    int nameWidth = this.textWidth(name);
+//                    float x = (float) (o.x * factor);
+//                    float z = (float) (o.z * factor);
+//                    if (this.options.oldNorth) {
+//                        this.write(guiGraphics, name, (left + 256) - z - (nameWidth / 2f), top + x - 3.0F, 16777215);
+//                    } else {
+//                        this.write(guiGraphics, name, left + x - (nameWidth / 2f), top + z - 3.0F, 16777215);
+//                    }
+//                }
+//            }
+//
+//            matrixStack.popPose();
+//        } TODO VoxelFixes: rewrite biomeOverlay
     }
 
     private void drawMapFrame(GuiGraphics guiGraphics, int x, int y, boolean squaremap) {
@@ -2017,7 +2019,7 @@ public class Map implements Runnable, IChangeObserver {
 //        }
 //
 //        drawContext.drawString(minecraft.font, hide, (centerX - footer / 2), ((scHeight + 5) / 2 + (height - 1) * 10 / 2 + 11), Color.WHITE.getRGB());
-//    }  TODO VoxelFixes 21.5: Make WelcomeScreen Using GuiScreen
+//    }  TODO VoxelFixes: Make WelcomeScreen Using GuiScreen
 
     private void drawBox(GuiGraphics drawContext, int leftX, int rightX, int topY, int botY) {
         float opacity = minecraft.options.textBackgroundOpacity().get().floatValue();
