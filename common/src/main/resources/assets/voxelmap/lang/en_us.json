@@ -142,6 +142,7 @@
   "voxelmap.waypoints.sortbycreated": "Created",
   "voxelmap.waypoints.sortbycolor": "Color",
   "voxelmap.waypoints.sortbyicon": "Icon",
+  "voxelmap.waypoints.nowaypointsexist": "No waypoints exist for this world/server.",
   "voxelmap.waypointshare.title": "Share Waypoint",
   "voxelmap.waypointshare.titlecoordinate": "Share Coordinate",
   "voxelmap.waypointshare.sharemessage": "Add Message (optional)",

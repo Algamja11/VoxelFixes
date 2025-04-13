@@ -995,55 +995,59 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 filteredCount++;
             }
         }
-        int itemHeight = 20;
-        int itemCount = Math.max(1, (this.height - 80) / itemHeight);
-        int itemMax = Math.min(waypoints.size(), (this.waypointListPage + 1) * itemCount);
-        int maxPageCount = (int) Math.ceil((float) filteredCount / itemCount);
-        if (this.waypointListPage < 0) {
-            this.waypointListPage = 0;
-        } else if (this.waypointListPage >= maxPageCount) {
-            this.waypointListPage = maxPageCount - 1;
-        }
-        int skipCount = 0;
-        for (int i = this.waypointListPage * itemCount; i < itemMax; ++i) {
-            Waypoint point = waypoints.get(i);
-            if (!point.inDimension || !point.inWorld) {
-                ++skipCount;
-                continue;
+        if (filteredCount > 0) {
+            int itemHeight = 20;
+            int itemCount = Math.max(1, (this.height - 80) / itemHeight);
+            int itemMax = Math.min(waypoints.size(), (this.waypointListPage + 1) * itemCount);
+            int maxPageCount = (int) Math.ceil((float) filteredCount / itemCount);
+            if (this.waypointListPage < 0) {
+                this.waypointListPage = 0;
+            } else if (this.waypointListPage >= maxPageCount) {
+                this.waypointListPage = maxPageCount - 1;
+            }
+            int skipCount = 0;
+            for (int i = this.waypointListPage * itemCount; i < itemMax; ++i) {
+                Waypoint point = waypoints.get(i);
+                if (!point.inDimension || !point.inWorld) {
+                    ++skipCount;
+                    continue;
+                }
+
+                int countInPage = (i - skipCount) - this.waypointListPage * itemCount;
+                int itemY = 35 + (itemHeight * countInPage);
+                boolean hover = mouseX >= this.sidebarLeft && mouseX <= this.sidebarRight && mouseY >= itemY && mouseY <= itemY + itemHeight;
+                float alpha = point.enabled ? 1.0F : 0.3F;
+                float blue = hover ? 0.65F : 1.0F;
+                Sprite icon = this.waypointManager.getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/waypoint" + point.imageSuffix + ".png");
+                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, this.sidebarLeft, itemY, 20, 20, point.getUnifiedColor(alpha));
+                guiGraphics.drawString(this.getFontRenderer(), point.name, this.sidebarLeft + 20, itemY + 7, ARGB.colorFromFloat(alpha, 1.0F, 1.0F, blue));
+
+                if (this.pressedMouseButtonRaw == 0 && hover) {
+                    this.centerAt(point.getX(), point.getZ());
+                }
             }
 
-            int countInPage = (i - skipCount) - this.waypointListPage * itemCount;
-            int itemY = 35 + (itemHeight * countInPage);
-            boolean hover = mouseX >= this.sidebarLeft && mouseX <= this.sidebarRight && mouseY >= itemY && mouseY <= itemY + itemHeight;
-            float alpha = point.enabled ? 1.0F : 0.3F;
-            float blue = hover ? 0.65F : 1.0F;
-            Sprite icon = this.waypointManager.getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/waypoint" + point.imageSuffix + ".png");
-            icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, this.sidebarLeft, itemY, 20, 20, point.getUnifiedColor(alpha));
-            guiGraphics.drawString(this.getFontRenderer(), point.name, this.sidebarLeft + 20, itemY + 7, ARGB.colorFromFloat(alpha, 1.0F, 1.0F, blue));
+            int buttonCenter = (this.sidebarLeft + this.sidebarRight) / 2;
+            int buttonX = buttonCenter - 30;
+            int buttonY = this.height - 40;
+            this.waypointListButtons[0] = mouseX >= buttonX - 4 && mouseX <= buttonX + 4 && mouseY >= buttonY - 4 && mouseY <= buttonY + 4;
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(buttonX, buttonY, 0.0F);
+            guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(180.0F));
+            guiGraphics.pose().translate(-buttonX, -buttonY, 0.0F);
+            guiGraphics.blit(RenderType::guiTextured, arrowResource, buttonX - 4, buttonY - 4, 0.0F, 0.0F, 8, 8, 8, 8);
+            guiGraphics.pose().popPose();
 
-            if (this.pressedMouseButtonRaw == 0 && hover) {
-                this.centerAt(point.getX(), point.getZ());
-            }
+            buttonX = buttonCenter + 30;
+            this.waypointListButtons[1] = mouseX >= buttonX - 4 && mouseX <= buttonX + 4 && mouseY >= buttonY - 4 && mouseY <= buttonY + 4;
+            guiGraphics.blit(RenderType::guiTextured, arrowResource, buttonX - 4, buttonY - 4, 0.0F, 0.0F, 8, 8, 8, 8);
+
+            buttonX = buttonCenter;
+            buttonY = this.height - 45;
+            guiGraphics.drawCenteredString(this.getFontRenderer(), (this.waypointListPage + 1) + " / " + maxPageCount, buttonX, buttonY, 0xFFFFFF);
+        } else {
+            guiGraphics.drawCenteredString(this.getFontRenderer(), "§E" + I18n.get("voxelmap.waypoints.nowaypointsexist"), (this.sidebarLeft + this.sidebarRight) / 2, this.height - 45, 0xFFFFFF);
         }
-
-        int buttonCenter = (this.sidebarLeft + this.sidebarRight) / 2;
-        int buttonX = buttonCenter - 30;
-        int buttonY = this.height - 40;
-        this.waypointListButtons[0] = mouseX >= buttonX - 4 && mouseX <= buttonX + 4 && mouseY >= buttonY - 4 && mouseY <= buttonY + 4;
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(buttonX, buttonY, 0.0F);
-        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(180.0F));
-        guiGraphics.pose().translate(-buttonX, -buttonY, 0.0F);
-        guiGraphics.blit(RenderType::guiTextured, arrowResource, buttonX - 4, buttonY - 4, 0.0F, 0.0F, 8, 8, 8, 8);
-        guiGraphics.pose().popPose();
-
-        buttonX = buttonCenter + 30;
-        this.waypointListButtons[1] = mouseX >= buttonX - 4 && mouseX <= buttonX + 4 && mouseY >= buttonY - 4 && mouseY <= buttonY + 4;
-        guiGraphics.blit(RenderType::guiTextured, arrowResource, buttonX - 4, buttonY - 4, 0.0F, 0.0F, 8, 8, 8, 8);
-
-        buttonX = buttonCenter;
-        buttonY = this.height - 45;
-        guiGraphics.drawCenteredString(this.getFontRenderer(), (this.waypointListPage + 1) + " / " + maxPageCount, buttonX, buttonY, 0xFFFFFF);
     }
 
     @Override

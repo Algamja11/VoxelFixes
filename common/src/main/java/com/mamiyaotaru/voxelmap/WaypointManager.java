@@ -48,8 +48,10 @@ import net.minecraft.client.User;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -548,7 +550,7 @@ public class WaypointManager {
             worldNameStandard = TextUtils.scrubNameFile(worldNameStandard);
             loaded = this.loadWaypointsExtensible(worldNameStandard);
             if (!loaded) {
-                MessageUtils.chatInfo("§ENo waypoints exist for this world/server.");
+                MessageUtils.chatInfo("§E" + I18n.get("voxelmap.waypoints.nowaypointsexist"));
             }
         }
 
