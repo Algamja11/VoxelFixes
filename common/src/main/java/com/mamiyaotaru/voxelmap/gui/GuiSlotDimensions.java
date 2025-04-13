@@ -94,7 +94,7 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
             int width = GuiSlotDimensions.this.width;
             if (mouseX >= x + padding && mouseY >= y && mouseX <= x + width + padding && mouseY <= y + GuiSlotDimensions.this.itemHeight) {
                 Component tooltip;
-                if (this.parentGui.popupOpen() && mouseX >= x + width - iconWidth - padding && mouseX <= x + width) {
+                if (mouseX >= x + width - iconWidth - padding && mouseX <= x + width) {
                     tooltip = this.parentGui.waypoint.dimensions.contains(this.dim) ? APPLIES : NOT_APPLIES;
                 } else {
                     tooltip = null;
@@ -120,12 +120,11 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
             GuiSlotDimensions.this.setSelected(this);
             byte iconWidth = 18;
             int rightEdge = GuiSlotDimensions.this.getX() + GuiSlotDimensions.this.getWidth();
-            boolean inRange = mouseX >= (rightEdge - iconWidth) && mouseX <= rightEdge;
-            if (inRange && GuiSlotDimensions.this.doubleClicked) {
+            if (mouseX >= (rightEdge - iconWidth) && mouseX <= rightEdge) {
                 this.parentGui.toggleDimensionSelected();
             }
 
-            return true;
+            return super.mouseClicked(mouseX, mouseY, button);
         }
     }
 }
