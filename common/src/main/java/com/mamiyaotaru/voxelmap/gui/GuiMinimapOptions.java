@@ -56,7 +56,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
         int maxPages = (int) Math.ceil((float) relevantOptions.length / buttonCount);
         this.screenTitle = I18n.get("options.voxelmap.title") + " [" + (page + 1) + "/" + maxPages + "]";
 
-        for (int i = buttonStart; i < buttonEnd; i++) {
+        for (int i = buttonStart; i < buttonEnd; ++i) {
             int buttonPos = i - buttonStart;
             EnumOptionsMinimap option = relevantOptions[i];
 

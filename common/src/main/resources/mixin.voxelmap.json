@@ -16,8 +16,6 @@
     "BiomeAccessor",
     "MixinChatHud",
     "MixinInGameHud",
-    "MixinKeyboard",
-    "MixinMouse",
     "MixinWorldRenderer"
   ]
 }

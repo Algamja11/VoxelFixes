@@ -32,7 +32,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 
         EnumOptionsMinimap[] relevantOptions = options.radarMode == 2 ? FULL_RELEVANT_OPTIONS : SIMPLE_RELEVANT_OPTIONS;
 
-        for (int i = 0; i < relevantOptions.length; i++) {
+        for (int i = 0; i < relevantOptions.length; ++i) {
             EnumOptionsMinimap option = relevantOptions[i];
             GuiOptionButtonMinimap optionButton = new GuiOptionButtonMinimap(this.getWidth() / 2 - 155 + i % 2 * 160, this.getHeight() / 6 + 24 * (i >> 1), option, Component.literal(options.getKeyText(option)), this::optionClicked);
 

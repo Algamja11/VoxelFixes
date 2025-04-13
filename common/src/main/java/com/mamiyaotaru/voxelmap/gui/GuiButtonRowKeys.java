@@ -17,18 +17,18 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class GuiButtonRowKeyMappings extends AbstractSelectionList<GuiButtonRowKeyMappings.RowItem> {
+public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.RowItem> {
     private final MapSettingsManager options;
     private final GuiMinimapControls parentGui;
     private KeyMapping keyForEdit;
     private final ArrayList<KeyMapping> duplicateKeys = new ArrayList<>();
 
-    public GuiButtonRowKeyMappings(GuiMinimapControls parentScreen, MapSettingsManager options) {
+    public GuiButtonRowKeys(GuiMinimapControls parentScreen, MapSettingsManager options) {
         super(VoxelConstants.getMinecraft(), parentScreen.getWidth(), parentScreen.getHeight() - 114, 40, 28);
         this.parentGui = parentScreen;
         this.options = options;
         ArrayList<RowItem> keyMappings = new ArrayList<>();
-        for (int i = 0; i < this.options.keyBindings.length; i++) {
+        for (int i = 0; i < this.options.keyBindings.length; ++i) {
             keyMappings.add(new RowItem(this.parentGui, this.buildButton(i, false), this.buildButton(i, true), this.options.keyBindings[i]));
         }
         keyMappings.sort(Comparator.comparing(entry -> entry.keyMapping));
@@ -40,7 +40,7 @@ public class GuiButtonRowKeyMappings extends AbstractSelectionList<GuiButtonRowK
         if (!resetButton) {
             return new Button.Builder(Component.literal(""), button -> this.keyForEdit = this.options.keyBindings[index]).bounds(0, 0, 75, 20).build();
         } else {
-            return new Button.Builder(Component.literal(I18n.get("controls.reset")), button -> this.resetKeyMapping(index)).bounds(0, 0, 50, 20).build();
+            return new Button.Builder(Component.translatable("controls.reset"), button -> this.resetKeyMapping(index)).bounds(0, 0, 50, 20).build();
         }
     }
 
@@ -127,9 +127,9 @@ public class GuiButtonRowKeyMappings extends AbstractSelectionList<GuiButtonRowK
                 this.button.setX(x);
                 this.button.setY(y + 2);
                 MutableComponent keyText = this.keyMapping.getTranslatedKeyMessage().copy();
-                if (GuiButtonRowKeyMappings.this.keyForEdit != null && GuiButtonRowKeyMappings.this.keyForEdit == this.keyMapping) {
+                if (GuiButtonRowKeys.this.keyForEdit != null && GuiButtonRowKeys.this.keyForEdit == this.keyMapping) {
                     keyText = Component.literal("> ").withStyle(ChatFormatting.YELLOW).append(keyText.copy()).append(" <");
-                } else if (GuiButtonRowKeyMappings.this.duplicateKeys.contains(this.keyMapping)) {
+                } else if (GuiButtonRowKeys.this.duplicateKeys.contains(this.keyMapping)) {
                     keyText.withStyle(ChatFormatting.RED);
                 }
                 this.button.setMessage(keyText);
@@ -143,7 +143,7 @@ public class GuiButtonRowKeyMappings extends AbstractSelectionList<GuiButtonRowK
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            GuiButtonRowKeyMappings.this.setSelected(this);
+            GuiButtonRowKeys.this.setSelected(this);
             boolean clicked = false;
             if (this.button != null && this.button.mouseClicked(mouseX, mouseY, button)) {
                 clicked = true;

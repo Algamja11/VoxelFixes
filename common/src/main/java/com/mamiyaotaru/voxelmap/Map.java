@@ -332,33 +332,16 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (minecraft.screen == null && this.options.keyBindMenu.consumeClick()) {
-            this.showWelcomeScreen = false;
-            if (this.options.welcome) {
-                this.options.welcome = false;
-                this.options.saveAll();
-            }
-
             minecraft.setScreen(new GuiPersistentMap(null));
         }
 
         if (minecraft.screen == null && this.options.keyBindWaypointMenu.consumeClick()) {
-            this.showWelcomeScreen = false;
-            if (this.options.welcome) {
-                this.options.welcome = false;
-                this.options.saveAll();
-            }
             if (VoxelMap.mapOptions.waypointsAllowed) {
                 minecraft.setScreen(new GuiWaypoints(null));
             }
         }
 
         if (minecraft.screen == null && this.options.keyBindWaypoint.consumeClick()) {
-            this.showWelcomeScreen = false;
-            if (this.options.welcome) {
-                this.options.welcome = false;
-                this.options.saveAll();
-            }
-
             if (VoxelMap.mapOptions.waypointsAllowed) {
                 float r;
                 float g;
@@ -376,8 +359,8 @@ public class Map implements Runnable, IChangeObserver {
                 TreeSet<DimensionContainer> dimensions = new TreeSet<>();
                 dimensions.add(VoxelConstants.getVoxelMapInstance().getDimensionManager().getDimensionContainerByWorld(VoxelConstants.getPlayer().level()));
                 double dimensionScale = VoxelConstants.getPlayer().level().dimensionType().coordinateScale();
-                Waypoint newWaypoint = new Waypoint("", (int) (GameVariableAccessShim.xCoord() * dimensionScale), (int) (GameVariableAccessShim.zCoord() * dimensionScale), GameVariableAccessShim.yCoord(), true, r, g, b, false, "",
-                        VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentSubworldDescriptor(false), dimensions);
+                Waypoint newWaypoint = new Waypoint("", (int) (GameVariableAccessShim.xCoord() * dimensionScale), (int) (GameVariableAccessShim.zCoord() * dimensionScale), GameVariableAccessShim.yCoord(),
+                        true, r, g, b, false, "", VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentSubworldDescriptor(false), dimensions);
                 minecraft.setScreen(new GuiAddWaypoint(null, newWaypoint, false));
             }
         }
