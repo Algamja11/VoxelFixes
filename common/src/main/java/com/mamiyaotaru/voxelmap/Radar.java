@@ -275,11 +275,11 @@ public class Radar implements IRadar {
                             Matrix4f matrix4f = guiGraphics.pose().last().pose();
                             VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.gui());
 
-                            int alpha = (int) (contact.brightness * 128.0F);
-                            vertexConsumer.addVertex(matrix4f, x / fontScale - halfStringWidth - 1, (y + 3) / fontScale + 9, 0.0F).setColor(0, 0, 0, alpha);
-                            vertexConsumer.addVertex(matrix4f, x / fontScale + halfStringWidth + 1, (y + 3) / fontScale + 9, 0.0F).setColor(0, 0, 0, alpha);
-                            vertexConsumer.addVertex(matrix4f, x / fontScale + halfStringWidth + 1, (y + 3) / fontScale - 1, 0.0F).setColor(0, 0, 0, alpha);
-                            vertexConsumer.addVertex(matrix4f, x / fontScale - halfStringWidth - 1, (y + 3) / fontScale - 1, 0.0F).setColor(0, 0, 0, alpha);
+                            float alpha = contact.brightness * minecraft.options.textBackgroundOpacity().get().floatValue();
+                            vertexConsumer.addVertex(matrix4f, x / fontScale - halfStringWidth - 1, (y + 3) / fontScale + 9, 0.0F).setColor(0.0F, 0.0F, 0.0F, alpha);
+                            vertexConsumer.addVertex(matrix4f, x / fontScale + halfStringWidth + 1, (y + 3) / fontScale + 9, 0.0F).setColor(0.0F, 0.0F, 0.0F, alpha);
+                            vertexConsumer.addVertex(matrix4f, x / fontScale + halfStringWidth + 1, (y + 3) / fontScale - 1, 0.0F).setColor(0.0F, 0.0F, 0.0F, alpha);
+                            vertexConsumer.addVertex(matrix4f, x / fontScale - halfStringWidth - 1, (y + 3) / fontScale - 1, 0.0F).setColor(0.0F, 0.0F, 0.0F, alpha);
                         });
                         guiGraphics.drawString(minecraft.font, contact.name, (int) (x / fontScale - halfStringWidth), (int) ((y + 3) / fontScale), labelColor, true);
                     }
