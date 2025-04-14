@@ -882,14 +882,14 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         boolean hover = cursorCoordX > ptX - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordX < ptX + 18.0F * this.guiToMap / this.guiToDirectMouse
                 && cursorCoordZ > ptZ - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordZ < ptZ + 18.0F * this.guiToMap / this.guiToDirectMouse;
 
-        int ptXScreen = (int) ((ptX - this.mapCenterX) * this.mapToGui);
-        int ptZScreen = (int) ((ptZ - this.mapCenterZ) * this.mapToGui);
-        int halfWidthX = this.width / 2 - 4;
-        int halfWidthZ = this.height / 2 - 32 - 4;
-        boolean far = !(ptXScreen >= -halfWidthX && ptXScreen <= halfWidthX && ptZScreen >= -halfWidthZ && ptZScreen <= halfWidthZ);
+        int wayX = (int) ((ptX - this.mapCenterX) * this.mapToGui);
+        int wayY = (int) ((ptZ - this.mapCenterZ) * this.mapToGui);
+        int halfX = this.width / 2 - 4;
+        int halfY = this.height / 2 - 32 - 4;
+        boolean far = !(wayX >= -halfX && wayX <= halfX && wayY >= -halfY && wayY <= halfY);
         if (far) {
-            ptX = Math.max(this.mapCenterX - (halfWidthX * this.guiToMap), Math.min(this.mapCenterX + (halfWidthX * this.guiToMap), ptX));
-            ptZ = Math.max(this.mapCenterZ - (halfWidthZ * this.guiToMap), Math.min(this.mapCenterZ + (halfWidthZ * this.guiToMap), ptZ));
+            ptX = Math.max(this.mapCenterX - (halfX * this.guiToMap), Math.min(this.mapCenterX + (halfX * this.guiToMap), ptX));
+            ptZ = Math.max(this.mapCenterZ - (halfY * this.guiToMap), Math.min(this.mapCenterZ + (halfY * this.guiToMap), ptZ));
         }
         float locate = (float) Math.toDegrees(Math.atan2(pt.getX() - ptX, -(pt.getZ() - ptZ)));
 
