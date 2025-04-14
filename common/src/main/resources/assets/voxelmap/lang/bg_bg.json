@@ -12,7 +12,6 @@
   "controls.voxelmap.title": "Минимап контроли",
   "controls.voxelmap.unbind1": "За да премахнете копче, изберете го и натиснете \"Escape\".",
   "controls.voxelmap.unbind2": "(С изключение на клавиша за менюто - той не може да няма бутон)",
-  "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Голяма карта",
   "key.voxelmap.menu": "Меню",
   "key.voxelmap.togglemobs": "Превключи чудовища",

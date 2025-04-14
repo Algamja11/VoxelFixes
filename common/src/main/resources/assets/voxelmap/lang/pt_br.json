@@ -12,7 +12,6 @@
   "controls.voxelmap.title": "Controles de Minimapa",
   "controls.voxelmap.unbind1": "Para desassociar uma tecla, pressione 'Esc'.",
   "controls.voxelmap.unbind2": "(Exceto a tecla de Menu - Não é permitido desassociá-la)",
-  "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Alternar mapa em tela cheia",
   "key.voxelmap.menu": "Menu",
   "key.voxelmap.waypointhotkey": "Atalho para Waypoints",

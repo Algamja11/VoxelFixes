@@ -12,7 +12,6 @@
   "controls.voxelmap.title": "Μικρός ελέγχου",
   "controls.voxelmap.unbind1": "Για να αποσυνδέσετε ένα κλειδί, επιλέξτε το και πατήστε «Escape».",
   "controls.voxelmap.unbind2": "(Εκτός από το πλήκτρο μενού - δεν μπορεί να είναι λυμένο)",
-  "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Εναλλαγή Fullscreen Χάρτης",
   "key.voxelmap.menu": "Μενού",
   "key.voxelmap.togglemobs": "Εναλλαγή όχλος",

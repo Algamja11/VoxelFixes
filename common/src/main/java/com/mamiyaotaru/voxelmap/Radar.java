@@ -8,11 +8,13 @@ import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.LayoutVariables;
 import com.mamiyaotaru.voxelmap.util.MobCategory;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ARGB;
@@ -27,6 +29,7 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
+import org.joml.Matrix4f;
 
 public class Radar implements IRadar {
     private final MapSettingsManager minimapOptions;
@@ -260,15 +263,25 @@ public class Radar implements IRadar {
                     contact.icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - imageSize / 2, y + yOffset - imageSize / 2, imageSize, imageSize, color);
 
                     if (contact.name != null && ((this.options.showPlayerNames && contact.category == MobCategory.PLAYER) || (this.options.showMobNames && contact.category != MobCategory.PLAYER && contact.entity.hasCustomName()))) {
-                        float scaleFactor = this.layoutVariables.scScale / this.options.fontScale;
-                        guiGraphics.pose().scale(1.0F / scaleFactor, 1.0F / scaleFactor, 1.0F);
+                        float fontScale = this.options.fontScale / 4.0F;
+                        guiGraphics.pose().scale(fontScale, fontScale, 1.0F);
 
                         float labelRed = ARGB.redFloat(contact.entity.getTeamColor());
                         float labelGreen = ARGB.greenFloat(contact.entity.getTeamColor());
                         float labelBlue = ARGB.blueFloat(contact.entity.getTeamColor());
                         int labelColor = ARGB.colorFromFloat(contact.brightness, labelRed, labelGreen, labelBlue);
                         int halfStringWidth = minecraft.font.width(contact.name) / 2;
-                        guiGraphics.drawString(minecraft.font, contact.name, (int) (x * scaleFactor - halfStringWidth), (int) ((y + 3) * scaleFactor), labelColor, true);
+                        guiGraphics.drawSpecial(bufferSource -> {
+                            Matrix4f matrix4f = guiGraphics.pose().last().pose();
+                            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.gui());
+
+                            int alpha = (int) (contact.brightness * 128.0F);
+                            vertexConsumer.addVertex(matrix4f, x / fontScale - halfStringWidth - 1, (y + 3) / fontScale + 9, 0.0F).setColor(0, 0, 0, alpha);
+                            vertexConsumer.addVertex(matrix4f, x / fontScale + halfStringWidth + 1, (y + 3) / fontScale + 9, 0.0F).setColor(0, 0, 0, alpha);
+                            vertexConsumer.addVertex(matrix4f, x / fontScale + halfStringWidth + 1, (y + 3) / fontScale - 1, 0.0F).setColor(0, 0, 0, alpha);
+                            vertexConsumer.addVertex(matrix4f, x / fontScale - halfStringWidth - 1, (y + 3) / fontScale - 1, 0.0F).setColor(0, 0, 0, alpha);
+                        });
+                        guiGraphics.drawString(minecraft.font, contact.name, (int) (x / fontScale - halfStringWidth), (int) ((y + 3) / fontScale), labelColor, true);
                     }
                 } catch (Exception e) {
                     VoxelConstants.getLogger().error("Error rendering mob icon! " + e.getLocalizedMessage() + " contact type " + BuiltInRegistries.ENTITY_TYPE.getKey(contact.entity.getType()), e);

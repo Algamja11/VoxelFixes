@@ -12,7 +12,6 @@
   "controls.voxelmap.title": "Minimap-Kontroller",
   "controls.voxelmap.unbind1": "For å lauskople ein tast, vel den og trykk 'Escape'.",
   "controls.voxelmap.unbind2": "(Unntak for Menyknappen - den kan ikkje bli lauskopla)",
-  "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Fullskjermkart av/på",
   "key.voxelmap.menu": "Meny",
   "key.voxelmap.waypointhotkey": "Hurtigtast Landemerke",

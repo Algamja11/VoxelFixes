@@ -12,7 +12,6 @@
   "controls.voxelmap.title": "Sterowanie",
   "controls.voxelmap.unbind1": "Jeśli nie chcesz używać klawisza, wybierz go i naciśnij 'Esc'.",
   "controls.voxelmap.unbind2": "(za wyjątkiem klawisza Menu)",
-  "key.voxelmap.zoom": "Przybliżanie",
   "key.voxelmap.togglefullscreen": "Tryb pełnoekranowy",
   "key.voxelmap.menu": "Menu",
   "key.voxelmap.waypointhotkey": "Definiowanie waypoint-a",
