@@ -126,11 +126,12 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
     private int sidebarLeft;
     private int sidebarRight;
-    private final boolean[] sidebarButtons = new boolean[2];
+    private final boolean[] sidebarButtonState = new boolean[2];
+    private boolean sidebarPressed;
 
     private boolean waypointListOpen;
     private int waypointListPage;
-    private final boolean[] waypointListButtons = new boolean[2];
+    private final boolean[] waypointListButtonState = new boolean[2];
 
     private final ResourceLocation voxelmapSkinLocation = ResourceLocation.fromNamespaceAndPath("voxelmap", "persistentmap/playerskin");
     private final ResourceLocation crosshairResource = ResourceLocation.parse("textures/gui/sprites/hud/crosshair.png");
@@ -328,6 +329,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         boolean blockInput = this.checkSelectedButton(false);
+        this.sidebarPressed = false;
 
         if (mouseY > this.top && mouseY < this.bottom && button == 1 && !blockInput) {
             this.keyboardInput = false;
@@ -386,7 +388,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     private boolean checkSelectedButton(boolean doEvents) {
         boolean selected = false;
         int count = 0;
-        for (boolean state : this.waypointListButtons) {
+        for (boolean state : this.waypointListButtonState) {
             if (state && doEvents) {
                 switch (count) {
                     case 0 -> --this.waypointListPage;
@@ -397,10 +399,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             ++count;
         }
         count = 0;
-        for (boolean state : this.sidebarButtons) {
+        for (boolean state : this.sidebarButtonState) {
             if (state && doEvents) {
                 switch (count) {
-                    // case 0 = panel background
+                    case 0 -> this.sidebarPressed = true;
                     case 1 -> this.waypointListOpen = !this.waypointListOpen;
                 }
             }
@@ -815,17 +817,17 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         this.overlayBackground(guiGraphics);
 
         if (this.waypointListOpen) {
-            this.sidebarButtons[0] = this.drawSidePanel(guiGraphics, 200, mouseX, mouseY);
+            this.sidebarButtonState[0] = this.drawSidePanel(guiGraphics, 200, mouseX, mouseY);
             this.drawWaypointList(guiGraphics, mouseX, mouseY);
         } else {
-            this.sidebarButtons[0] = false;
+            this.sidebarButtonState[0] = false;
         }
 
         int sideButtonX = this.width - 5 - 28;
         int sideButtonY = this.height - 40 - 28;
-        this.sidebarButtons[1] = mouseX >= sideButtonX && mouseX <= sideButtonX + 28 && mouseY >= sideButtonY && mouseY <= sideButtonY + 28;
+        this.sidebarButtonState[1] = mouseX >= sideButtonX && mouseX <= sideButtonX + 28 && mouseY >= sideButtonY && mouseY <= sideButtonY + 28;
         Sprite waypointIcon = waypointManager.getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
-        waypointIcon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, sideButtonX, sideButtonY, 28, 28, this.sidebarButtons[1] ? 0xFFCCCCCC : 0xFFFFFFFF);
+        waypointIcon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, sideButtonX, sideButtonY, 28, 28, this.sidebarButtonState[1] ? 0xFFCCCCCC : 0xFFFFFFFF);
 
         if (VoxelMap.mapOptions.worldmapAllowed) {
             guiGraphics.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 16, 0xFFFFFF);
@@ -1022,7 +1024,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, this.sidebarLeft, itemY, 20, 20, point.getUnifiedColor(alpha));
                 guiGraphics.drawString(this.getFontRenderer(), point.name, this.sidebarLeft + 20, itemY + 7, ARGB.colorFromFloat(alpha, 1.0F, 1.0F, blue));
 
-                if (this.pressedMouseButtonRaw == 0 && hover) {
+                if (this.pressedMouseButtonRaw == 0 && this.sidebarPressed && hover) {
                     this.centerAt(point.getX(), point.getZ());
                 }
             }
@@ -1030,7 +1032,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             int buttonCenter = (this.sidebarLeft + this.sidebarRight) / 2;
             int buttonX = buttonCenter - 30;
             int buttonY = this.height - 40;
-            this.waypointListButtons[0] = mouseX >= buttonX - 4 && mouseX <= buttonX + 4 && mouseY >= buttonY - 4 && mouseY <= buttonY + 4;
+            this.waypointListButtonState[0] = mouseX >= buttonX - 4 && mouseX <= buttonX + 4 && mouseY >= buttonY - 4 && mouseY <= buttonY + 4;
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(buttonX, buttonY, 0.0F);
             guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(180.0F));
@@ -1039,7 +1041,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             guiGraphics.pose().popPose();
 
             buttonX = buttonCenter + 30;
-            this.waypointListButtons[1] = mouseX >= buttonX - 4 && mouseX <= buttonX + 4 && mouseY >= buttonY - 4 && mouseY <= buttonY + 4;
+            this.waypointListButtonState[1] = mouseX >= buttonX - 4 && mouseX <= buttonX + 4 && mouseY >= buttonY - 4 && mouseY <= buttonY + 4;
             guiGraphics.blit(RenderType::guiTextured, arrowResource, buttonX - 4, buttonY - 4, 0.0F, 0.0F, 8, 8, 8, 8);
 
             buttonX = buttonCenter;
