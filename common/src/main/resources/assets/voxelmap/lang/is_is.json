@@ -12,7 +12,6 @@
   "controls.voxelmap.title": "minimap Stýrir",
   "controls.voxelmap.unbind1": "Til unbind lykil, velja það og ýta á 'Escape'.",
   "controls.voxelmap.unbind2": "(Nema fyrir á Valmynd takkann - það getur ekki verið óbundið)",
-  "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Víxla Fullscreen Kort",
   "key.voxelmap.menu": "Valmynd",
   "key.voxelmap.waypointhotkey": "Waypoint Hotkey",

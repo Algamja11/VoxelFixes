@@ -12,7 +12,6 @@
   "controls.voxelmap.title": "Miniharita Kontrolleri",
   "controls.voxelmap.unbind1": "Bir tuşun bağlantısını kaldırmak için,tuşu seçin ve \"ESC\" tuşuna basın.",
   "controls.voxelmap.unbind2": "(Menü butonu dışında-onun bağlantısı kaldırılamaz)",
-  "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Tam Ekran Haritayı Aç/Kapa",
   "key.voxelmap.menu": "Menü",
   "key.voxelmap.togglemobs": "Mobları Aç/Kapa",

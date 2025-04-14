@@ -12,7 +12,6 @@
   "controls.voxelmap.title": "Minitérkép kezelés",
   "controls.voxelmap.unbind1": "Törléshez válasszd ki a gombot, es nyomj 'ESC'-et.",
   "controls.voxelmap.unbind2": "(Kivéve a Menü-gomb, az nem változtatható)",
-  "key.voxelmap.zoom": "Nagyítás",
   "key.voxelmap.togglefullscreen": "Teljes képernyős térkép",
   "key.voxelmap.menu": "Menü",
   "key.voxelmap.togglemobs": "Lények kapcsolása",

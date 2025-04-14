@@ -12,7 +12,6 @@
   "controls.voxelmap.title": "Controlli della minimappa",
   "controls.voxelmap.unbind1": "Per deselezionare un tasto, selezionarlo e premere 'Escape'.",
   "controls.voxelmap.unbind2": "(Eccetto per il Tasto Menu - non può essere deselezionato)",
-  "key.voxelmap.zoom": "Zoom",
   "key.voxelmap.togglefullscreen": "Seleziona mappa a tutto schermo",
   "key.voxelmap.menu": "Menu",
   "key.voxelmap.waypointhotkey": "Tasto chiave dei punti di interesse",

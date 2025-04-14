@@ -36,9 +36,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.AbstractEquineModel;
 import net.minecraft.client.model.CamelModel;
 import net.minecraft.client.model.CodModel;
-import net.minecraft.client.model.DolphinModel;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.GuardianModel;
 import net.minecraft.client.model.LavaSlimeModel;
 import net.minecraft.client.model.LlamaModel;
 import net.minecraft.client.model.SalmonModel;
@@ -52,6 +50,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
 import net.minecraft.client.renderer.entity.CodRenderer;
 import net.minecraft.client.renderer.entity.DolphinRenderer;
+import net.minecraft.client.renderer.entity.DrownedRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.GoatRenderer;
 import net.minecraft.client.renderer.entity.HoglinRenderer;
@@ -59,11 +58,10 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.ParrotRenderer;
 import net.minecraft.client.renderer.entity.SalmonRenderer;
 import net.minecraft.client.renderer.entity.SlimeRenderer;
-import net.minecraft.client.renderer.entity.TropicalFishRenderer;
 import net.minecraft.client.renderer.entity.ZoglinRenderer;
+import net.minecraft.client.renderer.entity.layers.DrownedOuterLayer;
 import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -231,9 +229,10 @@ public class EntityMapImageManager {
             part.zRot = 0;
             part.render(pose, bufferBuilder, 15, 0, 0xffffffff); // light, overlay, color //TODO set model tint
         }
+
         if (baseRenderer instanceof SlimeRenderer slimeRenderer) {
-            SlimeOuterLayer slimeOuter = (SlimeOuterLayer) slimeRenderer.layers.get(0);
-            slimeOuter.model.setupAnim(renderState);
+            SlimeOuterLayer slimeOuter = (SlimeOuterLayer) slimeRenderer.layers.getFirst();
+            slimeOuter.model.resetPose();
             slimeOuter.model.root().render(pose, bufferBuilder, 15, 0, 0xffffffff); // light, overlay, color
         }
 
@@ -335,13 +334,10 @@ public class EntityMapImageManager {
     }
 
     private ModelPart[] getPartToRender(EntityModel<?> model) {
-
-        if (model instanceof CodModel) return new ModelPart[] { model.root() };
-        else if (model instanceof DolphinModel) return new ModelPart[] { model.root() };
-        else if (model instanceof SalmonModel) return new ModelPart[] { model.root() };
-        else if (model instanceof SlimeModel) return new ModelPart[] { model.root() };
-        else if (model instanceof TropicalFishModelA) return new ModelPart[] { model.root() };
-        else if (model instanceof TropicalFishModelB) return new ModelPart[] { model.root() };
+        if (model instanceof CodModel || model instanceof SalmonModel || model instanceof TropicalFishModelA || model instanceof TropicalFishModelB
+                || model instanceof SlimeModel || model instanceof LavaSlimeModel) {
+            return new ModelPart[] { model.root() };
+        }
 
         // horses
         for (ModelPart part : model.allParts()) {
@@ -376,10 +372,6 @@ public class EntityMapImageManager {
             if (part.hasChild("segment0")) {
                 return new ModelPart[] { part.getChild("segment0"), part.getChild("segment1") };
             }
-        }
-        // magma slime: head_parts
-        if (model instanceof LavaSlimeModel slime) {
-            return slime.bodyCubes;
         }
 
         return new ModelPart[] { model.root() };
