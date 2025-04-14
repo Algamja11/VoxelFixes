@@ -1367,7 +1367,7 @@ public class Map implements Runnable, IChangeObserver {
                 }
             }
             MutableBlockPosCache.release(blockPos);
-            return this.world.getMinY() - 1;
+            return Short.MIN_VALUE;
         }
     }
 
