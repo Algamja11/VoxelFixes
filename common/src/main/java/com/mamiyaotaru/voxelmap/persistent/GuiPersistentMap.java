@@ -23,14 +23,17 @@ import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.OptionalInt;
 import java.util.Random;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -126,18 +129,32 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
     private int sidebarLeft;
     private int sidebarRight;
-    private final boolean[] sidebarButtonState = new boolean[2];
+    private int sidebarMiddle;
+    private final boolean[] sidebarButtonState = new boolean[3];
     private boolean sidebarPressed;
 
     private boolean waypointListOpen;
     private int waypointListPage;
     private final boolean[] waypointListButtonState = new boolean[2];
 
+    private boolean distancePanelOpen;
+    private int distanceCalcX;
+    private int distanceCalcZ;
+    private int distanceCalcX2;
+    private int distanceCalcZ2;
+    private final boolean[] distancePanelButtonState = new boolean[4];
+    private boolean typingDistCalcX;
+    private boolean typingDistCalcZ;
+    private boolean typingDistCalcX2;
+    private boolean typingDistCalcZ2;
+
     private final ResourceLocation voxelmapSkinLocation = ResourceLocation.fromNamespaceAndPath("voxelmap", "persistentmap/playerskin");
     private final ResourceLocation crosshairResource = ResourceLocation.parse("textures/gui/sprites/hud/crosshair.png");
     private final ResourceLocation separatorHeaderResource = ResourceLocation.parse("textures/gui/inworld_header_separator.png");
     private final ResourceLocation separatorFooterResource = ResourceLocation.parse("textures/gui/inworld_footer_separator.png");
     private final ResourceLocation arrowResource = ResourceLocation.parse("textures/gui/sprites/container/villager/trade_arrow.png");
+    private final ResourceLocation waypointListIconResource = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/sidebar/waypoint_list.png");
+    private final ResourceLocation distanceMeasureIconResource = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/sidebar/distance_measure.png");
 
     public GuiPersistentMap(Screen parent) {
         this.parentScreen = parent;
@@ -315,8 +332,9 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         this.pressedMouseButtonRaw = button;
+        this.removeSidebarFocus();
 
-        boolean blockInput = this.checkSelectedButton(true);
+        boolean blockInput = this.checkSidebarButtons(true);
         if (blockInput) {
             return false;
         }
@@ -328,8 +346,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        boolean blockInput = this.checkSelectedButton(false);
-        this.sidebarPressed = false;
+        boolean blockInput = this.checkSidebarButtons(false);
 
         if (mouseY > this.top && mouseY < this.bottom && button == 1 && !blockInput) {
             this.keyboardInput = false;
@@ -348,6 +365,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.typingDistCalcX || this.typingDistCalcZ || this.typingDistCalcX2 || this.typingDistCalcZ2) {
+            this.updateDistanceMeasureFields(keyCode, scanCode);
+            return false;
+        }
+
         if (minecraft.options.keyJump.matches(keyCode, scanCode) || minecraft.options.keyShift.matches(keyCode, scanCode)) {
             if (minecraft.options.keyJump.matches(keyCode, scanCode)) {
                 this.zoomGoal /= 1.26F;
@@ -385,8 +407,9 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         return super.keyReleased(keyCode, scanCode, modifiers);
     }
 
-    private boolean checkSelectedButton(boolean doEvents) {
+    private boolean checkSidebarButtons(boolean doEvents) {
         boolean selected = false;
+
         int count = 0;
         for (boolean state : this.waypointListButtonState) {
             if (state && doEvents) {
@@ -398,12 +421,28 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             selected = selected || state;
             ++count;
         }
+
+        count = 0;
+        for (boolean state : this.distancePanelButtonState) {
+            if (state && doEvents) {
+                switch (count) {
+                    case 0 -> this.typingDistCalcX = true;
+                    case 1 -> this.typingDistCalcZ = true;
+                    case 2 -> this.typingDistCalcX2 = true;
+                    case 3 -> this.typingDistCalcZ2 = true;
+                }
+            }
+            selected = selected || state;
+            ++count;
+        }
+
         count = 0;
         for (boolean state : this.sidebarButtonState) {
             if (state && doEvents) {
-                switch (count) {
-                    case 0 -> this.sidebarPressed = true;
-                    case 1 -> this.waypointListOpen = !this.waypointListOpen;
+                if (count == 0) {
+                    this.sidebarPressed = true;
+                } else {
+                    this.toggleSidebarPanel(count);
                 }
             }
             selected = selected || state;
@@ -411,6 +450,30 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         }
 
         return selected;
+    }
+
+    private void toggleSidebarPanel(int panelType) {
+        boolean lastState = false;
+        switch (panelType) {
+            case 1 -> lastState = this.waypointListOpen;
+            case 2 -> lastState = this.distancePanelOpen;
+        }
+        // disable all panels
+        this.waypointListOpen = false;
+        this.distancePanelOpen = false;
+
+        switch (panelType) {
+            case 1 -> this.waypointListOpen = !lastState;
+            case 2 -> this.distancePanelOpen = !lastState;
+        }
+    }
+
+    private void removeSidebarFocus() {
+        this.sidebarPressed = false;
+        this.typingDistCalcX = false;
+        this.typingDistCalcZ = false;
+        this.typingDistCalcX2 = false;
+        this.typingDistCalcZ2 = false;
     }
 
     private void checkMovementKeyPressed(int keyCode, int scanCode) {
@@ -663,6 +726,29 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 });
             }
 
+            if (this.distancePanelOpen) {
+                float scale = 1.0f / (float) minecraft.getWindow().getGuiScale() / mapToGui;
+
+                float x1 = (float) (this.distanceCalcX);
+                float z1 = (float) (this.distanceCalcZ);
+                float x2 = (float) (this.distanceCalcX2);
+                float z2 = (float) (this.distanceCalcZ2);
+
+                guiGraphics.drawSpecial(bufferSource -> {
+                    Matrix4f matrix4f = guiGraphics.pose().last().pose();
+                    VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.debugLineStrip(1000.0));
+
+                    vertexConsumer.addVertex(matrix4f, x1, z1, 0).setColor(255, 0, 0, 255);
+                    vertexConsumer.addVertex(matrix4f, x2, z2, 0).setColor(255, 0, 0, 255);
+
+                    vertexConsumer.addVertex(matrix4f, x1 - scale, z1 - scale, 0).setColor(255, 0, 0, 255);
+                    vertexConsumer.addVertex(matrix4f, x2 + scale, z2 + scale, 0).setColor(255, 0, 0, 255);
+
+                    vertexConsumer.addVertex(matrix4f, x1 + scale, z1 + scale, 0).setColor(255, 0, 0, 255);
+                    vertexConsumer.addVertex(matrix4f, x2 - scale, z2 - scale, 0).setColor(255, 0, 0, 255);
+                });
+            }
+
             float cursorX;
             float cursorY;
             if (this.mouseCursorShown) {
@@ -817,17 +903,23 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         this.overlayBackground(guiGraphics);
 
         if (this.waypointListOpen) {
-            this.sidebarButtonState[0] = this.drawSidePanel(guiGraphics, 200, mouseX, mouseY);
+            this.sidebarButtonState[0] = this.drawSidebarPanel(guiGraphics, mouseX, mouseY, 200);
             this.drawWaypointList(guiGraphics, mouseX, mouseY);
+        } else if (this.distancePanelOpen) {
+            this.sidebarButtonState[0] = this.drawSidebarPanel(guiGraphics, mouseX, mouseY, 200);
+            this.drawDistanceMeasurePanel(guiGraphics, mouseX, mouseY);
         } else {
             this.sidebarButtonState[0] = false;
         }
 
         int sideButtonX = this.width - 5 - 28;
         int sideButtonY = this.height - 40 - 28;
-        this.sidebarButtonState[1] = mouseX >= sideButtonX && mouseX <= sideButtonX + 28 && mouseY >= sideButtonY && mouseY <= sideButtonY + 28;
-        Sprite waypointIcon = waypointManager.getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
-        waypointIcon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, sideButtonX, sideButtonY, 28, 28, this.sidebarButtonState[1] ? 0xFFCCCCCC : 0xFFFFFFFF);
+        this.sidebarButtonState[1] = this.drawTexturedSidebarElement(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, waypointListIconResource,
+                mouseX, mouseY, sideButtonX, sideButtonY, sideButtonX + 28, sideButtonY + 28, this.sidebarButtonState[1] ? 0xFFCCCCCC : 0xFFFFFFFF);
+
+        sideButtonY -= 40;
+        this.sidebarButtonState[2] = this.drawTexturedSidebarElement(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, distanceMeasureIconResource,
+                mouseX, mouseY, sideButtonX, sideButtonY, sideButtonX + 28, sideButtonY + 28, this.sidebarButtonState[2] ? 0xFFCCCCCC : 0xFFFFFFFF);
 
         if (VoxelMap.mapOptions.worldmapAllowed) {
             guiGraphics.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 16, 0xFFFFFF);
@@ -969,24 +1061,39 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         });
     }
 
-    private boolean drawSidePanel(GuiGraphics guiGraphics, int width, int mouseX, int mouseY) {
-        this.sidebarRight = this.width - 40;
-        this.sidebarLeft = this.sidebarRight - width;
+    private boolean drawSidebarElement(GuiGraphics guiGraphics, int mouseX, int mouseY, int x, int y, int x2, int y2, int color) {
         guiGraphics.drawSpecial(bufferSource -> {
             Matrix4f matrix4f = guiGraphics.pose().last().pose();
             VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.gui());
-
-            vertexConsumer.addVertex(matrix4f, this.sidebarLeft, this.height - 34, 0.0F).setColor(0, 0, 0, 128);
-            vertexConsumer.addVertex(matrix4f, this.width, this.height - 34, 0.0F).setColor(0, 0, 0, 128);
-            vertexConsumer.addVertex(matrix4f, this.width, 34, 0.0F).setColor(0, 0, 0, 128);
-            vertexConsumer.addVertex(matrix4f, this.sidebarLeft, 34, 0.0F).setColor(0, 0, 0, 128);
-
-            vertexConsumer.addVertex(matrix4f, this.sidebarLeft + 1, this.height - 35, 0.0F).setColor(255, 255, 255, 32);
-            vertexConsumer.addVertex(matrix4f, this.sidebarRight - 1, this.height - 35, 0.0F).setColor(255, 255, 255, 32);
-            vertexConsumer.addVertex(matrix4f, this.sidebarRight - 1, 35, 0.0F).setColor(255, 255, 255, 32);
-            vertexConsumer.addVertex(matrix4f, this.sidebarLeft + 1, 35, 0.0F).setColor(255, 255, 255, 32);
+            vertexConsumer.addVertex(matrix4f, x, y2, 0.0F).setColor(color);
+            vertexConsumer.addVertex(matrix4f, x2, y2, 0.0F).setColor(color);
+            vertexConsumer.addVertex(matrix4f, x2, y, 0.0F).setColor(color);
+            vertexConsumer.addVertex(matrix4f, x, y, 0.0F).setColor(color);
         });
-        return mouseX >= this.sidebarLeft && mouseX <= this.width && mouseY >= 34 && mouseY <= this.height - 34;
+
+        return mouseX >= x && mouseX <= x2 && mouseY >= y && mouseY <= y2;
+    }
+
+    private boolean drawTexturedSidebarElement(GuiGraphics guiGraphics, Function<ResourceLocation, RenderType> renderTypeMap, ResourceLocation resourceLocation, int mouseX, int mouseY, int x, int y, int x2, int y2, int color) {
+        guiGraphics.drawSpecial(bufferSource -> {
+            Matrix4f matrix4f = guiGraphics.pose().last().pose();
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(renderTypeMap.apply(resourceLocation));
+            vertexConsumer.addVertex(matrix4f, x, y2, 0.0F).setUv(0.0F, 1.0F).setColor(color);
+            vertexConsumer.addVertex(matrix4f, x2, y2, 0.0F).setUv(1.0F, 1.0F).setColor(color);
+            vertexConsumer.addVertex(matrix4f, x2, y, 0.0F).setUv(1.0F, 0.0F).setColor(color);
+            vertexConsumer.addVertex(matrix4f, x, y, 0.0F).setUv(0.0F, 0.0F).setColor(color);
+        });
+
+        return mouseX >= x && mouseX <= x2 && mouseY >= y && mouseY <= y2;
+    }
+
+    private boolean drawSidebarPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, int width) {
+        this.sidebarRight = this.width - 40;
+        this.sidebarLeft = this.sidebarRight - width;
+        this.sidebarMiddle = (this.sidebarLeft + this.sidebarRight) / 2;
+        boolean hover = this.drawSidebarElement(guiGraphics, mouseX, mouseY, this.sidebarLeft, 34, this.width, this.height - 34, 0x80000000);
+        this.drawSidebarElement(guiGraphics, mouseX, mouseY, this.sidebarLeft + 1, 35, this.sidebarRight - 1, this.height - 35, 0x20FFFFFF);
+        return hover;
     }
 
     private void drawWaypointList(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -1029,26 +1136,77 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 }
             }
 
-            int buttonCenter = (this.sidebarLeft + this.sidebarRight) / 2;
-            int buttonX = buttonCenter - 30;
+            int buttonX = this.sidebarMiddle - 30;
             int buttonY = this.height - 40;
-            this.waypointListButtonState[0] = mouseX >= buttonX - 4 && mouseX <= buttonX + 4 && mouseY >= buttonY - 4 && mouseY <= buttonY + 4;
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(buttonX, buttonY, 0.0F);
             guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(180.0F));
             guiGraphics.pose().translate(-buttonX, -buttonY, 0.0F);
-            guiGraphics.blit(RenderType::guiTextured, arrowResource, buttonX - 4, buttonY - 4, 0.0F, 0.0F, 8, 8, 8, 8);
+            this.waypointListButtonState[0] = this.drawTexturedSidebarElement(guiGraphics, RenderType::guiTextured, arrowResource, mouseX, mouseY, buttonX - 4, buttonY - 4, buttonX + 4, buttonY + 4, 0xFFFFFFFF);
             guiGraphics.pose().popPose();
 
-            buttonX = buttonCenter + 30;
-            this.waypointListButtonState[1] = mouseX >= buttonX - 4 && mouseX <= buttonX + 4 && mouseY >= buttonY - 4 && mouseY <= buttonY + 4;
-            guiGraphics.blit(RenderType::guiTextured, arrowResource, buttonX - 4, buttonY - 4, 0.0F, 0.0F, 8, 8, 8, 8);
+            buttonX = this.sidebarMiddle + 30;
+            this.waypointListButtonState[1] = this.drawTexturedSidebarElement(guiGraphics, RenderType::guiTextured, arrowResource, mouseX, mouseY, buttonX - 4, buttonY - 4, buttonX + 4, buttonY + 4, 0xFFFFFFFF);
 
-            buttonX = buttonCenter;
-            buttonY = this.height - 45;
-            guiGraphics.drawCenteredString(this.getFontRenderer(), (this.waypointListPage + 1) + " / " + maxPageCount, buttonX, buttonY, 0xFFFFFF);
+            guiGraphics.drawCenteredString(this.getFontRenderer(), (this.waypointListPage + 1) + " / " + maxPageCount, this.sidebarMiddle, this.height - 45, 0xFFFFFF);
         } else {
-            guiGraphics.drawCenteredString(this.getFontRenderer(), "§E" + I18n.get("voxelmap.waypoints.nowaypointsexist"), (this.sidebarLeft + this.sidebarRight) / 2, this.height - 45, 0xFFFFFF);
+            guiGraphics.drawCenteredString(this.getFontRenderer(), "§E" + I18n.get("voxelmap.waypoints.nowaypointsexist"), this.sidebarMiddle, this.height - 45, 0xFFFFFF);
+        }
+    }
+
+    private void drawDistanceMeasurePanel(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        this.distancePanelButtonState[0] = this.drawSidebarElement(guiGraphics, mouseX, mouseY, this.sidebarLeft + 4, 50, this.sidebarMiddle - 2, 65, this.typingDistCalcX ? 0x80FFFFFF : 0x80000000);
+        guiGraphics.drawString(this.getFontRenderer(), "X (1)", this.sidebarLeft + 4, 40, 0xFFFFFF);
+        guiGraphics.drawString(this.getFontRenderer(), "" + this.distanceCalcX, this.sidebarLeft + 5, 54, 0xFFFFFF);
+
+        this.distancePanelButtonState[1] = this.drawSidebarElement(guiGraphics, mouseX, mouseY, this.sidebarMiddle + 2, 50, this.sidebarRight - 4, 65, this.typingDistCalcZ ? 0x80FFFFFF : 0x80000000);
+        guiGraphics.drawString(this.getFontRenderer(), "Z (1)", this.sidebarMiddle + 2, 40, 0xFFFFFF);
+        guiGraphics.drawString(this.getFontRenderer(), "" + this.distanceCalcZ, this.sidebarMiddle + 3, 54, 0xFFFFFF);
+
+        this.distancePanelButtonState[2] = this.drawSidebarElement(guiGraphics, mouseX, mouseY, this.sidebarLeft + 4, 80, this.sidebarMiddle - 2, 95, this.typingDistCalcX2 ? 0x80FFFFFF : 0x80000000);
+        guiGraphics.drawString(this.getFontRenderer(), "X (2)", this.sidebarLeft + 4, 70, 0xFFFFFF);
+        guiGraphics.drawString(this.getFontRenderer(), "" + this.distanceCalcX2, this.sidebarLeft + 5, 84, 0xFFFFFF);
+
+        this.distancePanelButtonState[3] = this.drawSidebarElement(guiGraphics, mouseX, mouseY, this.sidebarMiddle + 2, 80, this.sidebarRight - 4, 95, this.typingDistCalcZ2 ? 0x80FFFFFF : 0x80000000);
+        guiGraphics.drawString(this.getFontRenderer(), "Z (2)", this.sidebarMiddle + 2, 70, 0xFFFFFF);
+        guiGraphics.drawString(this.getFontRenderer(), "" + this.distanceCalcZ2, this.sidebarMiddle + 3, 84, 0xFFFFFF);
+
+        int dx = this.distanceCalcX2 - this.distanceCalcX;
+        int dz = this.distanceCalcZ2 - this.distanceCalcZ;
+        double distance = Math.sqrt(dx * dx + dz * dz);
+        guiGraphics.drawCenteredString(this.getFontRenderer(), Math.round(distance * 100) * 0.01 + "m", this.sidebarMiddle, this.height / 2, 0xFFFFFF);
+    }
+
+    private void updateDistanceMeasureFields(int keyCode, int scanCode) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE || keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+            this.typingDistCalcX = false;
+            this.typingDistCalcZ = false;
+            this.typingDistCalcX2 = false;
+            this.typingDistCalcZ2 = false;
+        } else {
+            String baseString = "";
+
+            if (this.typingDistCalcX) baseString += this.distanceCalcX;
+            if (this.typingDistCalcZ) baseString += this.distanceCalcZ;
+            if (this.typingDistCalcX2) baseString += this.distanceCalcX2;
+            if (this.typingDistCalcZ2) baseString += this.distanceCalcZ2;
+
+            if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
+                baseString = baseString.length() <= 1 ? "0" : baseString.substring(0, baseString.length() - 1);
+            } else {
+                OptionalInt number = InputConstants.getKey(keyCode, scanCode).getNumericKeyValue();
+                if (number.isPresent()) {
+                    baseString = baseString.equals("0") ? "" + number.getAsInt() : baseString + number.getAsInt();
+                }
+            }
+
+            try {
+                if (this.typingDistCalcX) this.distanceCalcX = Integer.parseInt(baseString);
+                if (this.typingDistCalcZ) this.distanceCalcZ = Integer.parseInt(baseString);
+                if (this.typingDistCalcX2) this.distanceCalcX2 = Integer.parseInt(baseString);
+                if (this.typingDistCalcZ2) this.distanceCalcZ2 = Integer.parseInt(baseString);
+            } catch (Exception ignored) {
+            }
         }
     }
 
