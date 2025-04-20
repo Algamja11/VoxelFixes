@@ -99,7 +99,7 @@ public class WaypointContainer {
                         if (this.minecraft.options.keyShift.isDown()) {
                             this.renderLabel(poseStack, bufferSource, pt.waypoint, distance, pt.diff >= 0.0F, pt.waypoint.name, false, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ);
                         } else {
-                            this.renderLabel(poseStack, bufferSource, pt.waypoint, distance, count == last, pt.waypoint.name, false, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ);
+                            this.renderLabel(poseStack, bufferSource, pt.waypoint, distance, pt.diff >= 0.0F && count == last, pt.waypoint.name, false, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ);
                         }
                     }
                 }
