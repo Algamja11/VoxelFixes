@@ -137,7 +137,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     }
 
     protected void sortClicked(int id) {
-        this.options.setSort(id);
+        this.options.setWaypointSort(id);
         this.changedSort = true;
         this.sort();
     }

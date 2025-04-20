@@ -18,6 +18,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
+import org.lwjgl.glfw.GLFW;
 
 public class GuiAddWaypoint extends GuiScreenMinimap {
     private static final ResourceLocation BLANK = ResourceLocation.parse("textures/misc/white.png");
@@ -134,6 +135,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
             return false;
         }
 
+        boolean keyPressed = super.keyPressed(keyCode, scanCode, modifiers);
         boolean acceptable = !this.waypointName.getValue().isEmpty();
 
         try {
@@ -145,11 +147,11 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         }
 
         this.doneButton.active = acceptable;
-        if ((keyCode == 257 || keyCode == 335) && acceptable) {
+        if ((keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) && acceptable) {
             this.acceptWaypoint();
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return keyPressed;
     }
 
     @Override
@@ -158,6 +160,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
             return false;
         }
 
+        boolean charTyped = super.charTyped(chr, modifiers);
         boolean acceptable = !this.waypointName.getValue().isEmpty();
 
         try {
@@ -170,7 +173,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
 
         this.doneButton.active = acceptable;
 
-        return super.charTyped(chr, modifiers);
+        return charTyped;
     }
 
     @Override
