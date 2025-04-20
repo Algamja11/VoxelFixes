@@ -268,7 +268,6 @@ public class WaypointContainer {
                 vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
                 vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
                 vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                poseStack.translate(0.0F, 0.0F, 0.01F);
                 vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (-1 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
                 vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (8 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
                 vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (8 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
@@ -280,7 +279,6 @@ public class WaypointContainer {
                 vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
                 vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
                 vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
-                poseStack.translate(0.0F, 0.0F, 0.01F);
                 vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (-1 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
                 vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (8 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
                 vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (8 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
@@ -302,7 +300,6 @@ public class WaypointContainer {
                     vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
                     vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
                     vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                    poseStack.translate(0.0F, 0.0F, 0.01F);
                     vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (-1 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
                     vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (8 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
                     vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (8 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
@@ -314,7 +311,6 @@ public class WaypointContainer {
                     vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
                     vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
                     vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
-                    poseStack.translate(0.0F, 0.0F, 0.01F);
                     vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (-1 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
                     vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (8 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
                     vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (8 + labelElevation), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);

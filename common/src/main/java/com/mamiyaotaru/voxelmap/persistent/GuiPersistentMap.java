@@ -311,9 +311,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         boolean sidebarPressed = this.sidebarPanel.checkPressed(true);
-        if (sidebarPressed) {
-            this.sidebarPanel.mouseButton = button;
-        }
 
         this.pressedMouseButton = sidebarPressed ? -1 : button;
 
@@ -323,7 +320,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         boolean sidebarPressed = this.sidebarPanel.checkPressed(false);
-        this.sidebarPanel.mouseButton = -1;
 
         if (mouseY > this.top && mouseY < this.bottom && button == 1 && !sidebarPressed) {
             this.keyboardInput = false;
@@ -1168,18 +1164,17 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         private int sidebarLeft;
         private int sidebarRight;
         private int sidebarMiddle;
+        private boolean sidebarClicked;
 
         private boolean waypointListOpen;
         private int waypointListPage;
         private final List<Waypoint> filteredWaypoints = new ArrayList<>();
 
-        private float centerStartX;
-        private float centerStartZ;
-        private float centerGoalX;
-        private float centerGoalZ;
+        private float moveStartX;
+        private float moveStartZ;
+        private float moveGoalX;
+        private float moveGoalZ;
         private long timeOfStartMoving = -1L;
-
-        private int mouseButton;
 
         private final EnumMap<ElementType, Boolean> buttonStates = new EnumMap<>(ElementType.class);
         private final ElementType[] sidebarButtons = { ElementType.BUTTON_WAYPOINT_LIST };
@@ -1213,23 +1208,24 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             }
 
             if (waypointListOpen) {
-                drawWaypointList(guiGraphics, mouseX, mouseY);
+                drawWaypointList(guiGraphics, mouseX, mouseY, sidebarClicked);
             }
+            sidebarClicked = false;
 
             if (timeOfStartMoving != -1L) {
                 long timeSinceStartMoving = System.currentTimeMillis() - timeOfStartMoving;
                 if (timeSinceStartMoving < 700.0F) {
-                    float centerX = parentGui.easeOut(timeSinceStartMoving, centerStartX, centerGoalX - centerStartX, 700.0F);
-                    float centerZ = parentGui.easeOut(timeSinceStartMoving, centerStartZ, centerGoalZ - centerStartZ, 700.0F);
+                    float centerX = parentGui.easeOut(timeSinceStartMoving, moveStartX, moveGoalX - moveStartX, 700.0F);
+                    float centerZ = parentGui.easeOut(timeSinceStartMoving, moveStartZ, moveGoalZ - moveStartZ, 700.0F);
                     parentGui.centerAt(centerX, centerZ);
                 } else {
-                    parentGui.centerAt(centerGoalX, centerGoalZ);
+                    parentGui.centerAt(moveGoalX, moveGoalZ);
                     timeOfStartMoving = -1L;
                 }
             }
         }
 
-        private void drawWaypointList(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        private void drawWaypointList(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean clicked) {
             filteredWaypoints.clear();
             for (Waypoint waypoint : parentGui.waypointManager.getWaypoints()) {
                 if (waypoint.inDimension && waypoint.inWorld) {
@@ -1261,13 +1257,12 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                     icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, sidebarLeft, itemY, 20, 20, waypoint.getUnifiedColor(alpha));
                     guiGraphics.drawString(parentGui.getFontRenderer(), waypoint.name, sidebarLeft + 20, itemY + 7, ARGB.colorFromFloat(alpha, 1.0F, 1.0F, blue));
 
-                    if (hover && mouseButton == 0) {
-                        centerStartX = parentGui.mapCenterX;
-                        centerStartZ = parentGui.mapCenterZ;
-                        centerGoalX = (float) waypoint.getX();
-                        centerGoalZ = (float) waypoint.getZ();
-
+                    if (hover && clicked) {
                         timeOfStartMoving = System.currentTimeMillis();
+                        moveStartX = parentGui.mapCenterX;
+                        moveStartZ = parentGui.mapCenterZ;
+                        moveGoalX = waypoint.getX();
+                        moveGoalZ = waypoint.getZ();
                     }
                 }
 
@@ -1356,6 +1351,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 }
                 pressed = state.getValue() || pressed;
             }
+
+            if (doEvents && pressed) sidebarClicked = true;
 
             return pressed;
         }
