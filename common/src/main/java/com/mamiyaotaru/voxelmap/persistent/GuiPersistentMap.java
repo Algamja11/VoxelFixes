@@ -1257,13 +1257,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                     icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, sidebarLeft, itemY, 20, 20, waypoint.getUnifiedColor(alpha));
                     guiGraphics.drawString(parentGui.getFontRenderer(), waypoint.name, sidebarLeft + 20, itemY + 7, ARGB.colorFromFloat(alpha, 1.0F, 1.0F, blue));
 
-                    if (hover && clicked) {
-                        timeOfStartMoving = System.currentTimeMillis();
-                        moveStartX = parentGui.mapCenterX;
-                        moveStartZ = parentGui.mapCenterZ;
-                        moveGoalX = waypoint.getX();
-                        moveGoalZ = waypoint.getZ();
-                    }
+                    if (hover && clicked) setupMove(waypoint.getX(), waypoint.getZ());
                 }
 
                 int buttonX = sidebarMiddle - 30;
@@ -1335,6 +1329,14 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             } else {
                 buttonStates.put(type, state);
             }
+        }
+
+        private void setupMove(float goalX, float goalZ) {
+            timeOfStartMoving = System.currentTimeMillis();
+            moveStartX = parentGui.mapCenterX;
+            moveStartZ = parentGui.mapCenterZ;
+            moveGoalX = goalX;
+            moveGoalZ = goalZ;
         }
 
         private boolean checkPressed(boolean doEvents) {
