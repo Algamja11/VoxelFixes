@@ -46,8 +46,8 @@ public class MapSettingsManager implements ISettingsManager {
     public boolean moveMapBelowStatusEffect = true;
     public boolean lightmap = true;
     public boolean heightmap = this.multicore;
-    public boolean slopemap = true; // "Slope Map"
-    public boolean filtering = false; // "Filtering"
+    public boolean slopemap = true;
+    public boolean filtering = false;
     public boolean waterTransparency = this.multicore;
     public boolean blockTransparency = this.multicore;
     public boolean biomes = this.multicore;
@@ -65,14 +65,14 @@ public class MapSettingsManager implements ISettingsManager {
     public int showWaypointDistance = 2;
     public int sort = 1;
 
-    public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoomin", GLFW.GLFW_KEY_UP, "controls.voxelmap.title"); // "Zoom In Key"
-    public final KeyMapping keyBindZoomOut = new KeyMapping("key.voxelmap.zoomout", GLFW.GLFW_KEY_DOWN, "controls.voxelmap.title"); // "Zoom Out Key"
-    public final KeyMapping keyBindFullscreen = new KeyMapping("key.voxelmap.togglefullscreen", GLFW.GLFW_KEY_Z, "controls.voxelmap.title"); // "Fullscreen Key"
-    public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmapmenu", GLFW.GLFW_KEY_M, "controls.voxelmap.title"); // "Menu Key"
-    public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypointmenu", GLFW.GLFW_KEY_U, "controls.voxelmap.title"); // "Waypoint Menu Key"
-    public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypointhotkey", GLFW.GLFW_KEY_N, "controls.voxelmap.title"); // "Waypoint Key"
-    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.togglemobs", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title"); // "Mob Toggle Key"
-    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggleingamewaypoints", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title"); // "Waypoint Toggle Key"
+    public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoomin", GLFW.GLFW_KEY_UP, "controls.voxelmap.title");
+    public final KeyMapping keyBindZoomOut = new KeyMapping("key.voxelmap.zoomout", GLFW.GLFW_KEY_DOWN, "controls.voxelmap.title");
+    public final KeyMapping keyBindFullscreen = new KeyMapping("key.voxelmap.togglefullscreen", GLFW.GLFW_KEY_Z, "controls.voxelmap.title");
+    public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmapmenu", GLFW.GLFW_KEY_M, "controls.voxelmap.title");
+    public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypointmenu", GLFW.GLFW_KEY_U, "controls.voxelmap.title");
+    public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypointhotkey", GLFW.GLFW_KEY_N, "controls.voxelmap.title");
+    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.togglemobs", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title");
+    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggleingamewaypoints", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title");
     public final KeyMapping[] keyBindings;
 
     protected boolean welcome = true;
