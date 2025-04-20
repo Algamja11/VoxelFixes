@@ -232,7 +232,7 @@ public class GLUtils {
     );
 
     public static final RenderPipeline ENTITY_ICON = RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
-            .withLocation("pipeline/entity_solid")
+            .withLocation("pipeline/voxelmap/entity_icon")
             .withSampler("Sampler1")
             .withShaderDefine("EMISSIVE")
             .withShaderDefine("NO_OVERLAY")
