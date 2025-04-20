@@ -41,14 +41,9 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 
         for (EnumOptionsMinimap option : relevantOptions2) {
             if (option.isFloat()) {
-                float sValue = this.options.getOptionFloatValue(option);
+                float sValue = this.options.getFloatValue(option);
 
-                this.addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 - 155 + counter % 2 * 160, this.getHeight() / 6 + 24 * (counter >> 1), option, switch (option) {
-                    case MIN_ZOOM, MAX_ZOOM -> (sValue + 3.0F) / (5 + 3);
-                    case CACHE_SIZE -> sValue / 5000.0F;
-                    default ->
-                            throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName() + ". (possibly not a float value applicable to persistent map)");
-                }, this.options));
+                this.addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 - 155 + counter % 2 * 160, this.getHeight() / 6 + 24 * (counter >> 1), option, this.convertFloatValue(option, sValue), this.options));
             } else {
                 this.addRenderableWidget(new GuiOptionButtonMinimap(this.getWidth() / 2 - 155 + counter % 2 * 160, this.getHeight() / 6 + 24 * (counter >> 1), option, Component.literal(this.options.getKeyText(option)), this::optionClicked));
             }
@@ -70,7 +65,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 
     protected void optionClicked(Button par1GuiButton) {
         EnumOptionsMinimap option = ((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions();
-        this.options.setOptionValue(option);
+        this.options.setValue(option);
         par1GuiButton.setMessage(Component.literal(this.options.getKeyText(option)));
 
         for (Object buttonObj : this.getButtonList()) {
@@ -87,14 +82,8 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
         for (Object buttonObj : this.getButtonList()) {
             if (buttonObj instanceof GuiOptionSliderMinimap slider) {
                 EnumOptionsMinimap option = slider.returnEnumOptions();
-                float sValue = this.options.getOptionFloatValue(option);
-                float fValue;
+                float fValue = this.convertFloatValue(option, this.options.getFloatValue(option));
 
-                fValue = switch (option) {
-                    case MIN_ZOOM, MAX_ZOOM -> (sValue + 3.0F) / (5 + 3);
-                    case CACHE_SIZE -> sValue / 5000.0F;
-                    default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName() + ". (possibly not a float value applicable to persistent map)");
-                };
                 if (this.getFocused() != slider) {
                     slider.setValue(fValue);
                 }
@@ -107,5 +96,13 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
         drawContext.drawCenteredString(this.getFontRenderer(), this.cacheSettings, this.getWidth() / 2, this.getHeight() / 6 + 24, 16777215);
         drawContext.drawCenteredString(this.getFontRenderer(), this.warning, this.getWidth() / 2, this.getHeight() / 6 + 34, 16777215);
         super.render(drawContext, mouseX, mouseY, delta);
+    }
+
+    private float convertFloatValue(EnumOptionsMinimap option, float sValue) {
+        return switch (option) {
+            case MIN_ZOOM, MAX_ZOOM -> (sValue + 3.0F) / (5 + 3);
+            case CACHE_SIZE -> sValue / 5000.0F;
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
+        };
     }
 }

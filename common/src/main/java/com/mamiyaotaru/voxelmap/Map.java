@@ -3,7 +3,6 @@ package com.mamiyaotaru.voxelmap;
 import com.mamiyaotaru.voxelmap.gui.GuiAddWaypoint;
 import com.mamiyaotaru.voxelmap.gui.GuiWaypoints;
 import com.mamiyaotaru.voxelmap.gui.overridden.EnumOptionsMinimap;
-import com.mamiyaotaru.voxelmap.interfaces.AbstractMapData;
 import com.mamiyaotaru.voxelmap.interfaces.IChangeObserver;
 import com.mamiyaotaru.voxelmap.persistent.GuiPersistentMap;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
@@ -356,7 +355,7 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (minecraft.screen == null && this.options.keyBindMobToggle.consumeClick()) {
-            VoxelConstants.getVoxelMapInstance().getRadarOptions().setOptionValue(EnumOptionsMinimap.SHOW_RADAR);
+            VoxelConstants.getVoxelMapInstance().getRadarOptions().setValue(EnumOptionsMinimap.SHOW_RADAR);
             this.options.saveAll();
         }
 

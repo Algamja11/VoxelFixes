@@ -78,7 +78,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
                 this.addRenderableWidget(this.teleportCommandButton);
             } else {
                 StringBuilder text = new StringBuilder().append(this.options.getKeyText(option));
-                if ((option == EnumOptionsMinimap.WATER_TRANSPARENCY || option == EnumOptionsMinimap.BLOCK_TRANSPARENCY || option == EnumOptionsMinimap.BIOME_TINT) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
+                if ((option == EnumOptionsMinimap.WATER_TRANSPARENCY || option == EnumOptionsMinimap.BLOCK_TRANSPARENCY || option == EnumOptionsMinimap.BIOME_TINT) && !this.options.multicore && this.options.getBooleanValue(option)) {
                     text.append("§c").append(text);
                 }
 
@@ -120,9 +120,9 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 
     protected void optionClicked(Button par1GuiButton) {
         EnumOptionsMinimap option = ((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions();
-        this.options.setOptionValue(option);
+        this.options.setValue(option);
         String warningTint = "";
-        if ((option == EnumOptionsMinimap.WATER_TRANSPARENCY || option == EnumOptionsMinimap.BLOCK_TRANSPARENCY || option == EnumOptionsMinimap.BIOME_TINT) && !this.options.multicore && this.options.getOptionBooleanValue(option)) {
+        if ((option == EnumOptionsMinimap.WATER_TRANSPARENCY || option == EnumOptionsMinimap.BLOCK_TRANSPARENCY || option == EnumOptionsMinimap.BIOME_TINT) && !this.options.multicore && this.options.getBooleanValue(option)) {
             warningTint = "§c";
         }
 

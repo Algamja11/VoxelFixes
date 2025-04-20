@@ -18,9 +18,9 @@ import net.minecraft.world.entity.LivingEntity;
 public class RadarSettingsManager implements ISubSettingsManager {
     private boolean somethingChanged;
     public boolean showRadar = true;
-    public int radarMode = 2;
+    public int radarMode = 1;
     public int showMobs = 1;
-    public boolean showHostiles;
+    public boolean showHostiles = true;
     public boolean showNeutrals;
     public boolean showMobNames = true;
     public boolean showHelmetsMobs = true;
@@ -38,7 +38,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
     public final HashSet<ResourceLocation> hiddenMobs = new HashSet<>();
 
     @Override
-    public void loadSettings(File settingsFile) {
+    public void loadAll(File settingsFile) {
         try {
             BufferedReader in = new BufferedReader(new FileReader(settingsFile));
 
@@ -70,18 +70,6 @@ public class RadarSettingsManager implements ISubSettingsManager {
 
     }
 
-    private void applyHiddenMobSettings(String hiddenMobs) {
-        String[] mobsToHide = hiddenMobs.split(",");
-
-        this.hiddenMobs.clear();
-        for (String s : mobsToHide) {
-            DataResult<ResourceLocation> location = ResourceLocation.read(s);
-            if (location.isSuccess()) {
-                this.hiddenMobs.add(location.getOrThrow());
-            }
-        }
-    }
-
     @Override
     public void saveAll(PrintWriter out) {
         out.println("Show Radar:" + this.showRadar);
@@ -106,20 +94,23 @@ public class RadarSettingsManager implements ISubSettingsManager {
     }
 
     @Override
-    public String getKeyText(EnumOptionsMinimap options) {
-        String s = I18n.get(options.getName()) + ": ";
-        if (options.isBoolean()) {
-            return this.getOptionBooleanValue(options) ? s + I18n.get("options.on") : s + I18n.get("options.off");
-        } else if (options.isList()) {
-            String state = this.getOptionListValue(options);
-            return s + state;
+    public String getKeyText(EnumOptionsMinimap option) {
+        String name = I18n.get(option.getName()) + ": ";
+        if (option.isBoolean()) {
+            return this.getBooleanValue(option) ? name + I18n.get("options.on") : name + I18n.get("options.off");
+        } else if (option.isList()) {
+            String state = this.getListValue(option);
+            return name + state;
+        } else if (option.isFloat()) {
+            return name + this.getFloatValue(option);
         } else {
-            return s + this.getOptionFloatValue(options);
+            return name;
         }
     }
 
-    public boolean getOptionBooleanValue(EnumOptionsMinimap par1EnumOptions) {
-        return switch (par1EnumOptions) {
+    @Override
+    public boolean getBooleanValue(EnumOptionsMinimap option) {
+        return switch (option) {
             case SHOW_RADAR -> this.showRadar;
             case SHOW_MOB_NAMES -> this.showMobNames;
             case SHOW_MOB_HELMETS -> this.showHelmetsMobs;
@@ -129,46 +120,51 @@ public class RadarSettingsManager implements ISubSettingsManager {
             case SHOW_FACING -> this.showFacing;
             case ICON_OUTLINES -> this.outlines;
             case ICON_FILTERING -> this.filtering;
-            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a boolean)");
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         };
     }
 
-    public String getOptionListValue(EnumOptionsMinimap par1EnumOptions) {
-        switch (par1EnumOptions) {
+    @Override
+    public String getListValue(EnumOptionsMinimap option) {
+        switch (option) {
             case RADAR_MODE -> {
-                if (this.radarMode == 2) {
+                if (this.radarMode == 1) {
+                    return I18n.get("options.voxelmap.radar.radarmode.simple");
+                } else if (this.radarMode == 2) {
                     return I18n.get("options.voxelmap.radar.radarmode.full");
                 }
-                return I18n.get("options.voxelmap.radar.radarmode.simple");
+
+                return I18n.get("voxelmap.ui.error");
             }
             case SHOW_MOBS -> {
                 if (this.showMobs == 0) {
-                    return I18n.get("options.voxelmap.radar.showmobs.hostiles");
+                    return I18n.get("options.off");
                 } else if (this.showMobs == 1) {
+                    return I18n.get("options.voxelmap.radar.showmobs.hostiles");
+                } else if (this.showMobs == 2) {
                     return I18n.get("options.voxelmap.radar.showmobs.neutrals");
-                } else  {
-                    if (this.showMobs == 2) {
-                        return I18n.get("options.voxelmap.radar.showmobs.both");
-                    }
-                    return "error";
+                } else if (this.showMobs == 3) {
+                    return I18n.get("options.voxelmap.radar.showmobs.both");
                 }
+
+                return I18n.get("voxelmap.ui.error");
             }
-            default ->
-                    throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a list value applicable to minimap)");
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         }
     }
 
     @Override
-    public void setOptionFloatValue(EnumOptionsMinimap options, float value) {
-        switch (options) {
-            case FONT_SIZE -> this.fontScale = (Math.round(value * 12.0F) / 12.0F * 1.5F) + 0.5F;
+    public float getFloatValue(EnumOptionsMinimap option) {
+        return switch (option) {
+            case FONT_SIZE -> this.fontScale;
 
-            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + options.getName() + ". (possibly not a list value applicable to minimap)");
-        }
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
+        };
     }
 
-    public void setOptionValue(EnumOptionsMinimap par1EnumOptions) {
-        switch (par1EnumOptions) {
+    @Override
+    public void setValue(EnumOptionsMinimap option) {
+        switch (option) {
             case SHOW_RADAR -> this.showRadar = !this.showRadar;
             case SHOW_MOB_NAMES -> this.showMobNames = !this.showMobNames;
             case SHOW_MOB_HELMETS -> this.showHelmetsMobs = !this.showHelmetsMobs;
@@ -187,24 +183,56 @@ public class RadarSettingsManager implements ISubSettingsManager {
             }
             case SHOW_MOBS -> {
                 ++this.showMobs;
-                if (this.showMobs > 2) {
+                if (this.showMobs > 3) {
                     this.showMobs = 0;
                 }
                 if (this.showMobs == 0) {
-                    this.showHostiles = true;
+                    this.showHostiles = false;
                     this.showNeutrals = false;
                 } else if (this.showMobs == 1) {
+                    this.showHostiles = true;
+                    this.showNeutrals = false;
+                } else if (this.showMobs == 2) {
                     this.showHostiles = false;
                     this.showNeutrals = true;
-                } else if (this.showMobs == 2) {
+                } else if (this.showMobs == 3) {
                     this.showHostiles = true;
                     this.showNeutrals = true;
                 }
             }
-            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName());
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         }
 
         this.somethingChanged = true;
+    }
+
+    @Override
+    public void setFloatValue(EnumOptionsMinimap option, float value) {
+        switch (option) {
+            case FONT_SIZE -> this.fontScale = (Math.round(value * 12.0F) / 12.0F * 1.5F) + 0.5F;
+
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
+        }
+    }
+
+    private void applyHiddenMobSettings(String hiddenMobs) {
+        String[] mobsToHide = hiddenMobs.split(",");
+
+        this.hiddenMobs.clear();
+        for (String s : mobsToHide) {
+            DataResult<ResourceLocation> location = ResourceLocation.read(s);
+            if (location.isSuccess()) {
+                this.hiddenMobs.add(location.getOrThrow());
+            }
+        }
+    }
+
+    public boolean isMobEnabled(LivingEntity entity) {
+        return isMobEnabled(entity.getType());
+    }
+
+    public boolean isMobEnabled(EntityType<?> type) {
+        return !hiddenMobs.contains(BuiltInRegistries.ENTITY_TYPE.getKey(type));
     }
 
     public boolean isChanged() {
@@ -214,22 +242,5 @@ public class RadarSettingsManager implements ISubSettingsManager {
         } else {
             return false;
         }
-    }
-
-    @Override
-    public float getOptionFloatValue(EnumOptionsMinimap options) {
-        return switch (options) {
-            case FONT_SIZE -> this.fontScale;
-
-            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + options.getName());
-        };
-    }
-
-    public boolean isMobEnabled(LivingEntity entity) {
-        return isMobEnabled(entity.getType());
-    }
-
-    public boolean isMobEnabled(EntityType<?> type) {
-        return !hiddenMobs.contains(BuiltInRegistries.ENTITY_TYPE.getKey(type));
     }
 }
