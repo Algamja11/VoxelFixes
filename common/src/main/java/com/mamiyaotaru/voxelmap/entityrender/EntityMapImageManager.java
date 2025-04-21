@@ -34,7 +34,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.AbstractEquineModel;
 import net.minecraft.client.model.CamelModel;
+import net.minecraft.client.model.ChickenModel;
 import net.minecraft.client.model.CodModel;
+import net.minecraft.client.model.ColdCowModel;
+import net.minecraft.client.model.CowModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.LavaSlimeModel;
 import net.minecraft.client.model.LlamaModel;
@@ -43,6 +46,7 @@ import net.minecraft.client.model.SlimeModel;
 import net.minecraft.client.model.TropicalFishModelA;
 import net.minecraft.client.model.TropicalFishModelB;
 import net.minecraft.client.model.WardenModel;
+import net.minecraft.client.model.WarmCowModel;
 import net.minecraft.client.model.WitchModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -309,6 +313,13 @@ public class EntityMapImageManager {
         if (model instanceof CodModel || model instanceof SalmonModel || model instanceof TropicalFishModelA || model instanceof TropicalFishModelB
                 || model instanceof SlimeModel || model instanceof LavaSlimeModel) {
             return new ModelPart[] { model.root() };
+        }
+
+        if (model instanceof ChickenModel chickenModel) {
+            ModelPart chickenBody = chickenModel.root().getChild("body");
+            chickenBody.y = 12.0F;
+            chickenBody.yScale = 6.0F / 8.0F;
+            return new ModelPart[] { chickenModel.head, chickenBody };
         }
 
         // horses
