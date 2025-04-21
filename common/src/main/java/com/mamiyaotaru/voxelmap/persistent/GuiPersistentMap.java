@@ -154,9 +154,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         BufferedImage skinImage = ImageUtils.createBufferedImageFromResourceLocation(VoxelConstants.getPlayer().getSkin().texture());
 
         if (skinImage == null) {
-            if (VoxelConstants.DEBUG) {
-                VoxelConstants.getLogger().warn("Got no player skin!");
-            }
+            VoxelConstants.debugWarn("Got no player skin!");
             return;
         }
 

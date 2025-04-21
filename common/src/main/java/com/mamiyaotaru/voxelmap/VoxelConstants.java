@@ -200,4 +200,16 @@ public final class VoxelConstants {
     public static void setPacketBridge(PacketBridge packetBridge) {
         VoxelConstants.packetBridge = packetBridge;
     }
+
+    public static void debugInfo(String string) {
+        if (VoxelConstants.DEBUG) {
+            VoxelConstants.getLogger().info(string);
+        }
+    }
+
+    public static void debugWarn(String string) {
+        if (VoxelConstants.DEBUG) {
+            VoxelConstants.getLogger().warn(string);
+        }
+    }
 }
