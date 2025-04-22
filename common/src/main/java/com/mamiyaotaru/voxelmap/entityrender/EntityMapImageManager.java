@@ -25,19 +25,20 @@ import com.mojang.math.Axis;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.model.AbstractEquineModel;
 import net.minecraft.client.model.CamelModel;
 import net.minecraft.client.model.ChickenModel;
 import net.minecraft.client.model.CodModel;
-import net.minecraft.client.model.ColdCowModel;
-import net.minecraft.client.model.CowModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.LavaSlimeModel;
 import net.minecraft.client.model.LlamaModel;
@@ -45,9 +46,6 @@ import net.minecraft.client.model.SalmonModel;
 import net.minecraft.client.model.SlimeModel;
 import net.minecraft.client.model.TropicalFishModelA;
 import net.minecraft.client.model.TropicalFishModelB;
-import net.minecraft.client.model.WardenModel;
-import net.minecraft.client.model.WarmCowModel;
-import net.minecraft.client.model.WitchModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
@@ -67,6 +65,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
@@ -88,6 +87,7 @@ public class EntityMapImageManager {
     private int imageCreationRequests;
     private int fulfilledImageCreationRequests;
     private final HashMap<EntityType<?>, EntityVariantDataFactory> variantDataFactories = new HashMap<>();
+    private final HashMap<String, Properties> iconPropertiesMap = new HashMap<>();
     private ConcurrentLinkedQueue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
 
     public EntityMapImageManager() {
@@ -112,7 +112,7 @@ public class EntityMapImageManager {
         addVariantDataFactory(new DefaultEntityVariantDataFactory(EntityType.BOGGED, ResourceLocation.withDefaultNamespace("textures/entity/skeleton/bogged_overlay.png")));
         addVariantDataFactory(new DefaultEntityVariantDataFactory(EntityType.DROWNED, ResourceLocation.withDefaultNamespace("textures/entity/zombie/drowned_outer_layer.png")));
         addVariantDataFactory(new DefaultEntityVariantDataFactory(EntityType.ENDERMAN, ResourceLocation.withDefaultNamespace("textures/entity/enderman/enderman_eyes.png")));
-        // addVariantDataFactory(new DefaultEntityVariantDataFactory(EntityType.TROPICAL_FISH, ResourceLocation.withDefaultNamespace("textures/entity/enderman/enderman_eyes.png")));
+//        addVariantDataFactory(new TropicalFishVariantDataFactory(EntityType.TROPICAL_FISH, null));
         addVariantDataFactory(new HorseVariantDataFactory(EntityType.HORSE));
         if (VoxelConstants.DEBUG) {
             BuiltInRegistries.ENTITY_TYPE.forEach(t -> {
@@ -154,15 +154,19 @@ public class EntityMapImageManager {
     public Sprite requestImageForMob(Entity entity, int size, boolean addBorder) {
         EntityRenderer<?, ?> baseRenderer = minecraft.getEntityRenderDispatcher().getRenderer(entity);
         EntityVariantData variant = null;
+        EntityRenderState renderState = null;
+
         if (entity instanceof AbstractClientPlayer player) {
             variant = new DefaultEntityVariantData(entity.getType(), player.getSkin().texture(), null, size, addBorder);
         } else if (entity instanceof LivingEntity && baseRenderer instanceof LivingEntityRenderer renderer) {
-            EntityRenderState renderState = renderer.createRenderState(entity, 0.5f);
+            renderState = renderer.createRenderState(entity, 0.5f);
             variant = getVariantData(entity, renderer, renderState, size, addBorder);
         }
+
         if (variant == null) {
             return null;
         }
+
         Sprite existing = textureAtlas.getAtlasSpriteIncludingYetToBeStitched(variant);
         if (existing != null && existing != textureAtlas.getMissingImage()) {
             VoxelConstants.debugInfo("EntityMapImageManager: Existing type " + entity.getType().getDescriptionId());
@@ -170,20 +174,28 @@ public class EntityMapImageManager {
         }
         VoxelConstants.debugInfo("EntityMapImageManager: Rendering Mob of type " + entity.getType().getDescriptionId());
 
+        Properties properties = new Properties();
+        String filePath = ("textures/icons/" + entity.getClass().getSimpleName() + ".properties").toLowerCase();
+        Optional<Resource> resource = minecraft.getResourceManager().getResource(ResourceLocation.parse(filePath));
+        if (resource.isPresent()) {
+            try (InputStream inputStream = resource.get().open()) {
+                properties.load(inputStream);
+            } catch (Exception ignored) {
+            }
+        }
+        float iconScale = Float.parseFloat(properties.getProperty("scale", "1.0"));
+
         Sprite sprite = textureAtlas.registerEmptyIcon(variant);
         if (entity instanceof AbstractClientPlayer player) {
             BufferedImage playerImage = getPlayerIcon(player, size, addBorder);
-            postProcessRenderedMobImage(entity, sprite, null, playerImage);
+            postProcessRenderedMobImage(entity, sprite, null, playerImage, 1.0F);
             return sprite;
         }
-
-        ResourceLocation resourceLocation = variant.getPrimaryTexture();
-        ResourceLocation resourceLocation2 = variant.getSecondaryTexture();
 
         RenderPipeline renderPipeline = GLUtils.ENTITY_ICON;
         BufferBuilder bufferBuilder = fboTessellator.begin(Mode.QUADS, renderPipeline.getVertexFormat());
 
-        float scale = 64;
+        float scale = 64.0F;
 
         PoseStack pose = new PoseStack();
         pose.pushPose();
@@ -209,17 +221,20 @@ public class EntityMapImageManager {
         model.resetPose();
         
         for (ModelPart part : getPartToRender(model)) {
-            part.xRot = 0;
-            part.yRot = 0;
-            part.zRot = 0;
-            part.render(pose, bufferBuilder, 15, 0, 0xffffffff); // light, overlay, color //TODO set model tint
+            part.xRot = 0.0F;
+            part.yRot = 0.0F;
+            part.zRot = 0.0F;
+            part.render(pose, bufferBuilder, 15, 0, 0xFFFFFFFF); // light, overlay, color //TODO set model tint
         }
 
         if (baseRenderer instanceof SlimeRenderer slimeRenderer) {
             SlimeOuterLayer slimeOuter = (SlimeOuterLayer) slimeRenderer.layers.getFirst();
             slimeOuter.model.resetPose();
-            slimeOuter.model.root().render(pose, bufferBuilder, 15, 0, 0xffffffff); // light, overlay, color
+            slimeOuter.model.root().render(pose, bufferBuilder, 15, 0, 0xFFFFFFFF); // light, overlay, color
         }
+
+        ResourceLocation resourceLocation = variant.getPrimaryTexture();
+        ResourceLocation resourceLocation2 = variant.getSecondaryTexture();
 
         AbstractTexture texture = minecraft.getTextureManager().getTexture(resourceLocation);
         AbstractTexture texture2 = resourceLocation2 == null ? null : minecraft.getTextureManager().getTexture(resourceLocation2);
@@ -259,21 +274,16 @@ public class EntityMapImageManager {
         }
         imageCreationRequests++;
         GLUtils.readTextureContentsToBufferedImage(fboTexture, image2 -> {
-            postProcessRenderedMobImage(entity, sprite, model, image2);
+            postProcessRenderedMobImage(entity, sprite, model, image2, iconScale);
         });
 
         return sprite;
     }
 
-    private void postProcessRenderedMobImage(Entity entity, Sprite sprite, EntityModel model, BufferedImage image2) {
+    private void postProcessRenderedMobImage(Entity entity, Sprite sprite, EntityModel model, BufferedImage image2, float scale) {
         Util.backgroundExecutor().execute(() -> {
             BufferedImage image = image2;
             image = ImageUtils.flipHorizontal(image);
-            // try {
-            // ImageIO.write(image, "png", new File(entity.getType().getDescriptionId() + ".png"));
-            // } catch (IOException e) {
-            // e.printStackTrace();
-            // }
             if (model instanceof CamelModel) {
                 Graphics2D g = image.createGraphics();
                 g.setComposite(AlphaComposite.Clear);
@@ -285,11 +295,7 @@ public class EntityMapImageManager {
                 g.fillRect(0, 248, image.getWidth(), image.getHeight());
             }
             image = ImageUtils.trim(image);
-            int maxSize = Math.max(image.getHeight(), image.getWidth());
-            int targetSize = model instanceof AbstractEquineModel<?> || model instanceof WitchModel || model instanceof WardenModel ? 50 : 32;
-            if (maxSize > 0 && maxSize != targetSize) {
-                image = ImageUtils.scaleImage(image, (float) targetSize / maxSize);
-            }
+            image = ImageUtils.scaleImage(image, scale);
             image = ImageUtils.fillOutline(ImageUtils.pad(image), true, 2);
 
             BufferedImage image3 = image;

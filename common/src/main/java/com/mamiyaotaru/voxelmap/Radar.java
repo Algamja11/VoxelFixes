@@ -11,6 +11,8 @@ import com.mamiyaotaru.voxelmap.util.TextUtils;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.ArrayList;
+import java.util.Properties;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.RemotePlayer;
@@ -259,7 +261,7 @@ public class Radar implements IRadar {
                     // }
                     // }
 
-                    int imageSize = (int) (contact.icon.getIconWidth() / 8.0F);
+                    float imageSize = contact.icon.getIconWidth() / 8.0F;
                     contact.icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - imageSize / 2, y + yOffset - imageSize / 2, imageSize, imageSize, color);
 
                     if (contact.name != null && ((this.options.showPlayerNames && contact.category == MobCategory.PLAYER) || (this.options.showMobNames && contact.category != MobCategory.PLAYER && contact.entity.hasCustomName()))) {
