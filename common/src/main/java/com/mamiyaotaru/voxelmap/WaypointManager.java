@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,8 +48,10 @@ import net.minecraft.client.User;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -101,19 +104,15 @@ public class WaypointManager {
                 }
             }
 
-            Sprite markerIcon = textureAtlas.registerIconForResource(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/waypoints/marker.png"));
-            Sprite markerIconSmall = textureAtlas.registerIconForResource(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/waypoints/markersmall.png"));
+            ResourceLocation markerResource = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/waypoints/marker.png");
+            images.add(markerResource);
+
+            images.sort(Comparator.comparing(ResourceLocation::toString));
 
             for (ResourceLocation resourceLocation : images) {
                 Sprite icon = textureAtlas.registerIconForResource(resourceLocation);
                 String name = resourceLocation.toString();
-                if (name.toLowerCase().contains("waypoints/waypoint") && !name.toLowerCase().contains("small")) {
-                    textureAtlas.registerMaskedIcon(name.replace(".png", "Small.png"), icon);
-                    textureAtlas.registerMaskedIcon(name.replace("waypoints/waypoint", "waypoints/marker"), markerIcon);
-                    textureAtlas.registerMaskedIcon(name.replace("waypoints/waypoint", "waypoints/marker").replace(".png", "Small.png"), markerIconSmall);
-                } else if (name.toLowerCase().contains("waypoints/marker") && !name.toLowerCase().contains("small")) {
-                    textureAtlas.registerMaskedIcon(name.replace(".png", "Small.png"), icon);
-                }
+                textureAtlas.registerMaskedIcon(name, icon);
             }
 
         };
@@ -122,7 +121,7 @@ public class WaypointManager {
 
         for (ResourceLocation resourceLocation : images) {
             String name = resourceLocation.toString();
-            if (name.toLowerCase().contains("waypoints/waypoint") && !name.toLowerCase().contains("small")) {
+            if (name.toLowerCase().contains("waypoints/waypoint")) {
                 this.textureAtlasChooser.registerIconForResource(resourceLocation);
             }
         }
@@ -234,26 +233,28 @@ public class WaypointManager {
         HashSet<Waypoint> toDel = new HashSet<>();
 
         for (Waypoint pt : this.wayPts) {
-            if (pt.name.equals("Latest Death")) {
-                pt.name = "Previous Death";
-            }
+            if (pt.isDeathpoint) {
+                if (pt.name.equals("Latest Death")) {
+                    pt.name = "Previous Death";
+                }
 
-            if (pt.name.startsWith("Previous Death")) {
-                if (this.options.deathpoints == 2) {
-                    int num = 0;
+                if (pt.name.startsWith("Previous Death")) {
+                    if (this.options.deathpoints == 2) {
+                        int num = 0;
 
-                    try {
-                        if (pt.name.length() > 15) {
-                            num = Integer.parseInt(pt.name.substring(15));
-                        }
-                    } catch (NumberFormatException ignored) {}
+                        try {
+                            if (pt.name.length() > 15) {
+                                num = Integer.parseInt(pt.name.substring(15));
+                            }
+                        } catch (NumberFormatException ignored) {}
 
-                    pt.red -= (pt.red - 0.5F) / 8.0F;
-                    pt.green -= (pt.green - 0.5F) / 8.0F;
-                    pt.blue -= (pt.blue - 0.5F) / 8.0F;
-                    pt.name = "Previous Death " + (num + 1);
-                } else {
-                    toDel.add(pt);
+                        pt.red -= (pt.red - 0.5F) / 8.0F;
+                        pt.green -= (pt.green - 0.5F) / 8.0F;
+                        pt.blue -= (pt.blue - 0.5F) / 8.0F;
+                        pt.name = "Previous Death " + (num + 1);
+                    } else {
+                        toDel.add(pt);
+                    }
                 }
             }
         }
@@ -268,7 +269,8 @@ public class WaypointManager {
             TreeSet<DimensionContainer> dimensions = new TreeSet<>();
             dimensions.add(VoxelConstants.getVoxelMapInstance().getDimensionManager().getDimensionContainerByWorld(VoxelConstants.getPlayer().level()));
             double dimensionScale = VoxelConstants.getPlayer().level().dimensionType().coordinateScale();
-            this.addWaypoint(new Waypoint("Latest Death", (int) (GameVariableAccessShim.xCoord() * dimensionScale), (int) (GameVariableAccessShim.zCoord() * dimensionScale), GameVariableAccessShim.yCoord() - 1, true, 1.0F, 1.0F, 1.0F, "Skull", this.getCurrentSubworldDescriptor(false), dimensions));
+            this.addWaypoint(new Waypoint("Latest Death", (int) (GameVariableAccessShim.xCoord() * dimensionScale), (int) (GameVariableAccessShim.zCoord() * dimensionScale), GameVariableAccessShim.yCoord() - 1,
+                    true, 1.0F, 1.0F, 1.0F, true, "Skull", this.getCurrentSubworldDescriptor(false), dimensions));
         }
 
     }
@@ -513,7 +515,7 @@ public class WaypointManager {
                         dimensionsString.append(VoxelConstants.getVoxelMapInstance().getDimensionManager().getDimensionContainerByResourceLocation(BuiltinDimensionTypes.OVERWORLD.location()).getStorageName());
                     }
 
-                    out.println("name:" + TextUtils.scrubName(pt.name) + ",x:" + pt.x + ",z:" + pt.z + ",y:" + pt.y + ",enabled:" + pt.enabled + ",red:" + pt.red + ",green:" + pt.green + ",blue:" + pt.blue + ",suffix:" + pt.imageSuffix + ",world:" + TextUtils.scrubName(pt.world) + ",dimensions:" + dimensionsString);
+                    out.println("name:" + TextUtils.scrubName(pt.name) + ",x:" + pt.x + ",z:" + pt.z + ",y:" + pt.y + ",enabled:" + pt.enabled + ",red:" + pt.red + ",green:" + pt.green + ",blue:" + pt.blue + ",deathpoint:" + pt.isDeathpoint + ",suffix:" + pt.imageSuffix + ",world:" + TextUtils.scrubName(pt.world) + ",dimensions:" + dimensionsString);
                 }
             }
 
@@ -548,7 +550,7 @@ public class WaypointManager {
             worldNameStandard = TextUtils.scrubNameFile(worldNameStandard);
             loaded = this.loadWaypointsExtensible(worldNameStandard);
             if (!loaded) {
-                MessageUtils.chatInfo("§ENo waypoints exist for this world/server.");
+                MessageUtils.chatInfo("§E" + I18n.get("voxelmap.waypoints.nowaypointsexist"));
             }
         }
 
@@ -629,6 +631,7 @@ public class WaypointManager {
                                 float red = 0.5F;
                                 float green = 0.0F;
                                 float blue = 0.0F;
+                                boolean deathpoint = false;
                                 String suffix = "";
                                 String world = "";
                                 TreeSet<DimensionContainer> dimensions = new TreeSet<>();
@@ -647,6 +650,7 @@ public class WaypointManager {
                                             case "red" -> red = Float.parseFloat(value);
                                             case "green" -> green = Float.parseFloat(value);
                                             case "blue" -> blue = Float.parseFloat(value);
+                                            case "deathpoint" -> deathpoint = Boolean.parseBoolean(value);
                                             case "suffix" -> suffix = value;
                                             case "world" -> world = TextUtils.descrubName(value);
                                             case "dimensions" -> {
@@ -664,7 +668,7 @@ public class WaypointManager {
                                 }
 
                                 if (!name.isEmpty()) {
-                                    this.loadWaypoint(name, x, z, y, enabled, red, green, blue, suffix, world, dimensions);
+                                    this.loadWaypoint(name, x, z, y, enabled, red, green, blue, deathpoint, suffix, world, dimensions);
                                     if (!world.isEmpty()) {
                                         this.knownSubworldNames.add(TextUtils.descrubName(world));
                                     }
@@ -688,8 +692,8 @@ public class WaypointManager {
         }
     }
 
-    private void loadWaypoint(String name, int x, int z, int y, boolean enabled, float red, float green, float blue, String suffix, String world, TreeSet<DimensionContainer> dimensions) {
-        Waypoint newWaypoint = new Waypoint(name, x, z, y, enabled, red, green, blue, suffix, world, dimensions);
+    private void loadWaypoint(String name, int x, int z, int y, boolean enabled, float red, float green, float blue, boolean deathpoint, String suffix, String world, TreeSet<DimensionContainer> dimensions) {
+        Waypoint newWaypoint = new Waypoint(name, x, z, y, enabled, red, green, blue, deathpoint, suffix, world, dimensions);
         if (!this.wayPts.contains(newWaypoint)) {
             this.wayPts.add(newWaypoint);
         }

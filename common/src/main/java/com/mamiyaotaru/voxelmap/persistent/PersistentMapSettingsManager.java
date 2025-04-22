@@ -24,7 +24,7 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
     public boolean showWaypointNames = true;
 
     @Override
-    public void loadSettings(File settingsFile) {
+    public void loadAll(File settingsFile) {
         try {
             BufferedReader in = new BufferedReader(new FileReader(settingsFile));
 
@@ -70,92 +70,100 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
     }
 
     @Override
-    public String getKeyText(EnumOptionsMinimap options) {
-        String s = I18n.get(options.getName()) + ": ";
-        if (options.isFloat()) {
-            float f = this.getOptionFloatValue(options);
-            if (options == EnumOptionsMinimap.MINZOOM) {
-                return s + (float) Math.pow(2.0, f) + "x";
-            }
-
-            if (options == EnumOptionsMinimap.MAXZOOM) {
-                return s + (float) Math.pow(2.0, f) + "x";
-            }
-
-            if (options == EnumOptionsMinimap.CACHESIZE) {
-                return s + (int) f;
-            }
-        }
-
-        if (options.isBoolean()) {
-            boolean flag = this.getOptionBooleanValue(options);
-            return flag ? s + I18n.get("options.on") : s + I18n.get("options.off");
+    public String getKeyText(EnumOptionsMinimap option) {
+        String name = I18n.get(option.getName()) + ": ";
+        if (option.isBoolean()) {
+            boolean flag = this.getBooleanValue(option);
+            return flag ? name + I18n.get("options.on") : name + I18n.get("options.off");
+        } else if (option.isList()) {
+            String state = this.getListValue(option);
+            return name + state;
+        } else if (option.isFloat()) {
+            float value = this.getFloatValue(option);
+            return switch (option) {
+                case MIN_ZOOM, MAX_ZOOM ->  name + (float) Math.pow(2.0, value) + "x";
+                case CACHE_SIZE -> name + (int) value;
+                default -> name + value;
+            };
         } else {
-            return s;
+            return name;
         }
     }
 
     @Override
-    public float getOptionFloatValue(EnumOptionsMinimap options) {
-        if (options == EnumOptionsMinimap.MINZOOM) {
-            return this.minZoomPower;
-        } else if (options == EnumOptionsMinimap.MAXZOOM) {
-            return this.maxZoomPower;
-        } else {
-            return options == EnumOptionsMinimap.CACHESIZE ? this.cacheSize : 0.0F;
-        }
-    }
-
-    public boolean getOptionBooleanValue(EnumOptionsMinimap par1EnumOptions) {
-        return switch (par1EnumOptions) {
-            case SHOWWAYPOINTS -> this.showWaypoints && VoxelMap.mapOptions.waypointsAllowed;
-            case SHOWWAYPOINTNAMES -> this.showWaypointNames && VoxelMap.mapOptions.waypointsAllowed;
-            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName() + ". (possibly not a boolean)");
+    public boolean getBooleanValue(EnumOptionsMinimap option) {
+        return switch (option) {
+            case SHOW_WAYPOINTS -> this.showWaypoints && VoxelMap.mapOptions.waypointsAllowed;
+            case SHOW_WAYPOINT_NAMES -> this.showWaypointNames && VoxelMap.mapOptions.waypointsAllowed;
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         };
     }
 
     @Override
-    public void setOptionFloatValue(EnumOptionsMinimap options, float value) {
-        if (options == EnumOptionsMinimap.MINZOOM) {
-            this.minZoomPower = ((int) (value * 8.0F) - 3);
-            this.minZoom = (float) Math.pow(2.0, this.minZoomPower);
-            if (this.maxZoom < this.minZoom) {
-                this.maxZoom = this.minZoom;
-                this.maxZoomPower = this.minZoomPower;
-            }
-        } else if (options == EnumOptionsMinimap.MAXZOOM) {
-            this.maxZoomPower = ((int) (value * 8.0F) - 3);
-            this.maxZoom = (float) Math.pow(2.0, this.maxZoomPower);
-            if (this.minZoom > this.maxZoom) {
-                this.minZoom = this.maxZoom;
-                this.minZoomPower = this.maxZoomPower;
-            }
-        } else if (options == EnumOptionsMinimap.CACHESIZE) {
-            this.cacheSize = (int) (value * 5000.0F);
-            this.cacheSize = Math.max(this.cacheSize, 30);
+    public String getListValue(EnumOptionsMinimap option) {
+        switch (option) {
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
+        }
+    }
 
-            for (int minCacheSize = (int) ((1600.0F / this.minZoom / 256.0F + 4.0F) * (1100.0F / this.minZoom / 256.0F + 3.0F) * 1.35F); this.cacheSize < minCacheSize; minCacheSize = (int) ((1600.0F / this.minZoom / 256.0F + 4.0F) * (1100.0F / this.minZoom / 256.0F + 3.0F) * 1.35F)) {
-                ++this.minZoomPower;
+    @Override
+    public float getFloatValue(EnumOptionsMinimap option) {
+        return switch (option) {
+            case MIN_ZOOM -> this.minZoomPower;
+            case MAX_ZOOM -> this.maxZoomPower;
+            case CACHE_SIZE -> this.cacheSize;
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
+        };
+    }
+
+    @Override
+    public void setValue(EnumOptionsMinimap option) {
+        switch (option) {
+            case SHOW_WAYPOINTS -> this.showWaypoints = !this.showWaypoints;
+            case SHOW_WAYPOINT_NAMES -> this.showWaypointNames = !this.showWaypointNames;
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
+        }
+
+    }
+
+    @Override
+    public void setFloatValue(EnumOptionsMinimap option, float value) {
+        switch (option) {
+            case MIN_ZOOM -> {
+                this.minZoomPower = ((int) (value * 8.0F) - 3);
                 this.minZoom = (float) Math.pow(2.0, this.minZoomPower);
+                if (this.maxZoom < this.minZoom) {
+                    this.maxZoom = this.minZoom;
+                    this.maxZoomPower = this.minZoomPower;
+                }
             }
+            case MAX_ZOOM -> {
+                this.maxZoomPower = ((int) (value * 8.0F) - 3);
+                this.maxZoom = (float) Math.pow(2.0, this.maxZoomPower);
+                if (this.minZoom > this.maxZoom) {
+                    this.minZoom = this.maxZoom;
+                    this.minZoomPower = this.maxZoomPower;
+                }
+            }
+            case CACHE_SIZE -> {
+                this.cacheSize = (int) (value * 5000.0F);
+                this.cacheSize = Math.max(this.cacheSize, 30);
 
-            if (this.maxZoom < this.minZoom) {
-                this.maxZoom = this.minZoom;
-                this.maxZoomPower = this.minZoomPower;
+                for (int minCacheSize = (int) ((1600.0F / this.minZoom / 256.0F + 4.0F) * (1100.0F / this.minZoom / 256.0F + 3.0F) * 1.35F); this.cacheSize < minCacheSize; minCacheSize = (int) ((1600.0F / this.minZoom / 256.0F + 4.0F) * (1100.0F / this.minZoom / 256.0F + 3.0F) * 1.35F)) {
+                    ++this.minZoomPower;
+                    this.minZoom = (float) Math.pow(2.0, this.minZoomPower);
+                }
+
+                if (this.maxZoom < this.minZoom) {
+                    this.maxZoom = this.minZoom;
+                    this.maxZoomPower = this.minZoomPower;
+                }
             }
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         }
 
         this.bindZoom();
         this.bindCacheSize();
-    }
-
-    public void setOptionValue(EnumOptionsMinimap par1EnumOptions) {
-        switch (par1EnumOptions) {
-            case SHOWWAYPOINTS -> this.showWaypoints = !this.showWaypoints;
-            case SHOWWAYPOINTNAMES -> this.showWaypointNames = !this.showWaypointNames;
-            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + par1EnumOptions.getName());
-        }
-
     }
 
     private void bindCacheSize() {

@@ -23,7 +23,6 @@ import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import org.joml.Matrix4fStack;
 
 public final class VoxelConstants {
     private static final Logger LOGGER = LogManager.getLogger("VoxelMap");
@@ -173,7 +172,7 @@ public final class VoxelConstants {
 
     public static int moveScoreboard(int bottomX, int entriesHeight) {
         double unscaledHeight = Map.getMinTablistOffset(); // / scaleFactor;
-        if (VoxelMap.mapOptions.hide || !VoxelMap.mapOptions.minimapAllowed || VoxelMap.mapOptions.mapCorner != 1 || !VoxelMap.mapOptions.moveScoreBoardDown || !Double.isFinite(unscaledHeight)) {
+        if (VoxelMap.mapOptions.hide || !VoxelMap.mapOptions.minimapAllowed || VoxelMap.mapOptions.mapCorner != 1 || !VoxelMap.mapOptions.moveScoreboardBelowMap || !Double.isFinite(unscaledHeight)) {
             return bottomX;
         }
         double scaleFactor = Minecraft.getInstance().getWindow().getGuiScale(); // 1x 2x 3x, ...
@@ -202,12 +201,24 @@ public final class VoxelConstants {
     public static void setPacketBridge(PacketBridge packetBridge) {
         VoxelConstants.packetBridge = packetBridge;
     }
-
+  
     public static void setModApiBride(ModApiBridge modApiBridge) {
         VoxelConstants.modApiBridge = modApiBridge;
     }
 
     public static ModApiBridge getModApiBridge() {
         return modApiBridge;
+    }
+  
+    public static void debugInfo(String string) {
+        if (VoxelConstants.DEBUG) {
+            VoxelConstants.getLogger().info(string);
+        }
+    }
+
+    public static void debugWarn(String string) {
+        if (VoxelConstants.DEBUG) {
+            VoxelConstants.getLogger().warn(string);
+        }
     }
 }
