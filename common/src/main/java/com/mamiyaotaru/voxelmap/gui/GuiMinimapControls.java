@@ -11,19 +11,17 @@ import net.minecraft.network.chat.Component;
 
 public class GuiMinimapControls extends GuiScreenMinimap {
     protected String screenTitle = "Controls";
-    private final MapSettingsManager options;
     private GuiButtonRowKeys keymapList;
 
     public GuiMinimapControls(Screen par1GuiScreen) {
         this.parentScreen = par1GuiScreen;
-        this.options = VoxelConstants.getVoxelMapInstance().getMapOptions();
     }
 
     public void init() {
         this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 - 100, this.getHeight() - 28, 200, 20).build());
         this.screenTitle = I18n.get("controls.voxelmap.title");
 
-        this.keymapList = new GuiButtonRowKeys(this, options);
+        this.keymapList = new GuiButtonRowKeys(this);
         this.addRenderableWidget(this.keymapList);
     }
 
@@ -36,11 +34,11 @@ public class GuiMinimapControls extends GuiScreenMinimap {
         }
     }
 
-    public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        this.renderDefaultBackground(drawContext);
-        drawContext.drawCenteredString(this.getFontRenderer(), I18n.get("controls.voxelmap.unbind1"), this.getWidth() / 2, this.getHeight() - 64, 16777215);
-        drawContext.drawCenteredString(this.getFontRenderer(), I18n.get("controls.voxelmap.unbind2"), this.getWidth() / 2, this.getHeight() - 48, 16777215);
-        drawContext.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
-        super.render(drawContext, mouseX, mouseY, delta);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        this.renderDefaultBackground(guiGraphics);
+        guiGraphics.drawCenteredString(this.getFontRenderer(), I18n.get("controls.voxelmap.unbind1"), this.getWidth() / 2, this.getHeight() - 64, 16777215);
+        guiGraphics.drawCenteredString(this.getFontRenderer(), I18n.get("controls.voxelmap.unbind2"), this.getWidth() / 2, this.getHeight() - 48, 16777215);
+        guiGraphics.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
+        super.render(guiGraphics, mouseX, mouseY, delta);
     }
 }

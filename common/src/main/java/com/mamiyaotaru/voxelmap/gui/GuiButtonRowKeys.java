@@ -15,6 +15,7 @@ import net.minecraft.network.chat.MutableComponent;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.RowItem> {
@@ -23,10 +24,10 @@ public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.Row
     private KeyMapping keyForEdit;
     private final ArrayList<KeyMapping> duplicateKeys = new ArrayList<>();
 
-    public GuiButtonRowKeys(GuiMinimapControls parentScreen, MapSettingsManager options) {
+    public GuiButtonRowKeys(GuiMinimapControls parentScreen) {
         super(VoxelConstants.getMinecraft(), parentScreen.getWidth(), parentScreen.getHeight() - 114, 40, 28);
         this.parentGui = parentScreen;
-        this.options = options;
+        this.options = VoxelConstants.getVoxelMapInstance().getMapOptions();
         ArrayList<RowItem> keyMappings = new ArrayList<>();
         for (int i = 0; i < this.options.keyBindings.length; ++i) {
             keyMappings.add(new RowItem(this.parentGui, this.buildButton(i, false), this.buildButton(i, true), this.options.keyBindings[i]));
@@ -52,11 +53,12 @@ public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.Row
         KeyMapping key = this.options.keyBindings[index];
         this.options.setKeyBinding(key, key.getDefaultKey());
         this.checkDuplicateKeys();
+        KeyMapping.resetMapping();
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (this.keyEditing()) {
-            this.options.setKeyBinding(keyForEdit, InputConstants.Type.MOUSE.getOrCreate(button));
+            this.options.setKeyBinding(this.keyForEdit, InputConstants.Type.MOUSE.getOrCreate(button));
             this.keyForEdit = null;
             this.checkDuplicateKeys();
             KeyMapping.resetMapping();
@@ -68,13 +70,13 @@ public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.Row
 
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (this.keyEditing()) {
-            boolean isMenuKey = this.keyForEdit.same(this.options.keyBindMenu);
             if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                boolean isMenuKey = this.keyForEdit.same(this.options.keyBindMenu);
                 if (!isMenuKey) {
-                    this.options.setKeyBinding(keyForEdit, InputConstants.UNKNOWN);
+                    this.options.setKeyBinding(this.keyForEdit, InputConstants.UNKNOWN);
                 }
             } else {
-                this.options.setKeyBinding(keyForEdit, InputConstants.getKey(keyCode, scanCode));
+                this.options.setKeyBinding(this.keyForEdit, InputConstants.getKey(keyCode, scanCode));
             }
             this.keyForEdit = null;
             this.checkDuplicateKeys();
@@ -88,10 +90,11 @@ public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.Row
     private void checkDuplicateKeys() {
         this.duplicateKeys.clear();
         for (KeyMapping key : this.options.keyBindings) {
-            for (KeyMapping compareKey : VoxelConstants.getMinecraft().options.keyMappings) {
-                if (key != compareKey && key.same(compareKey)) {
-                    this.duplicateKeys.add(key);
-                }
+            boolean isDuplicate = Arrays.stream(minecraft.options.keyMappings)
+                    .anyMatch(compare -> key != compare && key.same(compare));
+
+            if (isDuplicate) {
+                this.duplicateKeys.add(key);
             }
         }
     }
@@ -103,7 +106,6 @@ public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.Row
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-
     }
 
     public class RowItem extends AbstractSelectionList.Entry<RowItem> {
@@ -120,9 +122,9 @@ public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.Row
         }
 
         @Override
-        public void render(GuiGraphics drawContext, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float ticks) {
+        public void render(GuiGraphics guiGraphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float ticks) {
             if (this.button != null && this.buttonReset != null) {
-                drawContext.drawString(this.parentGui.getFontRenderer(), I18n.get(this.keyMapping.getName()), x + 80, y + 9, 16777215);
+                guiGraphics.drawString(this.parentGui.getFontRenderer(), I18n.get(this.keyMapping.getName()), x + 80, y + 9, 16777215);
 
                 this.button.setX(x);
                 this.button.setY(y + 2);
@@ -133,11 +135,11 @@ public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.Row
                     keyText.withStyle(ChatFormatting.RED);
                 }
                 this.button.setMessage(keyText);
-                this.button.render(drawContext, mouseX, mouseY, ticks);
+                this.button.render(guiGraphics, mouseX, mouseY, ticks);
 
                 this.buttonReset.setX(x + width - 50);
                 this.buttonReset.setY(y + 2);
-                this.buttonReset.render(drawContext, mouseX, mouseY, ticks);
+                this.buttonReset.render(guiGraphics, mouseX, mouseY, ticks);
             }
         }
 

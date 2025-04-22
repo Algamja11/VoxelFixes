@@ -21,8 +21,8 @@ public class MixinRenderPipelines {
             IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_BEAM_PIPELINE, IrisProgram.BASIC);
             IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
             IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_NO_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_PIPELINE, IrisProgram.BASIC);
-            //IrisApi.getInstance().assignPipeline(GLUtils.ENTITY_ICON, IrisProgram.TEXTURED);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
         }
     }
 }
