@@ -832,8 +832,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         int wayY = (int) ((ptZ - this.mapCenterZ) * this.mapToGui);
         float locate = (float) Math.toDegrees(Math.atan2(wayX, wayY));
 
-        int rangeX = this.width / 2 - 4;
-        int rangeY = this.height / 2 - 32 - 4;
+        float rangeX = this.width / 2.0F - 4.0F;
+        float rangeY = this.height / 2.0F - 32.0F - 4.0F;
         boolean far = Math.abs(wayX) > rangeX || Math.abs(wayY) > rangeY;
         if (far) {
             rangeX *= this.guiToMap;
@@ -867,7 +867,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 poseStack.scale(this.guiToMap, this.guiToMap, 1.0F);
                 if (!uprightIcon) {
                     poseStack.translate(ptX * this.mapToGui, ptZ * this.mapToGui, 0.0F);
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(-locate - 180.0F));
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F - locate));
                     poseStack.translate(-ptX * this.mapToGui, -ptZ * this.mapToGui, 0.0F);
                 }
                 icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, ptX * this.mapToGui - 8, ptZ * this.mapToGui - 8, 16, 16, color);
