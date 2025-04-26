@@ -91,12 +91,7 @@ public class EntityMapImageManager {
     private ConcurrentLinkedQueue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
 
     public EntityMapImageManager() {
-        this.textureAtlas = new TextureAtlas("mobsmap", resourceTextureAtlasMarker);
-        this.textureAtlas.reset();
-        this.textureAtlas.registerIconForBufferedImage("hostile", ImageUtils.loadImage(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/radar/hostile.png"), 0, 0, 16, 16, 16, 16));
-        this.textureAtlas.registerIconForBufferedImage("neutral", ImageUtils.loadImage(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/radar/neutral.png"), 0, 0, 16, 16, 16, 16));
-        this.textureAtlas.registerIconForBufferedImage("tame", ImageUtils.loadImage(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/radar/tame.png"), 0, 0, 16, 16, 16, 16));
-        this.textureAtlas.stitch();
+        this.textureAtlas = new TextureAtlas("mob_images", resourceTextureAtlasMarker);
 
         final int fboTextureSize = 512;
         DynamicTexture fboTexture = new DynamicTexture("voxelmap-radarfbotexture", fboTextureSize, fboTextureSize, true);
@@ -108,12 +103,20 @@ public class EntityMapImageManager {
 
     public void reset() {
         VoxelConstants.debugInfo("EntityMapImageManager: Resetting");
+
+        textureAtlas.reset();
+        textureAtlas.registerIconForBufferedImage("hostile", ImageUtils.loadImage(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/radar/hostile.png"), 0, 0, 16, 16, 16, 16));
+        textureAtlas.registerIconForBufferedImage("neutral", ImageUtils.loadImage(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/radar/neutral.png"), 0, 0, 16, 16, 16, 16));
+        textureAtlas.registerIconForBufferedImage("tame", ImageUtils.loadImage(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/radar/tame.png"), 0, 0, 16, 16, 16, 16));
+        textureAtlas.stitch();
+
         variantDataFactories.clear();
         addVariantDataFactory(new DefaultEntityVariantDataFactory(EntityType.BOGGED, ResourceLocation.withDefaultNamespace("textures/entity/skeleton/bogged_overlay.png")));
         addVariantDataFactory(new DefaultEntityVariantDataFactory(EntityType.DROWNED, ResourceLocation.withDefaultNamespace("textures/entity/zombie/drowned_outer_layer.png")));
         addVariantDataFactory(new DefaultEntityVariantDataFactory(EntityType.ENDERMAN, ResourceLocation.withDefaultNamespace("textures/entity/enderman/enderman_eyes.png")));
 //        addVariantDataFactory(new TropicalFishVariantDataFactory(EntityType.TROPICAL_FISH, null));
         addVariantDataFactory(new HorseVariantDataFactory(EntityType.HORSE));
+
         if (VoxelConstants.DEBUG) {
             BuiltInRegistries.ENTITY_TYPE.forEach(t -> {
                 requestImageForMobType(t, 32, true);
