@@ -81,8 +81,8 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
         } else if (option.isFloat()) {
             float value = this.getFloatValue(option);
             return switch (option) {
-                case MIN_ZOOM, MAX_ZOOM ->  name + (float) Math.pow(2.0, value) + "x";
-                case CACHE_SIZE -> name + (int) value;
+                case WORLDMAP_MIN_ZOOM, WORLDMAP_MAX_ZOOM -> name + (float) Math.pow(2.0, value) + "x";
+                case WORLDMAP_CACHE_SIZE -> name + (int) value;
                 default -> name + value;
             };
         } else {
@@ -93,8 +93,8 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
     @Override
     public boolean getBooleanValue(EnumOptionsMinimap option) {
         return switch (option) {
-            case SHOW_WAYPOINTS -> this.showWaypoints && VoxelMap.mapOptions.waypointsAllowed;
-            case SHOW_WAYPOINT_NAMES -> this.showWaypointNames && VoxelMap.mapOptions.waypointsAllowed;
+            case WORLDMAP_SHOW_WAYPOINTS -> this.showWaypoints && VoxelMap.mapOptions.waypointsAllowed;
+            case WORLDMAP_SHOW_WAYPOINT_NAMES -> this.showWaypointNames && VoxelMap.mapOptions.waypointsAllowed;
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         };
     }
@@ -109,9 +109,9 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
     @Override
     public float getFloatValue(EnumOptionsMinimap option) {
         return switch (option) {
-            case MIN_ZOOM -> this.minZoomPower;
-            case MAX_ZOOM -> this.maxZoomPower;
-            case CACHE_SIZE -> this.cacheSize;
+            case WORLDMAP_MIN_ZOOM -> this.minZoomPower;
+            case WORLDMAP_MAX_ZOOM -> this.maxZoomPower;
+            case WORLDMAP_CACHE_SIZE -> this.cacheSize;
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         };
     }
@@ -119,8 +119,8 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
     @Override
     public void setValue(EnumOptionsMinimap option) {
         switch (option) {
-            case SHOW_WAYPOINTS -> this.showWaypoints = !this.showWaypoints;
-            case SHOW_WAYPOINT_NAMES -> this.showWaypointNames = !this.showWaypointNames;
+            case WORLDMAP_SHOW_WAYPOINTS -> this.showWaypoints = !this.showWaypoints;
+            case WORLDMAP_SHOW_WAYPOINT_NAMES -> this.showWaypointNames = !this.showWaypointNames;
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         }
 
@@ -129,7 +129,7 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
     @Override
     public void setFloatValue(EnumOptionsMinimap option, float value) {
         switch (option) {
-            case MIN_ZOOM -> {
+            case WORLDMAP_MIN_ZOOM -> {
                 this.minZoomPower = ((int) (value * 8.0F) - 3);
                 this.minZoom = (float) Math.pow(2.0, this.minZoomPower);
                 if (this.maxZoom < this.minZoom) {
@@ -137,7 +137,7 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
                     this.maxZoomPower = this.minZoomPower;
                 }
             }
-            case MAX_ZOOM -> {
+            case WORLDMAP_MAX_ZOOM -> {
                 this.maxZoomPower = ((int) (value * 8.0F) - 3);
                 this.maxZoom = (float) Math.pow(2.0, this.maxZoomPower);
                 if (this.minZoom > this.maxZoom) {
@@ -145,7 +145,7 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
                     this.minZoomPower = this.maxZoomPower;
                 }
             }
-            case CACHE_SIZE -> {
+            case WORLDMAP_CACHE_SIZE -> {
                 this.cacheSize = (int) (value * 5000.0F);
                 this.cacheSize = Math.max(this.cacheSize, 30);
 

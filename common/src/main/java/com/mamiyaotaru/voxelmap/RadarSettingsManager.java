@@ -209,7 +209,10 @@ public class RadarSettingsManager implements ISubSettingsManager {
     @Override
     public void setFloatValue(EnumOptionsMinimap option, float value) {
         switch (option) {
-            case FONT_SIZE -> this.fontScale = (Math.round(value * 12.0F) / 12.0F * 1.5F) + 0.5F;
+            case FONT_SIZE -> {
+                value = Math.round(value * 12.0F) / 12.0F;
+                this.fontScale = (value * 1.5F) + 0.5F;
+            }
 
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         }

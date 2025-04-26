@@ -40,16 +40,17 @@ public enum EnumOptionsMinimap {
     ICON_FILTERING("options.voxelmap.radar.iconfiltering", false, true, false),
 
     WAYPOINT_DISTANCE("options.voxelmap.waypoints.distance", true, false, false),
+    WAYPOINT_SIZE("options.voxelmap.waypoints.iconsize", true, false, false),
     DEATHPOINTS("options.voxelmap.waypoints.deathpoints", false, false, true),
     AUTO_UNIT_CONVERSION("options.voxelmap.waypoints.autounitconversion", false, true, false),
-    SHOW_NAME_LABEL("options.voxelmap.waypoints.shownamelabel", false, false, true),
-    SHOW_DISTANCE_LABEL("options.voxelmap.waypoints.showdistancelabel", false, false, true),
+    SHOW_WAYPOINT_NAME("options.voxelmap.waypoints.shownamelabel", false, false, true),
+    SHOW_WAYPOINT_DISTANCE("options.voxelmap.waypoints.showdistancelabel", false, false, true),
 
-    MIN_ZOOM("options.voxelmap.worldmap.minzoom", true, false, false),
-    MAX_ZOOM("options.voxelmap.worldmap.maxzoom", true, false, false),
-    CACHE_SIZE("options.voxelmap.worldmap.cachesize", true, false, false),
-    SHOW_WAYPOINTS("options.voxelmap.worldmap.showwaypoints", false, true, false),
-    SHOW_WAYPOINT_NAMES("options.voxelmap.worldmap.showwaypointnames", false, true, false),
+    WORLDMAP_MIN_ZOOM("options.voxelmap.worldmap.minzoom", true, false, false),
+    WORLDMAP_MAX_ZOOM("options.voxelmap.worldmap.maxzoom", true, false, false),
+    WORLDMAP_CACHE_SIZE("options.voxelmap.worldmap.cachesize", true, false, false),
+    WORLDMAP_SHOW_WAYPOINTS("options.voxelmap.worldmap.showwaypoints", false, true, false),
+    WORLDMAP_SHOW_WAYPOINT_NAMES("options.voxelmap.worldmap.showwaypointnames", false, true, false),
 
     WELCOME_SCREEN("Welcome Screen", false, true, false),
     ZOOM_LEVEL("Zoom Level", false, true, false);

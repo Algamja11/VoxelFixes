@@ -97,6 +97,7 @@
   "options.voxelmap.waypoints": "Waypoints...",
   "options.voxelmap.waypoints.title": "Waypoint Options",
   "options.voxelmap.waypoints.distance": "Max Distance",
+  "options.voxelmap.waypoints.iconsize": "Icon Size",
   "options.voxelmap.waypoints.infinite": "Infinite",
   "options.voxelmap.waypoints.deathpoints": "Deathpoint(s)",
   "options.voxelmap.waypoints.deathpoints.mostrecent": "Most Recent",

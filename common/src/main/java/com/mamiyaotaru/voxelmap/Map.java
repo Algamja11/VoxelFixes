@@ -452,7 +452,9 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (this.options.showBiomeLabel) {
-            this.currentBiomeName = I18n.get(GameVariableAccessShim.getCurrentBiomeId());
+            ResourceLocation biomeResource = VoxelConstants.getMinecraft().level.getBiome(VoxelConstants.getMinecraft().player.blockPosition()).unwrapKey().get().location();
+            String biomeKey = "biome." + biomeResource.getNamespace() + "." + biomeResource.getPath();
+            this.currentBiomeName = I18n.get(biomeKey);
         } else if (!this.currentBiomeName.isEmpty()) {
             this.currentBiomeName = "";
         }
@@ -461,7 +463,7 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private void zoomIn() {
-        this.zoom--;
+        --this.zoom;
         if (this.zoom < 0) {
             this.zoom = 4;
         }
@@ -474,7 +476,7 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private void zoomOut() {
-        this.zoom++;
+        ++this.zoom;
         if (this.zoom > 4) {
             this.zoom = 0;
         }

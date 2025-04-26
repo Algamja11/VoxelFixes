@@ -24,25 +24,25 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 public class WaypointContainer {
-    private final List<WaypointWithDiff> wayPts = new ArrayList<>();
+    private final List<WpDiffData> wayPts = new ArrayList<>();
     private Waypoint highlightedWaypoint;
     public final MapSettingsManager options;
     public final Minecraft minecraft = Minecraft.getInstance();
 
-    public static class WaypointWithDiff implements Comparable<WaypointWithDiff> {
+    public static class WpDiffData implements Comparable<WpDiffData> {
         public Waypoint waypoint;
         public float diff;
 
-        public WaypointWithDiff(Waypoint waypoint, float diff) {
+        public WpDiffData(Waypoint waypoint, float diff) {
             this.waypoint = waypoint;
             this.diff = diff;
         }
 
-        public static WaypointWithDiff createDiff(Waypoint waypoint) {
-            return new WaypointWithDiff(waypoint, -1.0F);
+        public static WpDiffData createDiff(Waypoint waypoint) {
+            return new WpDiffData(waypoint, -1.0F);
         }
 
-        public int compareTo(WaypointWithDiff o) {
+        public int compareTo(WpDiffData o) {
             if (this.diff < 0 && o.diff >= 0) return 1;
             if (this.diff >= 0 && o.diff < 0) return -1;
 
@@ -56,7 +56,7 @@ public class WaypointContainer {
     }
 
     public void addWaypoint(Waypoint newWaypoint) {
-        this.wayPts.add(WaypointWithDiff.createDiff(newWaypoint));
+        this.wayPts.add(WpDiffData.createDiff(newWaypoint));
     }
 
     public void removeWaypoint(Waypoint waypoint) {
@@ -74,7 +74,7 @@ public class WaypointContainer {
         double renderPosZ = cameraPos.z;
 
         if (this.options.showWaypointBeacons) {
-            for (WaypointWithDiff pt : this.wayPts) {
+            for (WpDiffData pt : this.wayPts) {
                 if (pt.waypoint.isActive() || pt.waypoint == this.highlightedWaypoint) {
                     int x = pt.waypoint.getX();
                     int z = pt.waypoint.getZ();
@@ -85,10 +85,10 @@ public class WaypointContainer {
         }
 
         if (this.options.showWaypointSigns) {
-            this.wayPts.sort(Collections.reverseOrder(WaypointWithDiff::compareTo));
+            this.wayPts.sort(Collections.reverseOrder(WpDiffData::compareTo));
             int last = this.wayPts.size() - 1;
             int count = 0;
-            for (WaypointWithDiff pt : this.wayPts) {
+            for (WpDiffData pt : this.wayPts) {
                 if (pt.waypoint.isActive() || pt.waypoint == this.highlightedWaypoint) {
                     int x = pt.waypoint.getX();
                     int z = pt.waypoint.getZ();
@@ -97,9 +97,9 @@ public class WaypointContainer {
                     if ((distance < this.options.maxWaypointDisplayDistance || this.options.maxWaypointDisplayDistance < 0 || pt.waypoint == this.highlightedWaypoint) && !VoxelConstants.getMinecraft().options.hideGui) {
                         pt.diff = this.getWaypointDiff(pt.waypoint, distance, camera);
                         if (this.minecraft.options.keyShift.isDown()) {
-                            this.renderLabel(poseStack, bufferSource, pt.waypoint, distance, pt.diff >= 0.0F, pt.waypoint.name, false, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ);
+                            this.renderIcon(poseStack, bufferSource, pt.waypoint, distance, pt.diff >= 0.0F, pt.waypoint.name, false, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ);
                         } else {
-                            this.renderLabel(poseStack, bufferSource, pt.waypoint, distance, pt.diff >= 0.0F && count == last, pt.waypoint.name, false, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ);
+                            this.renderIcon(poseStack, bufferSource, pt.waypoint, distance, pt.diff >= 0.0F && count == last, pt.waypoint.name, false, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ);
                         }
                     }
                 }
@@ -112,7 +112,7 @@ public class WaypointContainer {
                 int y = this.highlightedWaypoint.getY();
                 double distance = Math.sqrt(this.highlightedWaypoint.getDistanceSqToCamera(camera));
                 boolean isPointedAt = this.getWaypointDiff(this.highlightedWaypoint, distance, camera) >= 0.0f;
-                this.renderLabel(poseStack, bufferSource, this.highlightedWaypoint, distance, isPointedAt, "", true, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ);
+                this.renderIcon(poseStack, bufferSource, this.highlightedWaypoint, distance, isPointedAt, "", true, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ);
             }
         }
     }
@@ -185,12 +185,12 @@ public class WaypointContainer {
         }
     }
 
-    private void renderLabel(PoseStack poseStack, BufferSource bufferSource, Waypoint pt, double distance, boolean isPointedAt, String name, boolean target, double baseX, double baseY, double baseZ) {
+    private void renderIcon(PoseStack poseStack, BufferSource bufferSource, Waypoint pt, double distance, boolean showLabel, String name, boolean target, double baseX, double baseY, double baseZ) {
         if (target) {
             if (pt.red == 2.0F && pt.green == 0.0F && pt.blue == 0.0F) {
                 name = "X:" + pt.getX() + ", Y:" + pt.getY() + ", Z:" + pt.getZ();
             } else {
-                isPointedAt = false;
+                showLabel = false;
             }
         }
 
@@ -221,7 +221,7 @@ public class WaypointContainer {
             adjustedDistance = maxDistance;
         }
 
-        float var14 = ((float) adjustedDistance * 0.1F + 1.0F) * 0.0266F;
+        float var14 = ((float) adjustedDistance * 0.1F + 1.0F) * 0.0266F * this.options.waypointIconSize;
         poseStack.pushPose();
         poseStack.translate((float) baseX + 0.5F, (float) baseY + 0.5F, (float) baseZ + 0.5F);
         poseStack.mulPose(Axis.YP.rotationDegrees(-VoxelConstants.getMinecraft().getEntityRenderDispatcher().camera.getYRot()));
@@ -255,7 +255,7 @@ public class WaypointContainer {
         vertexConsumer.addVertex(poseStack.last(), width, -width, 0.0F).setUv(icon.getMaxU(), icon.getMinV()).setColor(r, g, b, fade * noDepth);
 
         Font fontRenderer = minecraft.font;
-        if (isPointedAt && fontRenderer != null) {
+        if (showLabel && fontRenderer != null) {
             int textColor = (int) (255.0F * fade) << 24 | 0x00FFFFFF;
             int textColorNoDepth = (int) (255.0F * fade * noDepth) << 24 | 0x00FFFFFF;
             int labelElevation = this.options.showWaypointName == 2 ? 10 : -19;

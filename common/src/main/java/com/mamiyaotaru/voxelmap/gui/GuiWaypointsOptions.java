@@ -12,7 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiWaypointsOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.AUTO_UNIT_CONVERSION, EnumOptionsMinimap.SHOW_NAME_LABEL, EnumOptionsMinimap.SHOW_DISTANCE_LABEL, EnumOptionsMinimap.DEATHPOINTS };
+    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.WAYPOINT_SIZE, EnumOptionsMinimap.DEATHPOINTS, EnumOptionsMinimap.AUTO_UNIT_CONVERSION, EnumOptionsMinimap.SHOW_WAYPOINT_NAME, EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCE };
     private final MapSettingsManager options;
     protected Component screenTitle;
 
@@ -76,7 +76,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 
             EnumOptionsMinimap option = button.returnEnumOptions();
 
-            if (option == EnumOptionsMinimap.SHOW_DISTANCE_LABEL) {
+            if (option == EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCE) {
                 button.active = this.options.showWaypointName != 0;
             }
         }
@@ -92,6 +92,9 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
                 sValue = (sValue - 50.0F) / 9951.0F;
 
                 return sValue;
+            }
+            case WAYPOINT_SIZE -> {
+                return (sValue - 0.5F) / 1.5F;
             }
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         }

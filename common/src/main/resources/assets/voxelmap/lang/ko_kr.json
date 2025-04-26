@@ -97,6 +97,7 @@
   "options.voxelmap.waypoints": "경유지...",
   "options.voxelmap.waypoints.title": "경유지 설정",
   "options.voxelmap.waypoints.distance": "최대 거리",
+  "options.voxelmap.waypoints.iconsize": "아이콘 크기",
   "options.voxelmap.waypoints.infinite": "무제한",
   "options.voxelmap.waypoints.deathpoints": "죽은 지점",
   "options.voxelmap.waypoints.deathpoints.mostrecent": "가장 최근",

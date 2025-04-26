@@ -59,6 +59,7 @@ public class MapSettingsManager implements ISettingsManager {
     public String serverTeleportCommand = null;
 
     public int maxWaypointDisplayDistance = 1000;
+    public float waypointIconSize = 1.0F;
     public int deathpoints = 1;
     public boolean autoUnitConversion = true;
     public int showWaypointName = 2;
@@ -133,6 +134,7 @@ public class MapSettingsManager implements ISettingsManager {
                         case "World Border" -> this.worldborder = Boolean.parseBoolean(curLine[1]);
                         case "Teleport Command" -> this.teleportCommand = curLine[1];
                         case "Waypoint Max Distance" -> this.maxWaypointDisplayDistance = Math.max(-1, Math.min(10000, Integer.parseInt(curLine[1])));
+                        case "Waypoint Icon Size" -> this.waypointIconSize = Math.max(0.5F, Math.min(2.0F, Float.parseFloat(curLine[1])));
                         case "Deathpoints" -> this.deathpoints = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
                         case "Auto Unit Conversion" -> this.autoUnitConversion = Boolean.parseBoolean(curLine[1]);
                         case "Show Waypoint Name" -> this.showWaypointName = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
@@ -201,6 +203,7 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("World Border:" + this.worldborder);
             out.println("Teleport Command:" + this.teleportCommand);
             out.println("Waypoint Max Distance:" + this.maxWaypointDisplayDistance);
+            out.println("Waypoint Icon Size:" + this.waypointIconSize);
             out.println("Deathpoints:" + this.deathpoints);
             out.println("Auto Unit Conversion:" + this.autoUnitConversion);
             out.println("Show Waypoint Name:" + this.showWaypointName);
@@ -241,6 +244,7 @@ public class MapSettingsManager implements ISettingsManager {
             float value = this.getFloatValue(option);
             return switch (option) {
                 case WAYPOINT_DISTANCE -> value < 0.0F ? name + I18n.get("options.voxelmap.waypoints.infinite") : name + (int) value;
+                case WAYPOINT_SIZE -> name + value + "x";
                 case ZOOM_LEVEL -> name + (int) value;
                 default -> name + value;
 
@@ -353,7 +357,7 @@ public class MapSettingsManager implements ISettingsManager {
 
                 return I18n.get("voxelmap.ui.error");
             }
-            case SHOW_NAME_LABEL -> {
+            case SHOW_WAYPOINT_NAME -> {
                 if (this.showWaypointName == 0) {
                     return I18n.get("options.off");
                 } else if (this.showWaypointName == 1) {
@@ -364,7 +368,7 @@ public class MapSettingsManager implements ISettingsManager {
 
                 return I18n.get("voxelmap.ui.error");
             }
-            case SHOW_DISTANCE_LABEL -> {
+            case SHOW_WAYPOINT_DISTANCE -> {
                 if (this.showWaypointDistance == 0) {
                     return I18n.get("options.off");
                 } else if (this.showWaypointDistance == 1) {
@@ -394,6 +398,7 @@ public class MapSettingsManager implements ISettingsManager {
     public float getFloatValue(EnumOptionsMinimap option) {
         return switch (option) {
             case WAYPOINT_DISTANCE -> this.maxWaypointDisplayDistance;
+            case WAYPOINT_SIZE -> this.waypointIconSize;
             case ZOOM_LEVEL -> this.zoom;
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         };
@@ -470,13 +475,13 @@ public class MapSettingsManager implements ISettingsManager {
                     this.biomeOverlay = 0;
                 }
             }
-            case SHOW_NAME_LABEL -> {
+            case SHOW_WAYPOINT_NAME -> {
                 ++this.showWaypointName;
                 if (this.showWaypointName > 2) {
                     this.showWaypointName = 0;
                 }
             }
-            case SHOW_DISTANCE_LABEL -> {
+            case SHOW_WAYPOINT_DISTANCE -> {
                 ++this.showWaypointDistance;
                 if (this.showWaypointDistance > 2) {
                     this.showWaypointDistance = 0;
@@ -505,7 +510,10 @@ public class MapSettingsManager implements ISettingsManager {
 
                 this.maxWaypointDisplayDistance = (int) distance;
             }
-
+            case WAYPOINT_SIZE -> {
+                value = Math.round(value * 12.0F) / 12.0F;
+                this.waypointIconSize = (value * 1.5F) + 0.5F;
+            }
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         }
 

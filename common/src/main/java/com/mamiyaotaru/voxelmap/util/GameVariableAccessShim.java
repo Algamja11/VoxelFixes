@@ -40,9 +40,4 @@ public class GameVariableAccessShim {
     public static float rotationYaw() {
         return VoxelConstants.getMinecraft().getCameraEntity().yRotO + (VoxelConstants.getMinecraft().getCameraEntity().getYRot() - VoxelConstants.getMinecraft().getCameraEntity().yRotO) * VoxelConstants.getMinecraft().getDeltaTracker().getGameTimeDeltaPartialTick(false);
     }
-
-    public static String getCurrentBiomeId() {
-        ResourceLocation biomeResource = VoxelConstants.getMinecraft().level.getBiome(VoxelConstants.getMinecraft().player.blockPosition()).unwrapKey().get().location();
-        return "biome." + biomeResource.getNamespace() + "." + biomeResource.getPath();
-    }
 }
