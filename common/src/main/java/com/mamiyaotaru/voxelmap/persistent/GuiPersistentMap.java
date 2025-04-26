@@ -897,7 +897,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             }
         }
 
-        if (this.options.showWaypointNames) {
+        if (this.options.showWaypointNames && !far) {
             poseStack.pushPose();
             poseStack.scale(this.guiToMap, this.guiToMap, 1);
             int halfStringWidth = this.chkLen(pt.name) / 2;

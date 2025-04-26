@@ -216,13 +216,13 @@ public final class VoxelConstants {
   
     public static void debugInfo(String string) {
         if (VoxelConstants.DEBUG) {
-            VoxelConstants.getLogger().info(string);
+            getLogger().info(string);
         }
     }
 
     public static void debugWarn(String string) {
         if (VoxelConstants.DEBUG) {
-            VoxelConstants.getLogger().warn(string);
+            getLogger().warn(string);
         }
     }
 
@@ -234,7 +234,8 @@ public final class VoxelConstants {
             IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_BEAM_PIPELINE, IrisProgram.BASIC);
             IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
             IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_NO_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_PIPELINE, IrisProgram.BASIC);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
             //IrisApi.getInstance().assignPipeline(GLUtils.ENTITY_ICON, IrisProgram.TEXTURED);
         }
     }
