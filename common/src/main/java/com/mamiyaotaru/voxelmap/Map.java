@@ -1647,7 +1647,7 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, TextureAtlas textureAtlas, int x, int y, double lastXDouble, double lastZDouble, Sprite icon) {
-        boolean lockRotation = icon != null || pt.isDeathpoint;
+        boolean uprightIcon = icon != null || pt.isDeathpoint;
 
         double wayX = lastXDouble - pt.getX() - 0.5;
         double wayY = lastZDouble - pt.getZ() - 0.5;
@@ -1697,7 +1697,7 @@ public class Map implements Runnable, IChangeObserver {
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate(x, y, 0.0f);
                 guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-locate));
-                if (lockRotation) {
+                if (uprightIcon) {
                     guiGraphics.pose().translate(0.0f, -hypot, 0.0f);
                     guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(locate));
                     guiGraphics.pose().translate(-x, -y, 0.0f);
@@ -1728,7 +1728,7 @@ public class Map implements Runnable, IChangeObserver {
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-locate));
                 guiGraphics.pose().translate(0.0f, -hypot, 0.0f);
-                guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-(-locate)));
+                guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(locate));
 
                 icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - 4, y - 4, 8, 8, color);
             } catch (Exception var42) {

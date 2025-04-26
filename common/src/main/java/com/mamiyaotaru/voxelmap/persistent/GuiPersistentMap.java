@@ -820,70 +820,88 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         if (!pt.inWorld || !pt.inDimension) {
             return;
         }
-        float ptX = pt.getX();
-        float ptZ = pt.getZ();
+        boolean uprightIcon = icon != null || pt.isDeathpoint;
 
-        PoseStack poseStack = guiGraphics.pose();
-        String name = pt.name;
-
-        ptX += 0.5F;
-        ptZ += 0.5F;
-        boolean target = false;
+        float ptX = pt.getX() + 0.5F;
+        float ptZ = pt.getZ() + 0.5F;
 
         boolean hover = cursorCoordX > ptX - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordX < ptX + 18.0F * this.guiToMap / this.guiToDirectMouse
                 && cursorCoordZ > ptZ - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordZ < ptZ + 18.0F * this.guiToMap / this.guiToDirectMouse;
 
         int wayX = (int) ((ptX - this.mapCenterX) * this.mapToGui);
         int wayY = (int) ((ptZ - this.mapCenterZ) * this.mapToGui);
-        int halfX = this.width / 2 - 4;
-        int halfY = this.height / 2 - 32 - 4;
-        boolean far = !(wayX >= -halfX && wayX <= halfX && wayY >= -halfY && wayY <= halfY);
+        float locate = (float) Math.toDegrees(Math.atan2(wayX, wayY));
+
+        int rangeX = this.width / 2 - 4;
+        int rangeY = this.height / 2 - 32 - 4;
+        boolean far = Math.abs(wayX) > rangeX || Math.abs(wayY) > rangeY;
         if (far) {
-            ptX = Math.max(this.mapCenterX - (halfX * this.guiToMap), Math.min(this.mapCenterX + (halfX * this.guiToMap), ptX));
-            ptZ = Math.max(this.mapCenterZ - (halfY * this.guiToMap), Math.min(this.mapCenterZ + (halfY * this.guiToMap), ptZ));
+            rangeX *= this.guiToMap;
+            rangeY *= this.guiToMap;
+            ptX = Math.max(this.mapCenterX - rangeX, Math.min(this.mapCenterX + rangeX, ptX));
+            ptZ = Math.max(this.mapCenterZ - rangeY, Math.min(this.mapCenterZ + rangeY, ptZ));
         }
-        float locate = (float) Math.toDegrees(Math.atan2(pt.getX() - ptX, -(pt.getZ() - ptZ)));
 
         TextureAtlas atlas = waypointManager.getTextureAtlas();
-        if (icon != null) {
-            name = "";
-            target = true;
-        } else if (far) {
-            if (!pt.isDeathpoint) {
-                icon = atlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
+        PoseStack poseStack = guiGraphics.pose();
+
+        boolean target = false;
+        if (far) {
+            if (icon == null) {
+                if (!pt.isDeathpoint) {
+                    icon = atlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
+                } else {
+                    icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
+
+                    if (icon == atlas.getMissingImage()) {
+                        icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
+                    }
+                }
             } else {
+                target = true;
+            }
+            int color = pt.getUnifiedColor(!pt.enabled && !target && !hover ? 0.3F : 1.0F);
+
+            try {
+                poseStack.pushPose();
+                poseStack.scale(this.guiToMap, this.guiToMap, 1.0F);
+                if (!uprightIcon) {
+                    poseStack.translate(ptX * this.mapToGui, ptZ * this.mapToGui, 0.0F);
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(-locate - 180.0F));
+                    poseStack.translate(-ptX * this.mapToGui, -ptZ * this.mapToGui, 0.0F);
+                }
+                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, ptX * this.mapToGui - 8, ptZ * this.mapToGui - 8, 16, 16, color);
+            } catch (Exception ignored) {
+            } finally {
+                poseStack.popPose();
+            }
+        } else {
+            if (icon == null) {
                 icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
 
                 if (icon == atlas.getMissingImage()) {
                     icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
                 }
+            } else {
+                target = true;
             }
-        } else {
-            icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
+            int color = pt.getUnifiedColor(!pt.enabled && !target && !hover ? 0.3F : 1.0F);
 
-            if (icon == atlas.getMissingImage()) {
-                icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
+            try {
+                poseStack.pushPose();
+                poseStack.scale(this.guiToMap, this.guiToMap, 1.0F);
+                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, ptX * this.mapToGui - 8, ptZ * this.mapToGui - 8, 16, 16, color);
+            } catch (Exception ignored) {
+            } finally {
+                poseStack.popPose();
             }
         }
 
-        int color = pt.getUnifiedColor(!pt.enabled && !target && !hover ? 0.3F : 1.0F);
-
-        poseStack.pushPose();
-        poseStack.scale(this.guiToMap, this.guiToMap, 1.0F);
-        if (!target && !pt.isDeathpoint && far) {
-            poseStack.translate(ptX * this.mapToGui, ptZ * this.mapToGui, 0.0F);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(locate));
-            poseStack.translate(-ptX * this.mapToGui, -ptZ * this.mapToGui, 0.0F);
-        }
-        icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, ptX * this.mapToGui - 8, ptZ * this.mapToGui - 8, 16, 16, color);
-
-        poseStack.popPose();
-
-        if (this.options.showWaypointNames && !far) {
-            int labelWidth = this.chkLen(name) / 2;
+        if (this.options.showWaypointNames) {
             poseStack.pushPose();
             poseStack.scale(this.guiToMap, this.guiToMap, 1);
-            this.write(guiGraphics, name, ptX * this.mapToGui - labelWidth, ptZ * this.mapToGui + 8, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFFFF);
+            int halfStringWidth = this.chkLen(pt.name) / 2;
+            this.write(guiGraphics, pt.name, ptX * this.mapToGui - halfStringWidth, ptZ * this.mapToGui + 8, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFFFF);
             poseStack.popPose();
         }
     }
