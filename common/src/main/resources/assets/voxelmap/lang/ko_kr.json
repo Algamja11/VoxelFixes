@@ -65,7 +65,7 @@
   "options.voxelmap.worldseed": "시드",
   "options.voxelmap.teleportcommand": "순간이동 명령어",
   "options.voxelmap.movescoreboardbelowmap": "점수판을 미니맵 아래로 이동",
-  "options.voxelmap.movemapbelowstatuseffect": "포션효과 아래로 미니맵을 이동",
+  "options.voxelmap.movemapbelowstatuseffect": "미니맵을 상태효과 아이콘 아래로 이동",
   "options.voxelmap.showbiomelabel": "바이옴 라벨 표시",
   "options.voxelmap.radar": "레이더...",
   "options.voxelmap.radar.title": "레이더 설정",
