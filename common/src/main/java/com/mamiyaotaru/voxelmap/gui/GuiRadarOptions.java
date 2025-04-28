@@ -45,8 +45,8 @@ public class GuiRadarOptions extends GuiScreenMinimap {
         if (options.radarMode == 2) {
             addRenderableWidget(new Button.Builder(Component.translatable("options.voxelmap.selectmobs"), x -> VoxelConstants.getMinecraft().setScreen(new GuiMobs(this, options))).bounds(getWidth() / 2 - 155, getHeight() / 6 + 120, 150, 20).build());
 
-            float sValue = this.options.getFloatValue(EnumOptionsMinimap.FONT_SIZE);
-            addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 + 5, this.getHeight() / 6 + 120, EnumOptionsMinimap.FONT_SIZE, this.convertFloatValue(EnumOptionsMinimap.FONT_SIZE, sValue), options));
+            float sValue = this.options.getFloatValue(EnumOptionsMinimap.RADAR_FONT_SCALE);
+            addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 + 5, this.getHeight() / 6 + 120, EnumOptionsMinimap.RADAR_FONT_SCALE, this.convertFloatValue(EnumOptionsMinimap.RADAR_FONT_SCALE, sValue), options));
         }
 
         addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), x -> VoxelConstants.getMinecraft().setScreen(parentScreen)).bounds(getWidth() / 2 - 100, getHeight() / 6 + 168, 200, 20).build());
@@ -120,13 +120,13 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 
             EnumOptionsMinimap option = slider.returnEnumOptions();
 
-            if (option == EnumOptionsMinimap.FONT_SIZE) slider.active = options.showRadar;
+            if (option == EnumOptionsMinimap.RADAR_FONT_SCALE) slider.active = options.showRadar;
         }
     }
 
     private float convertFloatValue(EnumOptionsMinimap option, float sValue) {
         return switch (option) {
-            case FONT_SIZE -> (sValue - 0.5F) / 1.5F;
+            case RADAR_FONT_SCALE -> (sValue - 0.5F) / 1.5F;
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         };
     }

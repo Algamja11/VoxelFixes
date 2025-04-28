@@ -34,7 +34,7 @@ public enum EnumOptionsMinimap {
     SHOW_PLAYERS("options.voxelmap.radar.showplayers", false, true, false),
     SHOW_PLAYER_NAMES("options.voxelmap.radar.showplayernames", false, true, false),
     SHOW_PLAYER_HELMETS("options.voxelmap.radar.showplayerhelmets", false, true, false),
-    FONT_SIZE("options.voxelmap.radar.fontsize", true, false, false),
+    RADAR_FONT_SCALE("options.voxelmap.radar.fontsize", true, false, false),
     SHOW_FACING("options.voxelmap.radar.showfacing", false, true, false),
     ICON_OUTLINES("options.voxelmap.radar.iconoutlines", false, true, false),
     ICON_FILTERING("options.voxelmap.radar.iconfiltering", false, true, false),
