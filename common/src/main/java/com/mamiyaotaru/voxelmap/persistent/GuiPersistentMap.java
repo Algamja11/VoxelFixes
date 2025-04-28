@@ -198,15 +198,15 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         int buttonCount = 5;
         int buttonSeparation = 4;
         int buttonWidth = (this.width - this.sideMargin * 2 - buttonSeparation * (buttonCount - 1)) / buttonCount;
-        this.buttonWaypoints = new PopupGuiButton(this.sideMargin, this.getHeight() - 28, this.buttonWidth, 20, Component.translatable("options.minimap.waypoints"), button -> minecraft.setScreen(new GuiWaypoints(this)), this);
+        this.buttonWaypoints = new PopupGuiButton(this.sideMargin, this.getHeight() - 28, buttonWidth, 20, Component.translatable("options.voxelmap.waypoints"), button -> minecraft.setScreen(new GuiWaypoints(this)), this);
         this.addRenderableWidget(this.buttonWaypoints);
         this.multiworldButtonName = Component.translatable(VoxelConstants.isRealmServer() ? "menu.online" : "options.voxelmap.worldmap.multiworld");
         if (!minecraft.hasSingleplayerServer() && !waypointManager.receivedAutoSubworldName()) {
-            this.addRenderableWidget(this.buttonMultiworld = new PopupGuiButton(this.sideMargin + (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, this.multiworldButtonName, button -> minecraft.setScreen(new GuiSubworldsSelect(this)), this));
+            this.addRenderableWidget(this.buttonMultiworld = new PopupGuiButton(this.sideMargin + (buttonWidth + buttonSeparation), this.getHeight() - 28, buttonWidth, 20, this.multiworldButtonName, button -> minecraft.setScreen(new GuiSubworldsSelect(this)), this));
         }
       
-        this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 3 * (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, Component.translatable("menu.options"), button -> minecraft.setScreen(new GuiMinimapOptions(this)), this));
-        this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 4 * (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, Component.translatable("gui.done"), button -> minecraft.setScreen(parent), this));
+        this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 3 * (buttonWidth + buttonSeparation), this.getHeight() - 28, buttonWidth, 20, Component.translatable("menu.options"), button -> minecraft.setScreen(new GuiMinimapOptions(this)), this));
+        this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 4 * (buttonWidth + buttonSeparation), this.getHeight() - 28, buttonWidth, 20, Component.translatable("gui.done"), button -> minecraft.setScreen(parentScreen), this));
     }
 
     private void centerAt(float x, float z) {
@@ -300,6 +300,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         boolean sidebarPressed = this.sidebarPanel.checkPressed(true);
 
+        if (button == 0 && !sidebarPressed) {
+            currentDragging = true;
+        }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -314,10 +318,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             if (VoxelMap.mapOptions.worldmapAllowed) {
                 this.createPopup((int) mouseX, (int) mouseY, mouseDirectX, mouseDirectY);
             }
-        }
-      
-        if (button == 0) {
-            currentDragging = true;
         }
       
         return super.mouseReleased(mouseX, mouseY, button);
@@ -350,51 +350,33 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             modifiers = GLFW.GLFW_KEY_UNKNOWN;
         }
 
-        this.checkMovementKeyPressed(keyCode, scanCode);
+        this.checkMovementKeys(keyCode, scanCode, true);
 
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        this.checkMovementKeyReleased(keyCode, scanCode);
+        this.checkMovementKeys(keyCode, scanCode, false);
 
         return super.keyReleased(keyCode, scanCode, modifiers);
     }
 
-    private void checkMovementKeyPressed(int keyCode, int scanCode) {
+    private void checkMovementKeys(int keyCode, int scanCode, boolean state) {
         if (minecraft.options.keySprint.matches(keyCode, scanCode)) {
-            this.sprintKeyPressed = true;
+            this.sprintKeyPressed = state;
         }
         if (minecraft.options.keyUp.matches(keyCode, scanCode)) {
-            this.upKeyPressed = true;
+            this.upKeyPressed = state;
         }
         if (minecraft.options.keyDown.matches(keyCode, scanCode)) {
-            this.downKeyPressed = true;
+            this.downKeyPressed = state;
         }
         if (minecraft.options.keyLeft.matches(keyCode, scanCode)) {
-            this.leftKeyPressed = true;
+            this.leftKeyPressed = state;
         }
         if (minecraft.options.keyRight.matches(keyCode, scanCode)) {
-            this.rightKeyPressed = true;
-        }
-    }
-
-    private void checkMovementKeyReleased(int keyCode, int scanCode) {
-        if (minecraft.options.keySprint.matches(keyCode, scanCode)) {
-            this.sprintKeyPressed = false;
-        }
-        if (minecraft.options.keyUp.matches(keyCode, scanCode)) {
-            this.upKeyPressed = false;
-        }
-        if (minecraft.options.keyDown.matches(keyCode, scanCode)) {
-            this.downKeyPressed = false;
-        }
-        if (minecraft.options.keyLeft.matches(keyCode, scanCode)) {
-            this.leftKeyPressed = false;
-        }
-        if (minecraft.options.keyRight.matches(keyCode, scanCode)) {
-            this.rightKeyPressed = false;
+            this.rightKeyPressed = state;
         }
     }
 
