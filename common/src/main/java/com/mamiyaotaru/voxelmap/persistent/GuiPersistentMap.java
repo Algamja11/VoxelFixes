@@ -95,7 +95,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     private float lastMouseX;
     private float lastMouseY;
     private boolean mouseCursorShown = true;
-    private int pressedMouseButton = -1;
+    private boolean currentDragging;
     private boolean leftMouseButtonDown;
     public boolean addClicked;
     public boolean editClicked;
@@ -198,25 +198,15 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         int buttonCount = 5;
         int buttonSeparation = 4;
         int buttonWidth = (this.width - this.sideMargin * 2 - buttonSeparation * (buttonCount - 1)) / buttonCount;
-        this.buttonWaypoints = new PopupGuiButton(this.sideMargin, this.getHeight() - 28, buttonWidth, 20, Component.translatable("options.voxelmap.waypoints"), buttonWidget_1 -> minecraft.setScreen(new GuiWaypoints(this)), this);
+        this.buttonWaypoints = new PopupGuiButton(this.sideMargin, this.getHeight() - 28, this.buttonWidth, 20, Component.translatable("options.minimap.waypoints"), button -> minecraft.setScreen(new GuiWaypoints(this)), this);
         this.addRenderableWidget(this.buttonWaypoints);
         this.multiworldButtonName = Component.translatable(VoxelConstants.isRealmServer() ? "menu.online" : "options.voxelmap.worldmap.multiworld");
         if (!minecraft.hasSingleplayerServer() && !waypointManager.receivedAutoSubworldName()) {
-            this.addRenderableWidget(this.buttonMultiworld = new PopupGuiButton(this.sideMargin + (buttonWidth + buttonSeparation), this.getHeight() - 28, buttonWidth, 20, this.multiworldButtonName, buttonWidget_1 -> minecraft.setScreen(new GuiSubworldsSelect(this)), this));
+            this.addRenderableWidget(this.buttonMultiworld = new PopupGuiButton(this.sideMargin + (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, this.multiworldButtonName, button -> minecraft.setScreen(new GuiSubworldsSelect(this)), this));
         }
-
-        this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 3 * (buttonWidth + buttonSeparation), this.getHeight() - 28, buttonWidth, 20, Component.translatable("menu.options"), null, this) {
-            @Override
-            public void onPress() {
-                minecraft.setScreen(new GuiMinimapOptions(GuiPersistentMap.this));
-            }
-        });
-        this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 4 * (buttonWidth + buttonSeparation), this.getHeight() - 28, buttonWidth, 20, Component.translatable("mco.selectServer.close"), null, this) {
-            @Override
-            public void onPress() {
-                minecraft.setScreen(GuiPersistentMap.this.parentScreen);
-            }
-        });
+      
+        this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 3 * (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, Component.translatable("menu.options"), button -> minecraft.setScreen(new GuiMinimapOptions(this)), this));
+        this.addRenderableWidget(new PopupGuiButton(this.sideMargin + 4 * (this.buttonWidth + this.buttonSeparation), this.getHeight() - 28, this.buttonWidth, 20, Component.translatable("gui.done"), button -> minecraft.setScreen(parent), this));
     }
 
     private void centerAt(float x, float z) {
@@ -310,15 +300,13 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         boolean sidebarPressed = this.sidebarPanel.checkPressed(true);
 
-        this.pressedMouseButton = sidebarPressed ? -1 : button;
-
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         boolean sidebarPressed = this.sidebarPanel.checkPressed(false);
-
+        currentDragging = false;
         if (mouseY > this.top && mouseY < this.bottom && button == 1 && !sidebarPressed) {
             this.keyboardInput = false;
             int mouseDirectX = (int) minecraft.mouseHandler.xpos();
@@ -327,9 +315,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 this.createPopup((int) mouseX, (int) mouseY, mouseDirectX, mouseDirectY);
             }
         }
-
-        this.pressedMouseButton = -1;
-
+      
+        if (button == 0) {
+            currentDragging = true;
+        }
+      
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
@@ -471,7 +461,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         this.mouseDirectToMap = 1.0F / scaledZoom;
         this.guiToDirectMouse = this.scScale;
         guiGraphics.fill(0, 0, this.width, this.height, 0xFF000000);
-        if (this.pressedMouseButton == 0) {
+        if (currentDragging) {
             if (!this.leftMouseButtonDown && this.overPopup(mouseX, mouseY)) {
                 this.deltaX = 0.0F;
                 this.deltaY = 0.0F;

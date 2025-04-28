@@ -14,6 +14,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
@@ -104,7 +106,7 @@ public class GLUtils {
     }
 
     public static final RenderPipeline GUI_TEXTURED_EQUAL_DEPTH_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-            .withLocation("pipeline/voxelmap/gui_textured_equal_depth")
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/gui_textured_equal_depth"))
             .withDepthTestFunction(DepthTestFunction.EQUAL_DEPTH_TEST)
             .build();
 
@@ -120,7 +122,7 @@ public class GLUtils {
     );
 
     public static final RenderPipeline GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-            .withLocation("pipeline/voxelmap/gui_textured_lequal_depth")
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/gui_textured_equal_depth"))
             .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST).build();
 
     public static final Function<ResourceLocation, RenderType> GUI_TEXTURED_LESS_OR_EQUAL_DEPTH = Util.memoize(
@@ -146,7 +148,7 @@ public class GLUtils {
     );
 
     public static final RenderPipeline WAYPOINT_BEAM_PIPELINE = RenderPipeline.builder(RenderPipelines.MATRICES_COLOR_SNIPPET)
-            .withLocation("pipeline/voxelmap/waypoint_beam")
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_beam"))
             .withVertexShader("core/position_color")
             .withFragmentShader("core/position_color")
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, Mode.TRIANGLE_STRIP)
@@ -164,14 +166,14 @@ public class GLUtils {
     );
 
     public static final RenderPipeline WAYPOINT_ICON_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-            .withLocation("pipeline/voxelmap/waypoint_icon_depthtest")
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_icon"))
             .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
             .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
             .withDepthWrite(true)
             .build();
 
     public static final RenderPipeline WAYPOINT_ICON_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-            .withLocation("pipeline/voxelmap/waypoint_icon_no_depthtest")
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_icon"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
             .withDepthWrite(true)
@@ -208,7 +210,7 @@ public class GLUtils {
             .build();
 
     public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
-            .withLocation("pipeline/voxelmap/waypoint_text_background_no_depthtest")
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_background"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .withDepthBias(1.0F, 7.0F)
             .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
@@ -231,9 +233,20 @@ public class GLUtils {
                     .createCompositeState(false)
     );
 
+    public static final VertexFormat VF = VertexFormat.builder()
+            .add("Position", VertexFormatElement.POSITION)
+            .add("Color", VertexFormatElement.COLOR)
+            .add("UV0", VertexFormatElement.UV0)
+            .add("UV1", VertexFormatElement.UV1)
+            .add("UV2", VertexFormatElement.UV2)
+            .add("Normal", VertexFormatElement.NORMAL)
+            .padding(1)
+            .build();
+
     public static final RenderPipeline ENTITY_ICON = RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
-            .withLocation("pipeline/voxelmap/entity_icon")
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/entity_solid"))
             .withSampler("Sampler1")
+            .withVertexFormat(VF, VertexFormat.Mode.QUADS)
             .withShaderDefine("EMISSIVE")
             .withShaderDefine("NO_OVERLAY")
             .withShaderDefine("NO_CARDINAL_LIGHTING")
