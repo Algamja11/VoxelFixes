@@ -61,7 +61,7 @@ public final class CommandUtils {
                 Style chatStyle = clickableWaypoint.getStyle();
                 chatStyle = chatStyle.withClickEvent(new ClickEvent.RunCommand("/newWaypoint " + waypointString.substring(1, waypointString.length() - 1)));
                 chatStyle = chatStyle.withColor(ChatFormatting.AQUA);
-                Component hover = Component.literal(I18n.get("minimap.waypointshare.tooltip1") + "\n" + I18n.get("minimap.waypointshare.tooltip2"));
+                Component hover = Component.literal(I18n.get("voxelmap.waypointshare.tooltip1") + "\n" + I18n.get("voxelmap.waypointshare.tooltip2"));
                 chatStyle = chatStyle.withHoverEvent(new HoverEvent.ShowText(hover));
                 clickableWaypoint.setStyle(chatStyle);
                 textComponents.add(clickableWaypoint);
@@ -112,6 +112,7 @@ public final class CommandUtils {
             float red = generator.nextFloat();
             float green = generator.nextFloat();
             float blue = generator.nextFloat();
+            boolean deathpoint = false;
             String suffix = "";
             String world = "";
             TreeSet<DimensionContainer> dimensions = new TreeSet<>();
@@ -142,6 +143,8 @@ public final class CommandUtils {
                         red = (color >> 16 & 0xFF) / 255.0F;
                         green = (color >> 8 & 0xFF) / 255.0F;
                         blue = (color & 0xFF) / 255.0F;
+                    } else if (key.equals("deathpoint")) {
+                        deathpoint = Boolean.parseBoolean(value);
                     } else if (!key.equals("suffix") && !key.equals("icon")) {
                         switch (key) {
                             case "world" -> world = TextUtils.descrubName(value);
@@ -175,7 +178,7 @@ public final class CommandUtils {
                     z = (int) ((double) z * dimensionScale);
                 }
 
-                waypoint = new Waypoint(name, x, z, y, enabled, red, green, blue, suffix, world, dimensions);
+                waypoint = new Waypoint(name, x, z, y, enabled, red, green, blue, deathpoint, suffix, world, dimensions);
             }
         } catch (NumberFormatException ignored) {
         }

@@ -13,7 +13,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiSubworldEdit extends GuiScreenMinimap implements BooleanConsumer {
-    private final Screen parent;
     private final WaypointManager waypointManager;
     private final ArrayList<?> knownSubworldNames;
     private final String originalSubworldName;
@@ -24,7 +23,7 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements BooleanConsumer
     private boolean deleteClicked;
 
     public GuiSubworldEdit(Screen parent, String subworldName) {
-        this.parent = parent;
+        this.parentScreen = parent;
         this.waypointManager = VoxelConstants.getVoxelMapInstance().getWaypointManager();
         this.originalSubworldName = subworldName;
         this.knownSubworldNames = new ArrayList<Object>(this.waypointManager.getKnownSubworldNames());
@@ -41,7 +40,7 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements BooleanConsumer
         this.subworldNameField.setValue(this.originalSubworldName);
         this.addRenderableWidget(this.subworldNameField);
         this.addRenderableWidget(this.doneButton = new Button.Builder(Component.translatable("gui.done"), button -> this.changeNameClicked()).bounds(this.getWidth() / 2 - 155, this.getHeight() / 6 + 168, 150, 20).build());
-        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.cancel"), button -> VoxelConstants.getMinecraft().setScreen(this.parent)).bounds(this.getWidth() / 2 + 5, this.getHeight() / 6 + 168, 150, 20).build());
+        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.cancel"), button -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 + 5, this.getHeight() / 6 + 168, 150, 20).build());
         int buttonListY = this.getHeight() / 6 + 82 + 6;
         this.addRenderableWidget(this.deleteButton = new Button.Builder(Component.translatable("selectServer.delete"), button -> this.deleteClicked()).bounds(this.getWidth() / 2 - 50, buttonListY + 24, 100, 20).build());
         this.doneButton.active = this.isNameAcceptable();
@@ -57,12 +56,12 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements BooleanConsumer
             this.waypointManager.changeSubworldName(this.originalSubworldName, this.currentSubworldName);
         }
 
-        VoxelConstants.getMinecraft().setScreen(this.parent);
+        VoxelConstants.getMinecraft().setScreen(this.parentScreen);
     }
 
     private void deleteClicked() {
         this.deleteClicked = true;
-        Component title = Component.translatable("worldmap.subworld.deleteconfirm");
+        Component title = Component.translatable("voxelmap.worldmap.subworld.deleteconfirm");
         Component explanation = Component.translatable("selectServer.deleteWarning", this.originalSubworldName);
         Component affirm = Component.translatable("selectServer.deleteButton");
         Component deny = Component.translatable("gui.cancel");
@@ -77,7 +76,7 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements BooleanConsumer
                 this.waypointManager.deleteSubworld(this.originalSubworldName);
             }
 
-            VoxelConstants.getMinecraft().setScreen(this.parent);
+            VoxelConstants.getMinecraft().setScreen(this.parentScreen);
         }
 
     }
@@ -112,11 +111,10 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements BooleanConsumer
     }
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        this.renderBlurredBackground();
-        this.renderMenuBackground(drawContext);
+        this.renderDefaultBackground(drawContext);
         drawContext.flush();
-        drawContext.drawCenteredString(this.getFontRenderer(), Component.translatable("worldmap.subworld.edit"), this.getWidth() / 2, 20, 16777215);
-        drawContext.drawString(this.getFontRenderer(), Component.translatable("worldmap.subworld.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 10526880);
+        drawContext.drawCenteredString(this.getFontRenderer(), Component.translatable("voxelmap.worldmap.subworld.edit"), this.getWidth() / 2, 20, 16777215);
+        drawContext.drawString(this.getFontRenderer(), Component.translatable("voxelmap.worldmap.subworld.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 10526880);
         this.subworldNameField.render(drawContext, mouseX, mouseY, delta);
         super.render(drawContext, mouseX, mouseY, delta);
     }

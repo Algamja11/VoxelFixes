@@ -13,8 +13,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.DimensionItem> {
-    private static final Component APPLIES = Component.translatable("minimap.waypoints.dimension.applies");
-    private static final Component NOT_APPLIES = Component.translatable("minimap.waypoints.dimension.notapplies");
+    private static final Component APPLIES = Component.translatable("voxelmap.waypoints.dimension.applies");
+    private static final Component NOT_APPLIES = Component.translatable("voxelmap.waypoints.dimension.notapplies");
     private static final ResourceLocation CONFIRM = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
     private static final ResourceLocation CANCEL = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
 
@@ -94,7 +94,7 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
             int width = GuiSlotDimensions.this.width;
             if (mouseX >= x + padding && mouseY >= y && mouseX <= x + width + padding && mouseY <= y + GuiSlotDimensions.this.itemHeight) {
                 Component tooltip;
-                if (this.parentGui.popupOpen() && mouseX >= x + width - iconWidth - padding && mouseX <= x + width) {
+                if (mouseX >= x + width - iconWidth - padding && mouseX <= x + width) {
                     tooltip = this.parentGui.waypoint.dimensions.contains(this.dim) ? APPLIES : NOT_APPLIES;
                 } else {
                     tooltip = null;
@@ -120,12 +120,11 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
             GuiSlotDimensions.this.setSelected(this);
             byte iconWidth = 18;
             int rightEdge = GuiSlotDimensions.this.getX() + GuiSlotDimensions.this.getWidth();
-            boolean inRange = mouseX >= (rightEdge - iconWidth) && mouseX <= rightEdge;
-            if (inRange && GuiSlotDimensions.this.doubleClicked) {
+            if (mouseX >= (rightEdge - iconWidth) && mouseX <= rightEdge) {
                 this.parentGui.toggleDimensionSelected();
             }
 
-            return true;
+            return super.mouseClicked(mouseX, mouseY, button);
         }
     }
 }

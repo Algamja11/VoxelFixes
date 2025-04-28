@@ -4,6 +4,7 @@ import com.mamiyaotaru.voxelmap.RadarSettingsManager;
 import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.VoxelMap;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
+import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.MobCategory;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,10 +25,10 @@ class GuiSlotMobs extends AbstractSelectionList<GuiSlotMobs.MobItem> {
     private final ArrayList<MobItem> mobs;
     private ArrayList<Entry<?>> mobsFiltered;
     final GuiMobs parentGui;
-    static final Component ENABLED = Component.translatable("options.minimap.mobs.enabled");
-    static final Component DISABLED = Component.translatable("options.minimap.mobs.disabled");
-    static final Component TOOLTIP_ENABLE = Component.translatable("options.minimap.mobs.enabletooltip");
-    static final Component TOOLTIP_DISABLE = Component.translatable("options.minimap.mobs.disabletooltip");
+    static final Component ENABLED = Component.translatable("options.voxelmap.selectmobs.enabled");
+    static final Component DISABLED = Component.translatable("options.voxelmap.selectmobs.disabled");
+    static final Component TOOLTIP_ENABLE = Component.translatable("options.voxelmap.selectmobs.enabletooltip");
+    static final Component TOOLTIP_DISABLE = Component.translatable("options.voxelmap.selectmobs.disabletooltip");
     final ResourceLocation visibleIconIdentifier = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
     final ResourceLocation invisibleIconIdentifier = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
 
@@ -134,7 +135,7 @@ class GuiSlotMobs extends AbstractSelectionList<GuiSlotMobs.MobItem> {
             }
             Sprite sprite = VoxelConstants.getVoxelMapInstance().getNotSimpleRadar().getEntityMapImageManager().requestImageForMobType(type);
             if (sprite != null) {
-                sprite.blit(drawContext, RenderType::guiTextured, x + 2, y - 2, 18, 18);
+                sprite.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, x + 2, y - 2, 18, 18);
             }
             drawContext.blit(RenderType::guiTextured, isEnabled ? GuiSlotMobs.this.visibleIconIdentifier : GuiSlotMobs.this.invisibleIconIdentifier, x + 198, y - 2, 0.0F, 0.0F, 18, 18, 18, 18);
             drawContext.flush();

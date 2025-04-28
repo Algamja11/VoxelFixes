@@ -1,6 +1,9 @@
 package com.mamiyaotaru.voxelmap.gui;
 
 import com.mamiyaotaru.voxelmap.VoxelConstants;
+import com.mamiyaotaru.voxelmap.WaypointManager;
+import com.mamiyaotaru.voxelmap.textures.Sprite;
+import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
 import java.awt.Color;
@@ -21,10 +24,10 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
     private ArrayList<?> waypointsFiltered;
     final GuiWaypoints parentGui;
     private String filterString = "";
-    static final Component TOOLTIP_ENABLE = Component.translatable("minimap.waypoints.enabletooltip");
-    static final Component TOOLTIP_DISABLE = Component.translatable("minimap.waypoints.disabletooltip");
-    static final Component TOOLTIP_HIGHLIGHT = Component.translatable("minimap.waypoints.highlighttooltip");
-    static final Component TOOLTIP_HIGHLIGHT_REMOVE = Component.translatable("minimap.waypoints.removehighlighttooltip");
+    static final Component TOOLTIP_ENABLE = Component.translatable("voxelmap.waypoints.enabletooltip");
+    static final Component TOOLTIP_DISABLE = Component.translatable("voxelmap.waypoints.disabletooltip");
+    static final Component TOOLTIP_HIGHLIGHT = Component.translatable("voxelmap.waypoints.highlighttooltip");
+    static final Component TOOLTIP_HIGHLIGHT_REMOVE = Component.translatable("voxelmap.waypoints.removehighlighttooltip");
     final ResourceLocation visibleIconIdentifier = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
     final ResourceLocation invisibleIconIdentifier = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
     final ResourceLocation highlightedIconIdentifier = ResourceLocation.parse("voxelmap:images/waypoints/target.png");
@@ -119,12 +122,10 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
     public class WaypointItem extends AbstractSelectionList.Entry<WaypointItem> implements Comparable<WaypointItem> {
         private final GuiWaypoints parentGui;
         private final Waypoint waypoint;
-        private final ResourceLocation iconSprite;
 
         protected WaypointItem(GuiWaypoints waypointScreen, Waypoint waypoint) {
             this.parentGui = waypointScreen;
             this.waypoint = waypoint;
-            this.iconSprite = ResourceLocation.parse("voxelmap:images/waypoints/waypoint" + waypoint.imageSuffix + ".png");
         }
 
         @Override
@@ -153,11 +154,12 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
             }
             drawContext.blit(RenderType::guiTextured, this.waypoint.enabled ? GuiSlotWaypoints.this.visibleIconIdentifier : GuiSlotWaypoints.this.invisibleIconIdentifier, x + 198, y - 2, 0.0F, 0.0F, 18, 18, 18, 18);
 
-            drawContext.blit(RenderType::guiTextured, this.iconSprite, x, y - 2, 0.0F, 0.0F, 18, 18, 18, 18, waypoint.getUnifiedColor());
+            Sprite waypointSprite = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/waypoint" + waypoint.imageSuffix + ".png");
+            waypointSprite.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, x, y - 2, 18, 18, waypoint.getUnifiedColor());
 
             if (this.waypoint == this.parentGui.highlightedWaypoint) {
                 int redColor = ARGB.colorFromFloat(1.0f, 1.0f, 0.0f, 0.0f);
-                drawContext.blit(RenderType::guiTextured, GuiSlotWaypoints.this.highlightedIconIdentifier, x, y - 2, 0.0F, 0.0F, 18, 18, 18, 18, redColor);
+                drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, GuiSlotWaypoints.this.highlightedIconIdentifier, x, y - 2, 0.0F, 0.0F, 18, 18, 18, 18, redColor);
             }
         }
 

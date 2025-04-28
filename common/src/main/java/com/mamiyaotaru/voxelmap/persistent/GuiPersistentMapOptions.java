@@ -12,19 +12,18 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiPersistentMapOptions extends GuiScreenMinimap {
-    private final Screen parent;
     private final PersistentMapSettingsManager options;
-    private final Component screenTitle = Component.translatable("options.worldmap.title");
-    private final Component cacheSettings = Component.translatable("options.worldmap.cachesettings");
-    private final Component warning = Component.translatable("options.worldmap.warning");
+    private final Component screenTitle = Component.translatable("options.voxelmap.worldmap.title");
+    private final Component cacheSettings = Component.translatable("options.voxelmap.worldmap.cachesettings");
+    private final Component warning = Component.translatable("options.voxelmap.worldmap.warning");
 
     public GuiPersistentMapOptions(Screen parent) {
-        this.parent = parent;
+        this.parentScreen = parent;
         this.options = VoxelConstants.getVoxelMapInstance().getPersistentMapOptions();
     }
 
     public void init() {
-        EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.SHOWWAYPOINTS, EnumOptionsMinimap.SHOWWAYPOINTNAMES };
+        EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WORLDMAP_SHOW_WAYPOINTS, EnumOptionsMinimap.WORLDMAP_SHOW_WAYPOINT_NAMES};
 
         int counter = 0;
 
@@ -32,24 +31,19 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
             GuiOptionButtonMinimap optionButton = new GuiOptionButtonMinimap(this.getWidth() / 2 - 155 + counter % 2 * 160, this.getHeight() / 6 + 24 * (counter >> 1), option, Component.literal(this.options.getKeyText(option)), this::optionClicked);
             this.addRenderableWidget(optionButton);
             
-            if (option == EnumOptionsMinimap.SHOWWAYPOINTS) optionButton.active = VoxelMap.mapOptions.waypointsAllowed;
-            if (option == EnumOptionsMinimap.SHOWWAYPOINTNAMES) optionButton.active = VoxelMap.mapOptions.waypointsAllowed;
+            if (option == EnumOptionsMinimap.WORLDMAP_SHOW_WAYPOINTS) optionButton.active = VoxelMap.mapOptions.waypointsAllowed;
+            if (option == EnumOptionsMinimap.WORLDMAP_SHOW_WAYPOINT_NAMES) optionButton.active = VoxelMap.mapOptions.waypointsAllowed;
             counter++;
         }
 
-        EnumOptionsMinimap[] relevantOptions2 = { EnumOptionsMinimap.MINZOOM, EnumOptionsMinimap.MAXZOOM, EnumOptionsMinimap.CACHESIZE };
+        EnumOptionsMinimap[] relevantOptions2 = { EnumOptionsMinimap.WORLDMAP_MIN_ZOOM, EnumOptionsMinimap.WORLDMAP_MAX_ZOOM, EnumOptionsMinimap.WORLDMAP_CACHE_SIZE};
         counter += 2;
 
         for (EnumOptionsMinimap option : relevantOptions2) {
             if (option.isFloat()) {
-                float sValue = this.options.getOptionFloatValue(option);
+                float sValue = this.options.getFloatValue(option);
 
-                this.addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 - 155 + counter % 2 * 160, this.getHeight() / 6 + 24 * (counter >> 1), option, switch (option) {
-                    case MINZOOM, MAXZOOM -> (sValue + 3.0F) / (5 + 3);
-                    case CACHESIZE -> sValue / 5000.0F;
-                    default ->
-                            throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName() + ". (possibly not a float value applicable to persistent map)");
-                }, this.options));
+                this.addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 - 155 + counter % 2 * 160, this.getHeight() / 6 + 24 * (counter >> 1), option, this.convertFloatValue(option, sValue), this.options));
             } else {
                 this.addRenderableWidget(new GuiOptionButtonMinimap(this.getWidth() / 2 - 155 + counter % 2 * 160, this.getHeight() / 6 + 24 * (counter >> 1), option, Component.literal(this.options.getKeyText(option)), this::optionClicked));
             }
@@ -57,11 +51,11 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
             counter++;
         }
 
-        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), buttonx -> VoxelConstants.getMinecraft().setScreen(this.parent)).bounds(this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, 200, 20).build());
+        this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), buttonx -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, 200, 20).build());
 
         for (Object buttonObj : this.getButtonList()) {
             if (buttonObj instanceof GuiOptionButtonMinimap button) {
-                if (button.returnEnumOptions() == EnumOptionsMinimap.SHOWWAYPOINTNAMES) {
+                if (button.returnEnumOptions() == EnumOptionsMinimap.WORLDMAP_SHOW_WAYPOINT_NAMES) {
                     button.active = this.options.showWaypoints && VoxelMap.mapOptions.waypointsAllowed;
                 }
             }
@@ -71,12 +65,12 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 
     protected void optionClicked(Button par1GuiButton) {
         EnumOptionsMinimap option = ((GuiOptionButtonMinimap) par1GuiButton).returnEnumOptions();
-        this.options.setOptionValue(option);
+        this.options.setValue(option);
         par1GuiButton.setMessage(Component.literal(this.options.getKeyText(option)));
 
         for (Object buttonObj : this.getButtonList()) {
             if (buttonObj instanceof GuiOptionButtonMinimap button) {
-                if (button.returnEnumOptions() == EnumOptionsMinimap.SHOWWAYPOINTNAMES) {
+                if (button.returnEnumOptions() == EnumOptionsMinimap.WORLDMAP_SHOW_WAYPOINT_NAMES) {
                     button.active = this.options.showWaypoints && VoxelMap.mapOptions.waypointsAllowed;
                 }
             }
@@ -88,26 +82,27 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
         for (Object buttonObj : this.getButtonList()) {
             if (buttonObj instanceof GuiOptionSliderMinimap slider) {
                 EnumOptionsMinimap option = slider.returnEnumOptions();
-                float sValue = this.options.getOptionFloatValue(option);
-                float fValue;
+                float fValue = this.convertFloatValue(option, this.options.getFloatValue(option));
 
-                fValue = switch (option) {
-                    case MINZOOM, MAXZOOM -> (sValue + 3.0F) / (5 + 3);
-                    case CACHESIZE -> sValue / 5000.0F;
-                    default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName() + ". (possibly not a float value applicable to persistent map)");
-                };
                 if (this.getFocused() != slider) {
                     slider.setValue(fValue);
                 }
             }
         }
 
-        this.renderBlurredBackground();
-        this.renderMenuBackground(drawContext);
+        this.renderDefaultBackground(drawContext);
         drawContext.flush();
         drawContext.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
         drawContext.drawCenteredString(this.getFontRenderer(), this.cacheSettings, this.getWidth() / 2, this.getHeight() / 6 + 24, 16777215);
         drawContext.drawCenteredString(this.getFontRenderer(), this.warning, this.getWidth() / 2, this.getHeight() / 6 + 34, 16777215);
         super.render(drawContext, mouseX, mouseY, delta);
+    }
+
+    private float convertFloatValue(EnumOptionsMinimap option, float sValue) {
+        return switch (option) {
+            case WORLDMAP_MIN_ZOOM, WORLDMAP_MAX_ZOOM -> (sValue + 3.0F) / (5 + 3);
+            case WORLDMAP_CACHE_SIZE -> sValue / 5000.0F;
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
+        };
     }
 }

@@ -45,7 +45,7 @@ public class RadarSimple implements IRadar {
     public RadarSimple() {
         this.minimapOptions = VoxelConstants.getVoxelMapInstance().getMapOptions();
         this.options = VoxelConstants.getVoxelMapInstance().getRadarOptions();
-        this.textureAtlas = new TextureAtlas("pings", resourceTextureAtlasMarker);
+        this.textureAtlas = new TextureAtlas("simple_radar", resourceTextureAtlasMarker);
     }
 
     @Override
@@ -178,7 +178,6 @@ public class RadarSimple implements IRadar {
                     guiGraphics.pose().translate(0.0f, (float) -contact.distance, 0.0f);
                     guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(contact.angle + contactFacing));
                     guiGraphics.pose().translate(-x, -y, 0.0f);
-                    guiGraphics.pose().translate(0, 0, 125);
 
                     this.textureAtlas.getAtlasSprite("contact").blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - 4, y - 4, 8, 8, color);
                     if (this.options.showFacing) {
