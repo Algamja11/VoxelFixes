@@ -204,17 +204,15 @@ public class GLUtils {
     public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_text_background_depthtest"))
             .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
-            .withDepthBias(1.0F, 7.0F)
             .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
-            .withDepthWrite(false)
+            .withDepthWrite(true)
             .build();
 
     public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_text_background_no_depthtest"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-            .withDepthBias(1.0F, 7.0F)
             .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
-            .withDepthWrite(false)
+            .withDepthWrite(true)
             .build();
 
     public static final RenderType WAYPOINT_TEXT_BACKGROUND_DEPTHTEST = RenderType.create(
