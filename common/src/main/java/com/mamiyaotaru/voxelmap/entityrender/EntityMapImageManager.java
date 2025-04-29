@@ -178,7 +178,7 @@ public class EntityMapImageManager {
         VoxelConstants.debugInfo("EntityMapImageManager: Rendering Mob of type " + entity.getType().getDescriptionId());
 
         Properties properties = new Properties();
-        String filePath = ("textures/icons/" + entity.getClass().getSimpleName() + ".properties").toLowerCase();
+        String filePath = ("textures/icons/" + entity.getType().getDescriptionId() + ".properties").toLowerCase();
         Optional<Resource> resource = minecraft.getResourceManager().getResource(ResourceLocation.parse(filePath));
         if (resource.isPresent()) {
             try (InputStream inputStream = resource.get().open()) {
