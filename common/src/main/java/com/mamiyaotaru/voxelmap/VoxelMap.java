@@ -206,6 +206,10 @@ public class VoxelMap implements PreparableReloadListener {
         return null;
     }
 
+    public Radar getFullRadar() {
+        return radar;
+    }
+
     public ColorManager getColorManager() {
         return this.colorManager;
     }
@@ -292,9 +296,5 @@ public class VoxelMap implements PreparableReloadListener {
     public void onClientStopping() {
         VoxelConstants.onShutDown();
         ThreadManager.flushSaveQueue();
-    }
-
-    public Radar getNotSimpleRadar() {
-        return radar;
     }
 }

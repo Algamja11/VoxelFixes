@@ -18,7 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class RadarSettingsManager implements ISubSettingsManager {
     private boolean somethingChanged;
     public boolean showRadar = true;
-    public int radarMode = 1;
+    public int radarMode = 2;
     public int showMobs = 1;
     public boolean showHostiles = true;
     public boolean showNeutrals;
