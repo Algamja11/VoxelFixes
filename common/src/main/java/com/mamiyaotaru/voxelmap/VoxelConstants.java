@@ -213,18 +213,6 @@ public final class VoxelConstants {
     public static ModApiBridge getModApiBridge() {
         return modApiBridge;
     }
-  
-    public static void debugInfo(String string) {
-        if (VoxelConstants.DEBUG) {
-            getLogger().info(string);
-        }
-    }
-
-    public static void debugWarn(String string) {
-        if (VoxelConstants.DEBUG) {
-            getLogger().warn(string);
-        }
-    }
 
     public static void registerIrisPipelines() {
         if (modApiBridge.isModEnabled("iris")) {

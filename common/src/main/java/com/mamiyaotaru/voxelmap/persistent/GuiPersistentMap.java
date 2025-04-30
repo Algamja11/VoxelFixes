@@ -22,6 +22,7 @@ import com.mamiyaotaru.voxelmap.util.DimensionContainer;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
+import com.mamiyaotaru.voxelmap.util.MessageUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -149,7 +150,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         BufferedImage skinImage = ImageUtils.createBufferedImageFromResourceLocation(VoxelConstants.getPlayer().getSkin().texture());
 
         if (skinImage == null) {
-            VoxelConstants.debugWarn("Got no player skin!");
+            MessageUtils.printDebugWarn("Got no player skin!");
             return;
         }
 

@@ -675,9 +675,9 @@ public class ColorManager {
                     dataZ = Math.min(dataZ, 255);
                     Biome biome = mapData.getBiome(dataX, dataZ);
                     if (biome == null) {
-                        MessageUtils.printDebug("Null biome ID! " + " at " + t + "," + s);
-                        MessageUtils.printDebug("block: " + mapData.getBlockstate(dataX, dataZ) + ", height: " + mapData.getHeight(dataX, dataZ));
-                        MessageUtils.printDebug("Mapdata: " + mapData);
+                        MessageUtils.printDebugWarn("Null biome ID! " + " at " + t + "," + s);
+                        MessageUtils.printDebugWarn("block: " + mapData.getBlockstate(dataX, dataZ) + ", height: " + mapData.getHeight(dataX, dataZ));
+                        MessageUtils.printDebugWarn("Mapdata: " + mapData);
                     }
 
                     int biomeTint = biome == null ? 0 : colorResolver.getColorAtPos(blockState, biome, loopBlockPos.withXYZ(t, blockPos.getY(), s));

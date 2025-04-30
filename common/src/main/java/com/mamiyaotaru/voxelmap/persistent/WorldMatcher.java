@@ -42,7 +42,7 @@ public class WorldMatcher {
                 ArrayList<String> knownSubworldNames = new ArrayList<>(VoxelConstants.getVoxelMapInstance().getWaypointManager().getKnownSubworldNames());
                 String[] subworldNamesArray = new String[knownSubworldNames.size()];
                 knownSubworldNames.toArray(subworldNamesArray);
-                MessageUtils.printDebug("player coords " + VoxelConstants.getPlayer().getX() + " " + VoxelConstants.getPlayer().getZ() + " in world " + VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentWorldName());
+                MessageUtils.printDebugWarn("player coords " + VoxelConstants.getPlayer().getX() + " " + VoxelConstants.getPlayer().getZ() + " in world " + VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentWorldName());
                 this.x = (int) Math.floor(VoxelConstants.getPlayer().getX() / 256.0);
                 this.z = (int) Math.floor(VoxelConstants.getPlayer().getZ() / 256.0);
                 this.loadRegions(subworldNamesArray);
@@ -59,22 +59,22 @@ public class WorldMatcher {
 
                     if (this.x == (int) Math.floor(VoxelConstants.getPlayer().getX() / 256.0) && this.z == (int) Math.floor(VoxelConstants.getPlayer().getZ() / 256.0)) {
                         if (!this.candidateRegions.isEmpty()) {
-                            MessageUtils.printDebug("going to load current region");
+                            MessageUtils.printDebugWarn("going to load current region");
                             this.region.loadCurrent();
-                            MessageUtils.printDebug("loaded chunks in local region: " + this.region.getLoadedChunks());
+                            MessageUtils.printDebugWarn("loaded chunks in local region: " + this.region.getLoadedChunks());
                         }
                     } else {
                         this.x = (int) Math.floor(VoxelConstants.getPlayer().getX() / 256.0);
                         this.z = (int) Math.floor(VoxelConstants.getPlayer().getZ() / 256.0);
-                        MessageUtils.printDebug("player coords changed to " + VoxelConstants.getPlayer().getX() + " " + VoxelConstants.getPlayer().getZ() + " in world " + VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentWorldName());
+                        MessageUtils.printDebugWarn("player coords changed to " + VoxelConstants.getPlayer().getX() + " " + VoxelConstants.getPlayer().getZ() + " in world " + VoxelConstants.getVoxelMapInstance().getWaypointManager().getCurrentWorldName());
                         this.loadRegions(subworldNamesArray);
                     }
 
                     if (attempts >= 5) {
                         if (this.candidateRegions.isEmpty()) {
-                            MessageUtils.printDebug("no candidate regions at current coordinates, bailing");
+                            MessageUtils.printDebugWarn("no candidate regions at current coordinates, bailing");
                         } else {
-                            MessageUtils.printDebug("took too long to load local region, bailing");
+                            MessageUtils.printDebugWarn("took too long to load local region, bailing");
                         }
                     }
                 }
@@ -83,21 +83,21 @@ public class WorldMatcher {
 
                 while (!WorldMatcher.this.cancelled && iterator.hasNext()) {
                     ComparisonCachedRegion candidateRegion = iterator.next();
-                    MessageUtils.printDebug("testing region " + candidateRegion.getSubworldName() + ": " + candidateRegion.getKey());
+                    MessageUtils.printDebugWarn("testing region " + candidateRegion.getSubworldName() + ": " + candidateRegion.getKey());
                     if (this.region.getSimilarityTo(candidateRegion) < 95) {
-                        MessageUtils.printDebug("region failed");
+                        MessageUtils.printDebugWarn("region failed");
                         iterator.remove();
                     } else {
-                        MessageUtils.printDebug("region succeeded");
+                        MessageUtils.printDebugWarn("region succeeded");
                     }
                 }
 
-                MessageUtils.printDebug("remaining regions: " + this.candidateRegions.size());
+                MessageUtils.printDebugWarn("remaining regions: " + this.candidateRegions.size());
                 if (!WorldMatcher.this.cancelled && this.candidateRegions.size() == 1 && !VoxelConstants.getVoxelMapInstance().getWaypointManager().receivedAutoSubworldName()) {
                     VoxelConstants.getVoxelMapInstance().newSubWorldName(this.candidateRegions.get(0).getSubworldName(), false);
                     MessageUtils.chatInfo(I18n.get("voxelmap.worldmap.multiworld.foundworld1") + ":" + " §a" + this.candidateRegions.get(0).getSubworldName() + ".§r" + " " + I18n.get("voxelmap.worldmap.multiworld.foundworld2"));
                 } else if (!WorldMatcher.this.cancelled && !VoxelConstants.getVoxelMapInstance().getWaypointManager().receivedAutoSubworldName()) {
-                    MessageUtils.printDebug("remaining regions: " + this.candidateRegions.size());
+                    MessageUtils.printDebugWarn("remaining regions: " + this.candidateRegions.size());
                     MessageUtils.chatInfo("§4VoxelMap§r" + ":" + " " + I18n.get("voxelmap.worldmap.multiworld.unknownsubworld"));
                 }
 
@@ -111,17 +111,17 @@ public class WorldMatcher {
                             ComparisonCachedRegion candidateRegion = new ComparisonCachedRegion(WorldMatcher.this.map, this.x + "," + this.z, WorldMatcher.this.world, this.worldName, subworldName, this.x, this.z);
                             candidateRegion.loadStored();
                             this.candidateRegions.add(candidateRegion);
-                            MessageUtils.printDebug("added candidate region " + candidateRegion.getSubworldName() + ": " + candidateRegion.getKey());
+                            MessageUtils.printDebugWarn("added candidate region " + candidateRegion.getSubworldName() + ": " + candidateRegion.getKey());
                         } else {
-                            MessageUtils.printDebug(subworldName + " not found as a candidate region");
+                            MessageUtils.printDebugWarn(subworldName + " not found as a candidate region");
                         }
                     }
                 }
 
                 this.region = new ComparisonCachedRegion(WorldMatcher.this.map, this.x + "," + this.z, VoxelConstants.getClientWorld(), this.worldName, "", this.x, this.z);
-                MessageUtils.printDebug("going to load current region");
+                MessageUtils.printDebugWarn("going to load current region");
                 this.region.loadCurrent();
-                MessageUtils.printDebug("loaded chunks in local region: " + this.region.getLoadedChunks());
+                MessageUtils.printDebugWarn("loaded chunks in local region: " + this.region.getLoadedChunks());
             }
         };
         ThreadManager.executorService.execute(runnable);

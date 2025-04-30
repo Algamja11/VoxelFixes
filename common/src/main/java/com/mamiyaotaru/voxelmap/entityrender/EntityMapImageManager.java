@@ -8,6 +8,7 @@ import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
+import com.mamiyaotaru.voxelmap.util.MessageUtils;
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
@@ -103,7 +104,7 @@ public class EntityMapImageManager {
     }
 
     public void reset() {
-        VoxelConstants.debugInfo("EntityMapImageManager: Resetting");
+        MessageUtils.printDebugInfo("EntityMapImageManager: Resetting");
 
         textureAtlas.reset();
         textureAtlas.registerIconForBufferedImage("hostile", ImageUtils.loadImage(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/radar/hostile.png"), 0, 0, 16, 16, 16, 16));
@@ -173,10 +174,10 @@ public class EntityMapImageManager {
 
         Sprite existing = textureAtlas.getAtlasSpriteIncludingYetToBeStitched(variant);
         if (existing != null && existing != textureAtlas.getMissingImage()) {
-            VoxelConstants.debugInfo("EntityMapImageManager: Existing type " + entity.getType().getDescriptionId());
+            MessageUtils.printDebugInfo("EntityMapImageManager: Existing type " + entity.getType().getDescriptionId());
             return existing;
         }
-        VoxelConstants.debugInfo("EntityMapImageManager: Rendering Mob of type " + entity.getType().getDescriptionId());
+        MessageUtils.printDebugInfo("EntityMapImageManager: Rendering Mob of type " + entity.getType().getDescriptionId());
 
         Properties properties = new Properties();
         String filePath = ("textures/icons/" + entity.getType().getDescriptionId() + ".properties").toLowerCase();
@@ -307,11 +308,11 @@ public class EntityMapImageManager {
                 fulfilledImageCreationRequests++;
 
                 sprite.setTextureData(ImageUtils.nativeImageFromBufferedImage(image3));
-                VoxelConstants.debugInfo("EntityMapImageManager: Buffered Image (" + fulfilledImageCreationRequests + "/" + imageCreationRequests + ") added to texture atlas " + entity.getType().getDescriptionId() + " (" + image3.getWidth() + " * " + image3.getHeight() + ")");
+                MessageUtils.printDebugInfo("EntityMapImageManager: Buffered Image (" + fulfilledImageCreationRequests + "/" + imageCreationRequests + ") added to texture atlas " + entity.getType().getDescriptionId() + " (" + image3.getWidth() + " * " + image3.getHeight() + ")");
                 if (fulfilledImageCreationRequests == imageCreationRequests) {
                     textureAtlas.stitchNew();
+                    MessageUtils.printDebugInfo("EntityMapImageManager: Stiching!");
                     if (VoxelConstants.DEBUG) {
-                        VoxelConstants.getLogger().info("EntityMapImageManager: Stiching!");
                         textureAtlas.saveDebugImage();
                     }
                 }
@@ -383,7 +384,7 @@ public class EntityMapImageManager {
         }
 
         if (skinImage == null) {
-            VoxelConstants.debugInfo("Got no player skin! -> " + skinLocation + " -- " + skinTexture.getClass());
+            MessageUtils.printDebugInfo("Got no player skin! -> " + skinLocation + " -- " + skinTexture.getClass());
             return null;
         }
 

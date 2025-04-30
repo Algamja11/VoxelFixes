@@ -232,11 +232,11 @@ public class ComparisonCachedRegion {
                     matched += matchesInChunk;
                 }
 
-                MessageUtils.printDebug("at " + t + "," + s + " there were local non zero: " + nonZeroHeights + " and comparison non zero: " + nonZeroHeightsInCandidate);
+                MessageUtils.printDebugWarn("at " + t + "," + s + " there were local non zero: " + nonZeroHeights + " and comparison non zero: " + nonZeroHeightsInCandidate);
             }
         }
 
-        MessageUtils.printDebug("compared: " + compared + ", matched: " + matched);
+        MessageUtils.printDebugWarn("compared: " + compared + ", matched: " + matched);
         return compared >= 256 ? matched * 100 / compared : 0;
     }
 }
