@@ -205,7 +205,7 @@ public final class VoxelConstants {
     public static void setPacketBridge(PacketBridge packetBridge) {
         VoxelConstants.packetBridge = packetBridge;
     }
-  
+    
     public static void setModApiBride(ModApiBridge modApiBridge) {
         VoxelConstants.modApiBridge = modApiBridge;
     }
