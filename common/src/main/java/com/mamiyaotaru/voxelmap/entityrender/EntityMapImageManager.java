@@ -39,6 +39,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.CamelModel;
 import net.minecraft.client.model.ChickenModel;
 import net.minecraft.client.model.CodModel;
+import net.minecraft.client.model.DolphinModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.LavaSlimeModel;
 import net.minecraft.client.model.LlamaModel;
@@ -319,7 +320,9 @@ public class EntityMapImageManager {
     }
 
     private ModelPart[] getPartToRender(EntityModel<?> model) {
-        if (model instanceof CodModel || model instanceof SalmonModel || model instanceof TropicalFishModelA || model instanceof TropicalFishModelB
+        if (model instanceof CodModel || model instanceof SalmonModel
+                || model instanceof TropicalFishModelA || model instanceof TropicalFishModelB
+                || model instanceof DolphinModel
                 || model instanceof SlimeModel || model instanceof LavaSlimeModel) {
             return new ModelPart[] { model.root() };
         }
