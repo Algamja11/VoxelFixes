@@ -299,6 +299,8 @@ public class Map implements Runnable, IChangeObserver {
         this.mapData[this.zoom].blank();
         this.doFullRender = true;
         VoxelConstants.getVoxelMapInstance().getSettingsAndLightingChangeNotifier().notifyOfChanges();
+
+        showMessage(this.waypointManager.getCurrentWorldName(), 6000);
     }
 
     public void newWorldName() {
@@ -310,7 +312,7 @@ public class Map implements Runnable, IChangeObserver {
             subworldNameBuilder.append(subworldName);
         }
 
-        this.message = subworldNameBuilder.toString();
+        showMessage(subworldNameBuilder.toString(), 2000);
     }
 
     public void onTickInGame(GuiGraphics drawContext) {
@@ -364,11 +366,11 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (minecraft.screen == null && this.options.keyBindZoomIn.consumeClick()) {
-            this.zoomIn();
+            this.changeZoom(false);
         }
 
         if (minecraft.screen == null && this.options.keyBindZoomOut.consumeClick()) {
-            this.zoomOut();
+            this.changeZoom(true);
         }
 
         if (minecraft.screen == null && this.options.keyBindFullscreen.consumeClick()) {
@@ -436,14 +438,6 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (!this.message.isEmpty() && this.zTimer <= 0) {
-            this.zTimer = 2000;
-        }
-
-        int deltaTick = (int) (System.currentTimeMillis() - this.zTimerDelta);
-        this.zTimer -= deltaTick;
-        this.zTimerDelta = System.currentTimeMillis();
-
-        if (!this.message.isEmpty() && this.zTimer <= 0) {
             this.message = "";
         }
 
@@ -460,26 +454,20 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         this.timer = this.timer > 5000 ? 0 : this.timer + 1;
+
+        this.zTimer = this.zTimer < 0 ? 0 : this.zTimer - (int) (System.currentTimeMillis() - this.zTimerDelta);
+        this.zTimerDelta = System.currentTimeMillis();
     }
 
-    private void zoomIn() {
-        --this.zoom;
+    private void changeZoom(boolean zoomOut) {
+        this.zoom = zoomOut ? this.zoom + 1 : this.zoom - 1;
         if (this.zoom < 0) {
             this.zoom = 4;
         }
-        this.options.zoom = this.zoom;
-        this.options.saveAll();
-        this.zoomChanged = true;
-        this.setZoomScale();
-        this.showZoomScale();
-        this.doFullRender = true;
-    }
-
-    private void zoomOut() {
-        ++this.zoom;
         if (this.zoom > 4) {
             this.zoom = 0;
         }
+
         this.options.zoom = this.zoom;
         this.options.saveAll();
         this.zoomChanged = true;
@@ -490,15 +478,15 @@ public class Map implements Runnable, IChangeObserver {
 
     private void showZoomScale() {
         if (this.zoom == 0) {
-            this.message = I18n.get("voxelmap.ui.zoomlevel") + ": (4.0x)";
+            showMessage(I18n.get("voxelmap.ui.zoomlevel") + ": (4.0x)", 2000);
         } else if (this.zoom == 1) {
-            this.message = I18n.get("voxelmap.ui.zoomlevel") + ": (2.0x)";
+            showMessage(I18n.get("voxelmap.ui.zoomlevel") + ": (2.0x)", 2000);
         } else if (this.zoom == 2) {
-            this.message = I18n.get("voxelmap.ui.zoomlevel") + ": (1.0x)";
+            showMessage(I18n.get("voxelmap.ui.zoomlevel") + ": (1.0x)", 2000);
         } else if (this.zoom == 3) {
-            this.message = I18n.get("voxelmap.ui.zoomlevel") + ": (0.5x)";
+            showMessage(I18n.get("voxelmap.ui.zoomlevel") + ": (0.5x)", 2000);
         } else if (this.zoom == 4) {
-            this.message = I18n.get("voxelmap.ui.zoomlevel") + ": (0.25x)";
+            showMessage(I18n.get("voxelmap.ui.zoomlevel") + ": (0.25x)", 2000);
         }
     }
 
@@ -1710,7 +1698,7 @@ public class Map implements Runnable, IChangeObserver {
 
                 icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - 4, y - 4, 8, 8, color);
             } catch (Exception var40) {
-                this.message = "Error: marker overlay not found!";
+                showMessage("Error: marker overlay not found!", 2000);
             } finally {
                 guiGraphics.pose().popPose();
             }
@@ -1734,7 +1722,7 @@ public class Map implements Runnable, IChangeObserver {
 
                 icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - 4, y - 4, 8, 8, color);
             } catch (Exception var42) {
-                this.message = "Error: waypoint overlay not found!";
+                showMessage("Error: waypoint overlay not found!", 2000);
             } finally {
                 guiGraphics.pose().popPose();
             }
@@ -1944,6 +1932,11 @@ public class Map implements Runnable, IChangeObserver {
             halfTextWidth = this.textWidth(text) / 2;
             this.write(drawContext, text, (minecraft.getWindow().getGuiScaledWidth() / 2f - halfTextWidth), 15.0F, 0xFFFFFF);
         }
+    }
+
+    private void showMessage(String string, int duration) {
+        this.message = string;
+        this.zTimer = duration;
     }
 
     private String dCoord(int paramInt1) {
