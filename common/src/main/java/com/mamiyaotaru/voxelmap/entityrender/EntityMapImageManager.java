@@ -188,15 +188,9 @@ public class EntityMapImageManager {
             } catch (Exception ignored) {
             }
         }
-        float iconScale = Float.parseFloat(properties.getProperty("scale", "1.0"));
+        float scaleProperty = Float.parseFloat(properties.getProperty("scale", "1.0"));
 
         Sprite sprite = textureAtlas.registerEmptyIcon(variant);
-        if (entity instanceof AbstractClientPlayer player) {
-            BufferedImage playerImage = getPlayerIcon(player, size, addBorder);
-            postProcessRenderedMobImage(entity, sprite, null, playerImage, 1.0F);
-            return sprite;
-        }
-
         RenderPipeline renderPipeline = GLUtils.ENTITY_ICON;
         BufferBuilder bufferBuilder = fboTessellator.begin(Mode.QUADS, renderPipeline.getVertexFormat());
 
@@ -279,7 +273,7 @@ public class EntityMapImageManager {
         }
         imageCreationRequests++;
         GLUtils.readTextureContentsToBufferedImage(fboTexture, image2 -> {
-            postProcessRenderedMobImage(entity, sprite, model, image2, iconScale);
+            postProcessRenderedMobImage(entity, sprite, model, image2, scaleProperty);
         });
 
         return sprite;
@@ -371,37 +365,6 @@ public class EntityMapImageManager {
         }
 
         return new ModelPart[] { model.root() };
-    }
-
-    private BufferedImage getPlayerIcon(AbstractClientPlayer player, int size, boolean addBorder) {
-        ResourceLocation skinLocation = player.getSkin().texture();
-        AbstractTexture skinTexture = minecraft.getTextureManager().getTexture(skinLocation);
-        BufferedImage skinImage = null;
-        if (skinTexture instanceof DynamicTexture dynamicTexture) {
-            skinImage = ImageUtils.bufferedImageFromNativeImage(dynamicTexture.getPixels());
-        } else { // should be ReloadableImage
-            skinImage = ImageUtils.createBufferedImageFromResourceLocation(skinLocation);
-        }
-
-        if (skinImage == null) {
-            MessageUtils.printDebugInfo("Got no player skin! -> " + skinLocation + " -- " + skinTexture.getClass());
-            return null;
-        }
-
-        boolean showHat = VoxelConstants.getPlayer().isModelPartShown(PlayerModelPart.HAT);
-        if (showHat) {
-            skinImage = ImageUtils.addImages(ImageUtils.loadImage(skinImage, 8, 8, 8, 8), ImageUtils.loadImage(skinImage, 40, 8, 8, 8), 0.0F, 0.0F, 8, 8);
-        } else {
-            skinImage = ImageUtils.loadImage(skinImage, 8, 8, 8, 8);
-        }
-
-        float scale = size == -1 ? 2 : (float) size / skinImage.getWidth();
-        skinImage = ImageUtils.pad(ImageUtils.scaleImage(skinImage, scale));
-
-        if (addBorder) {
-            skinImage = ImageUtils.fillOutline(skinImage, true, 1);
-        }
-        return skinImage;
     }
 
     public void onRenderTick(GuiGraphics drawContext) {
