@@ -268,10 +268,7 @@ public class Radar implements IRadar {
                         float fontScale = this.options.fontScale / 4.0F;
                         guiGraphics.pose().scale(fontScale, fontScale, 1.0F);
 
-                        float labelRed = ARGB.redFloat(contact.entity.getTeamColor());
-                        float labelGreen = ARGB.greenFloat(contact.entity.getTeamColor());
-                        float labelBlue = ARGB.blueFloat(contact.entity.getTeamColor());
-                        int labelColor = ARGB.colorFromFloat(contact.brightness, labelRed, labelGreen, labelBlue);
+                        int labelColor = ((int) (contact.brightness * 255.0F) << 24) | (contact.entity.getTeamColor() & 0x00FFFFFF);
                         int halfStringWidth = minecraft.font.width(contact.name) / 2;
                         guiGraphics.fill((int) (x / fontScale - halfStringWidth - 1), (int) ((y + 3) / fontScale + 9), (int) (x / fontScale + halfStringWidth + 1), (int) ((y + 3) / fontScale - 1), 0x40000000);
                         guiGraphics.drawString(minecraft.font, contact.name, (int) (x / fontScale - halfStringWidth), (int) ((y + 3) / fontScale), labelColor, true);
