@@ -146,7 +146,7 @@ public class RadarSimple implements IRadar {
 
             int color = wayY < 0 ? ARGB.colorFromFloat(contact.brightness, 1, 1, 1) : ARGB.colorFromFloat(1, contact.brightness, contact.brightness, contact.brightness);
 
-            if (this.minimapOptions.rotates) {
+            if (layoutVariables.rotates) {
                 contact.angle += this.direction;
             } else if (this.minimapOptions.oldNorth) {
                 contact.angle -= 90.0F;
@@ -166,7 +166,7 @@ public class RadarSimple implements IRadar {
                 try {
                     guiGraphics.pose().pushPose();
                     float contactFacing = contact.entity.getYHeadRot();
-                    if (this.minimapOptions.rotates) {
+                    if (layoutVariables.rotates) {
                         contactFacing -= this.direction;
                     } else if (this.minimapOptions.oldNorth) {
                         contactFacing += 90.0F;

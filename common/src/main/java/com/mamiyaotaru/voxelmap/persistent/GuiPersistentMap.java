@@ -19,6 +19,7 @@ import com.mamiyaotaru.voxelmap.util.BackgroundImageInfo;
 import com.mamiyaotaru.voxelmap.util.BiomeMapData;
 import com.mamiyaotaru.voxelmap.util.CommandUtils;
 import com.mamiyaotaru.voxelmap.util.DimensionContainer;
+import com.mamiyaotaru.voxelmap.util.EasingUtils;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
@@ -259,17 +260,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         return Math.min(this.options.maxZoom, zoom);
     }
 
-    private float easeOut(float elapsedTime, float startValue, float finalDelta, float totalTime) {
-        float value;
-        if (elapsedTime == totalTime) {
-            value = startValue + finalDelta;
-        } else {
-            value = finalDelta * (-((float) Math.pow(2.0, -10.0F * elapsedTime / totalTime)) + 1.0F) + startValue;
-        }
-
-        return value;
-    }
-
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double amount) {
         this.switchToMouseInput();
@@ -382,7 +372,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             float previousZoom = this.zoom;
             long timeSinceZoom = System.currentTimeMillis() - this.timeOfZoom;
             if (timeSinceZoom < 700.0F) {
-                this.zoom = this.easeOut(timeSinceZoom, this.zoomStart, this.zoomGoal - this.zoomStart, 700.0F);
+                this.zoom = EasingUtils.easeOutExpo(this.zoomStart, this.zoomGoal, timeSinceZoom, 700.0F);
             } else {
                 this.zoom = this.zoomGoal;
             }
@@ -431,8 +421,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         } else {
             long timeSinceRelease = System.currentTimeMillis() - this.timeOfRelease;
             if (timeSinceRelease < 700.0F) {
-                this.deltaX = this.easeOut(timeSinceRelease, this.deltaXonRelease, -this.deltaXonRelease, 700.0F);
-                this.deltaY = this.easeOut(timeSinceRelease, this.deltaYonRelease, -this.deltaYonRelease, 700.0F);
+                this.deltaX = EasingUtils.easeOutExpo(this.deltaXonRelease, 0.0f, timeSinceRelease, 700.0F);
+                this.deltaY = EasingUtils.easeOutExpo(this.deltaYonRelease, 0.0F, timeSinceRelease, 700.0F);
             } else {
                 this.deltaX = 0.0F;
                 this.deltaY = 0.0F;
@@ -1131,7 +1121,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         private float moveStartZ;
         private float moveGoalX;
         private float moveGoalZ;
-        private long timeOfStartMoving = -1L;
+        private long timeOfMoveStart = -1L;
 
         private final EnumMap<ElementType, Boolean> buttonStates = new EnumMap<>(ElementType.class);
         private final ElementType[] sidebarButtons = { ElementType.BUTTON_WAYPOINT_LIST };
@@ -1169,15 +1159,15 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             }
             sidebarClicked = false;
 
-            if (timeOfStartMoving != -1L) {
-                long timeSinceStartMoving = System.currentTimeMillis() - timeOfStartMoving;
-                if (timeSinceStartMoving < 700.0F) {
-                    float centerX = parentGui.easeOut(timeSinceStartMoving, moveStartX, moveGoalX - moveStartX, 700.0F);
-                    float centerZ = parentGui.easeOut(timeSinceStartMoving, moveStartZ, moveGoalZ - moveStartZ, 700.0F);
+            if (timeOfMoveStart != -1L) {
+                long timeSinceMoveStart = System.currentTimeMillis() - timeOfMoveStart;
+                if (timeSinceMoveStart < 700.0F) {
+                    float centerX = EasingUtils.easeOutExpo(moveStartX, moveGoalX, timeSinceMoveStart, 700.0F);
+                    float centerZ = EasingUtils.easeOutExpo(moveStartZ, moveGoalZ, timeSinceMoveStart, 700.0F);
                     parentGui.centerAt(centerX, centerZ);
                 } else {
                     parentGui.centerAt(moveGoalX, moveGoalZ);
-                    timeOfStartMoving = -1L;
+                    timeOfMoveStart = -1L;
                 }
             }
         }
@@ -1289,7 +1279,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         }
 
         private void setupMove(float goalX, float goalZ) {
-            timeOfStartMoving = System.currentTimeMillis();
+            timeOfMoveStart = System.currentTimeMillis();
             moveStartX = parentGui.mapCenterX;
             moveStartZ = parentGui.mapCenterZ;
             moveGoalX = goalX;

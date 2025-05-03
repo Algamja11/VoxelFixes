@@ -198,7 +198,7 @@ public class Radar implements IRadar {
                 color = ARGB.colorFromFloat(1.0f, contact.brightness, contact.brightness, contact.brightness);
             }
 
-            if (this.minimapOptions.rotates) {
+            if (layoutVariables.rotates) {
                 contact.angle += this.direction;
             } else if (this.minimapOptions.oldNorth) {
                 contact.angle -= 90.0F;

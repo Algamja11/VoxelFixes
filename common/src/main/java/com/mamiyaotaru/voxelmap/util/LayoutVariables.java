@@ -5,16 +5,18 @@ public class LayoutVariables {
     public float scaleProj;
     public int mapX;
     public int mapY;
+    public int mapSize;
+    public boolean rotates;
     public double zoomScale;
     public double zoomScaleAdjusted;
 
-    public int mapSize = 64;
-
-    public void updateVars(int scScale, float scaleProj, int mapX, int mapY, double zoomScale, double zoomScaleAdjusted) {
+    public void updateVars(int scScale, float scaleProj, int mapX, int mapY, int mapSize, boolean rotates, double zoomScale, double zoomScaleAdjusted) {
         this.scScale = scScale;
         this.scaleProj = scaleProj;
         this.mapX = mapX;
         this.mapY = mapY;
+        this.mapSize = mapSize;
+        this.rotates = rotates;
         this.zoomScale = zoomScale;
         this.zoomScaleAdjusted = zoomScaleAdjusted;
     }
