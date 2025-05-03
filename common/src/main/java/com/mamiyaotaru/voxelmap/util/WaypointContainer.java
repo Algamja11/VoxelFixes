@@ -118,9 +118,9 @@ public class WaypointContainer {
     }
 
     private float getWaypointDiff(Waypoint waypoint, double distance, Camera camera) {
-        double degrees = 5.0 + Math.min(5.0 / distance, 5.0);
+        double degrees = 3.0 + Math.min(3.0 / distance, 3.0);
         double angle = Math.toRadians(degrees);
-        double size = Math.sin(angle) * distance;
+        double size = Math.sin(angle) * distance * this.options.waypointIconSize;
         Vec3 cameraPos = camera.getPosition();
         Vector3f lookVector = camera.getLookVector();
         Vec3 lookVectorAdjusted = cameraPos.add(lookVector.x * distance, lookVector.y * distance, lookVector.z * distance);
@@ -194,24 +194,6 @@ public class WaypointContainer {
             }
         }
 
-        if (this.options.showWaypointName == 0) {
-            name = "";
-        }
-        String distanceStr = "";
-        if (this.options.showWaypointDistance != 0) {
-            if (this.options.autoUnitConversion && distance >= 10000.0) {
-                double newDistance = distance / 1000.0;
-                distanceStr = (int) newDistance + "." + (int) ((newDistance - (int) newDistance) * 10) + "km";
-            } else {
-                distanceStr = (int) distance + "." + (int) ((distance - (int) distance) * 10) + "m";
-            }
-
-            if (this.options.showWaypointDistance == 1 && !name.isEmpty()) {
-                name += " (" + distanceStr + ")";
-                distanceStr = "";
-            }
-        }
-
         double maxDistance = minecraft.options.simulationDistance().get() * 16.0 * 0.99;
         double adjustedDistance = distance;
         if (distance > maxDistance) {
@@ -228,12 +210,12 @@ public class WaypointContainer {
         poseStack.mulPose(Axis.XP.rotationDegrees(VoxelConstants.getMinecraft().getEntityRenderDispatcher().camera.getXRot()));
         poseStack.scale(-var14, -var14, -var14);
         float fade = distance > 5.0 ? 1.0F : (float) distance / 5.0F;
+        float fadeNoDepth = fade * 0.4F;
         fade = Math.min(fade, !pt.enabled && !target ? 0.3F : 1.0F);
         float width = 10.0F;
         float r = target ? 1.0F : pt.red;
         float g = target ? 0.0F : pt.green;
         float b = target ? 0.0F : pt.blue;
-        float noDepth = 0.4F;
         TextureAtlas textureAtlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
         Sprite icon = target ? textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png") : textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
         if (icon == textureAtlas.getMissingImage()) {
@@ -249,83 +231,105 @@ public class WaypointContainer {
 
         renderType = GLUtils.WAYPOINT_ICON_NO_DEPTHTEST.apply(icon.getResourceLocation());
         vertexConsumer = bufferSource.getBuffer(renderType);
-        vertexConsumer.addVertex(poseStack.last(), -width, -width, 0.0F).setUv(icon.getMinU(), icon.getMinV()).setColor(r, g, b, fade * noDepth);
-        vertexConsumer.addVertex(poseStack.last(), -width, width, 0.0F).setUv(icon.getMinU(), icon.getMaxV()).setColor(r, g, b, fade * noDepth);
-        vertexConsumer.addVertex(poseStack.last(), width, width, 0.0F).setUv(icon.getMaxU(), icon.getMaxV()).setColor(r, g, b, fade * noDepth);
-        vertexConsumer.addVertex(poseStack.last(), width, -width, 0.0F).setUv(icon.getMaxU(), icon.getMinV()).setColor(r, g, b, fade * noDepth);
+        vertexConsumer.addVertex(poseStack.last(), -width, -width, 0.0F).setUv(icon.getMinU(), icon.getMinV()).setColor(r, g, b, fadeNoDepth);
+        vertexConsumer.addVertex(poseStack.last(), -width, width, 0.0F).setUv(icon.getMinU(), icon.getMaxV()).setColor(r, g, b, fadeNoDepth);
+        vertexConsumer.addVertex(poseStack.last(), width, width, 0.0F).setUv(icon.getMaxU(), icon.getMaxV()).setColor(r, g, b, fadeNoDepth);
+        vertexConsumer.addVertex(poseStack.last(), width, -width, 0.0F).setUv(icon.getMaxU(), icon.getMinV()).setColor(r, g, b, fadeNoDepth);
 
         Font fontRenderer = minecraft.font;
         if (showLabel && fontRenderer != null) {
+            boolean aboveIcon = this.options.showWaypointName == 1;
+            String distanceStr = "";
+            if (this.options.showWaypointName == 0) {
+                name = "";
+            }
+            if (this.options.showWaypointDistance != 0) {
+                if (this.options.autoUnitConversion && distance >= 10000.0) {
+                    double converted = distance / 1000.0;
+                    distanceStr = (int) distance + "." + (int) ((converted - (int) converted) * 10) + "km";
+                } else {
+                    distanceStr = (int) distance + "." + (int) ((distance - (int) distance) * 10) + "m";
+                }
+                if (name.isEmpty()) {
+                    aboveIcon = this.options.showWaypointDistance == 1;
+                    name = "(" + distanceStr + ")";
+                    distanceStr = "";
+                } else if (this.options.showWaypointDistance == 1) {
+                    name += " (" + distanceStr + ")";
+                    distanceStr = "";
+                }
+            }
+
             int textColor = (int) (255.0F * fade) << 24 | 0x00FFFFFF;
-            int textColorNoDepth = (int) (255.0F * fade * noDepth) << 24 | 0x00FFFFFF;
-            int labelElevation = this.options.showWaypointName == 2 ? 10 : -19;
-            int halfStringWidth = fontRenderer.width(name) / 2;
+            int textColorNoDepth = (int) (255.0F * fadeNoDepth) << 24 | 0x00FFFFFF;
+            int labelY = aboveIcon ? -20 : 10;
+            int halfLabelWidth = fontRenderer.width(name) / 2;
             float zOffset = 0.1F;
 
             if (!name.isEmpty()) {
                 renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHTEST;
                 vertexConsumer = bufferSource.getBuffer(renderType);
-                vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (-1 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (8 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (8 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (-1 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
 
                 renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST;
                 vertexConsumer = bufferSource.getBuffer(renderType);
-                vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
-                vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
-                vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (-1 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
-                vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (8 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (8 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (-1 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
 
                 poseStack.pushPose();
                 poseStack.translate(0.0F, 0.0F, zOffset * 2.0F);
-                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelElevation, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
-                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelElevation, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
+                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
                 poseStack.popPose();
+            }
 
-                if (!distanceStr.isEmpty()) {
-                    labelElevation = this.options.showWaypointName == 2 ? 30 : -39;
-                    halfStringWidth = fontRenderer.width(distanceStr) / 2;
+            if (!distanceStr.isEmpty()) {
+                labelY = aboveIcon ? -40 : 30;
+                halfLabelWidth = fontRenderer.width(distanceStr) / 2;
 
-                    poseStack.pushPose();
-                    poseStack.scale(0.65F, 0.65F, 1.0F);
+                poseStack.pushPose();
+                poseStack.scale(0.65F, 0.65F, 1.0F);
 
-                    renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHTEST;
-                    vertexConsumer = bufferSource.getBuffer(renderType);
-                    vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                    vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                    vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                    vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                    vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (-1 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                    vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (8 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                    vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (8 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                    vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (-1 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHTEST;
+                vertexConsumer = bufferSource.getBuffer(renderType);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
 
-                    renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST;
-                    vertexConsumer = bufferSource.getBuffer(renderType);
-                    vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
-                    vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
-                    vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (9 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
-                    vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 2), (-2 + labelElevation), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade * noDepth);
-                    vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (-1 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
-                    vertexConsumer.addVertex(poseStack.last(), (-halfStringWidth - 1), (8 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
-                    vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (8 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
-                    vertexConsumer.addVertex(poseStack.last(), (halfStringWidth + 1), (-1 + labelElevation), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade * noDepth);
+                renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST;
+                vertexConsumer = bufferSource.getBuffer(renderType);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
 
-                    poseStack.translate(0.0F, 0.0F, zOffset * 2.0F);
-                    fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelElevation, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
-                    fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelElevation, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                poseStack.translate(0.0F, 0.0F, zOffset * 2.0F);
+                fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
+                fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
 
-                    poseStack.popPose();
-                }
+                poseStack.popPose();
             }
         }
         poseStack.popPose();

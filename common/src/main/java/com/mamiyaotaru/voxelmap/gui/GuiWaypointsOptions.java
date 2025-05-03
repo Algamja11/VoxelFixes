@@ -77,7 +77,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
             EnumOptionsMinimap option = button.returnEnumOptions();
 
             if (option == EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCE) {
-                button.active = this.options.showWaypointName != 0;
+                button.setMessage(Component.literal(this.options.getKeyText(option)));
             }
         }
     }

@@ -361,9 +361,9 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.showWaypointName == 0) {
                     return I18n.get("options.off");
                 } else if (this.showWaypointName == 1) {
-                    return I18n.get("options.voxelmap.waypoints.shownamelabel.above");
+                    return I18n.get("options.voxelmap.waypoints.shownamelabel.aboveicon");
                 } else if (this.showWaypointName == 2) {
-                    return I18n.get("options.voxelmap.waypoints.shownamelabel.below");
+                    return I18n.get("options.voxelmap.waypoints.shownamelabel.belowicon");
                 }
 
                 return I18n.get("voxelmap.ui.error");
@@ -372,9 +372,9 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.showWaypointDistance == 0) {
                     return I18n.get("options.off");
                 } else if (this.showWaypointDistance == 1) {
-                    return I18n.get("options.voxelmap.waypoints.showdistancelabel.beside");
+                    return this.showWaypointName == 0 ? I18n.get("options.voxelmap.waypoints.showdistancelabel.aboveicon") : I18n.get("options.voxelmap.waypoints.showdistancelabel.besidename");
                 } else if (this.showWaypointDistance == 2) {
-                    return I18n.get("options.voxelmap.waypoints.showdistancelabel.below");
+                    return this.showWaypointName == 0 ? I18n.get("options.voxelmap.waypoints.showdistancelabel.belowicon") : I18n.get("options.voxelmap.waypoints.showdistancelabel.belowname");
                 }
 
                 return I18n.get("voxelmap.ui.error");
