@@ -129,8 +129,6 @@ public class Map implements Runnable, IChangeObserver {
     private Screen lastGuiScreen;
     private boolean fullscreenMap;
     private int zoom;
-    private int scWidth;
-    private int scHeight;
     private String message = "";
     private final Component[] welcomeText = new Component[8];
     private int zTimer;
@@ -630,66 +628,51 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     public void drawMinimap(GuiGraphics drawContext) {
-        int scScaleOrig = 1;
-
-        while (minecraft.getWindow().getWidth() / (scScaleOrig + 1) >= 320 && minecraft.getWindow().getHeight() / (scScaleOrig + 1) >= 240) {
-            ++scScaleOrig;
-        }
-
+        int scScaleOrig = Math.max(1, Math.min(minecraft.getWindow().getWidth() / 320, minecraft.getWindow().getHeight() / 240));
         int scScale = scScaleOrig + (this.fullscreenMap ? 0 : this.options.sizeModifier);
-        double scaledWidthD = (double) minecraft.getWindow().getWidth() / scScale;
-        double scaledHeightD = (double) minecraft.getWindow().getHeight() / scScale;
-        this.scWidth = Mth.ceil(scaledWidthD);
-        this.scHeight = Mth.ceil(scaledHeightD);
+        int scWidth = Mth.ceil((double) minecraft.getWindow().getWidth() / scScale);
+        int scHeight = Mth.ceil((double) minecraft.getWindow().getHeight() / scScale);
         float scaleProj = (float) (scScale / minecraft.getWindow().getGuiScale());
-
-        int mapX;
-        if (this.options.mapCorner != 0 && this.options.mapCorner != 3) {
-            mapX = this.scWidth - 37;
-        } else {
-            mapX = 37;
+        int mapX = this.options.mapCorner != 0 && this.options.mapCorner != 3 ? scWidth - 37 : 37;
+        int mapY = this.options.mapCorner != 0 && this.options.mapCorner != 1 ? scHeight - 37 : 37;
+        if (this.fullscreenMap) {
+            mapX = scWidth / 2;
+            mapY = scHeight / 2;
         }
+        this.layoutVariables.updateVars(scScale, scaleProj, mapX, mapY, 64, scWidth, scHeight, this.zoomScale, this.zoomScaleAdjusted);
 
-        int mapY;
-        if (this.options.mapCorner != 0 && this.options.mapCorner != 1) {
-            mapY = this.scHeight - 37;
-        } else {
-            mapY = 37;
-        }
-
-        float statusIconOffset = 0.0F;
-        if (VoxelMap.mapOptions.moveMapBelowStatusEffect) {
-            if (this.options.mapCorner == 1 && !VoxelConstants.getPlayer().getActiveEffects().isEmpty()) {
-
-                for (MobEffectInstance statusEffectInstance : VoxelConstants.getPlayer().getActiveEffects()) {
-                    if (statusEffectInstance.showIcon()) {
-                        if (statusEffectInstance.getEffect().value().isBeneficial()) {
-                            statusIconOffset = Math.max(statusIconOffset, 24.0F);
-                        } else {
-                            statusIconOffset = 50.0F;
-                        }
-                    }
-                }
-                int scHeight = minecraft.getWindow().getGuiScaledHeight();
-                float resFactor = (float) this.scHeight / scHeight;
-                mapY += (int) (statusIconOffset * resFactor);
-            }
-        }
-        Map.statusIconOffset = statusIconOffset;
+//        float statusIconOffset = 0.0F;
+//        if (VoxelMap.mapOptions.moveMapBelowStatusEffect) {
+//            if (this.options.mapCorner == 1 && !VoxelConstants.getPlayer().getActiveEffects().isEmpty()) {
+//
+//                for (MobEffectInstance statusEffectInstance : VoxelConstants.getPlayer().getActiveEffects()) {
+//                    if (statusEffectInstance.showIcon()) {
+//                        if (statusEffectInstance.getEffect().value().isBeneficial()) {
+//                            statusIconOffset = Math.max(statusIconOffset, 24.0F);
+//                        } else {
+//                            statusIconOffset = 50.0F;
+//                        }
+//                    }
+//                }
+//                float resFactor = (float) scHeight / minecraft.getWindow().getGuiScaledHeight();
+//                mapY += (int) (statusIconOffset * resFactor);
+//            }
+//        }
+//        Map.statusIconOffset = statusIconOffset; TODO VoxelFixes: move this code after refactoring
 
         if (!this.options.hide) {
             if (this.fullscreenMap) {
-                this.renderMapFull(drawContext, this.scWidth, this.scHeight, scaleProj);
-                this.drawArrow(drawContext, this.scWidth / 2, this.scHeight / 2, scaleProj);
+                this.renderMapFull(drawContext, layoutVariables);
+                this.drawArrow(drawContext, layoutVariables);
             } else {
-                this.renderMap(drawContext, mapX, mapY, scScale, scaleProj);
-                this.drawDirections(drawContext, mapX, mapY, scaleProj);
-                this.drawArrow(drawContext, mapX, mapY, scaleProj);
+                this.renderMap(drawContext, layoutVariables);
+                this.drawDirections(drawContext, layoutVariables);
+                this.drawArrow(drawContext, layoutVariables);
             }
         }
 
         if (this.options.coordsMode != 0) {
-            this.showCoords(drawContext, mapX, mapY, scaleProj);
+            this.showCoords(drawContext, layoutVariables);
         }
 
         if (this.showWelcomeScreen) {
@@ -1519,9 +1502,12 @@ public class Map implements Runnable, IChangeObserver {
         return ARGB.toABGR(combinedLight);
     }
 
-    private void renderMap(GuiGraphics guiGraphics, int x, int y, int scScale, float scaleProj) {
+    private void renderMap(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
+        int mapX = layoutVariables.mapX;
+        int mapY = layoutVariables.mapY;
+
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(scaleProj, scaleProj, 1.0F);
+        guiGraphics.pose().scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0F);
         guiGraphics.pose().translate(0, 0, 122);
 
         float scale = 1.0F;
@@ -1529,7 +1515,7 @@ public class Map implements Runnable, IChangeObserver {
             scale = 1.4142F;
         }
 
-        guiGraphics.blit(RenderType::guiTextured, this.options.squareMap ? this.squareStencil : this.circleStencil, x - 32, y - 32, 0, 0, 64, 64, 64, 64);
+        guiGraphics.blit(RenderType::guiTextured, this.options.squareMap ? this.squareStencil : this.circleStencil, mapX - 32, mapY - 32, 0, 0, 64, 64, 64, 64);
 
         synchronized (this.coordinateLock) {
             if (this.imageChanged) {
@@ -1602,17 +1588,16 @@ public class Map implements Runnable, IChangeObserver {
 
         guiGraphics.pose().popPose();
 
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, resourceFboTexture, x - 32, y - 32, 0, 0, 64, 64, 64, 64);
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, resourceFboTexture, mapX - 32, mapY - 32, 0, 0, 64, 64, 64, 64);
 
         if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
-            this.layoutVariables.updateVars(scScale, x, y, this.zoomScale, this.zoomScaleAdjusted);
             VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(guiGraphics, this.layoutVariables, 1.0F);
         }
 
-        this.drawMapFrame(guiGraphics, x, y, this.options.squareMap);
+        this.drawMapFrame(guiGraphics, layoutVariables);
 
-        double guiScale = (double) minecraft.getWindow().getWidth() / this.scWidth;
-        minTablistOffset = guiScale * 63;
+        double guiScale = (double) minecraft.getWindow().getWidth() / layoutVariables.scWidth;
+        minTablistOffset = guiScale * layoutVariables.mapSize;
 
         double lastXDouble = GameVariableAccessShim.xCoordDouble();
         double lastZDouble = GameVariableAccessShim.zCoordDouble();
@@ -1624,20 +1609,23 @@ public class Map implements Runnable, IChangeObserver {
                 if (pt.isActive() || pt == highlightedPoint) {
                     double distanceSq = pt.getDistanceSqToEntity(minecraft.getCameraEntity());
                     if (distanceSq < (this.options.maxWaypointDisplayDistance * this.options.maxWaypointDisplayDistance) || this.options.maxWaypointDisplayDistance < 0 || pt == highlightedPoint) {
-                        this.drawWaypoint(guiGraphics, pt, textureAtlas, x, y, lastXDouble, lastZDouble, null);
+                        this.drawWaypoint(guiGraphics, pt, null, textureAtlas, lastXDouble, lastZDouble, layoutVariables);
                     }
                 }
             }
 
             if (highlightedPoint != null) {
-                this.drawWaypoint(guiGraphics, highlightedPoint, textureAtlas, x, y, lastXDouble, lastZDouble, textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png"));
+                this.drawWaypoint(guiGraphics, highlightedPoint, textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png"), textureAtlas, lastXDouble, lastZDouble, layoutVariables);
             }
         }
         guiGraphics.pose().popPose();
     }
 
-    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, TextureAtlas textureAtlas, int x, int y, double lastXDouble, double lastZDouble, Sprite icon) {
+    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, Sprite icon, TextureAtlas textureAtlas, double lastXDouble, double lastZDouble, LayoutVariables layoutVariables) {
         boolean uprightIcon = icon != null || pt.isDeathpoint;
+
+        int mapX = layoutVariables.mapX;
+        int mapY = layoutVariables.mapY;
 
         double wayX = lastXDouble - pt.getX() - 0.5;
         double wayY = lastZDouble - pt.getZ() - 0.5;
@@ -1650,19 +1638,20 @@ public class Map implements Runnable, IChangeObserver {
             locate -= this.northRotate;
         }
 
-        hypot /= this.zoomScaleAdjusted;
+        int halfMapSize = layoutVariables.mapSize / 2;
+        hypot /= layoutVariables.zoomScaleAdjusted;
         if (this.options.squareMap) {
             double radLocate = Math.toRadians(locate);
             double dispX = hypot * Math.cos(radLocate);
             double dispY = hypot * Math.sin(radLocate);
-            far = Math.abs(dispX) > 28.5 || Math.abs(dispY) > 28.5;
+            far = Math.abs(dispX) > (halfMapSize - 3.5) || Math.abs(dispY) > (halfMapSize - 3.5);
             if (far) {
-                hypot = (float) (hypot / Math.max(Math.abs(dispX), Math.abs(dispY)) * 30.0);
+                hypot = (float) (hypot / Math.max(Math.abs(dispX), Math.abs(dispY)) * (halfMapSize - 2.0));
             }
         } else {
-            far = hypot >= 31.0f;
+            far = hypot >= (halfMapSize - 1.0F);
             if (far) {
-                hypot = 34.0f;
+                hypot = (halfMapSize + 2.0F);
             }
         }
 
@@ -1685,18 +1674,18 @@ public class Map implements Runnable, IChangeObserver {
 
             try {
                 guiGraphics.pose().pushPose();
-                guiGraphics.pose().translate(x, y, 0.0f);
+                guiGraphics.pose().translate(mapX, mapY, 0.0f);
                 guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-locate));
                 if (uprightIcon) {
                     guiGraphics.pose().translate(0.0f, -hypot, 0.0f);
                     guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(locate));
-                    guiGraphics.pose().translate(-x, -y, 0.0f);
+                    guiGraphics.pose().translate(-mapX, -mapY, 0.0f);
                 } else {
-                    guiGraphics.pose().translate(-x, -y, 0.0f);
+                    guiGraphics.pose().translate(-mapX, -mapY, 0.0f);
                     guiGraphics.pose().translate(0.0f, -hypot, 0.0f);
                 }
 
-                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - 4, y - 4, 8, 8, color);
+                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, mapX - 4, mapY - 4, 8, 8, color);
             } catch (Exception var40) {
                 showMessage("Error: marker overlay not found!", 2000);
             } finally {
@@ -1720,7 +1709,7 @@ public class Map implements Runnable, IChangeObserver {
                 guiGraphics.pose().translate(0.0f, -hypot, 0.0f);
                 guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(locate));
 
-                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - 4, y - 4, 8, 8, color);
+                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, mapX - 4, mapY - 4, 8, 8, color);
             } catch (Exception var42) {
                 showMessage("Error: waypoint overlay not found!", 2000);
             } finally {
@@ -1729,22 +1718,25 @@ public class Map implements Runnable, IChangeObserver {
         }
     }
 
-    private void drawArrow(GuiGraphics guiGraphics, int x, int y, float scaleProj) {
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(scaleProj, scaleProj, 1.0f);
+    private void drawArrow(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
+        int mapX = layoutVariables.mapX;
+        int mapY = layoutVariables.mapY;
 
-        guiGraphics.pose().translate(x, y, 0.0f);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0f);
+
+        guiGraphics.pose().translate(mapX, mapY, 0.0f);
         guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(this.options.rotates && !this.fullscreenMap ? 0.0F : this.direction + this.northRotate));
-        guiGraphics.pose().translate(-x, -y, 0.0f);
+        guiGraphics.pose().translate(-mapX, -mapY, 0.0f);
 
         guiGraphics.pose().translate(0, 0, 200.0f);
 
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, resourceArrow, x - 4, y - 4, 0, 0, 8, 8, 8, 8);
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, resourceArrow, mapX - 4, mapY - 4, 0, 0, 8, 8, 8, 8);
 
         guiGraphics.pose().popPose();
     }
 
-    private void renderMapFull(GuiGraphics guiGraphics, int scWidth, int scHeight, float scaleProj) {
+    private void renderMapFull(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
         synchronized (this.coordinateLock) {
             if (this.imageChanged) {
                 this.imageChanged = false;
@@ -1754,9 +1746,12 @@ public class Map implements Runnable, IChangeObserver {
             }
         }
 
-        int size = Math.min(scWidth, scHeight);
-        int left = scWidth / 2 - size / 2;
-        int top = scHeight / 2 - size / 2;
+        int mapX = layoutVariables.mapX;
+        int mapY = layoutVariables.mapY;
+
+        int size = Math.min(layoutVariables.scWidth, layoutVariables.scHeight);
+        int left = mapX - size / 2;
+        int top = mapY - size / 2;
         float multi = (float) (1.0 / this.zoomScale);
         float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX);
         float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ);
@@ -1764,13 +1759,13 @@ public class Map implements Runnable, IChangeObserver {
         percentY *= multi;
 
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(scaleProj, scaleProj, 1.0F);
+        guiGraphics.pose().scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0F);
 
         guiGraphics.blit(RenderType::guiTextured, this.squareStencil, left, top, 0.0F, 0.0F, size, size, size, size);
 
-        guiGraphics.pose().translate(scWidth / 2.0F, scHeight / 2.0F, 0.0f);
+        guiGraphics.pose().translate(mapX, mapY, 0.0f);
         guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(this.northRotate));
-        guiGraphics.pose().translate(-(scWidth / 2.0F), -(scHeight / 2.0F), 0.0F);
+        guiGraphics.pose().translate(-mapX, -mapY, 0.0F);
         guiGraphics.pose().translate(-percentX * size / 64.0F, -percentY * size / 64.0F, 0.0f);
         guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, mapResources[this.zoom], left, top, 0.0F, 0.0F, size, size, size, size);
 
@@ -1802,12 +1797,15 @@ public class Map implements Runnable, IChangeObserver {
 //        } TODO VoxelFixes: rewrite biomeOverlay
     }
 
-    private void drawMapFrame(GuiGraphics guiGraphics, int x, int y, boolean squaremap) {
-        ResourceLocation frameResource = squaremap ? resourceSquareMap : resourceRoundMap;
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, frameResource, x - 32, y - 32, 0, 0, 64, 64, 64, 64);
+    private void drawMapFrame(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
+        ResourceLocation frameResource = this.options.squareMap ? resourceSquareMap : resourceRoundMap;
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, frameResource, layoutVariables.mapX - 32, layoutVariables.mapY - 32, 0, 0, 64, 64, 64, 64);
     }
 
-    private void drawDirections(GuiGraphics drawContext, int x, int y, float scaleProj) {
+    private void drawDirections(GuiGraphics drawContext, LayoutVariables layoutVariables) {
+        int mapX = layoutVariables.mapX;
+        int mapY = layoutVariables.mapY;
+
         PoseStack poseStack = drawContext.pose();
         float scale = 0.5F;
         float rotate;
@@ -1831,46 +1829,49 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         poseStack.pushPose();
-        poseStack.scale(scaleProj, scaleProj, 1.0F);
+        poseStack.scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0F);
         poseStack.scale(scale, scale, 1.0F);
         poseStack.translate(0, 0, 150);
 
         poseStack.pushPose();
         poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate - 90.0))), distance * Math.cos(Math.toRadians(-(rotate - 90.0))), 100.0);
-        this.write(drawContext, "N", x / scale - 2.0F, y / scale - 4.0F, 16777215);
+        this.write(drawContext, "N", mapX / scale - 2.0F, mapY / scale - 4.0F, 16777215);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(distance * Math.sin(Math.toRadians(-rotate)), distance * Math.cos(Math.toRadians(-rotate)), 10.0);
-        this.write(drawContext, "E", x / scale - 2.0F, y / scale - 4.0F, 16777215);
+        this.write(drawContext, "E", mapX / scale - 2.0F, mapY / scale - 4.0F, 16777215);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate + 90.0))), distance * Math.cos(Math.toRadians(-(rotate + 90.0))), 10.0);
-        this.write(drawContext, "S", x / scale - 2.0F, y / scale - 4.0F, 16777215);
+        this.write(drawContext, "S", mapX / scale - 2.0F, mapY / scale - 4.0F, 16777215);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate + 180.0))), distance * Math.cos(Math.toRadians(-(rotate + 180.0))), 10.0);
-        this.write(drawContext, "W", x / scale - 2.0F, y / scale - 4.0F, 16777215);
+        this.write(drawContext, "W", mapX / scale - 2.0F, mapY / scale - 4.0F, 16777215);
         poseStack.popPose();
 
         poseStack.popPose();
     }
 
-    private void showCoords(GuiGraphics drawContext, int x, int y, float scaleProj) {
+    private void showCoords(GuiGraphics drawContext, LayoutVariables layoutVariables) {
+        int mapX = layoutVariables.mapX;
+        int mapY = layoutVariables.mapY;
+
         PoseStack poseStack = drawContext.pose();
         float scale = 0.5F;
         int textStart;
-        boolean inverseOrder;
-        if (y > this.scHeight / 2 + 64) {
-            textStart = y - 32 - 8;
-            inverseOrder = true;
+        boolean invertY;
+        if (mapY > layoutVariables.scHeight / 2 + 64) {
+            textStart = mapY - 32 - 8;
+            invertY = true;
         } else {
-            textStart = y + 32 + 4;
-            inverseOrder = false;
+            textStart = mapY + 32 + 4;
+            invertY = false;
         }
 
         if (!this.options.hide && !this.fullscreenMap) {
             poseStack.pushPose();
-            poseStack.scale(scaleProj, scaleProj, 1.0F);
+            poseStack.scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0F);
             poseStack.scale(scale, scale, 1.0F);
 
             String text;
@@ -1879,27 +1880,27 @@ public class Map implements Runnable, IChangeObserver {
             if (this.options.coordsMode == 2) {
                 text = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.yCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
                 halfTextWidth = this.textWidth(text) / 2;
-                this.write(drawContext, text, x / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // X, Y, Z
+                this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // X, Y, Z
             } else {
                 text = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
                 halfTextWidth = this.textWidth(text) / 2;
-                this.write(drawContext, text, x / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // X, Z
+                this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // X, Z
 
                 text = this.dCoord(GameVariableAccessShim.yCoord());
                 halfTextWidth = this.textWidth(text) / 2;
-                textY += (inverseOrder ? -10.0F : 10.0F);
-                this.write(drawContext, text, x / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // Y
+                textY += (invertY ? -10.0F : 10.0F);
+                this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // Y
             }
 
             text = this.currentBiomeName;
             halfTextWidth = this.textWidth(text) / 2;
-            textY += (inverseOrder ? -10.0F : 10.0F);
-            this.write(drawContext, text, x / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // BIOME
+            textY += (invertY ? -10.0F : 10.0F);
+            this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // BIOME
 
             if (this.zTimer > 0) {
                 halfTextWidth = this.textWidth(this.message) / 2;
-                textY += (inverseOrder ? -10.0F : 10.0F);
-                this.write(drawContext, this.message, x / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // WORLD NAME
+                textY += (invertY ? -10.0F : 10.0F);
+                this.write(drawContext, this.message, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // WORLD NAME
             }
 
             poseStack.popPose();
