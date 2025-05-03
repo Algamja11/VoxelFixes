@@ -127,6 +127,8 @@ public class Map implements Runnable, IChangeObserver {
     private Screen lastGuiScreen;
     private boolean fullscreenMap;
     private int zoom;
+    private int scWidth;
+    private int scHeight;
     private String message = "";
 //    private final Component[] welcomeText = new Component[8];
     private int zTimer;
@@ -628,14 +630,14 @@ public class Map implements Runnable, IChangeObserver {
     public void drawMinimap(GuiGraphics drawContext) {
         int scScaleOrig = Math.max(1, Math.min(minecraft.getWindow().getWidth() / 320, minecraft.getWindow().getHeight() / 240));
         int scScale = scScaleOrig + (this.fullscreenMap ? 0 : this.options.sizeModifier);
-        int scWidth = Mth.ceil((double) minecraft.getWindow().getWidth() / scScale);
-        int scHeight = Mth.ceil((double) minecraft.getWindow().getHeight() / scScale);
+        this.scWidth = Mth.ceil((double) minecraft.getWindow().getWidth() / scScale);
+        this.scHeight = Mth.ceil((double) minecraft.getWindow().getHeight() / scScale);
         float scaleProj = (float) (scScale / minecraft.getWindow().getGuiScale());
         int mapOffset = this.layoutVariables.mapSize / 2 + 5;
-        int mapX = this.fullscreenMap ? scWidth / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 3 ? scWidth - mapOffset : mapOffset;
-        int mapY = this.fullscreenMap ? scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? scHeight - mapOffset : mapOffset;
+        int mapX = this.fullscreenMap ? this.scWidth / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 3 ? this.scWidth - mapOffset : mapOffset;
+        int mapY = this.fullscreenMap ? this.scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - mapOffset : mapOffset;
 
-        this.layoutVariables.updateVars(scScale, scaleProj, mapX, mapY, scWidth, scHeight, this.zoomScale, this.zoomScaleAdjusted);
+        this.layoutVariables.updateVars(scScale, scaleProj, mapX, mapY, this.zoomScale, this.zoomScaleAdjusted);
 
 //        float statusIconOffset = 0.0F;
 //        if (VoxelMap.mapOptions.moveMapBelowStatusEffect) {
@@ -1589,8 +1591,7 @@ public class Map implements Runnable, IChangeObserver {
         ResourceLocation frameResource = this.options.squareMap ? resourceSquareMap : resourceRoundMap;
         guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, frameResource, mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
 
-        double guiScale = (double) minecraft.getWindow().getWidth() / layoutVariables.scWidth;
-        minTablistOffset = guiScale * mapSize;
+        minTablistOffset = minecraft.getWindow().getGuiScale() * mapSize;
 
         double lastXDouble = GameVariableAccessShim.xCoordDouble();
         double lastZDouble = GameVariableAccessShim.zCoordDouble();
@@ -1740,7 +1741,7 @@ public class Map implements Runnable, IChangeObserver {
 
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
-        int mapSize = Math.min(layoutVariables.scWidth, layoutVariables.scHeight);
+        int mapSize = Math.min(this.scWidth, this.scHeight);
         layoutVariables.mapSize = mapSize;
 
         float multi = (float) (1.0 / this.zoomScale);
@@ -1847,7 +1848,7 @@ public class Map implements Runnable, IChangeObserver {
         float scale = 0.5F;
         int textStart;
         boolean invertY;
-        if (mapY > layoutVariables.scHeight / 2 + mapSize) {
+        if (mapY > this.scHeight / 2 + mapSize) {
             textStart = mapY - mapSize / 2 - 8;
             invertY = true;
         } else {
