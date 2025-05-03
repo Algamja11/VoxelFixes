@@ -61,7 +61,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -79,7 +78,6 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 public class Map implements Runnable, IChangeObserver {
@@ -130,7 +128,7 @@ public class Map implements Runnable, IChangeObserver {
     private boolean fullscreenMap;
     private int zoom;
     private String message = "";
-    private final Component[] welcomeText = new Component[8];
+//    private final Component[] welcomeText = new Component[8];
     private int zTimer;
     private long zTimerDelta;
     private int heightMapFudge;
@@ -435,7 +433,7 @@ public class Map implements Runnable, IChangeObserver {
             this.direction += 360.0F;
         }
 
-        if (!this.message.isEmpty() && this.zTimer <= 0) {
+        if (!this.message.isEmpty() && this.zTimer == 0) {
             this.message = "";
         }
 
@@ -453,7 +451,7 @@ public class Map implements Runnable, IChangeObserver {
 
         this.timer = this.timer > 5000 ? 0 : this.timer + 1;
 
-        this.zTimer = this.zTimer < 0 ? 0 : this.zTimer - (int) (System.currentTimeMillis() - this.zTimerDelta);
+        this.zTimer = this.zTimer <= 0 ? 0 : this.zTimer - (int) (System.currentTimeMillis() - this.zTimerDelta);
         this.zTimerDelta = System.currentTimeMillis();
     }
 
@@ -633,13 +631,11 @@ public class Map implements Runnable, IChangeObserver {
         int scWidth = Mth.ceil((double) minecraft.getWindow().getWidth() / scScale);
         int scHeight = Mth.ceil((double) minecraft.getWindow().getHeight() / scScale);
         float scaleProj = (float) (scScale / minecraft.getWindow().getGuiScale());
-        int mapX = this.options.mapCorner != 0 && this.options.mapCorner != 3 ? scWidth - 37 : 37;
-        int mapY = this.options.mapCorner != 0 && this.options.mapCorner != 1 ? scHeight - 37 : 37;
-        if (this.fullscreenMap) {
-            mapX = scWidth / 2;
-            mapY = scHeight / 2;
-        }
-        this.layoutVariables.updateVars(scScale, scaleProj, mapX, mapY, 64, scWidth, scHeight, this.zoomScale, this.zoomScaleAdjusted);
+        int mapOffset = this.layoutVariables.mapSize / 2 + 5;
+        int mapX = this.fullscreenMap ? scWidth / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 3 ? scWidth - mapOffset : mapOffset;
+        int mapY = this.fullscreenMap ? scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? scHeight - mapOffset : mapOffset;
+
+        this.layoutVariables.updateVars(scScale, scaleProj, mapX, mapY, scWidth, scHeight, this.zoomScale, this.zoomScaleAdjusted);
 
 //        float statusIconOffset = 0.0F;
 //        if (VoxelMap.mapOptions.moveMapBelowStatusEffect) {
@@ -662,17 +658,17 @@ public class Map implements Runnable, IChangeObserver {
 
         if (!this.options.hide) {
             if (this.fullscreenMap) {
-                this.renderMapFull(drawContext, layoutVariables);
-                this.drawArrow(drawContext, layoutVariables);
+                this.renderMapFull(drawContext, this.layoutVariables);
+                this.drawArrow(drawContext, this.layoutVariables);
             } else {
-                this.renderMap(drawContext, layoutVariables);
-                this.drawDirections(drawContext, layoutVariables);
-                this.drawArrow(drawContext, layoutVariables);
+                this.renderMap(drawContext, this.layoutVariables);
+                this.drawDirections(drawContext, this.layoutVariables);
+                this.drawArrow(drawContext, this.layoutVariables);
             }
         }
 
         if (this.options.coordsMode != 0) {
-            this.showCoords(drawContext, layoutVariables);
+            this.drawInfoLabels(drawContext, this.layoutVariables);
         }
 
         if (this.showWelcomeScreen) {
@@ -1505,6 +1501,8 @@ public class Map implements Runnable, IChangeObserver {
     private void renderMap(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
+        int mapSize = 64;
+        layoutVariables.mapSize = mapSize;
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0F);
@@ -1515,7 +1513,7 @@ public class Map implements Runnable, IChangeObserver {
             scale = 1.4142F;
         }
 
-        guiGraphics.blit(RenderType::guiTextured, this.options.squareMap ? this.squareStencil : this.circleStencil, mapX - 32, mapY - 32, 0, 0, 64, 64, 64, 64);
+        guiGraphics.blit(RenderType::guiTextured, this.options.squareMap ? this.squareStencil : this.circleStencil, mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
 
         synchronized (this.coordinateLock) {
             if (this.imageChanged) {
@@ -1527,10 +1525,8 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         float multi = (float) (1.0 / this.zoomScale);
-        float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX);
-        float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ);
-        percentX *= multi;
-        percentY *= multi;
+        float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX) * multi;
+        float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ) * multi;
         guiGraphics.pose().pushPose();
         guiGraphics.pose().setIdentity();
 
@@ -1546,16 +1542,12 @@ public class Map implements Runnable, IChangeObserver {
 
         guiGraphics.flush();
 
+        Matrix4f matrix4f = guiGraphics.pose().last().pose();
         BufferBuilder bufferBuilder = fboTessellator.begin(Mode.QUADS, RenderPipelines.GUI_TEXTURED.getVertexFormat());
-        Vector3f vector3f = new Vector3f();
-        guiGraphics.pose().last().pose().transformPosition(0, 512, 0, vector3f);
-        bufferBuilder.addVertex(vector3f).setUv(0, 0).setColor(255, 255, 255, 255);
-        guiGraphics.pose().last().pose().transformPosition(512, 512, 0, vector3f);
-        bufferBuilder.addVertex(vector3f).setUv(1, 0).setColor(255, 255, 255, 255);
-        guiGraphics.pose().last().pose().transformPosition(512, 0, 0, vector3f);
-        bufferBuilder.addVertex(vector3f).setUv(1, 1).setColor(255, 255, 255, 255);
-        guiGraphics.pose().last().pose().transformPosition(0, 0, 0, vector3f);
-        bufferBuilder.addVertex(vector3f).setUv(0, 1).setColor(255, 255, 255, 255);
+        bufferBuilder.addVertex(matrix4f, 0, 512, 0).setUv(0, 0).setColor(0xFFFFFFFF);
+        bufferBuilder.addVertex(matrix4f, 512, 512, 0).setUv(1, 0).setColor(0xFFFFFFFF);
+        bufferBuilder.addVertex(matrix4f, 512, 0, 0).setUv(1, 1).setColor(0xFFFFFFFF);
+        bufferBuilder.addVertex(matrix4f, 0, 0, 0).setUv(0, 1).setColor(0xFFFFFFFF);
 
         ProjectionType originalProjectionType = RenderSystem.getProjectionType();
         Matrix4f originalProjectionMatrix = RenderSystem.getProjectionMatrix();
@@ -1588,16 +1580,17 @@ public class Map implements Runnable, IChangeObserver {
 
         guiGraphics.pose().popPose();
 
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, resourceFboTexture, mapX - 32, mapY - 32, 0, 0, 64, 64, 64, 64);
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, resourceFboTexture, mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
 
         if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
-            VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(guiGraphics, this.layoutVariables, 1.0F);
+            VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(guiGraphics, layoutVariables);
         }
 
-        this.drawMapFrame(guiGraphics, layoutVariables);
+        ResourceLocation frameResource = this.options.squareMap ? resourceSquareMap : resourceRoundMap;
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, frameResource, mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
 
         double guiScale = (double) minecraft.getWindow().getWidth() / layoutVariables.scWidth;
-        minTablistOffset = guiScale * layoutVariables.mapSize;
+        minTablistOffset = guiScale * mapSize;
 
         double lastXDouble = GameVariableAccessShim.xCoordDouble();
         double lastZDouble = GameVariableAccessShim.zCoordDouble();
@@ -1626,11 +1619,12 @@ public class Map implements Runnable, IChangeObserver {
 
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
+        int halfMapSize = layoutVariables.mapSize / 2;
 
         double wayX = lastXDouble - pt.getX() - 0.5;
         double wayY = lastZDouble - pt.getZ() - 0.5;
         float locate = (float) Math.toDegrees(Math.atan2(wayX, wayY));
-        float hypot = (float) Math.sqrt(wayX * wayX + wayY * wayY);
+        float hypot = (float) Math.sqrt(wayX * wayX + wayY * wayY) * layoutVariables.getPositionScale();
         boolean far;
         if (this.options.rotates) {
             locate += this.direction;
@@ -1638,8 +1632,6 @@ public class Map implements Runnable, IChangeObserver {
             locate -= this.northRotate;
         }
 
-        int halfMapSize = layoutVariables.mapSize / 2;
-        hypot /= layoutVariables.zoomScaleAdjusted;
         if (this.options.squareMap) {
             double radLocate = Math.toRadians(locate);
             double dispX = hypot * Math.cos(radLocate);
@@ -1748,26 +1740,23 @@ public class Map implements Runnable, IChangeObserver {
 
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
+        int mapSize = Math.min(layoutVariables.scWidth, layoutVariables.scHeight);
+        layoutVariables.mapSize = mapSize;
 
-        int size = Math.min(layoutVariables.scWidth, layoutVariables.scHeight);
-        int left = mapX - size / 2;
-        int top = mapY - size / 2;
         float multi = (float) (1.0 / this.zoomScale);
-        float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX);
-        float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ);
-        percentX *= multi;
-        percentY *= multi;
+        float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX) * multi;
+        float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ) * multi;
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0F);
 
-        guiGraphics.blit(RenderType::guiTextured, this.squareStencil, left, top, 0.0F, 0.0F, size, size, size, size);
+        guiGraphics.blit(RenderType::guiTextured, this.squareStencil, mapX - mapSize / 2, mapY - mapSize / 2, 0.0F, 0.0F, mapSize, mapSize, mapSize, mapSize);
 
         guiGraphics.pose().translate(mapX, mapY, 0.0f);
         guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(this.northRotate));
         guiGraphics.pose().translate(-mapX, -mapY, 0.0F);
-        guiGraphics.pose().translate(-percentX * size / 64.0F, -percentY * size / 64.0F, 0.0f);
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, mapResources[this.zoom], left, top, 0.0F, 0.0F, size, size, size, size);
+        guiGraphics.pose().translate(-percentX * mapSize / 64.0F, -percentY * mapSize / 64.0F, 0.0f);
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, mapResources[this.zoom], mapX - mapSize / 2, mapY - mapSize / 2, 0.0F, 0.0F, mapSize, mapSize, mapSize, mapSize);
 
         guiGraphics.pose().popPose();
 
@@ -1797,14 +1786,10 @@ public class Map implements Runnable, IChangeObserver {
 //        } TODO VoxelFixes: rewrite biomeOverlay
     }
 
-    private void drawMapFrame(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
-        ResourceLocation frameResource = this.options.squareMap ? resourceSquareMap : resourceRoundMap;
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, frameResource, layoutVariables.mapX - 32, layoutVariables.mapY - 32, 0, 0, 64, 64, 64, 64);
-    }
-
     private void drawDirections(GuiGraphics drawContext, LayoutVariables layoutVariables) {
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
+        int halfMapSize = layoutVariables.mapSize / 2;
 
         PoseStack poseStack = drawContext.pose();
         float scale = 0.5F;
@@ -1820,12 +1805,12 @@ public class Map implements Runnable, IChangeObserver {
             if (this.options.rotates) {
                 float tempdir = this.direction % 90.0F;
                 tempdir = 45.0F - Math.abs(45.0F - tempdir);
-                distance = (float) (33.5 / scale / Math.cos(Math.toRadians(tempdir)));
+                distance = (float) ((halfMapSize + 1.5F) / scale / Math.cos(Math.toRadians(tempdir)));
             } else {
-                distance = 33.5F / scale;
+                distance = (halfMapSize + 1.5F) / scale;
             }
         } else {
-            distance = 32.0F / scale;
+            distance = halfMapSize / scale;
         }
 
         poseStack.pushPose();
@@ -1853,19 +1838,20 @@ public class Map implements Runnable, IChangeObserver {
         poseStack.popPose();
     }
 
-    private void showCoords(GuiGraphics drawContext, LayoutVariables layoutVariables) {
+    private void drawInfoLabels(GuiGraphics drawContext, LayoutVariables layoutVariables) {
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
+        int mapSize = layoutVariables.mapSize;
 
         PoseStack poseStack = drawContext.pose();
         float scale = 0.5F;
         int textStart;
         boolean invertY;
-        if (mapY > layoutVariables.scHeight / 2 + 64) {
-            textStart = mapY - 32 - 8;
+        if (mapY > layoutVariables.scHeight / 2 + mapSize) {
+            textStart = mapY - mapSize / 2 - 8;
             invertY = true;
         } else {
-            textStart = mapY + 32 + 4;
+            textStart = mapY + mapSize / 2 + 4;
             invertY = false;
         }
 
@@ -2015,11 +2001,11 @@ public class Map implements Runnable, IChangeObserver {
 //
 //        drawContext.drawString(minecraft.font, hide, (centerX - footer / 2), ((scHeight + 5) / 2 + (height - 1) * 10 / 2 + 11), Color.WHITE.getRGB());
 //    }  TODO VoxelFixes: Make WelcomeScreen Using GuiScreen
-
-    private void drawBox(GuiGraphics drawContext, int leftX, int rightX, int topY, int botY) {
-        float opacity = minecraft.options.textBackgroundOpacity().get().floatValue();
-        drawContext.fill(leftX, topY, rightX, botY, ARGB.colorFromFloat(opacity, 0.0F, 0.0F, 0.0F));
-    }
+//
+//    private void drawBox(GuiGraphics drawContext, int leftX, int rightX, int topY, int botY) {
+//        float opacity = minecraft.options.textBackgroundOpacity().get().floatValue();
+//        drawContext.fill(leftX, topY, rightX, botY, ARGB.colorFromFloat(opacity, 0.0F, 0.0F, 0.0F));
+//    }
 
     public static double getMinTablistOffset() {
         return minTablistOffset;

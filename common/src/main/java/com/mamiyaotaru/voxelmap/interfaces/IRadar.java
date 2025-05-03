@@ -7,5 +7,5 @@ import net.minecraft.server.packs.resources.ResourceManager;
 public interface IRadar {
     void onResourceManagerReload(ResourceManager resourceManager);
 
-    void onTickInGame(GuiGraphics guiGraphics, LayoutVariables layoutVariables, float scaleProj);
+    void onTickInGame(GuiGraphics guiGraphics, LayoutVariables layoutVariables);
 }

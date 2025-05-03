@@ -32,7 +32,6 @@ import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.player.Player;
 
 public class RadarSimple implements IRadar {
-    private LayoutVariables layoutVariables;
     public final MapSettingsManager minimapOptions;
     public final RadarSettingsManager options;
     private final TextureAtlas textureAtlas;
@@ -73,9 +72,8 @@ public class RadarSimple implements IRadar {
     }
 
     @Override
-    public void onTickInGame(GuiGraphics guiGraphics, LayoutVariables layoutVariables, float scaleProj) {
+    public void onTickInGame(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
         if (this.options.radarAllowed || this.options.radarMobsAllowed || this.options.radarPlayersAllowed) {
-            this.layoutVariables = layoutVariables;
             if (this.options.isChanged()) {
                 this.timer = 500;
             }
@@ -91,18 +89,18 @@ public class RadarSimple implements IRadar {
             }
 
             if (this.completedLoading && this.timer > 95) {
-                this.calculateMobs();
+                this.calculateMobs(layoutVariables);
                 this.timer = 0;
             }
 
             ++this.timer;
             if (this.completedLoading) {
-                this.renderMapMobs(guiGraphics, this.layoutVariables.mapX, this.layoutVariables.mapY, scaleProj);
+                this.renderMapMobs(guiGraphics, layoutVariables);
             }
         }
     }
 
-    public void calculateMobs() {
+    public void calculateMobs(LayoutVariables layoutVariables) {
         this.contacts.clear();
 
         for (Entity entity : VoxelConstants.getClientWorld().entitiesForRendering()) {
@@ -112,9 +110,8 @@ public class RadarSimple implements IRadar {
                     int wayX = GameVariableAccessShim.xCoord() - (int) entity.position().x();
                     int wayZ = GameVariableAccessShim.zCoord() - (int) entity.position().z();
                     int wayY = GameVariableAccessShim.yCoord() - (int) entity.position().y();
-                    double hypot = wayX * wayX + wayZ * wayZ + wayY * wayY;
-                    hypot /= this.layoutVariables.zoomScaleAdjusted * this.layoutVariables.zoomScaleAdjusted;
-                    if (hypot < 961.0) {
+                    double hypot = Math.sqrt(wayX * wayX + wayZ * wayZ + wayY * wayY) * layoutVariables.getPositionScale();
+                    if (hypot < layoutVariables.mapSize / 2.0F) {
                         Contact contact = new Contact((LivingEntity) entity, MobCategory.forEntity(entity));
                         this.contacts.add(contact);
                     }
@@ -127,8 +124,11 @@ public class RadarSimple implements IRadar {
         this.contacts.sort(Comparator.comparingDouble(contact -> contact.y));
     }
 
-    public void renderMapMobs(GuiGraphics guiGraphics, int x, int y, float scaleProj) {
-        double max = this.layoutVariables.zoomScaleAdjusted * 32.0;
+    public void renderMapMobs(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
+        int mapX = layoutVariables.mapX;
+        int mapY = layoutVariables.mapY;
+
+        double max = layoutVariables.zoomScaleAdjusted * 32.0;
 
         for (Contact contact : this.contacts) {
             contact.updateLocation();
@@ -142,7 +142,7 @@ public class RadarSimple implements IRadar {
             contact.brightness = (float) Math.max(adjustedDiff / max, 0.0);
             contact.brightness *= contact.brightness;
             contact.angle = (float) Math.toDegrees(Math.atan2(wayX, wayZ));
-            contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) / this.layoutVariables.zoomScaleAdjusted;
+            contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) / layoutVariables.zoomScaleAdjusted;
 
             int color = wayY < 0 ? ARGB.colorFromFloat(contact.brightness, 1, 1, 1) : ARGB.colorFromFloat(1, contact.brightness, contact.brightness, contact.brightness);
 
@@ -165,7 +165,6 @@ public class RadarSimple implements IRadar {
             if (inRange) {
                 try {
                     guiGraphics.pose().pushPose();
-                    guiGraphics.pose().scale(scaleProj, scaleProj, 1.0F);
                     float contactFacing = contact.entity.getYHeadRot();
                     if (this.minimapOptions.rotates) {
                         contactFacing -= this.direction;
@@ -173,15 +172,15 @@ public class RadarSimple implements IRadar {
                         contactFacing += 90.0F;
                     }
 
-                    guiGraphics.pose().translate(x, y, 0.0f);
+                    guiGraphics.pose().translate(mapX, mapY, 0.0f);
                     guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-contact.angle));
                     guiGraphics.pose().translate(0.0f, (float) -contact.distance, 0.0f);
                     guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(contact.angle + contactFacing));
-                    guiGraphics.pose().translate(-x, -y, 0.0f);
+                    guiGraphics.pose().translate(-mapX, -mapY, 0.0f);
 
-                    this.textureAtlas.getAtlasSprite("contact").blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - 4, y - 4, 8, 8, color);
+                    this.textureAtlas.getAtlasSprite("contact").blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, mapX - 4, mapY - 4, 8, 8, color);
                     if (this.options.showFacing) {
-                        this.textureAtlas.getAtlasSprite("facing").blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, x - 4, y - 4, 8, 8, color);
+                        this.textureAtlas.getAtlasSprite("facing").blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, mapX - 4, mapY - 4, 8, 8, color);
                     }
                 } catch (Exception e) {
                     VoxelConstants.getLogger().error("Error rendering mob icon! " + e.getLocalizedMessage() + " contact type " + BuiltInRegistries.ENTITY_TYPE.getKey(contact.entity.getType()));
