@@ -69,7 +69,7 @@ public class MapSettingsManager implements ISettingsManager {
     public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoomin", GLFW.GLFW_KEY_UP, "controls.voxelmap.title");
     public final KeyMapping keyBindZoomOut = new KeyMapping("key.voxelmap.zoomout", GLFW.GLFW_KEY_DOWN, "controls.voxelmap.title");
     public final KeyMapping keyBindEnlargedMap = new KeyMapping("key.voxelmap.toggleenlargedmap", GLFW.GLFW_KEY_Z, "controls.voxelmap.title");
-    public final KeyMapping keyBindFullscreenMap = new KeyMapping("key.voxelmap.togglefullscreenmap", GLFW.GLFW_KEY_V, "controls.voxelmap.title");
+    public final KeyMapping keyBindFullscreenMap = new KeyMapping("key.voxelmap.togglefullscreen", GLFW.GLFW_KEY_X, "controls.voxelmap.title");
     public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmapmenu", GLFW.GLFW_KEY_M, "controls.voxelmap.title");
     public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypointmenu", GLFW.GLFW_KEY_U, "controls.voxelmap.title");
     public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypointhotkey", GLFW.GLFW_KEY_N, "controls.voxelmap.title");
