@@ -227,6 +227,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
                 drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, PICKER, pickerX, pickerY, 0f, 0f, 200, 200, 200, 200);
                 int pickedColor = this.pickColor(mouseX, mouseY, 200);
                 if (pickedColor != -1) {
+                    drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, TARGET, mouseX - 8, mouseY - 8, 0f, 0f, 16, 16, 16, 16);
                     drawContext.drawCenteredString(this.getFontRenderer(), "R: " + ARGB.red(pickedColor) + ", G: " + ARGB.green(pickedColor) + ", B: " + ARGB.blue(pickedColor), this.getWidth() / 2, this.getHeight() / 2 + pickerSize / 2 + 8, pickedColor);
                 }
             } else if (this.choosingIcon) {
