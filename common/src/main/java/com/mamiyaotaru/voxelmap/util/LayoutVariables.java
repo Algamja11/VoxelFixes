@@ -12,6 +12,9 @@ public class LayoutVariables {
     public int mapMode;
     public double zoomScale;
     public double zoomScaleAdjusted;
+    public boolean rotates;
+    public boolean squareMap;
+    public float positionScale;
 
     private final MapSettingsManager mapOptions = VoxelConstants.getVoxelMapInstance().getMapOptions();
 
@@ -23,22 +26,9 @@ public class LayoutVariables {
         this.mapSize = mapSize;
         this.mapMode = mapMode;
         this.zoomScale = zoomScale;
-        this.zoomScaleAdjusted = zoomScaleAdjusted;
-    }
-
-    public boolean isSquareMap() {
-        return mapOptions.squareMap || mapMode == 2;
-    }
-
-    public boolean getRotates() {
-        return mapOptions.rotates && mapMode == 0;
-    }
-
-    public double getZoomScaleAdjusted() {
-        return mapMode == 0 ? zoomScaleAdjusted : zoomScale;
-    }
-
-    public float getPositionScale() {
-        return (mapSize / 64.0F) / (float) getZoomScaleAdjusted();
+        this.zoomScaleAdjusted = mapMode == 0 ? zoomScaleAdjusted : zoomScale;
+        this.rotates = mapMode == 0 && mapOptions.rotates;
+        this.squareMap = mapMode == 2 && mapOptions.squareMap;
+        this.positionScale = (mapSize / 64.0F) / (float) zoomScaleAdjusted;
     }
 }

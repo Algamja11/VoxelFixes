@@ -1518,7 +1518,7 @@ public class Map implements Runnable, IChangeObserver {
         guiGraphics.pose().translate(0, 0, 122);
 
         float scale = 1.0F;
-        if (layoutVariables.isSquareMap() && layoutVariables.getRotates()) {
+        if (layoutVariables.squareMap && layoutVariables.rotates) {
             scale = 1.4142F;
         }
 
@@ -1540,7 +1540,7 @@ public class Map implements Runnable, IChangeObserver {
         guiGraphics.pose().setIdentity();
 
         guiGraphics.pose().translate(256, 256, 0);
-        if (!layoutVariables.getRotates()) {
+        if (!layoutVariables.rotates) {
             guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-this.northRotate));
         } else {
             guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(this.direction));
@@ -1649,8 +1649,8 @@ public class Map implements Runnable, IChangeObserver {
 
     private ResourceLocation getMapFrame(LayoutVariables layoutVariables) {
         return switch (layoutVariables.mapMode) {
-            case 0 -> layoutVariables.isSquareMap() ? resourceSquareMap : resourceRoundMap;
-            case 1 -> layoutVariables.isSquareMap() ? resourceEnlargedSquareMap : resourceEnlargedRoundMap;
+            case 0 -> layoutVariables.squareMap ? resourceSquareMap : resourceRoundMap;
+            case 1 -> layoutVariables.squareMap ? resourceEnlargedSquareMap : resourceEnlargedRoundMap;
             case 2 -> resourceEnlargedSquareMap;
             default -> null;
         };
@@ -1658,8 +1658,8 @@ public class Map implements Runnable, IChangeObserver {
 
     private ResourceLocation getMapStencil(LayoutVariables layoutVariables) {
         return switch (layoutVariables.mapMode) {
-            case 0 -> layoutVariables.isSquareMap() ? squareMapStencil : roundMapStencil;
-            case 1 -> layoutVariables.isSquareMap() ? enlargedSquareMapStencil : enlargedRoundMapStencil;
+            case 0 -> layoutVariables.squareMap ? squareMapStencil : roundMapStencil;
+            case 1 -> layoutVariables.squareMap ? enlargedSquareMapStencil : enlargedRoundMapStencil;
             case 2 -> enlargedSquareMapStencil;
             default -> null;
         };
@@ -1675,15 +1675,15 @@ public class Map implements Runnable, IChangeObserver {
         double wayX = lastXDouble - pt.getX() - 0.5;
         double wayY = lastZDouble - pt.getZ() - 0.5;
         float locate = (float) Math.toDegrees(Math.atan2(wayX, wayY));
-        float hypot = (float) Math.sqrt(wayX * wayX + wayY * wayY) * layoutVariables.getPositionScale();
+        float hypot = (float) Math.sqrt(wayX * wayX + wayY * wayY) * layoutVariables.positionScale;
         boolean far;
-        if (layoutVariables.getRotates()) {
+        if (layoutVariables.rotates) {
             locate += this.direction;
         } else {
             locate -= this.northRotate;
         }
 
-        if (layoutVariables.isSquareMap()) {
+        if (layoutVariables.squareMap) {
             double radLocate = Math.toRadians(locate);
             double dispX = hypot * Math.cos(radLocate);
             double dispY = hypot * Math.sin(radLocate);
@@ -1768,7 +1768,7 @@ public class Map implements Runnable, IChangeObserver {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0f);
 
-        if (!layoutVariables.getRotates()) {
+        if (!layoutVariables.rotates) {
             guiGraphics.pose().translate(mapX, mapY, 0.0f);
             guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(this.direction + this.northRotate));
             guiGraphics.pose().translate(-mapX, -mapY, 0.0f);
@@ -1789,15 +1789,15 @@ public class Map implements Runnable, IChangeObserver {
         PoseStack poseStack = drawContext.pose();
         float scale = 0.5F;
         float rotate;
-        if (layoutVariables.getRotates()) {
+        if (layoutVariables.rotates) {
             rotate = -this.direction - 90.0F - this.northRotate;
         } else {
             rotate = -90.0F;
         }
 
         float distance;
-        if (layoutVariables.isSquareMap()) {
-            if (layoutVariables.getRotates()) {
+        if (layoutVariables.squareMap) {
+            if (layoutVariables.rotates) {
                 float tempdir = this.direction % 90.0F;
                 tempdir = 45.0F - Math.abs(45.0F - tempdir);
                 distance = (float) ((halfMapSize + 1.5F) / scale / Math.cos(Math.toRadians(tempdir)));

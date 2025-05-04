@@ -105,11 +105,13 @@ public class Radar implements IRadar {
             }
             try {
                 if (this.isEntityShown(entity)) {
+                    int halfMapSize = layoutVariables.mapSize / 2;
                     int wayX = GameVariableAccessShim.xCoord() - (int) entity.position().x();
                     int wayZ = GameVariableAccessShim.zCoord() - (int) entity.position().z();
                     int wayY = GameVariableAccessShim.yCoord() - (int) entity.position().y();
-                    double hypot = Math.sqrt(wayX * wayX + wayZ * wayZ + wayY * wayY) * layoutVariables.getPositionScale();
-                    if (hypot < layoutVariables.mapSize / 2.0F) {
+                    double hypot = wayX * wayX + wayZ * wayZ + wayY * wayY;
+                    hypot *= layoutVariables.positionScale * layoutVariables.positionScale;
+                    if (hypot < halfMapSize * halfMapSize) {
 
                         Contact contact = new Contact((LivingEntity) entity, MobCategory.forEntity(entity));
                         if (contact.entity.getVehicle() != null && this.isEntityShown(contact.entity.getVehicle())) {
@@ -161,7 +163,7 @@ public class Radar implements IRadar {
         int halfMapSize = layoutVariables.mapSize / 2;
         int scScale = layoutVariables.scScale;
 
-        double max = layoutVariables.getZoomScaleAdjusted() * 32.0;
+        double max = layoutVariables.zoomScaleAdjusted * 32.0;
         double lastX = GameVariableAccessShim.xCoordDouble();
         double lastZ = GameVariableAccessShim.zCoordDouble();
         double lastY = GameVariableAccessShim.yCoordDouble();
@@ -182,7 +184,7 @@ public class Radar implements IRadar {
             contact.brightness = (float) Math.max(adjustedDiff / entityMax, 0.0);
             contact.brightness *= contact.brightness;
             contact.angle = (float) Math.toDegrees(Math.atan2(wayX, wayZ));
-            contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) * layoutVariables.getPositionScale();
+            contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) * layoutVariables.positionScale;
 
             int color;
             if (wayY < 0) {
@@ -194,14 +196,14 @@ public class Radar implements IRadar {
                 color = ARGB.colorFromFloat(1.0f, contact.brightness, contact.brightness, contact.brightness);
             }
 
-            if (layoutVariables.getRotates()) {
+            if (layoutVariables.rotates) {
                 contact.angle += this.direction;
             } else if (this.minimapOptions.oldNorth) {
                 contact.angle -= 90.0F;
             }
 
             boolean inRange;
-            if (!layoutVariables.isSquareMap()) {
+            if (!layoutVariables.squareMap) {
                 inRange = contact.distance < (halfMapSize - 3.5);
             } else {
                 double radLocate = Math.toRadians(contact.angle);
