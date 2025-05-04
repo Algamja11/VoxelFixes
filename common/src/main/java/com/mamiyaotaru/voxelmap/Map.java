@@ -378,8 +378,7 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (minecraft.screen == null && this.options.keyBindEnlargedMap.consumeClick()) {
-            this.enlargedMap = !this.enlargedMap;
-            this.fullscreenMap = false;
+            this.enlargedMap = !this.fullscreenMap && !this.enlargedMap;
         }
 
         if (minecraft.screen == null && this.options.keyBindFullscreenMap.consumeClick()) {
@@ -388,8 +387,7 @@ public class Map implements Runnable, IChangeObserver {
                 this.options.welcome = false;
                 this.options.saveAll();
             } else {
-                this.fullscreenMap = !this.fullscreenMap;
-                this.enlargedMap = false;
+                this.fullscreenMap = !this.fullscreenMap && !this.enlargedMap;
             }
         }
 
