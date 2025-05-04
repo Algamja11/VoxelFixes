@@ -28,7 +28,7 @@ public class LayoutVariables {
         this.zoomScale = zoomScale;
         this.zoomScaleAdjusted = mapMode == 0 ? zoomScaleAdjusted : zoomScale;
         this.rotates = mapMode == 0 && mapOptions.rotates;
-        this.squareMap = mapMode == 2 && mapOptions.squareMap;
+        this.squareMap = mapMode == 2 || mapOptions.squareMap;
         this.positionScale = (mapSize / 64.0F) / (float) zoomScaleAdjusted;
     }
 }
