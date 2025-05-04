@@ -68,7 +68,8 @@ public class MapSettingsManager implements ISettingsManager {
 
     public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoomin", GLFW.GLFW_KEY_UP, "controls.voxelmap.title");
     public final KeyMapping keyBindZoomOut = new KeyMapping("key.voxelmap.zoomout", GLFW.GLFW_KEY_DOWN, "controls.voxelmap.title");
-    public final KeyMapping keyBindFullscreen = new KeyMapping("key.voxelmap.togglefullscreen", GLFW.GLFW_KEY_Z, "controls.voxelmap.title");
+    public final KeyMapping keyBindEnlargedMap = new KeyMapping("key.voxelmap.toggleenlargedmap", GLFW.GLFW_KEY_Z, "controls.voxelmap.title");
+    public final KeyMapping keyBindFullscreenMap = new KeyMapping("key.voxelmap.togglefullscreenmap", GLFW.GLFW_KEY_V, "controls.voxelmap.title");
     public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmapmenu", GLFW.GLFW_KEY_M, "controls.voxelmap.title");
     public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypointmenu", GLFW.GLFW_KEY_U, "controls.voxelmap.title");
     public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypointhotkey", GLFW.GLFW_KEY_N, "controls.voxelmap.title");
@@ -91,7 +92,7 @@ public class MapSettingsManager implements ISettingsManager {
 
     public MapSettingsManager() {
         instance = this;
-        this.keyBindings = new KeyMapping[] { this.keyBindMenu, this.keyBindWaypointMenu, this.keyBindZoomIn, this.keyBindZoomOut, this.keyBindFullscreen, this.keyBindWaypoint, this.keyBindMobToggle, this.keyBindWaypointToggle };
+        this.keyBindings = new KeyMapping[] { this.keyBindMenu, this.keyBindWaypointMenu, this.keyBindZoomIn, this.keyBindZoomOut, this.keyBindEnlargedMap, this.keyBindFullscreenMap, this.keyBindWaypoint, this.keyBindMobToggle, this.keyBindWaypointToggle };
     }
 
     public void addSecondaryOptionsManager(ISubSettingsManager secondarySettingsManager) {
@@ -142,7 +143,8 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Waypoint Sort By" -> this.sort = Math.max(1, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Zoom In Key" -> this.bindKey(this.keyBindZoomIn, curLine[1]);
                         case "Zoom Out Key" -> this.bindKey(this.keyBindZoomOut, curLine[1]);
-                        case "Fullscreen Key" -> this.bindKey(this.keyBindFullscreen, curLine[1]);
+                        case "Enlarged Map Key" -> this.bindKey(this.keyBindEnlargedMap, curLine[1]);
+                        case "Fullscreen Key" -> this.bindKey(this.keyBindFullscreenMap, curLine[1]);
                         case "Menu Key" -> this.bindKey(this.keyBindMenu, curLine[1]);
                         case "Waypoint Menu Key" -> this.bindKey(this.keyBindWaypointMenu, curLine[1]);
                         case "Waypoint Key" -> this.bindKey(this.keyBindWaypoint, curLine[1]);
@@ -211,7 +213,8 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Waypoint Sort By:" + this.sort);
             out.println("Zoom In Key:" + this.keyBindZoomIn.saveString());
             out.println("Zoom Out Key:" + this.keyBindZoomOut.saveString());
-            out.println("Fullscreen Key:" + this.keyBindFullscreen.saveString());
+            out.println("Enlarged Map Key:" + this.keyBindEnlargedMap.saveString());
+            out.println("Fullscreen Key:" + this.keyBindFullscreenMap.saveString());
             out.println("Menu Key:" + this.keyBindMenu.saveString());
             out.println("Waypoint Menu Key:" + this.keyBindWaypointMenu.saveString());
             out.println("Waypoint Key:" + this.keyBindWaypoint.saveString());

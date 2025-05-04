@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.client.renderer.texture.TextureContents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -22,14 +21,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.animal.Bee;
-import net.minecraft.world.entity.animal.PolarBear;
-import net.minecraft.world.entity.animal.Rabbit;
-import net.minecraft.world.entity.animal.wolf.Wolf;
-import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.monster.ZombifiedPiglin;
-import net.minecraft.world.entity.player.Player;
 
 public class RadarSimple implements IRadar {
     public final MapSettingsManager minimapOptions;
@@ -127,8 +118,9 @@ public class RadarSimple implements IRadar {
     public void renderMapMobs(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
+        int halfMapSize = layoutVariables.mapSize / 2;
 
-        double max = layoutVariables.zoomScaleAdjusted * 32.0;
+        double max = layoutVariables.getZoomScaleAdjusted() * 32.0;
 
         for (Contact contact : this.contacts) {
             contact.updateLocation();
@@ -142,31 +134,31 @@ public class RadarSimple implements IRadar {
             contact.brightness = (float) Math.max(adjustedDiff / max, 0.0);
             contact.brightness *= contact.brightness;
             contact.angle = (float) Math.toDegrees(Math.atan2(wayX, wayZ));
-            contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) / layoutVariables.zoomScaleAdjusted;
+            contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) * layoutVariables.getPositionScale();
 
             int color = wayY < 0 ? ARGB.colorFromFloat(contact.brightness, 1, 1, 1) : ARGB.colorFromFloat(1, contact.brightness, contact.brightness, contact.brightness);
 
-            if (layoutVariables.rotates) {
+            if (layoutVariables.getRotates()) {
                 contact.angle += this.direction;
             } else if (this.minimapOptions.oldNorth) {
                 contact.angle -= 90.0F;
             }
 
             boolean inRange;
-            if (!this.minimapOptions.squareMap) {
-                inRange = contact.distance < 31.0;
+            if (!layoutVariables.isSquareMap()) {
+                inRange = contact.distance < (halfMapSize - 3.5);
             } else {
                 double radLocate = Math.toRadians(contact.angle);
                 double dispX = contact.distance * Math.cos(radLocate);
                 double dispY = contact.distance * Math.sin(radLocate);
-                inRange = Math.abs(dispX) <= 28.5 && Math.abs(dispY) <= 28.5;
+                inRange = Math.abs(dispX) <= (halfMapSize - 3.5) && Math.abs(dispY) <= (halfMapSize - 3.5);
             }
 
             if (inRange) {
                 try {
                     guiGraphics.pose().pushPose();
                     float contactFacing = contact.entity.getYHeadRot();
-                    if (layoutVariables.rotates) {
+                    if (layoutVariables.getRotates()) {
                         contactFacing -= this.direction;
                     } else if (this.minimapOptions.oldNorth) {
                         contactFacing += 90.0F;

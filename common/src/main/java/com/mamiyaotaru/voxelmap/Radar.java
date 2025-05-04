@@ -8,15 +8,12 @@ import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.LayoutVariables;
 import com.mamiyaotaru.voxelmap.util.MobCategory;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.ArrayList;
-import java.util.Properties;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.RemotePlayer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ARGB;
@@ -31,7 +28,6 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
-import org.joml.Matrix4f;
 
 public class Radar implements IRadar {
     private final MapSettingsManager minimapOptions;
@@ -165,7 +161,7 @@ public class Radar implements IRadar {
         int halfMapSize = layoutVariables.mapSize / 2;
         int scScale = layoutVariables.scScale;
 
-        double max = layoutVariables.zoomScaleAdjusted * 32.0;
+        double max = layoutVariables.getZoomScaleAdjusted() * 32.0;
         double lastX = GameVariableAccessShim.xCoordDouble();
         double lastZ = GameVariableAccessShim.zCoordDouble();
         double lastY = GameVariableAccessShim.yCoordDouble();
@@ -198,14 +194,14 @@ public class Radar implements IRadar {
                 color = ARGB.colorFromFloat(1.0f, contact.brightness, contact.brightness, contact.brightness);
             }
 
-            if (layoutVariables.rotates) {
+            if (layoutVariables.getRotates()) {
                 contact.angle += this.direction;
             } else if (this.minimapOptions.oldNorth) {
                 contact.angle -= 90.0F;
             }
 
             boolean inRange;
-            if (!this.minimapOptions.squareMap) {
+            if (!layoutVariables.isSquareMap()) {
                 inRange = contact.distance < (halfMapSize - 3.5);
             } else {
                 double radLocate = Math.toRadians(contact.angle);

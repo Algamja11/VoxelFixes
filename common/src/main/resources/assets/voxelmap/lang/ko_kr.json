@@ -15,6 +15,7 @@
   "controls.voxelmap.unbind2": "(메뉴 키는 제외됩니다. 설정 해제할 수 없습니다.)",
   "key.voxelmap.zoomin": "확대",
   "key.voxelmap.zoomout": "축소",
+  "key.voxelmap.toggleenlargedmap": "확장된 맵 토글",
   "key.voxelmap.togglefullscreen": "전체화면 맵 토글",
   "key.voxelmap.voxelmapmenu": "VoxelMap 메뉴",
   "key.voxelmap.menu": "메뉴",

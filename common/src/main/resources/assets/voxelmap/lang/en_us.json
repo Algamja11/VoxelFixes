@@ -15,6 +15,7 @@
   "controls.voxelmap.unbind2": "(Except for the Menu Key - it can't be unbound)",
   "key.voxelmap.zoomin": "Zoom In",
   "key.voxelmap.zoomout": "Zoom Out",
+  "key.voxelmap.toggleenlargedmap": "Toggle Enlarged Map",
   "key.voxelmap.togglefullscreen": "Toggle Fullscreen Map",
   "key.voxelmap.voxelmapmenu": "VoxelMap Menu",
   "key.voxelmap.menu": "Menu",
