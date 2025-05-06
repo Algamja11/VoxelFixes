@@ -3,6 +3,7 @@ package com.mamiyaotaru.voxelmap;
 import com.mamiyaotaru.voxelmap.gui.GuiAddWaypoint;
 import com.mamiyaotaru.voxelmap.gui.GuiWaypoints;
 import com.mamiyaotaru.voxelmap.gui.overridden.EnumOptionsMinimap;
+import com.mamiyaotaru.voxelmap.interfaces.AbstractMapData;
 import com.mamiyaotaru.voxelmap.interfaces.IChangeObserver;
 import com.mamiyaotaru.voxelmap.persistent.GuiPersistentMap;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
@@ -137,8 +138,7 @@ public class Map implements Runnable, IChangeObserver {
     private int scHeight;
     private String message = "";
 //    private final Component[] welcomeText = new Component[8];
-    private int zTimer;
-    private long zTimerDelta;
+    private long zTimer;
     private int heightMapFudge;
     private int timer;
     private boolean doFullRender = true;
@@ -148,7 +148,6 @@ public class Map implements Runnable, IChangeObserver {
     private int lastY;
     private int lastImageX;
     private int lastImageZ;
-    private boolean lastFullscreen;
     private float direction;
     private int northRotate;
     private Thread zCalc = new Thread(this, "Voxelmap LiveMap Calculation Thread");
@@ -444,7 +443,7 @@ public class Map implements Runnable, IChangeObserver {
             this.direction += 360.0F;
         }
 
-        if (!this.message.isEmpty() && this.zTimer == 0) {
+        if (!this.message.isEmpty() && this.zTimer == 0L) {
             this.message = "";
         }
 
@@ -452,18 +451,11 @@ public class Map implements Runnable, IChangeObserver {
             this.drawMinimap(drawContext);
         }
 
-        if (this.options.showBiomeLabel) {
-            ResourceLocation biomeResource = VoxelConstants.getMinecraft().level.getBiome(VoxelConstants.getMinecraft().player.blockPosition()).unwrapKey().get().location();
-            String biomeKey = "biome." + biomeResource.getNamespace() + "." + biomeResource.getPath();
-            this.currentBiomeName = I18n.get(biomeKey);
-        } else if (!this.currentBiomeName.isEmpty()) {
-            this.currentBiomeName = "";
-        }
-
         this.timer = this.timer > 5000 ? 0 : this.timer + 1;
 
-        this.zTimer = this.zTimer <= 0 ? 0 : this.zTimer - (int) (System.currentTimeMillis() - this.zTimerDelta);
-        this.zTimerDelta = System.currentTimeMillis();
+        if (System.currentTimeMillis() > this.zTimer) {
+            this.zTimer = 0;
+        }
     }
 
     private void changeZoom(boolean zoomOut) {
@@ -648,6 +640,8 @@ public class Map implements Runnable, IChangeObserver {
         int mapY = this.fullscreenMap ? this.scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - mapOffset : mapOffset;
         int mapMode = this.fullscreenMap ? 2 : this.enlargedMap ? 1 : 0;
 
+        minTablistOffset = minecraft.getWindow().getGuiScale() * mapSize;
+
         float statusIconOffset = 0.0F;
         if (VoxelMap.mapOptions.moveMapBelowStatusEffectIcons) {
             if (this.options.mapCorner == 1 && !VoxelConstants.getPlayer().getActiveEffects().isEmpty()) {
@@ -828,18 +822,21 @@ public class Map implements Runnable, IChangeObserver {
             }
         }
 
-        if ((full || offsetX != 0 || offsetZ != 0 || !this.lastFullscreen) && this.fullscreenMap && this.options.biomeOverlay != 0) {
+        if ((full || offsetX != 0 || offsetZ != 0) && (this.enlargedMap || this.fullscreenMap) && this.options.biomeOverlay != 0) {
             this.mapData[zoom].segmentBiomes();
             this.mapData[zoom].findCenterOfSegments(!this.options.oldNorth);
         }
 
-        this.lastFullscreen = this.fullscreenMap;
         if (full || offsetX != 0 || offsetZ != 0 || needHeightMap || needLight || skyColorChanged) {
             this.imageChanged = true;
         }
 
         if (needLight || skyColorChanged) {
             VoxelConstants.getVoxelMapInstance().getSettingsAndLightingChangeNotifier().notifyOfChanges();
+        }
+
+        if (offsetX != 0 || offsetZ != 0 && this.options.showBiomeLabel) {
+            this.currentBiomeName = BiomeRepository.getName(world.getBiome(GameVariableAccessShim.blockPos()).value());
         }
 
     }
@@ -1589,13 +1586,16 @@ public class Map implements Runnable, IChangeObserver {
 
         guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, resourceFboTexture, mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
 
+        if (this.options.biomeOverlay != 0 && (this.enlargedMap || this.fullscreenMap)) {
+            this.drawBiomeLabel(guiGraphics, layoutVariables);
+        }
+
         if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
             VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(guiGraphics, layoutVariables);
         }
 
+        guiGraphics.pose().translate(0, 0, 10);
         guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, this.getMapFrame(layoutVariables), mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
-
-        minTablistOffset = minecraft.getWindow().getGuiScale() * mapSize;
 
         double lastXDouble = GameVariableAccessShim.xCoordDouble();
         double lastZDouble = GameVariableAccessShim.zCoordDouble();
@@ -1617,31 +1617,6 @@ public class Map implements Runnable, IChangeObserver {
             }
         }
 
-//        if (this.options.biomeOverlay != 0) {
-//            double factor = Math.pow(2.0, 3 - this.zoom);
-//            int minimumSize = (int) Math.pow(2.0, this.zoom);
-//            minimumSize *= minimumSize;
-//            ArrayList<AbstractMapData.BiomeLabel> labels = this.mapData[this.zoom].getBiomeLabels();
-//            matrixStack.pushPose();
-//            matrixStack.translate(0.0, 0.0, 1160.0);
-//
-//            for (AbstractMapData.BiomeLabel o : labels) {
-//                if (o.segmentSize > minimumSize) {
-//                    String name = o.name;
-//                    int nameWidth = this.textWidth(name);
-//                    float x = (float) (o.x * factor);
-//                    float z = (float) (o.z * factor);
-//                    if (this.options.oldNorth) {
-//                        this.write(guiGraphics, name, (left + 256) - z - (nameWidth / 2f), top + x - 3.0F, 16777215);
-//                    } else {
-//                        this.write(guiGraphics, name, left + x - (nameWidth / 2f), top + z - 3.0F, 16777215);
-//                    }
-//                }
-//            }
-//
-//            matrixStack.popPose();
-//        } TODO VoxelFixes: rewrite biomeOverlay
-
         guiGraphics.pose().popPose();
     }
 
@@ -1661,6 +1636,39 @@ public class Map implements Runnable, IChangeObserver {
             case 2 -> enlargedSquareMapStencil;
             default -> null;
         };
+    }
+
+    private void drawBiomeLabel(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
+        int left = layoutVariables.mapX - (layoutVariables.mapSize / 2);
+        int top = layoutVariables.mapY - (layoutVariables.mapSize / 2);
+        int mapSize = layoutVariables.mapSize;
+
+        float fontSize = 0.5F;
+        float scale = mapSize / fontSize;
+        float mapWidth = this.mapData[this.zoom].getWidth();
+        int minimumSize = (int) Math.pow(2.0, this.zoom);
+        minimumSize *= minimumSize;
+        int textColor = this.options.biomeOverlay == 1 ? 0xFFFFFFFF : 0x80FFFFFF;
+
+        ArrayList<AbstractMapData.BiomeLabel> labels = this.mapData[this.zoom].getBiomeLabels();
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(fontSize, fontSize, 1.0F);
+
+        for (AbstractMapData.BiomeLabel o : labels) {
+            if (o.segmentSize > minimumSize) {
+                String name = o.name;
+                int nameWidth = this.textWidth(name);
+                float x = (o.x / mapWidth) * scale;
+                float z = (o.z / mapWidth) * scale;
+                if (this.options.oldNorth) {
+                    this.write(guiGraphics, name, (left + mapSize) - z - (nameWidth / 2f), top + x - 3.0F, textColor);
+                } else {
+                    this.write(guiGraphics, name, left + x - (nameWidth / 2.0F), top + z - 3.0F, textColor);
+                }
+            }
+        }
+
+        guiGraphics.pose().popPose();
     }
 
     private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, Sprite icon, TextureAtlas textureAtlas, double lastXDouble, double lastZDouble, LayoutVariables layoutVariables) {
@@ -1871,12 +1879,14 @@ public class Map implements Runnable, IChangeObserver {
                 this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // Y
             }
 
-            text = this.currentBiomeName;
-            halfTextWidth = this.textWidth(text) / 2;
-            textY += (invertY ? -10.0F : 10.0F);
-            this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // BIOME
+            if (this.options.showBiomeLabel) {
+                text = this.currentBiomeName;
+                halfTextWidth = this.textWidth(text) / 2;
+                textY += (invertY ? -10.0F : 10.0F);
+                this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // BIOME
+            }
 
-            if (this.zTimer > 0) {
+            if (this.zTimer != 0) {
                 halfTextWidth = this.textWidth(this.message) / 2;
                 textY += (invertY ? -10.0F : 10.0F);
                 this.write(drawContext, this.message, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // WORLD NAME
@@ -1903,9 +1913,12 @@ public class Map implements Runnable, IChangeObserver {
             int halfTextWidth = this.textWidth(text) / 2;
             this.write(drawContext, text, mapX / scale - halfTextWidth, 5.0F, 0xFFFFFF);
 
-            text = this.currentBiomeName;
+            text = "";
+            if (this.options.showBiomeLabel) {
+                text = this.currentBiomeName;
+            }
             if (this.zTimer > 0) {
-                text = text + ", " + this.message;
+                text += ", " + this.message;
             }
             halfTextWidth = this.textWidth(text) / 2;
             this.write(drawContext, text, mapX / scale - halfTextWidth, 15.0F, 0xFFFFFF);
@@ -1915,8 +1928,8 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private void showMessage(String string, int duration) {
+        this.zTimer = System.currentTimeMillis() + duration;
         this.message = string;
-        this.zTimer = duration;
     }
 
     private String dCoord(int paramInt1) {
