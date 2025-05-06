@@ -113,8 +113,8 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Coordinates Mode" -> this.coordsMode = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
                         case "Old North" -> this.oldNorth = Boolean.parseBoolean(curLine[1]);
                         case "Show Biome Label" -> this.showBiomeLabel = Boolean.parseBoolean(curLine[1]);
-                        case "Map Size" -> this.sizeModifier = Math.max(-1, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Square Map" -> this.squareMap = Boolean.parseBoolean(curLine[1]);
+                        case "Map Size" -> this.sizeModifier = Math.max(-1, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Rotation" -> this.rotates = Boolean.parseBoolean(curLine[1]);
                         case "Map Corner" -> this.mapCorner = Math.max(0, Math.min(3, Integer.parseInt(curLine[1])));
                         case "Enable Cave Mode" -> this.showCaves = Boolean.parseBoolean(curLine[1]);
@@ -183,8 +183,8 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Coordinates Mode:" + this.coordsMode);
             out.println("Old North:" + this.oldNorth);
             out.println("Show Biome Label:" + this.showBiomeLabel);
-            out.println("Map Size:" + this.sizeModifier);
             out.println("Square Map:" + this.squareMap);
+            out.println("Map Size:" + this.sizeModifier);
             out.println("Rotation:" + this.rotates);
             out.println("Map Corner:" + this.mapCorner);
             out.println("Enable Cave Mode:" + this.showCaves);

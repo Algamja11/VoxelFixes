@@ -19,7 +19,7 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
     private static final EnumOptionsMinimap[] relevantOptions = {
             EnumOptionsMinimap.HIDE_MINIMAP, EnumOptionsMinimap.SHOW_COORDINATES,
             EnumOptionsMinimap.OLD_NORTH, EnumOptionsMinimap.SHOW_BIOME_LABEL,
-            EnumOptionsMinimap.SIZE, EnumOptionsMinimap.SQUAREMAP,
+            EnumOptionsMinimap.SQUAREMAP, EnumOptionsMinimap.SIZE,
             EnumOptionsMinimap.ROTATES, EnumOptionsMinimap.LOCATION,
             EnumOptionsMinimap.CAVE_MODE, EnumOptionsMinimap.INGAME_WAYPOINTS,
             EnumOptionsMinimap.MOVE_SCOREBOARD_BELOW_MAP, EnumOptionsMinimap.MOVE_MAP_BELOW_STATUS_EFFECT_ICONS,
