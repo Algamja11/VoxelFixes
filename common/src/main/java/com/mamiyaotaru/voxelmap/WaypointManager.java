@@ -550,7 +550,7 @@ public class WaypointManager {
             worldNameStandard = TextUtils.scrubNameFile(worldNameStandard);
             loaded = this.loadWaypointsExtensible(worldNameStandard);
             if (!loaded) {
-                MessageUtils.chatInfo("§E" + I18n.get("voxelmap.waypoints.nowaypointsexist"));
+                MessageUtils.chatInfo("§E" + I18n.get("voxelmap.waypoints.no_waypoints_exist"));
             }
         }
 

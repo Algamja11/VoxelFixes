@@ -43,7 +43,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
         iterateButtonOptions();
 
         if (options.radarMode == 2) {
-            addRenderableWidget(new Button.Builder(Component.translatable("options.voxelmap.selectmobs"), x -> VoxelConstants.getMinecraft().setScreen(new GuiMobs(this, options))).bounds(getWidth() / 2 - 155, getHeight() / 6 + 120, 150, 20).build());
+            addRenderableWidget(new Button.Builder(Component.translatable("options.voxelmap.select_mobs"), x -> VoxelConstants.getMinecraft().setScreen(new GuiMobs(this, options))).bounds(getWidth() / 2 - 155, getHeight() / 6 + 120, 150, 20).build());
 
             float sValue = this.options.getFloatValue(EnumOptionsMinimap.RADAR_FONT_SCALE);
             addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 + 5, this.getHeight() / 6 + 120, EnumOptionsMinimap.RADAR_FONT_SCALE, this.convertFloatValue(EnumOptionsMinimap.RADAR_FONT_SCALE, sValue), options));

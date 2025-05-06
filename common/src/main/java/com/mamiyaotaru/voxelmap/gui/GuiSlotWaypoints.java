@@ -24,10 +24,10 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
     private ArrayList<?> waypointsFiltered;
     final GuiWaypoints parentGui;
     private String filterString = "";
-    static final Component TOOLTIP_ENABLE = Component.translatable("voxelmap.waypoints.enabletooltip");
-    static final Component TOOLTIP_DISABLE = Component.translatable("voxelmap.waypoints.disabletooltip");
-    static final Component TOOLTIP_HIGHLIGHT = Component.translatable("voxelmap.waypoints.highlighttooltip");
-    static final Component TOOLTIP_HIGHLIGHT_REMOVE = Component.translatable("voxelmap.waypoints.removehighlighttooltip");
+    static final Component TOOLTIP_ENABLE = Component.translatable("voxelmap.waypoints.tooltip.enable");
+    static final Component TOOLTIP_DISABLE = Component.translatable("voxelmap.waypoints.tooltip.disable");
+    static final Component TOOLTIP_HIGHLIGHT = Component.translatable("voxelmap.waypoints.tooltip.highlight");
+    static final Component TOOLTIP_HIGHLIGHT_REMOVE = Component.translatable("voxelmap.waypoints.tooltip.remove_highlight");
     final ResourceLocation visibleIconIdentifier = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
     final ResourceLocation invisibleIconIdentifier = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
     final ResourceLocation highlightedIconIdentifier = ResourceLocation.parse("voxelmap:images/waypoints/target.png");

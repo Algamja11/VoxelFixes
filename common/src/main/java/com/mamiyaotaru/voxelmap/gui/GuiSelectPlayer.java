@@ -20,10 +20,10 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements BooleanConsumer
     protected EditBox filter;
     private Component tooltip;
     private final String locInfo;
-    static final MutableComponent SHARE_MESSAGE = (Component.translatable("voxelmap.waypointshare.sharemessage")).append(":");
-    static final Component SHARE_WITH = Component.translatable("voxelmap.waypointshare.sharewith");
-    static final Component SHARE_WAYPOINT = Component.translatable("voxelmap.waypointshare.title");
-    static final Component SHARE_COORDINATES = Component.translatable("voxelmap.waypointshare.titlecoordinate");
+    static final MutableComponent SHARE_MESSAGE = (Component.translatable("voxelmap.waypoint_share.share_message")).append(":");
+    static final Component SHARE_WITH = Component.translatable("voxelmap.waypoint_share.share_with");
+    static final Component SHARE_WAYPOINT = Component.translatable("voxelmap.waypoint_share.title");
+    static final Component SHARE_COORDINATES = Component.translatable("voxelmap.waypoint_share.title.coordinates");
 
     public GuiSelectPlayer(Screen parentScreen, String locInfo, boolean sharingWaypoint) {
         this.parentScreen = parentScreen;
@@ -37,7 +37,7 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements BooleanConsumer
     public void init() {
         this.screenTitle = this.sharingWaypoint ? SHARE_WAYPOINT : SHARE_COORDINATES;
         this.playerList = new GuiButtonRowListPlayers(this);
-        int messageStringWidth = this.getFontRenderer().width(I18n.get("voxelmap.waypointshare.sharemessage") + ":");
+        int messageStringWidth = this.getFontRenderer().width(I18n.get("voxelmap.waypoint_share.share_message") + ":");
         this.message = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 153 + messageStringWidth + 5, 34, 305 - messageStringWidth - 5, 20, null);
         this.message.setMaxLength(78);
         this.addRenderableWidget(this.message);

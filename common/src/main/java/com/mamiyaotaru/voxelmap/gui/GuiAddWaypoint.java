@@ -79,8 +79,8 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         this.addRenderableWidget(this.waypointZ);
         int buttonListY = this.getHeight() / 6 + 82 + 6;
         this.addRenderableWidget(this.buttonEnabled = new Button.Builder(Component.literal("Enabled: " + (this.waypoint.enabled ? "On" : "Off")), button -> this.waypoint.enabled = !this.waypoint.enabled).bounds(this.getWidth() / 2 - 101, buttonListY, 100, 20).build());
-        this.addRenderableWidget(new Button.Builder(Component.literal(I18n.get("voxelmap.waypoints.sortbycolor") + ":     "), button -> this.choosingColor = true).bounds(this.getWidth() / 2 - 101, buttonListY + 24, 100, 20).build());
-        this.addRenderableWidget(new Button.Builder(Component.literal(I18n.get("voxelmap.waypoints.sortbyicon") + ":     "), button -> this.choosingIcon = true).bounds(this.getWidth() / 2 - 101, buttonListY + 48, 100, 20).build());
+        this.addRenderableWidget(new Button.Builder(Component.literal(I18n.get("voxelmap.waypoints.sort.color") + ":     "), button -> this.choosingColor = true).bounds(this.getWidth() / 2 - 101, buttonListY + 24, 100, 20).build());
+        this.addRenderableWidget(new Button.Builder(Component.literal(I18n.get("voxelmap.waypoints.sort.icon") + ":     "), button -> this.choosingIcon = true).bounds(this.getWidth() / 2 - 101, buttonListY + 48, 100, 20).build());
         this.doneButton = new Button.Builder(Component.translatable("addServer.add"), button -> this.acceptWaypoint()).bounds(this.getWidth() / 2 - 155, this.getHeight() / 6 + 168, 150, 20).build();
         this.addRenderableWidget(this.doneButton);
         this.addRenderableWidget(new Button.Builder(Component.translatable("gui.cancel"), button -> this.cancelWaypoint()).bounds(this.getWidth() / 2 + 5, this.getHeight() / 6 + 168, 150, 20).build());

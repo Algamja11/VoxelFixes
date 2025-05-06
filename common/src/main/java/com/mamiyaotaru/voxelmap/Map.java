@@ -309,7 +309,7 @@ public class Map implements Runnable, IChangeObserver {
 
     public void newWorldName() {
         String subworldName = this.waypointManager.getCurrentSubworldDescriptor(true);
-        StringBuilder subworldNameBuilder = (new StringBuilder("§r")).append(I18n.get("voxelmap.worldmap.multiworld.newworld")).append(":").append(" ");
+        StringBuilder subworldNameBuilder = (new StringBuilder("§r")).append(I18n.get("voxelmap.worldmap.multiworld.new_world")).append(":").append(" ");
         if (subworldName.isEmpty() && this.waypointManager.isMultiworld()) {
             subworldNameBuilder.append("???");
         } else if (!subworldName.isEmpty()) {
@@ -485,15 +485,15 @@ public class Map implements Runnable, IChangeObserver {
 
     private void showZoomScale() {
         if (this.zoom == 0) {
-            showMessage(I18n.get("voxelmap.ui.zoomlevel") + ": (4.0x)", 2000);
+            showMessage(I18n.get("voxelmap.ui.zoom_level") + ": (4.0x)", 2000);
         } else if (this.zoom == 1) {
-            showMessage(I18n.get("voxelmap.ui.zoomlevel") + ": (2.0x)", 2000);
+            showMessage(I18n.get("voxelmap.ui.zoom_level") + ": (2.0x)", 2000);
         } else if (this.zoom == 2) {
-            showMessage(I18n.get("voxelmap.ui.zoomlevel") + ": (1.0x)", 2000);
+            showMessage(I18n.get("voxelmap.ui.zoom_level") + ": (1.0x)", 2000);
         } else if (this.zoom == 3) {
-            showMessage(I18n.get("voxelmap.ui.zoomlevel") + ": (0.5x)", 2000);
+            showMessage(I18n.get("voxelmap.ui.zoom_level") + ": (0.5x)", 2000);
         } else if (this.zoom == 4) {
-            showMessage(I18n.get("voxelmap.ui.zoomlevel") + ": (0.25x)", 2000);
+            showMessage(I18n.get("voxelmap.ui.zoom_level") + ": (0.25x)", 2000);
         }
     }
 
@@ -649,7 +649,7 @@ public class Map implements Runnable, IChangeObserver {
         int mapMode = this.fullscreenMap ? 2 : this.enlargedMap ? 1 : 0;
 
         float statusIconOffset = 0.0F;
-        if (VoxelMap.mapOptions.moveMapBelowStatusEffect) {
+        if (VoxelMap.mapOptions.moveMapBelowStatusEffectIcons) {
             if (this.options.mapCorner == 1 && !VoxelConstants.getPlayer().getActiveEffects().isEmpty()) {
 
                 for (MobEffectInstance statusEffectInstance : VoxelConstants.getPlayer().getActiveEffects()) {

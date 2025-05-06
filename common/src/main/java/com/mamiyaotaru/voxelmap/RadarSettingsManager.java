@@ -129,9 +129,9 @@ public class RadarSettingsManager implements ISubSettingsManager {
         switch (option) {
             case RADAR_MODE -> {
                 if (this.radarMode == 1) {
-                    return I18n.get("options.voxelmap.radar.radarmode.simple");
+                    return I18n.get("options.voxelmap.radar.radar_mode.simple");
                 } else if (this.radarMode == 2) {
-                    return I18n.get("options.voxelmap.radar.radarmode.full");
+                    return I18n.get("options.voxelmap.radar.radar_mode.full");
                 }
 
                 return I18n.get("voxelmap.ui.error");
@@ -140,11 +140,11 @@ public class RadarSettingsManager implements ISubSettingsManager {
                 if (this.showMobs == 0) {
                     return I18n.get("options.off");
                 } else if (this.showMobs == 1) {
-                    return I18n.get("options.voxelmap.radar.showmobs.hostiles");
+                    return I18n.get("options.voxelmap.radar.show_mobs.hostiles");
                 } else if (this.showMobs == 2) {
-                    return I18n.get("options.voxelmap.radar.showmobs.neutrals");
+                    return I18n.get("options.voxelmap.radar.show_mobs.neutrals");
                 } else if (this.showMobs == 3) {
-                    return I18n.get("options.voxelmap.radar.showmobs.both");
+                    return I18n.get("options.voxelmap.radar.show_mobs.both");
                 }
 
                 return I18n.get("voxelmap.ui.error");

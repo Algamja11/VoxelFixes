@@ -43,7 +43,7 @@ public class MapSettingsManager implements ISettingsManager {
     private boolean preToggleWaypointBeacons;
     private boolean preToggleWaypointSigns = true;
     public boolean moveScoreboardBelowMap = true;
-    public boolean moveMapBelowStatusEffect = true;
+    public boolean moveMapBelowStatusEffectIcons = true;
     public boolean lightmap = true;
     public boolean heightmap = this.multicore;
     public boolean slopemap = true;
@@ -66,15 +66,15 @@ public class MapSettingsManager implements ISettingsManager {
     public int showWaypointDistance = 2;
     public int sort = 1;
 
-    public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoomin", GLFW.GLFW_KEY_UP, "controls.voxelmap.title");
-    public final KeyMapping keyBindZoomOut = new KeyMapping("key.voxelmap.zoomout", GLFW.GLFW_KEY_DOWN, "controls.voxelmap.title");
-    public final KeyMapping keyBindEnlargedMap = new KeyMapping("key.voxelmap.toggleenlargedmap", GLFW.GLFW_KEY_Z, "controls.voxelmap.title");
-    public final KeyMapping keyBindFullscreenMap = new KeyMapping("key.voxelmap.togglefullscreen", GLFW.GLFW_KEY_X, "controls.voxelmap.title");
-    public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmapmenu", GLFW.GLFW_KEY_M, "controls.voxelmap.title");
-    public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypointmenu", GLFW.GLFW_KEY_U, "controls.voxelmap.title");
-    public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypointhotkey", GLFW.GLFW_KEY_N, "controls.voxelmap.title");
-    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.togglemobs", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title");
-    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggleingamewaypoints", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title");
+    public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoom_in", GLFW.GLFW_KEY_UP, "controls.voxelmap.title");
+    public final KeyMapping keyBindZoomOut = new KeyMapping("key.voxelmap.zoom_out", GLFW.GLFW_KEY_DOWN, "controls.voxelmap.title");
+    public final KeyMapping keyBindEnlargedMap = new KeyMapping("key.voxelmap.toggle_enlarged_map", GLFW.GLFW_KEY_Z, "controls.voxelmap.title");
+    public final KeyMapping keyBindFullscreenMap = new KeyMapping("key.voxelmap.toggle_fullscreen_map", GLFW.GLFW_KEY_X, "controls.voxelmap.title");
+    public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmap_menu", GLFW.GLFW_KEY_M, "controls.voxelmap.title");
+    public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypoint_menu", GLFW.GLFW_KEY_U, "controls.voxelmap.title");
+    public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypoint_hotkey", GLFW.GLFW_KEY_N, "controls.voxelmap.title");
+    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.toggle_mobs", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title");
+    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggle_waypoints", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title");
     public final KeyMapping[] keyBindings;
 
     protected boolean welcome = true;
@@ -121,7 +121,7 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Waypoint Beacons" -> this.showWaypointBeacons = Boolean.parseBoolean(curLine[1]);
                         case "Waypoint Signs" -> this.showWaypointSigns = Boolean.parseBoolean(curLine[1]);
                         case "Move Scoreboard Below Map" -> this.moveScoreboardBelowMap = Boolean.parseBoolean(curLine[1]);
-                        case "Move Map Below Status Effect" -> this.moveMapBelowStatusEffect = Boolean.parseBoolean(curLine[1]);
+                        case "Move Map Below Status Effect Icons" -> this.moveMapBelowStatusEffectIcons = Boolean.parseBoolean(curLine[1]);
                         case "Dynamic Lighting" -> this.lightmap = Boolean.parseBoolean(curLine[1]);
                         case "Height Map" -> this.heightmap = Boolean.parseBoolean(curLine[1]);
                         case "Slope Map" -> this.slopemap = Boolean.parseBoolean(curLine[1]);
@@ -191,7 +191,7 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Waypoint Beacons:" + this.showWaypointBeacons);
             out.println("Waypoint Signs:" + this.showWaypointSigns);
             out.println("Move Scoreboard Below Map" + this.moveScoreboardBelowMap);
-            out.println("Move Map Below Status Effect" + this.moveMapBelowStatusEffect);
+            out.println("Move Map Below Status Effect Icons" + this.moveMapBelowStatusEffectIcons);
             out.println("Dynamic Lighting:" + this.lightmap);
             out.println("Height Map:" + this.heightmap);
             out.println("Slope Map:" + this.slopemap);
@@ -268,7 +268,7 @@ public class MapSettingsManager implements ISettingsManager {
             case ROTATES -> this.rotates;
             case CAVE_MODE -> this.cavesAllowed && this.showCaves;
             case MOVE_SCOREBOARD_BELOW_MAP -> this.moveScoreboardBelowMap;
-            case MOVE_MAP_BELOW_STATUS_EFFECT -> this.moveMapBelowStatusEffect;
+            case MOVE_MAP_BELOW_STATUS_EFFECT_ICONS -> this.moveMapBelowStatusEffectIcons;
             case DYNAMIC_LIGHTING -> this.lightmap;
             case FILTERING -> this.filtering;
             case WATER_TRANSPARENCY -> this.waterTransparency;
@@ -290,9 +290,9 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.coordsMode == 0) {
                     return I18n.get("options.off");
                 } else if (this.coordsMode == 1) {
-                    return I18n.get("options.voxelmap.showcoordinates.mode1");
+                    return I18n.get("options.voxelmap.show_coordinates.mode1");
                 } else if (this.coordsMode == 2) {
-                    return I18n.get("options.voxelmap.showcoordinates.mode2");
+                    return I18n.get("options.voxelmap.show_coordinates.mode2");
                 }
 
                 return I18n.get("voxelmap.ui.error");
@@ -316,24 +316,24 @@ public class MapSettingsManager implements ISettingsManager {
             }
             case LOCATION -> {
                 if (this.mapCorner == 0) {
-                    return I18n.get("options.voxelmap.location.topleft");
+                    return I18n.get("options.voxelmap.location.top_left");
                 } else if (this.mapCorner == 1) {
-                    return I18n.get("options.voxelmap.location.topright");
+                    return I18n.get("options.voxelmap.location.top_right");
                 } else if (this.mapCorner == 2) {
-                    return I18n.get("options.voxelmap.location.bottomright");
+                    return I18n.get("options.voxelmap.location.bottom_right");
                 } else  if (this.mapCorner == 3) {
-                    return I18n.get("options.voxelmap.location.bottomleft");
+                    return I18n.get("options.voxelmap.location.bottom_left");
                 }
 
                 return I18n.get("voxelmap.ui.error");
             }
             case INGAME_WAYPOINTS -> {
                 if (this.waypointsAllowed && this.showWaypointBeacons && this.showWaypointSigns) {
-                    return I18n.get("options.voxelmap.ingamewaypoints.both");
+                    return I18n.get("options.voxelmap.ingame_waypoints.both");
                 } else if (this.waypointsAllowed && this.showWaypointBeacons) {
-                    return I18n.get("options.voxelmap.ingamewaypoints.beacons");
+                    return I18n.get("options.voxelmap.ingame_waypoints.beacons");
                 } else if (this.waypointsAllowed && this.showWaypointSigns) {
-                    return I18n.get("options.voxelmap.ingamewaypoints.signs");
+                    return I18n.get("options.voxelmap.ingame_waypoints.signs");
                 }
 
                 return I18n.get("options.off");
@@ -353,9 +353,9 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.biomeOverlay == 0) {
                     return I18n.get("options.off");
                 } else if (this.biomeOverlay == 1) {
-                    return I18n.get("options.voxelmap.biomeoverlay.solid");
+                    return I18n.get("options.voxelmap.biome_overlay.solid");
                 } else if (this.biomeOverlay == 2) {
-                    return I18n.get("options.voxelmap.biomeoverlay.transparent");
+                    return I18n.get("options.voxelmap.biome_overlay.transparent");
                 }
 
                 return I18n.get("voxelmap.ui.error");
@@ -364,9 +364,9 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.showWaypointName == 0) {
                     return I18n.get("options.off");
                 } else if (this.showWaypointName == 1) {
-                    return I18n.get("options.voxelmap.waypoints.shownamelabel.aboveicon");
+                    return I18n.get("options.voxelmap.waypoints.show_name_label.aboveicon");
                 } else if (this.showWaypointName == 2) {
-                    return I18n.get("options.voxelmap.waypoints.shownamelabel.belowicon");
+                    return I18n.get("options.voxelmap.waypoints.show_name_label.below_icon");
                 }
 
                 return I18n.get("voxelmap.ui.error");
@@ -375,9 +375,9 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.showWaypointDistance == 0) {
                     return I18n.get("options.off");
                 } else if (this.showWaypointDistance == 1) {
-                    return this.showWaypointName == 0 ? I18n.get("options.voxelmap.waypoints.showdistancelabel.aboveicon") : I18n.get("options.voxelmap.waypoints.showdistancelabel.besidename");
+                    return this.showWaypointName == 0 ? I18n.get("options.voxelmap.waypoints.show_distance_label.above_icon") : I18n.get("options.voxelmap.waypoints.show_distance_label.beside_name");
                 } else if (this.showWaypointDistance == 2) {
-                    return this.showWaypointName == 0 ? I18n.get("options.voxelmap.waypoints.showdistancelabel.belowicon") : I18n.get("options.voxelmap.waypoints.showdistancelabel.belowname");
+                    return this.showWaypointName == 0 ? I18n.get("options.voxelmap.waypoints.show_distance_label.below_icon") : I18n.get("options.voxelmap.waypoints.show_distance_label.below_name");
                 }
 
                 return I18n.get("voxelmap.ui.error");
@@ -386,7 +386,7 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.deathpoints == 0) {
                     return I18n.get("options.off");
                 } else if (this.deathpoints == 1) {
-                    return I18n.get("options.voxelmap.waypoints.deathpoints.mostrecent");
+                    return I18n.get("options.voxelmap.waypoints.deathpoints.most_recent");
                 } else if (this.deathpoints == 2) {
                     return I18n.get("options.voxelmap.waypoints.deathpoints.all");
                 }
@@ -417,7 +417,7 @@ public class MapSettingsManager implements ISettingsManager {
             case ROTATES -> this.rotates = !this.rotates;
             case CAVE_MODE -> this.showCaves = !this.showCaves;
             case MOVE_SCOREBOARD_BELOW_MAP -> this.moveScoreboardBelowMap = !this.moveScoreboardBelowMap;
-            case MOVE_MAP_BELOW_STATUS_EFFECT -> this.moveMapBelowStatusEffect = !this.moveMapBelowStatusEffect;
+            case MOVE_MAP_BELOW_STATUS_EFFECT_ICONS -> this.moveMapBelowStatusEffectIcons = !this.moveMapBelowStatusEffectIcons;
             case DYNAMIC_LIGHTING -> this.lightmap = !this.lightmap;
             case FILTERING -> this.filtering = !this.filtering;
             case WATER_TRANSPARENCY -> this.waterTransparency = !this.waterTransparency;
@@ -544,10 +544,6 @@ public class MapSettingsManager implements ISettingsManager {
     public Component getKeybindDisplayString(int keybindIndex) {
         KeyMapping keyBinding = this.keyBindings[keybindIndex];
         return this.getKeybindDisplayString(keyBinding);
-    }
-
-    public String getKeyBindingDescription(int keybindIndex) {
-        return this.keyBindings[keybindIndex].getName().equals("key.voxelmap.voxelmapmenu") ? I18n.get("key.voxelmap.menu") : I18n.get(this.keyBindings[keybindIndex].getName());
     }
 
     public void toggleIngameWaypoints() {

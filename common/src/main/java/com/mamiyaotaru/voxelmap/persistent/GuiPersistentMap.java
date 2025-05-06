@@ -902,16 +902,16 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             entries.add(entry);
             entry = new Popup.PopupEntry(I18n.get("selectServer.delete"), 5, true, true);
             entries.add(entry);
-            entry = new Popup.PopupEntry(I18n.get(hovered != this.waypointManager.getHighlightedWaypoint() ? "voxelmap.waypoints.highlight" : "voxelmap.waypoints.removehighlight"), 1, true, true);
+            entry = new Popup.PopupEntry(I18n.get(hovered != this.waypointManager.getHighlightedWaypoint() ? "voxelmap.waypoints.highlight" : "voxelmap.waypoints.remove_highlight"), 1, true, true);
         } else {
-            entry = new Popup.PopupEntry(I18n.get("voxelmap.waypoints.newwaypoint"), 0, true, VoxelMap.mapOptions.waypointsAllowed);
+            entry = new Popup.PopupEntry(I18n.get("voxelmap.waypoints.new_waypoint"), 0, true, VoxelMap.mapOptions.waypointsAllowed);
             entries.add(entry);
-            entry = new Popup.PopupEntry(I18n.get(hovered == null ? "voxelmap.waypoints.highlight" : "voxelmap.waypoints.removehighlight"), 1, true, VoxelMap.mapOptions.waypointsAllowed);
+            entry = new Popup.PopupEntry(I18n.get(hovered == null ? "voxelmap.waypoints.highlight" : "voxelmap.waypoints.remove_highlight"), 1, true, VoxelMap.mapOptions.waypointsAllowed);
         }
         entries.add(entry);
-        entry = new Popup.PopupEntry(I18n.get("voxelmap.waypoints.teleportto"), 3, true, true);
+        entry = new Popup.PopupEntry(I18n.get("voxelmap.waypoints.teleport_to"), 3, true, true);
         entries.add(entry);
-        entry = new Popup.PopupEntry(I18n.get("voxelmap.waypoints.share"), 2, true, true);
+        entry = new Popup.PopupEntry(I18n.get("voxelmap.waypoint_share"), 2, true, true);
         entries.add(entry);
 
         this.createPopup(x, y, directX, directY, entries);
@@ -1045,7 +1045,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 if (hovered != null) {
                     this.deleteClicked = true;
                     this.selectedWaypoint = hovered;
-                    Component title = Component.translatable("voxelmap.waypoints.deleteconfirm");
+                    Component title = Component.translatable("voxelmap.waypoints.delete_confirm");
                     Component explanation = Component.translatable("selectServer.deleteWarning", this.selectedWaypoint.name);
                     Component affirm = Component.translatable("selectServer.deleteButton");
                     Component deny = Component.translatable("gui.cancel");
@@ -1229,7 +1229,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 guiGraphics.drawCenteredString(parentGui.getFontRenderer(), (this.waypointListPage + 1) + " / " + pageCount, sidebarMiddle, parentGui.bottom - 15, 0xFFFFFF);
 
             } else {
-                guiGraphics.drawCenteredString(parentGui.getFontRenderer(), "§E" + I18n.get("voxelmap.waypoints.nowaypointsexist"), sidebarMiddle, parentGui.bottom - 15, 0xFFFFFF);
+                guiGraphics.drawCenteredString(parentGui.getFontRenderer(), "§E" + I18n.get("voxelmap.waypoints.no_waypoints_exist"), sidebarMiddle, parentGui.bottom - 15, 0xFFFFFF);
             }
         }
 

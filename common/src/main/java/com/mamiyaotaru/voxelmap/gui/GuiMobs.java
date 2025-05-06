@@ -31,14 +31,14 @@ public class GuiMobs extends GuiScreenMinimap {
     }
 
     public void init() {
-        this.screenTitle = Component.translatable("options.voxelmap.selectmobs.title");
+        this.screenTitle = Component.translatable("options.voxelmap.select_mobs.title");
         this.mobsList = new GuiSlotMobs(this);
         int filterStringWidth = this.getFontRenderer().width(I18n.get("voxelmap.waypoints.filter") + ":");
         this.filter = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 153 + filterStringWidth + 5, this.getHeight() - 56, 305 - filterStringWidth - 5, 20, null);
         this.filter.setMaxLength(35);
         this.addRenderableWidget(this.filter);
-        this.addRenderableWidget(this.buttonEnable = new Button.Builder(Component.translatable("options.voxelmap.selectmobs.enable"), button -> this.setMobEnabled(this.selectedMobId, true)).bounds(this.getWidth() / 2 - 154, this.getHeight() - 28, 100, 20).build());
-        this.addRenderableWidget(this.buttonDisable = new Button.Builder(Component.translatable("options.voxelmap.selectmobs.disable"), button -> this.setMobEnabled(this.selectedMobId, false)).bounds(this.getWidth() / 2 - 50, this.getHeight() - 28, 100, 20).build());
+        this.addRenderableWidget(this.buttonEnable = new Button.Builder(Component.translatable("options.voxelmap.select_mobs.enable"), button -> this.setMobEnabled(this.selectedMobId, true)).bounds(this.getWidth() / 2 - 154, this.getHeight() - 28, 100, 20).build());
+        this.addRenderableWidget(this.buttonDisable = new Button.Builder(Component.translatable("options.voxelmap.select_mobs.disable"), button -> this.setMobEnabled(this.selectedMobId, false)).bounds(this.getWidth() / 2 - 50, this.getHeight() - 28, 100, 20).build());
         this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 + 4 + 50, this.getHeight() - 28, 100, 20).build());
         this.setFocused(this.filter);
         this.filter.setFocused(true);

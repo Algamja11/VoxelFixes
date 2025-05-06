@@ -58,10 +58,10 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     public void init() {
         this.screenTitle = Component.translatable("voxelmap.waypoints.title");
         this.waypointList = new GuiSlotWaypoints(this);
-        this.addRenderableWidget(this.buttonSortName = new Button.Builder(Component.translatable("voxelmap.waypoints.sortbyname"), button -> this.sortClicked(2)).bounds(this.getWidth() / 2 - 154, 34, 77, 20).build());
-        this.addRenderableWidget(this.buttonSortDistance = new Button.Builder(Component.translatable("voxelmap.waypoints.sortbydistance"), button -> this.sortClicked(3)).bounds(this.getWidth() / 2 - 77, 34, 77, 20).build());
-        this.addRenderableWidget(this.buttonSortCreated = new Button.Builder(Component.translatable("voxelmap.waypoints.sortbycreated"), button -> this.sortClicked(1)).bounds(this.getWidth() / 2, 34, 77, 20).build());
-        this.addRenderableWidget(this.buttonSortColor = new Button.Builder(Component.translatable("voxelmap.waypoints.sortbycolor"), button -> this.sortClicked(4)).bounds(this.getWidth() / 2 + 77, 34, 77, 20).build());
+        this.addRenderableWidget(this.buttonSortName = new Button.Builder(Component.translatable("voxelmap.waypoints.sort.name"), button -> this.sortClicked(2)).bounds(this.getWidth() / 2 - 154, 34, 77, 20).build());
+        this.addRenderableWidget(this.buttonSortDistance = new Button.Builder(Component.translatable("voxelmap.waypoints.sort.distance"), button -> this.sortClicked(3)).bounds(this.getWidth() / 2 - 77, 34, 77, 20).build());
+        this.addRenderableWidget(this.buttonSortCreated = new Button.Builder(Component.translatable("voxelmap.waypoints.sort.created"), button -> this.sortClicked(1)).bounds(this.getWidth() / 2, 34, 77, 20).build());
+        this.addRenderableWidget(this.buttonSortColor = new Button.Builder(Component.translatable("voxelmap.waypoints.sort.color"), button -> this.sortClicked(4)).bounds(this.getWidth() / 2 + 77, 34, 77, 20).build());
         int filterStringWidth = this.getFontRenderer().width(I18n.get("voxelmap.waypoints.filter") + ":");
         this.filter = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 153 + filterStringWidth + 5, this.getHeight() - 80, 305 - filterStringWidth - 5, 20, null);
         this.filter.setMaxLength(35);
@@ -70,8 +70,8 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.addRenderableWidget(this.buttonEdit = new Button.Builder(Component.translatable("selectServer.edit"), button -> this.editWaypoint(this.selectedWaypoint)).bounds(this.getWidth() / 2 - 76, this.getHeight() - 52, 74, 20).build());
         this.addRenderableWidget(this.buttonDelete = new Button.Builder(Component.translatable("selectServer.delete"), button -> this.deleteClicked()).bounds(this.getWidth() / 2 + 2, this.getHeight() - 52, 74, 20).build());
         this.addRenderableWidget(this.buttonHighlight = new Button.Builder(Component.translatable("voxelmap.waypoints.highlight"), button -> this.setHighlightedWaypoint()).bounds(this.getWidth() / 2 + 80, this.getHeight() - 52, 74, 20).build());
-        this.addRenderableWidget(this.buttonTeleport = new Button.Builder(Component.translatable("voxelmap.waypoints.teleportto"), button -> this.teleportClicked()).bounds(this.getWidth() / 2 - 154, this.getHeight() - 28, 74, 20).build());
-        this.addRenderableWidget(this.buttonShare = new Button.Builder(Component.translatable("voxelmap.waypoints.share"), button -> CommandUtils.sendWaypoint(this.selectedWaypoint)).bounds(this.getWidth() / 2 - 76, this.getHeight() - 28, 74, 20).build());
+        this.addRenderableWidget(this.buttonTeleport = new Button.Builder(Component.translatable("voxelmap.waypoints.teleport_to"), button -> this.teleportClicked()).bounds(this.getWidth() / 2 - 154, this.getHeight() - 28, 74, 20).build());
+        this.addRenderableWidget(this.buttonShare = new Button.Builder(Component.translatable("voxelmap.waypoint_share"), button -> CommandUtils.sendWaypoint(this.selectedWaypoint)).bounds(this.getWidth() / 2 - 76, this.getHeight() - 28, 74, 20).build());
         this.addRenderableWidget(new Button.Builder(Component.translatable("menu.options"), button -> VoxelConstants.getMinecraft().setScreen(new GuiWaypointsOptions(this, this.options))).bounds(this.getWidth() / 2 + 2, this.getHeight() - 28, 74, 20).build());
         this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 + 80, this.getHeight() - 28, 74, 20).build());
         this.setFocused(this.filter);
@@ -91,27 +91,27 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.waypointList.sortBy(sortKey, ascending);
         String arrow = ascending ? "↑" : "↓";
         if (sortKey == 2) {
-            this.buttonSortName.setMessage(Component.literal(arrow + " " + I18n.get("voxelmap.waypoints.sortbyname") + " " + arrow));
+            this.buttonSortName.setMessage(Component.literal(arrow + " " + I18n.get("voxelmap.waypoints.sort.name") + " " + arrow));
         } else {
-            this.buttonSortName.setMessage(Component.translatable("voxelmap.waypoints.sortbyname"));
+            this.buttonSortName.setMessage(Component.translatable("voxelmap.waypoints.sort.name"));
         }
 
         if (sortKey == 3) {
-            this.buttonSortDistance.setMessage(Component.literal(arrow + " " + I18n.get("voxelmap.waypoints.sortbydistance") + " " + arrow));
+            this.buttonSortDistance.setMessage(Component.literal(arrow + " " + I18n.get("voxelmap.waypoints.sort.distance") + " " + arrow));
         } else {
-            this.buttonSortDistance.setMessage(Component.translatable("voxelmap.waypoints.sortbydistance"));
+            this.buttonSortDistance.setMessage(Component.translatable("voxelmap.waypoints.sort.distance"));
         }
 
         if (sortKey == 1) {
-            this.buttonSortCreated.setMessage(Component.literal(arrow + " " + I18n.get("voxelmap.waypoints.sortbycreated") + " " + arrow));
+            this.buttonSortCreated.setMessage(Component.literal(arrow + " " + I18n.get("voxelmap.waypoints.sort.created") + " " + arrow));
         } else {
-            this.buttonSortCreated.setMessage(Component.translatable("voxelmap.waypoints.sortbycreated"));
+            this.buttonSortCreated.setMessage(Component.translatable("voxelmap.waypoints.sort.created"));
         }
 
         if (sortKey == 4) {
-            this.buttonSortColor.setMessage(Component.literal(arrow + " " + I18n.get("voxelmap.waypoints.sortbycolor") + " " + arrow));
+            this.buttonSortColor.setMessage(Component.literal(arrow + " " + I18n.get("voxelmap.waypoints.sort.color") + " " + arrow));
         } else {
-            this.buttonSortColor.setMessage(Component.translatable("voxelmap.waypoints.sortbycolor"));
+            this.buttonSortColor.setMessage(Component.translatable("voxelmap.waypoints.sort.color"));
         }
 
     }
@@ -120,7 +120,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         String var2 = this.selectedWaypoint.name;
         if (var2 != null) {
             this.deleteClicked = true;
-            Component title = Component.translatable("voxelmap.waypoints.deleteconfirm");
+            Component title = Component.translatable("voxelmap.waypoints.delete_confirm");
             Component explanation = Component.translatable("selectServer.deleteWarning", var2);
             Component affirm = Component.translatable("selectServer.deleteButton");
             Component deny = Component.translatable("gui.cancel");
@@ -221,7 +221,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.buttonEdit.active = isSomethingSelected;
         this.buttonDelete.active = isSomethingSelected;
         this.buttonHighlight.active = isSomethingSelected;
-        this.buttonHighlight.setMessage(Component.translatable(isSomethingSelected && this.selectedWaypoint == this.highlightedWaypoint ? "voxelmap.waypoints.removehighlight" : "voxelmap.waypoints.highlight"));
+        this.buttonHighlight.setMessage(Component.translatable(isSomethingSelected && this.selectedWaypoint == this.highlightedWaypoint ? "voxelmap.waypoints.remove_highlight" : "voxelmap.waypoints.highlight"));
         this.buttonShare.active = isSomethingSelected;
         this.buttonTeleport.active = isSomethingSelected && this.canTeleport();
     }
@@ -230,7 +230,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.waypointManager.setHighlightedWaypoint(this.selectedWaypoint, true);
         this.highlightedWaypoint = this.waypointManager.getHighlightedWaypoint();
         boolean isSomethingSelected = this.selectedWaypoint != null;
-        this.buttonHighlight.setMessage(Component.translatable(isSomethingSelected && this.selectedWaypoint == this.highlightedWaypoint ? "voxelmap.waypoints.removehighlight" : "voxelmap.waypoints.highlight"));
+        this.buttonHighlight.setMessage(Component.translatable(isSomethingSelected && this.selectedWaypoint == this.highlightedWaypoint ? "voxelmap.waypoints.remove_highlight" : "voxelmap.waypoints.highlight"));
     }
 
     protected void editWaypoint(Waypoint waypoint) {
