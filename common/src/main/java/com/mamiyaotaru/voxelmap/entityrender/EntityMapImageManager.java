@@ -80,6 +80,7 @@ public class EntityMapImageManager {
 
     private final TextureAtlas textureAtlas;
     public static final ResourceLocation resourceTextureAtlasMarker = ResourceLocation.fromNamespaceAndPath("voxelmap", "atlas/mobs");
+    private static final Class<?>[] rootRenderModels = { CodModel.class, DolphinModel.class, LavaSlimeModel.class, SalmonModel.class, SlimeModel.class, TropicalFishModelA.class, TropicalFishModelB.class };
 
     private GpuTexture fboTexture;
     private GpuTexture fboDepthTexture;
@@ -89,11 +90,10 @@ public class EntityMapImageManager {
     private int imageCreationRequests;
     private int fulfilledImageCreationRequests;
     private final HashMap<EntityType<?>, EntityVariantDataFactory> variantDataFactories = new HashMap<>();
-    private final HashMap<String, Properties> iconPropertiesMap = new HashMap<>();
     private ConcurrentLinkedQueue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
 
     public EntityMapImageManager() {
-        this.textureAtlas = new TextureAtlas("mob_images", resourceTextureAtlasMarker);
+        this.textureAtlas = new TextureAtlas("mobsmap", resourceTextureAtlasMarker);
 
         final int fboTextureSize = 512;
         DynamicTexture fboTexture = new DynamicTexture("voxelmap-radarfbotexture", fboTextureSize, fboTextureSize, true);
@@ -218,7 +218,7 @@ public class EntityMapImageManager {
 
         EntityModel model = ((LivingEntityRenderer) baseRenderer).getModel();
         model.resetPose();
-        
+
         for (ModelPart part : getPartToRender(model)) {
             part.xRot = 0.0F;
             part.yRot = 0.0F;
@@ -315,20 +315,18 @@ public class EntityMapImageManager {
     }
 
     private ModelPart[] getPartToRender(EntityModel<?> model) {
-        if (model instanceof CodModel || model instanceof SalmonModel
-                || model instanceof TropicalFishModelA || model instanceof TropicalFishModelB
-                || model instanceof DolphinModel
-                || model instanceof SlimeModel || model instanceof LavaSlimeModel) {
-            return new ModelPart[] { model.root() };
+        for (Class<?> clazz : rootRenderModels) {
+            if (clazz.isInstance(model)) {
+                return new ModelPart[] { model.root() };
+            }
         }
-
+        // chicken
         if (model instanceof ChickenModel chickenModel) {
             ModelPart chickenBody = chickenModel.root().getChild("body");
             chickenBody.y = 12.0F;
             chickenBody.yScale = 6.0F / 8.0F;
             return new ModelPart[] { chickenModel.head, chickenBody };
         }
-
         // horses
         for (ModelPart part : model.allParts()) {
             if (part.hasChild("head_parts")) {

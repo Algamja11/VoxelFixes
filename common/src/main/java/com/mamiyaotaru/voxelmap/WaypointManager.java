@@ -89,7 +89,7 @@ public class WaypointManager {
     public WaypointManager() {
         this.options = VoxelConstants.getVoxelMapInstance().getMapOptions();
         this.textureAtlas = new TextureAtlas("waypoints", resourceTextureAtlasWaypoints);
-        this.textureAtlasChooser = new TextureAtlas("waypoint_chooser", resourceTextureAtlasWaypointChooser);
+        this.textureAtlasChooser = new TextureAtlas("chooser", resourceTextureAtlasWaypointChooser);
         this.waypointContainer = new WaypointContainer(this.options);
     }
 

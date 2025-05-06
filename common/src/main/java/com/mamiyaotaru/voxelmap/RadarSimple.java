@@ -35,7 +35,7 @@ public class RadarSimple implements IRadar {
     public RadarSimple() {
         this.minimapOptions = VoxelConstants.getVoxelMapInstance().getMapOptions();
         this.options = VoxelConstants.getVoxelMapInstance().getRadarOptions();
-        this.textureAtlas = new TextureAtlas("simple_radar", resourceTextureAtlasMarker);
+        this.textureAtlas = new TextureAtlas("pings", resourceTextureAtlasMarker);
     }
 
     @Override
