@@ -30,7 +30,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
     public boolean showFacing = true;
     public boolean outlines = true;
     public boolean filtering = true;
-    public float fontScale = 1.0F;
+    public float fontSize = 1.0F;
 
     public boolean radarAllowed = true;
     public boolean radarPlayersAllowed = true;
@@ -59,7 +59,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
                     case "Show Facing" -> this.showFacing = Boolean.parseBoolean(curLine[1]);
                     case "Filter Mob Icons" -> this.filtering = Boolean.parseBoolean(curLine[1]);
                     case "Outline Mob Icons" -> this.outlines = Boolean.parseBoolean(curLine[1]);
-                    case "Radar Font Scale" -> this.fontScale = Float.parseFloat(curLine[1]);
+                    case "Radar Font Size" -> this.fontSize = Math.max(0.5F, Math.min(2.0F, Float.parseFloat(curLine[1])));
                     case "Hidden Mobs" -> this.applyHiddenMobSettings(curLine[1]);
                 }
             }
@@ -85,7 +85,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
         out.println("Show Facing:" + this.showFacing);
         out.println("Filter Mob Icons:" + this.filtering);
         out.println("Outline Mob Icons:" + this.outlines);
-        out.println("Radar Font Scale:" + this.fontScale);
+        out.println("Radar Font Size:" + this.fontSize);
         out.print("Hidden Mobs:");
         for (ResourceLocation mob : hiddenMobs) {
             out.print(mob.toString() + ",");
@@ -102,7 +102,11 @@ public class RadarSettingsManager implements ISubSettingsManager {
             String state = this.getListValue(option);
             return name + state;
         } else if (option.isFloat()) {
-            return name + this.getFloatValue(option);
+            float value = this.getFloatValue(option);
+            return switch (option) {
+                case RADAR_FONT_SIZE -> name + value + "x";
+                default -> name + value;
+            };
         } else {
             return name;
         }
@@ -156,7 +160,7 @@ public class RadarSettingsManager implements ISubSettingsManager {
     @Override
     public float getFloatValue(EnumOptionsMinimap option) {
         return switch (option) {
-            case RADAR_FONT_SCALE -> this.fontScale;
+            case RADAR_FONT_SIZE -> this.fontSize;
 
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         };
@@ -209,9 +213,9 @@ public class RadarSettingsManager implements ISubSettingsManager {
     @Override
     public void setFloatValue(EnumOptionsMinimap option, float value) {
         switch (option) {
-            case RADAR_FONT_SCALE -> {
+            case RADAR_FONT_SIZE -> {
                 value = Math.round(value * 12.0F) / 12.0F;
-                this.fontScale = (value * 1.5F) + 0.5F;
+                this.fontSize = (value * 1.5F) + 0.5F;
             }
 
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());

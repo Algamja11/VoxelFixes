@@ -1672,11 +1672,21 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, Sprite icon, TextureAtlas textureAtlas, double lastXDouble, double lastZDouble, LayoutVariables layoutVariables) {
-        boolean uprightIcon = icon != null || pt.isDeathpoint;
-
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
         int halfMapSize = layoutVariables.mapSize / 2;
+
+        boolean uprightIcon = icon != null || pt.isDeathpoint;
+
+        boolean showLabel = this.options.showWaypointNamesOnMap;
+        String name = pt.name;
+        if (pt.name.isEmpty()) {
+            if (pt.red == 2.0F && pt.green == 0.0F && pt.blue == 0.0F) {
+                name = "X:" + pt.getX() + ", Y:" + pt.getY() + ", Z:" + pt.getZ();
+            } else {
+                showLabel = false;
+            }
+        }
 
         double wayX = lastXDouble - pt.getX() - 0.5;
         double wayY = lastZDouble - pt.getZ() - 0.5;
@@ -1759,6 +1769,17 @@ public class Map implements Runnable, IChangeObserver {
                 guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(locate));
 
                 icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, mapX - 4, mapY - 4, 8, 8, color);
+
+                if (showLabel) {
+                    float fontSize = this.options.waypointFontSize / 4.0F;
+                    guiGraphics.pose().scale(fontSize, fontSize, 1.0F);
+
+                    int backgroundColor = pt.getUnifiedColor(!pt.enabled && !target ? 0.3F : 0.5F);
+                    int halfStringWidth = this.textWidth(name) / 2;
+                    guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 2), (int) ((mapY + 4) / fontSize + 10), (int) (mapX / fontSize + halfStringWidth + 2), (int) ((mapY + 4) / fontSize - 2), backgroundColor);
+                    guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 1), (int) ((mapY + 4) / fontSize + 9), (int) (mapX / fontSize + halfStringWidth + 1), (int) ((mapY + 4) / fontSize - 1), 0x30000000);
+                    this.write(guiGraphics, name, mapX / fontSize - halfStringWidth, (mapY + 4) / fontSize, 0xFFFFFF);
+                }
             } catch (Exception var42) {
                 showMessage("Error: waypoint overlay not found!", 2000);
             } finally {

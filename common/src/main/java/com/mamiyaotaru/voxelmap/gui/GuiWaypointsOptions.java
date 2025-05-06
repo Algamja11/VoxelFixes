@@ -8,11 +8,12 @@ import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionSliderMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiWaypointsOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.WAYPOINT_SIZE, EnumOptionsMinimap.DEATHPOINTS, EnumOptionsMinimap.AUTO_UNIT_CONVERSION, EnumOptionsMinimap.SHOW_WAYPOINT_NAME, EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCE };
+    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.WAYPOINT_ICON_SIZE, EnumOptionsMinimap.DEATHPOINTS, EnumOptionsMinimap.AUTO_UNIT_CONVERSION, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES, EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCES, EnumOptionsMinimap.WAYPOINT_FONT_SIZE, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES_ON_MAP};
     private final MapSettingsManager options;
     protected Component screenTitle;
 
@@ -71,13 +72,23 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
     }
 
     private void iterateButtonOptions() {
-        for (Object buttonObj : this.getButtonList()) {
-            if (!(buttonObj instanceof GuiOptionButtonMinimap button)) continue;
+        for (GuiEventListener element : this.getButtonList()) {
+            if (!(element instanceof GuiOptionButtonMinimap button)) continue;
 
             EnumOptionsMinimap option = button.returnEnumOptions();
 
-            if (option == EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCE) {
+            if (option == EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCES) {
                 button.setMessage(Component.literal(this.options.getKeyText(option)));
+            }
+        }
+
+        for (GuiEventListener element : this.getButtonList()) {
+            if (!(element instanceof GuiOptionSliderMinimap slider)) continue;
+
+            EnumOptionsMinimap option = slider.returnEnumOptions();
+
+            if (option == EnumOptionsMinimap.WAYPOINT_FONT_SIZE) {
+                slider.active = this.options.showWaypointNamesOnMap;
             }
         }
     }
@@ -93,8 +104,11 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 
                 return sValue;
             }
-            case WAYPOINT_SIZE -> {
+            case WAYPOINT_ICON_SIZE -> {
                 return (sValue - 0.5F) / 1.5F;
+            }
+            case WAYPOINT_FONT_SIZE -> {
+                return (sValue - 0.75F) / 1.25F;
             }
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         }

@@ -118,7 +118,7 @@ public class WaypointContainer {
     }
 
     private float getWaypointDiff(Waypoint waypoint, double distance, Camera camera) {
-        double degrees = 3.0 + Math.min(3.0 / distance, 3.0);
+        double degrees = 5.0 + Math.min(5.0 / distance, 5.0);
         double angle = Math.toRadians(degrees);
         double size = Math.sin(angle) * distance * this.options.waypointIconSize;
         Vec3 cameraPos = camera.getPosition();
@@ -238,12 +238,12 @@ public class WaypointContainer {
 
         Font fontRenderer = minecraft.font;
         if (showLabel && fontRenderer != null) {
-            boolean aboveIcon = this.options.showWaypointName == 1;
+            boolean aboveIcon = this.options.showWaypointNames == 1;
             String distanceStr = "";
-            if (this.options.showWaypointName == 0) {
+            if (this.options.showWaypointNames == 0) {
                 name = "";
             }
-            if (this.options.showWaypointDistance != 0) {
+            if (this.options.showWaypointDistances != 0) {
                 if (this.options.autoUnitConversion && distance >= 10000.0) {
                     double converted = distance / 1000.0;
                     distanceStr = (int) distance + "." + (int) ((converted - (int) converted) * 10) + "km";
@@ -251,10 +251,10 @@ public class WaypointContainer {
                     distanceStr = (int) distance + "." + (int) ((distance - (int) distance) * 10) + "m";
                 }
                 if (name.isEmpty()) {
-                    aboveIcon = this.options.showWaypointDistance == 1;
+                    aboveIcon = this.options.showWaypointDistances == 1;
                     name = "(" + distanceStr + ")";
                     distanceStr = "";
-                } else if (this.options.showWaypointDistance == 1) {
+                } else if (this.options.showWaypointDistances == 1) {
                     name += " (" + distanceStr + ")";
                     distanceStr = "";
                 }

@@ -263,13 +263,13 @@ public class Radar implements IRadar {
                     contact.icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, mapX - imageSize / 2, mapY + yOffset - imageSize / 2, imageSize, imageSize, color);
 
                     if (contact.name != null && ((this.options.showPlayerNames && contact.category == MobCategory.PLAYER) || (this.options.showMobNames && contact.category != MobCategory.PLAYER && contact.entity.hasCustomName()))) {
-                        float fontScale = this.options.fontScale / 4.0F;
-                        guiGraphics.pose().scale(fontScale, fontScale, 1.0F);
+                        float fontSize = this.options.fontSize / 4.0F;
+                        guiGraphics.pose().scale(fontSize, fontSize, 1.0F);
 
                         int labelColor = ((int) (contact.brightness * 255.0F) << 24) | (contact.entity.getTeamColor() & 0x00FFFFFF);
                         int halfStringWidth = minecraft.font.width(contact.name) / 2;
-                        guiGraphics.fill((int) (mapX / fontScale - halfStringWidth - 1), (int) ((mapY + 3) / fontScale + 9), (int) (mapX / fontScale + halfStringWidth + 1), (int) ((mapY + 3) / fontScale - 1), 0x40000000);
-                        guiGraphics.drawString(minecraft.font, contact.name, (int) (mapX / fontScale - halfStringWidth), (int) ((mapY + 3) / fontScale), labelColor, true);
+                        guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 1), (int) ((mapY + 3) / fontSize + 9), (int) (mapX / fontSize + halfStringWidth + 1), (int) ((mapY + 3) / fontSize - 1), 0x40000000);
+                        guiGraphics.drawString(minecraft.font, contact.name, (int) (mapX / fontSize - halfStringWidth), (int) ((mapY + 3) / fontSize), labelColor, true);
                     }
                 } catch (Exception e) {
                     VoxelConstants.getLogger().error("Error rendering mob icon! " + e.getLocalizedMessage() + " contact type " + BuiltInRegistries.ENTITY_TYPE.getKey(contact.entity.getType()), e);
