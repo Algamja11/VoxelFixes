@@ -371,7 +371,7 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.showWaypointNames == 0) {
                     return I18n.get("options.off");
                 } else if (this.showWaypointNames == 1) {
-                    return I18n.get("options.voxelmap.waypoints.show_waypoint_names.aboveicon");
+                    return I18n.get("options.voxelmap.waypoints.show_waypoint_names.above_icon");
                 } else if (this.showWaypointNames == 2) {
                     return I18n.get("options.voxelmap.waypoints.show_waypoint_names.below_icon");
                 }
