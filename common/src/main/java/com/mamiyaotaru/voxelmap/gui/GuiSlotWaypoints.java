@@ -1,7 +1,6 @@
 package com.mamiyaotaru.voxelmap.gui;
 
 import com.mamiyaotaru.voxelmap.VoxelConstants;
-import com.mamiyaotaru.voxelmap.WaypointManager;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
@@ -27,7 +26,7 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
     static final Component TOOLTIP_ENABLE = Component.translatable("voxelmap.waypoints.tooltip.enable");
     static final Component TOOLTIP_DISABLE = Component.translatable("voxelmap.waypoints.tooltip.disable");
     static final Component TOOLTIP_HIGHLIGHT = Component.translatable("voxelmap.waypoints.tooltip.highlight");
-    static final Component TOOLTIP_HIGHLIGHT_REMOVE = Component.translatable("voxelmap.waypoints.tooltip.remove_highlight");
+    static final Component TOOLTIP_REMOVE_HIGHLIGHT = Component.translatable("voxelmap.waypoints.tooltip.remove_highlight");
     final ResourceLocation visibleIconIdentifier = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
     final ResourceLocation invisibleIconIdentifier = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
     final ResourceLocation highlightedIconIdentifier = ResourceLocation.parse("voxelmap:images/waypoints/target.png");
@@ -138,7 +137,7 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
                 if (mouseX >= x + 215 - iconWidth - padding && mouseX <= x + 215 + padding) {
                     tooltip = this.waypoint.enabled ? GuiSlotWaypoints.TOOLTIP_DISABLE : GuiSlotWaypoints.TOOLTIP_ENABLE;
                 } else if (mouseX >= x + padding && mouseX <= x + iconWidth + padding) {
-                    tooltip = this.waypoint == this.parentGui.highlightedWaypoint ? TOOLTIP_HIGHLIGHT_REMOVE : TOOLTIP_HIGHLIGHT;
+                    tooltip = this.waypoint == this.parentGui.highlightedWaypoint ? TOOLTIP_REMOVE_HIGHLIGHT : TOOLTIP_HIGHLIGHT;
                 } else {
                     String tooltipText = "X: " + this.waypoint.getX() + " Z: " + this.waypoint.getZ();
                     if (this.waypoint.getY() > minecraft.level.getMinY()) {

@@ -9,6 +9,7 @@ import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
 import com.mamiyaotaru.voxelmap.util.DimensionContainer;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -45,6 +46,9 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
     private final String suffix;
     private final boolean enabled;
     private final boolean editing;
+    private final int playerX;
+    private final int playerY;
+    private final int playerZ;
 
     public GuiAddWaypoint(IGuiWaypoints par1GuiScreen, Waypoint par2Waypoint, boolean editing) {
         this.waypointManager = VoxelConstants.getVoxelMapInstance().getWaypointManager();
@@ -58,6 +62,9 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         this.enabled = this.waypoint.enabled;
         this.editing = editing;
         this.parentScreen = (Screen) par1GuiScreen;
+        this.playerX = VoxelConstants.getPlayer().getBlockX();
+        this.playerY = VoxelConstants.getPlayer().getBlockY();
+        this.playerZ = VoxelConstants.getPlayer().getBlockZ();
     }
 
     public void init() {
@@ -66,12 +73,15 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         this.waypointName.setValue(this.waypoint.name);
         this.waypointX = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 100, this.getHeight() / 6 + 41 + 13, 56, 20, null);
         this.waypointX.setMaxLength(128);
+        this.waypointX.setHint(Component.literal(String.valueOf(playerX)).withStyle(ChatFormatting.DARK_GRAY));
         this.waypointX.setValue(String.valueOf(this.waypoint.getX()));
         this.waypointY = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 28, this.getHeight() / 6 + 41 + 13, 56, 20, null);
         this.waypointY.setMaxLength(128);
+        this.waypointY.setHint(Component.literal(String.valueOf(playerY)).withStyle(ChatFormatting.DARK_GRAY));
         this.waypointY.setValue(String.valueOf(this.waypoint.getY()));
         this.waypointZ = new EditBox(this.getFontRenderer(), this.getWidth() / 2 + 44, this.getHeight() / 6 + 41 + 13, 56, 20, null);
         this.waypointZ.setMaxLength(128);
+        this.waypointZ.setHint(Component.literal(String.valueOf(playerZ)).withStyle(ChatFormatting.DARK_GRAY));
         this.waypointZ.setValue(String.valueOf(this.waypoint.getZ()));
         this.addRenderableWidget(this.waypointName);
         this.addRenderableWidget(this.waypointX);
@@ -108,9 +118,9 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
 
     protected void acceptWaypoint() {
         waypoint.name = waypointName.getValue();
-        waypoint.setX(Integer.parseInt(waypointX.getValue()));
-        waypoint.setY(Integer.parseInt(waypointY.getValue()));
-        waypoint.setZ(Integer.parseInt(waypointZ.getValue()));
+        waypoint.setX(parseOrDefault(waypointX.getValue(), playerX));
+        waypoint.setY(parseOrDefault(waypointY.getValue(), playerY));
+        waypoint.setZ(parseOrDefault(waypointZ.getValue(), playerZ));
 
         if (parentGui != null) {
             parentGui.accept(true);
@@ -129,6 +139,14 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         VoxelConstants.getMinecraft().setScreen(parentScreen);
     }
 
+    private int parseOrDefault(String string, int defaultValue) {
+        try {
+            return Integer.parseInt(string);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (this.choosingColor || this.choosingIcon) {
@@ -137,14 +155,6 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
 
         boolean keyPressed = super.keyPressed(keyCode, scanCode, modifiers);
         boolean acceptable = !this.waypointName.getValue().isEmpty();
-
-        try {
-            Integer.parseInt(this.waypointX.getValue());
-            Integer.parseInt(this.waypointY.getValue());
-            Integer.parseInt(this.waypointZ.getValue());
-        } catch (NumberFormatException var7) {
-            acceptable = false;
-        }
 
         this.doneButton.active = acceptable;
         if ((keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) && acceptable) {
@@ -162,14 +172,6 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
 
         boolean charTyped = super.charTyped(chr, modifiers);
         boolean acceptable = !this.waypointName.getValue().isEmpty();
-
-        try {
-            Integer.parseInt(this.waypointX.getValue());
-            Integer.parseInt(this.waypointY.getValue());
-            Integer.parseInt(this.waypointZ.getValue());
-        } catch (NumberFormatException var6) {
-            acceptable = false;
-        }
 
         this.doneButton.active = acceptable;
 
@@ -193,6 +195,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
                 this.waypoint.imageSuffix = pickedIcon.getIconName().toString().replace("voxelmap:images/waypoints/waypoint", "").replace(".png", "");
                 this.choosingIcon = false;
             }
+            return false;
         }
 
         return super.mouseClicked(mouseX, mouseY, button);

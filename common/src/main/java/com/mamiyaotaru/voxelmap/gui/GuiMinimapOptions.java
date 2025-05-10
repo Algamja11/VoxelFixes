@@ -44,8 +44,6 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
 
     public void init() {
         clearWidgets();
-        getButtonList().clear();
-        children().clear();
 
         int buttonCount = 10;
         int buttonStart = page * buttonCount;

@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.RowItem> {
+public class GuiSlotKeyMapping extends AbstractSelectionList<GuiSlotKeyMapping.RowItem> {
     private final MapSettingsManager options;
     private final GuiMinimapControls parentGui;
     private KeyMapping keyForEdit;
     private final ArrayList<KeyMapping> duplicateKeys = new ArrayList<>();
 
-    public GuiButtonRowKeys(GuiMinimapControls parentScreen) {
+    public GuiSlotKeyMapping(GuiMinimapControls parentScreen) {
         super(VoxelConstants.getMinecraft(), parentScreen.getWidth(), parentScreen.getHeight() - 114, 40, 28);
         this.parentGui = parentScreen;
         this.options = VoxelConstants.getVoxelMapInstance().getMapOptions();
@@ -129,9 +129,9 @@ public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.Row
                 this.button.setX(x);
                 this.button.setY(y + 2);
                 MutableComponent keyText = this.keyMapping.getTranslatedKeyMessage().copy();
-                if (GuiButtonRowKeys.this.keyForEdit != null && GuiButtonRowKeys.this.keyForEdit == this.keyMapping) {
+                if (GuiSlotKeyMapping.this.keyForEdit != null && GuiSlotKeyMapping.this.keyForEdit == this.keyMapping) {
                     keyText = Component.literal("> ").withStyle(ChatFormatting.YELLOW).append(keyText.copy()).append(" <");
-                } else if (GuiButtonRowKeys.this.duplicateKeys.contains(this.keyMapping)) {
+                } else if (GuiSlotKeyMapping.this.duplicateKeys.contains(this.keyMapping)) {
                     keyText.withStyle(ChatFormatting.RED);
                 }
                 this.button.setMessage(keyText);
@@ -145,7 +145,7 @@ public class GuiButtonRowKeys extends AbstractSelectionList<GuiButtonRowKeys.Row
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            GuiButtonRowKeys.this.setSelected(this);
+            GuiSlotKeyMapping.this.setSelected(this);
             boolean clicked = false;
             if (this.button != null && this.button.mouseClicked(mouseX, mouseY, button)) {
                 clicked = true;

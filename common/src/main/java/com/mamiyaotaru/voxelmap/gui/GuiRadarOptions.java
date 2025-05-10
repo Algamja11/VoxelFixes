@@ -26,8 +26,6 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 
     public void init() {
         clearWidgets();
-        getButtonList().clear();
-        children().clear();
 
         this.screenTitle = Component.translatable("options.voxelmap.radar.title");
 
