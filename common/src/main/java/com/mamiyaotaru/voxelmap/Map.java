@@ -1679,10 +1679,12 @@ public class Map implements Runnable, IChangeObserver {
         boolean uprightIcon = icon != null || pt.isDeathpoint;
 
         boolean showLabel = this.options.showWaypointNamesOnMap;
+        boolean target = false;
         String name = pt.name;
-        if (pt.name.isEmpty()) {
+        if (name.isEmpty()) {
             if (pt.red == 2.0F && pt.green == 0.0F && pt.blue == 0.0F) {
                 name = "X:" + pt.getX() + ", Y:" + pt.getY() + ", Z:" + pt.getZ();
+                target = true;
             } else {
                 showLabel = false;
             }
@@ -1714,7 +1716,6 @@ public class Map implements Runnable, IChangeObserver {
             }
         }
 
-        boolean target = false;
         if (far) {
             if (icon == null) {
                 if (!pt.isDeathpoint) {
@@ -1726,8 +1727,6 @@ public class Map implements Runnable, IChangeObserver {
                         icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
                     }
                 }
-            } else {
-                target = true;
             }
             int color = pt.getUnifiedColor(!pt.enabled && !target ? 0.3F : 1.0F);
 
@@ -1757,8 +1756,6 @@ public class Map implements Runnable, IChangeObserver {
                 if (icon == textureAtlas.getMissingImage()) {
                     icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
                 }
-            } else {
-                target = true;
             }
             int color = pt.getUnifiedColor(!pt.enabled && !target ? 0.3F : 1.0F);
 

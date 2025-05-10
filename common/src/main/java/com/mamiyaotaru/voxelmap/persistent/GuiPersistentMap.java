@@ -753,6 +753,18 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         }
         boolean uprightIcon = icon != null || pt.isDeathpoint;
 
+        boolean showLabel = this.options.showWaypointNames;
+        boolean target = false;
+        String name = pt.name;
+        if (name.isEmpty()) {
+            if (pt.red == 2.0F && pt.green == 0.0F && pt.blue == 0.0F) {
+                name = "X:" + pt.getX() + ", Y:" + pt.getY() + ", Z:" + pt.getZ();
+                target = true;
+            } else {
+                showLabel = false;
+            }
+        }
+
         float ptX = pt.getX() + 0.5F;
         float ptZ = pt.getZ() + 0.5F;
 
@@ -776,7 +788,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         TextureAtlas atlas = waypointManager.getTextureAtlas();
         PoseStack poseStack = guiGraphics.pose();
 
-        boolean target = false;
         if (far) {
             if (icon == null) {
                 if (!pt.isDeathpoint) {
@@ -788,8 +799,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                         icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
                     }
                 }
-            } else {
-                target = true;
             }
             int color = pt.getUnifiedColor(!pt.enabled && !target && !hover ? 0.3F : 1.0F);
 
@@ -813,8 +822,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 if (icon == atlas.getMissingImage()) {
                     icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
                 }
-            } else {
-                target = true;
             }
             int color = pt.getUnifiedColor(!pt.enabled && !target && !hover ? 0.3F : 1.0F);
 
@@ -828,11 +835,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             }
         }
 
-        if (this.options.showWaypointNames && !far) {
+        if (showLabel && !far) {
             poseStack.pushPose();
             poseStack.scale(this.guiToMap, this.guiToMap, 1);
-            int halfStringWidth = this.chkLen(pt.name) / 2;
-            this.write(guiGraphics, pt.name, ptX * this.mapToGui - halfStringWidth, ptZ * this.mapToGui + 8, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFFFF);
+            int halfStringWidth = this.chkLen(name) / 2;
+            this.write(guiGraphics, name, ptX * this.mapToGui - halfStringWidth, ptZ * this.mapToGui + 8, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFFFF);
             poseStack.popPose();
         }
     }
