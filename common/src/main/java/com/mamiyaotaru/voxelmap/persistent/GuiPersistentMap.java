@@ -25,7 +25,6 @@ import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
 import com.mamiyaotaru.voxelmap.util.MessageUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.awt.image.BufferedImage;
@@ -572,12 +571,15 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             }
 
             if (VoxelMap.mapOptions.waypointsAllowed && this.options.showWaypoints) {
+                TextureAtlas textureAtlas = this.waypointManager.getTextureAtlas();
+                Waypoint highlightedPoint = this.waypointManager.getHighlightedWaypoint();
+
                 for (Waypoint pt : this.waypointManager.getWaypoints()) {
-                    this.drawWaypoint(guiGraphics, pt, cursorCoordX, cursorCoordZ, null);
+                    this.drawWaypoint(guiGraphics, pt, false, cursorCoordZ, cursorCoordX, textureAtlas);
                 }
 
-                if (this.waypointManager.getHighlightedWaypoint() != null) {
-                    this.drawWaypoint(guiGraphics, this.waypointManager.getHighlightedWaypoint(), cursorCoordX, cursorCoordZ, waypointManager.getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/target.png"));
+                if (highlightedPoint != null) {
+                    this.drawWaypoint(guiGraphics, highlightedPoint, true, cursorCoordZ, cursorCoordX, textureAtlas);
                 }
             }
 
@@ -747,23 +749,30 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         // nothing
     }
 
-    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, float cursorCoordX, float cursorCoordZ, Sprite icon) {
+    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, boolean target, float cursorCoordZ, float cursorCoordX, TextureAtlas textureAtlas) {
         if (!pt.inWorld || !pt.inDimension) {
             return;
         }
-        boolean uprightIcon = icon != null || pt.isDeathpoint;
 
         boolean showLabel = this.options.showWaypointNames;
-        boolean target = false;
         String name = pt.name;
-        if (name.isEmpty()) {
+        if (target) {
             if (pt.red == 2.0F && pt.green == 0.0F && pt.blue == 0.0F) {
                 name = "X:" + pt.getX() + ", Y:" + pt.getY() + ", Z:" + pt.getZ();
-                target = true;
             } else {
                 showLabel = false;
             }
         }
+
+        Sprite icon = null;
+        if (target) {
+            icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png");
+        }
+        if (pt.isDeathpoint) {
+            icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypointskull.png");
+        }
+
+        boolean uprightIcon = icon != null;
 
         float ptX = pt.getX() + 0.5F;
         float ptZ = pt.getZ() + 0.5F;
@@ -785,62 +794,52 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             ptZ = Math.max(this.mapCenterZ - rangeY, Math.min(this.mapCenterZ + rangeY, ptZ));
         }
 
-        TextureAtlas atlas = waypointManager.getTextureAtlas();
-        PoseStack poseStack = guiGraphics.pose();
 
         if (far) {
             if (icon == null) {
-                if (!pt.isDeathpoint) {
-                    icon = atlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
-                } else {
-                    icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
-
-                    if (icon == atlas.getMissingImage()) {
-                        icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
-                    }
-                }
+                icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
             }
-            int color = pt.getUnifiedColor(!pt.enabled && !target && !hover ? 0.3F : 1.0F);
+            int color = target ? 0xFFFF0000 : pt.getUnifiedColor(!pt.enabled ? 0.5F : 1.0F);
 
             try {
-                poseStack.pushPose();
-                poseStack.scale(this.guiToMap, this.guiToMap, 1.0F);
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().scale(this.guiToMap, this.guiToMap, 1.0F);
                 if (!uprightIcon) {
-                    poseStack.translate(ptX * this.mapToGui, ptZ * this.mapToGui, 0.0F);
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F - locate));
-                    poseStack.translate(-ptX * this.mapToGui, -ptZ * this.mapToGui, 0.0F);
+                    guiGraphics.pose().translate(ptX * this.mapToGui, ptZ * this.mapToGui, 0.0F);
+                    guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(180.0F - locate));
+                    guiGraphics.pose().translate(-ptX * this.mapToGui, -ptZ * this.mapToGui, 0.0F);
                 }
                 icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, ptX * this.mapToGui - 8, ptZ * this.mapToGui - 8, 16, 16, color);
             } catch (Exception ignored) {
             } finally {
-                poseStack.popPose();
+                guiGraphics.pose().popPose();
             }
         } else {
             if (icon == null) {
-                icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
+                icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
 
-                if (icon == atlas.getMissingImage()) {
-                    icon = atlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
+                if (icon == textureAtlas.getMissingImage()) {
+                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
                 }
             }
-            int color = pt.getUnifiedColor(!pt.enabled && !target && !hover ? 0.3F : 1.0F);
+            int color = target ? 0xFFFF0000 : pt.getUnifiedColor(!pt.enabled ? 0.5F : 1.0F);
 
             try {
-                poseStack.pushPose();
-                poseStack.scale(this.guiToMap, this.guiToMap, 1.0F);
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().scale(this.guiToMap, this.guiToMap, 1.0F);
                 icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, ptX * this.mapToGui - 8, ptZ * this.mapToGui - 8, 16, 16, color);
             } catch (Exception ignored) {
             } finally {
-                poseStack.popPose();
+                guiGraphics.pose().popPose();
             }
         }
 
         if (showLabel && !far) {
-            poseStack.pushPose();
-            poseStack.scale(this.guiToMap, this.guiToMap, 1);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().scale(this.guiToMap, this.guiToMap, 1);
             int halfStringWidth = this.chkLen(name) / 2;
             this.write(guiGraphics, name, ptX * this.mapToGui - halfStringWidth, ptZ * this.mapToGui + 8, !pt.enabled && !target && !hover ? 0x55FFFFFF : 0xFFFFFFFF);
-            poseStack.popPose();
+            guiGraphics.pose().popPose();
         }
     }
 

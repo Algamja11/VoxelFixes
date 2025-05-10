@@ -1597,23 +1597,23 @@ public class Map implements Runnable, IChangeObserver {
         guiGraphics.pose().translate(0, 0, 10);
         guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, this.getMapFrame(layoutVariables), mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
 
-        double lastXDouble = GameVariableAccessShim.xCoordDouble();
-        double lastZDouble = GameVariableAccessShim.zCoordDouble();
-        TextureAtlas textureAtlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
         if (VoxelMap.mapOptions.waypointsAllowed) {
+            double lastXDouble = GameVariableAccessShim.xCoordDouble();
+            double lastZDouble = GameVariableAccessShim.zCoordDouble();
+            TextureAtlas textureAtlas = this.waypointManager.getTextureAtlas();
             Waypoint highlightedPoint = this.waypointManager.getHighlightedWaypoint();
 
             for (Waypoint pt : this.waypointManager.getWaypoints()) {
                 if (pt.isActive() || pt == highlightedPoint) {
                     double distanceSq = pt.getDistanceSqToEntity(minecraft.getCameraEntity());
                     if (distanceSq < (this.options.maxWaypointDisplayDistance * this.options.maxWaypointDisplayDistance) || this.options.maxWaypointDisplayDistance < 0 || pt == highlightedPoint) {
-                        this.drawWaypoint(guiGraphics, pt, null, textureAtlas, lastXDouble, lastZDouble, layoutVariables);
+                        this.drawWaypoint(guiGraphics, pt, false, lastXDouble, lastZDouble, textureAtlas, layoutVariables);
                     }
                 }
             }
 
             if (highlightedPoint != null) {
-                this.drawWaypoint(guiGraphics, highlightedPoint, textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png"), textureAtlas, lastXDouble, lastZDouble, layoutVariables);
+                this.drawWaypoint(guiGraphics, highlightedPoint, true, lastXDouble, lastZDouble, textureAtlas, layoutVariables);
             }
         }
 
@@ -1671,24 +1671,30 @@ public class Map implements Runnable, IChangeObserver {
         guiGraphics.pose().popPose();
     }
 
-    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, Sprite icon, TextureAtlas textureAtlas, double lastXDouble, double lastZDouble, LayoutVariables layoutVariables) {
+    private void drawWaypoint(GuiGraphics guiGraphics, Waypoint pt, boolean target, double lastXDouble, double lastZDouble, TextureAtlas textureAtlas, LayoutVariables layoutVariables) {
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
         int halfMapSize = layoutVariables.mapSize / 2;
 
-        boolean uprightIcon = icon != null || pt.isDeathpoint;
-
         boolean showLabel = this.options.showWaypointNamesOnMap;
-        boolean target = false;
         String name = pt.name;
-        if (name.isEmpty()) {
+        if (target) {
             if (pt.red == 2.0F && pt.green == 0.0F && pt.blue == 0.0F) {
                 name = "X:" + pt.getX() + ", Y:" + pt.getY() + ", Z:" + pt.getZ();
-                target = true;
             } else {
                 showLabel = false;
             }
         }
+
+        Sprite icon = null;
+        if (target) {
+            icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png");
+        }
+        if (pt.isDeathpoint) {
+            icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypointskull.png");
+        }
+
+        boolean uprightIcon = icon != null;
 
         double wayX = lastXDouble - pt.getX() - 0.5;
         double wayY = lastZDouble - pt.getZ() - 0.5;
@@ -1718,17 +1724,9 @@ public class Map implements Runnable, IChangeObserver {
 
         if (far) {
             if (icon == null) {
-                if (!pt.isDeathpoint) {
-                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
-                } else {
-                    icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
-
-                    if (icon == textureAtlas.getMissingImage()) {
-                        icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
-                    }
-                }
+                icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
             }
-            int color = pt.getUnifiedColor(!pt.enabled && !target ? 0.3F : 1.0F);
+            int color = target ? 0xFFFF0000 : pt.getUnifiedColor(!pt.enabled ? 0.5F: 1.0F);
 
             try {
                 guiGraphics.pose().pushPose();
@@ -1757,7 +1755,7 @@ public class Map implements Runnable, IChangeObserver {
                     icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
                 }
             }
-            int color = pt.getUnifiedColor(!pt.enabled && !target ? 0.3F : 1.0F);
+            int color = target ? 0xFFFF0000 : pt.getUnifiedColor(!pt.enabled ? 0.5F: 1.0F);
 
             try {
                 guiGraphics.pose().pushPose();

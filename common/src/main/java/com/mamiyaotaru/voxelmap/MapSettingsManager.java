@@ -65,7 +65,7 @@ public class MapSettingsManager implements ISettingsManager {
     public int showWaypointNames = 2;
     public int showWaypointDistances = 2;
     public float waypointFontSize = 1.0F;
-    public boolean showWaypointNamesOnMap = true;
+    public boolean showWaypointNamesOnMap = false;
     public int sort = 1;
 
     public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoom_in", GLFW.GLFW_KEY_UP, "controls.voxelmap.title");
