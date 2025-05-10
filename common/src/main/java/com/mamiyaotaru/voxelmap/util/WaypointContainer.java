@@ -10,6 +10,7 @@ import com.mojang.math.Axis;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -18,6 +19,7 @@ import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -113,20 +115,24 @@ public class WaypointContainer {
     }
 
     private double getDiff(Waypoint waypoint, double distance, Camera camera) {
-        double range = Math.max(1.0, 0.0524 * distance);
-        range *= range;
-
-        float ptX = waypoint.getX() + 0.5F;
-        float ptY = waypoint.getY() + 1.65F;
-        float ptZ = waypoint.getZ() + 0.5F;
-
+        double degrees = 3.0 + Math.min(5.0 / distance, 5.0);
+        double angle = Math.toRadians(degrees);
+        double size = Math.sin(angle) * distance * options.waypointIconSize;
         Vec3 cameraPos = camera.getPosition();
         Vector3f lookVector = camera.getLookVector();
         Vec3 lookingPos = cameraPos.add(lookVector.x * distance, lookVector.y * distance, lookVector.z * distance);
-
-        double diff = lookingPos.distanceToSqr(ptX, ptY, ptZ);
-
-        return diff <= range ? diff : -1.0;
+        float ptX = waypoint.getX() + 0.5F;
+        float ptY = waypoint.getY() + 1.65F;
+        float ptZ = waypoint.getZ() + 0.5F;
+        AABB boundingBox = new AABB(ptX - size, ptY - size, ptZ - size, ptX + size, ptY + size,  ptZ + size);
+        Optional<Vec3> raytraceResult = boundingBox.clip(cameraPos, lookingPos);
+        if (boundingBox.contains(cameraPos)) {
+            return 0.0;
+        }
+        if (raytraceResult.isPresent()) {
+            return lookingPos.distanceToSqr(ptX, ptY, ptZ);
+        }
+        return -1.0;
     }
 
     private void renderBeam(Waypoint par1EntityWaypoint, double baseX, double baseY, double baseZ, PoseStack poseStack, BufferSource bufferSource) {
