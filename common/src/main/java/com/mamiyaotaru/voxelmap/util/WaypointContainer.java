@@ -113,27 +113,20 @@ public class WaypointContainer {
     }
 
     private double getDiff(Waypoint waypoint, double distance, Camera camera) {
-        double degrees = 5.0 + Math.min(5.0 / distance, 5.0);
-        double angle = Math.toRadians(degrees);
-        double size = Math.sin(angle) * distance * this.options.waypointIconSize;
+        double range = Math.max(1.0, distance * 0.05236);
+        range *= range;
+
+        float ptX = waypoint.getX() + 0.5F;
+        float ptY = waypoint.getY() + 1.65F;
+        float ptZ = waypoint.getZ() + 0.5F;
+
         Vec3 cameraPos = camera.getPosition();
         Vector3f lookVector = camera.getLookVector();
         Vec3 lookingPos = cameraPos.add(lookVector.x * distance, lookVector.y * distance, lookVector.z * distance);
-        float centerX = waypoint.getX() + 0.5F;
-        float centerY = waypoint.getY() + 1.65F;
-        float centerZ = waypoint.getZ() + 0.5F;
-        AABB boundingBox = new AABB(centerX - size, centerY - size, centerZ - size, centerX + size, centerY + size, centerZ + size);
-        Optional<Vec3> raycastResult = boundingBox.clip(cameraPos, lookingPos);
-        if (!boundingBox.contains(cameraPos) && raycastResult.isEmpty()) {
-            return -1.0;
-        } else if (distance <= 5.0) {
-            return 0.0;
-        } else {
-            double dx = lookingPos.x - centerX;
-            double dy = lookingPos.y - centerY;
-            double dz = lookingPos.z - centerZ;
-            return dx * dx + dy * dy + dz * dz;
-        }
+
+        double diff = lookingPos.distanceToSqr(ptX, ptY, ptZ);
+
+        return diff <= range ? diff : -1.0;
     }
 
     private void renderBeam(Waypoint par1EntityWaypoint, double baseX, double baseY, double baseZ, PoseStack poseStack, BufferSource bufferSource) {
