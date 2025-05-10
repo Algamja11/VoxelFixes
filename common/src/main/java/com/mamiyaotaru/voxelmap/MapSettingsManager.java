@@ -143,7 +143,7 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Show Waypoint Names" -> this.showWaypointNames = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
                         case "Show Waypoint Distances" -> this.showWaypointDistances = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
                         case "Waypoint Font Size" -> this.waypointFontSize = Math.max(0.75F, Math.min(2.0F, Float.parseFloat(curLine[1])));
-                        case "Show Waypoint Names On Map" -> this.showWaypointNamesOnMap = Boolean.parseBoolean(curLine[1]);
+                        case "Show Waypoint Names on Map" -> this.showWaypointNamesOnMap = Boolean.parseBoolean(curLine[1]);
                         case "Waypoint Sort By" -> this.sort = Math.max(1, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Zoom In Key" -> this.bindKey(this.keyBindZoomIn, curLine[1]);
                         case "Zoom Out Key" -> this.bindKey(this.keyBindZoomOut, curLine[1]);
@@ -215,7 +215,7 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Show Waypoint Names:" + this.showWaypointNames);
             out.println("Show Waypoint Distances:" + this.showWaypointDistances);
             out.println("Waypoint Font Size:" + this.waypointFontSize);
-            out.println("Show Waypoint Names On Map" + this.showWaypointNamesOnMap);
+            out.println("Show Waypoint Names on Map" + this.showWaypointNamesOnMap);
             out.println("Waypoint Sort By:" + this.sort);
             out.println("Zoom In Key:" + this.keyBindZoomIn.saveString());
             out.println("Zoom Out Key:" + this.keyBindZoomOut.saveString());
