@@ -1132,8 +1132,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         private final EnumMap<ElementType, Boolean> buttonStates = new EnumMap<>(ElementType.class);
         private final ElementType[] sidebarButtons = { ElementType.BUTTON_WAYPOINT_LIST };
 
-        private final ResourceLocation arrowIcon = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/sidebar/arrow.png");
-        private final ResourceLocation waypointListIcon = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/sidebar/waypoint_list.png");
+        private final ResourceLocation arrowIcon = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/worldmap_sidebar/arrow.png");
+        private final ResourceLocation waypointListIcon = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/worldmap_sidebar/waypoint_list.png");
 
         private SidebarPanel() {
             parentGui = GuiPersistentMap.this;
