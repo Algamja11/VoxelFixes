@@ -194,8 +194,8 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Enable Cave Mode:" + this.showCaves);
             out.println("Waypoint Beacons:" + this.showWaypointBeacons);
             out.println("Waypoint Signs:" + this.showWaypointSigns);
-            out.println("Move Scoreboard Below Map" + this.moveScoreboardBelowMap);
-            out.println("Move Map Below Status Effect Icons" + this.moveMapBelowStatusEffectIcons);
+            out.println("Move Scoreboard Below Map:" + this.moveScoreboardBelowMap);
+            out.println("Move Map Below Status Effect Icons:" + this.moveMapBelowStatusEffectIcons);
             out.println("Dynamic Lighting:" + this.lightmap);
             out.println("Height Map:" + this.heightmap);
             out.println("Slope Map:" + this.slopemap);
@@ -215,7 +215,7 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Show Waypoint Names:" + this.showWaypointNames);
             out.println("Show Waypoint Distances:" + this.showWaypointDistances);
             out.println("Waypoint Font Size:" + this.waypointFontSize);
-            out.println("Show Waypoint Names on Map" + this.showWaypointNamesOnMap);
+            out.println("Show Waypoint Names on Map:" + this.showWaypointNamesOnMap);
             out.println("Waypoint Sort By:" + this.sort);
             out.println("Zoom In Key:" + this.keyBindZoomIn.saveString());
             out.println("Zoom Out Key:" + this.keyBindZoomOut.saveString());
