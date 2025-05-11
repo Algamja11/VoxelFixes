@@ -133,7 +133,6 @@
   "voxelmap.waypoints.tooltip.remove_highlight": "클릭하여 강조 제거하기",
   "voxelmap.waypoint_share": "공유하기",
   "voxelmap.waypoints.filter": "필터",
-  "voxelmap.waypoints.add": "추가",
   "voxelmap.waypoints.new_waypoint": "새 경유지",
   "voxelmap.waypoints.delete_confirm": "정말 이 경유지를 지우시겠습니까?",
   "voxelmap.waypoints.edit": "경유지 수정",

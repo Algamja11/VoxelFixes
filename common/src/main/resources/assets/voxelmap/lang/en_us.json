@@ -133,7 +133,6 @@
   "voxelmap.waypoints.tooltip.remove_highlight": "Click to Remove Highlight",
   "voxelmap.waypoint_share": "Share",
   "voxelmap.waypoints.filter": "Filter",
-  "voxelmap.waypoints.add": "Add",
   "voxelmap.waypoints.new_waypoint": "New Waypoint",
   "voxelmap.waypoints.delete_confirm": "Are you sure you want to remove this waypoint?",
   "voxelmap.waypoints.edit": "Edit Waypoint",

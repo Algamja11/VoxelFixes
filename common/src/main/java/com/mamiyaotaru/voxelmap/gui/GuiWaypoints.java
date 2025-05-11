@@ -66,7 +66,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.filter = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 153 + filterStringWidth + 5, this.getHeight() - 80, 305 - filterStringWidth - 5, 20, null);
         this.filter.setMaxLength(35);
         this.addRenderableWidget(this.filter);
-        this.addRenderableWidget(new Button.Builder(Component.translatable("voxelmap.waypoints.add"), button -> this.addWaypoint()).bounds(this.getWidth() / 2 - 154, this.getHeight() - 52, 74, 20).build());
+        this.addRenderableWidget(new Button.Builder(Component.translatable("voxelmap.waypoints.new_waypoint"), button -> this.addWaypoint()).bounds(this.getWidth() / 2 - 154, this.getHeight() - 52, 74, 20).build());
         this.addRenderableWidget(this.buttonEdit = new Button.Builder(Component.translatable("selectServer.edit"), button -> this.editWaypoint(this.selectedWaypoint)).bounds(this.getWidth() / 2 - 76, this.getHeight() - 52, 74, 20).build());
         this.addRenderableWidget(this.buttonDelete = new Button.Builder(Component.translatable("selectServer.delete"), button -> this.deleteClicked()).bounds(this.getWidth() / 2 + 2, this.getHeight() - 52, 74, 20).build());
         this.addRenderableWidget(this.buttonHighlight = new Button.Builder(Component.translatable("voxelmap.waypoints.highlight"), button -> this.setHighlightedWaypoint()).bounds(this.getWidth() / 2 + 80, this.getHeight() - 52, 74, 20).build());
