@@ -1770,7 +1770,7 @@ public class Map implements Runnable, IChangeObserver {
                     float fontSize = this.options.waypointFontSize / 4.0F;
                     guiGraphics.pose().scale(fontSize, fontSize, 1.0F);
 
-                    int backgroundColor = pt.getUnifiedColor(!pt.enabled && !target ? 0.3F : 0.5F);
+                    int backgroundColor = pt.getUnifiedColor(!pt.enabled ? 0.25F : 0.5F);
                     int halfStringWidth = this.textWidth(name) / 2;
                     guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 2), (int) ((mapY + 4) / fontSize + 10), (int) (mapX / fontSize + halfStringWidth + 2), (int) ((mapY + 4) / fontSize - 2), backgroundColor);
                     guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 1), (int) ((mapY + 4) / fontSize + 9), (int) (mapX / fontSize + halfStringWidth + 1), (int) ((mapY + 4) / fontSize - 1), 0x30000000);
