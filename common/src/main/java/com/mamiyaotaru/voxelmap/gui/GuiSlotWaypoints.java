@@ -2,6 +2,7 @@ package com.mamiyaotaru.voxelmap.gui;
 
 import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.textures.Sprite;
+import com.mamiyaotaru.voxelmap.util.DimensionContainer;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
@@ -23,6 +24,7 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
     private ArrayList<?> waypointsFiltered;
     final GuiWaypoints parentGui;
     private String filterString = "";
+    private DimensionContainer dimension;
     static final Component TOOLTIP_ENABLE = Component.translatable("voxelmap.waypoints.tooltip.enable");
     static final Component TOOLTIP_DISABLE = Component.translatable("voxelmap.waypoints.tooltip.disable");
     static final Component TOOLTIP_HIGHLIGHT = Component.translatable("voxelmap.waypoints.tooltip.highlight");
@@ -97,6 +99,26 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
         while (iterator.hasNext()) {
             Waypoint waypoint = ((WaypointItem) iterator.next()).waypoint;
             if (!TextUtils.scrubCodes(waypoint.name).toLowerCase().contains(filterString)) {
+                if (waypoint == this.parentGui.selectedWaypoint) {
+                    this.parentGui.setSelectedWaypoint(null);
+                }
+
+                iterator.remove();
+            }
+        }
+
+        this.waypointsFiltered.forEach(x -> this.addEntry((WaypointItem) x));
+    }
+
+    protected void updateDimensionFilter(DimensionContainer dimension) {
+        this.clearEntries();
+        this.dimension = dimension;
+        this.waypointsFiltered = new ArrayList<>(this.waypoints);
+        Iterator<?> iterator = this.waypointsFiltered.iterator();
+
+        while (iterator.hasNext()) {
+            Waypoint waypoint = ((WaypointItem) iterator.next()).waypoint;
+            if (!waypoint.dimensions.contains(this.dimension)) {
                 if (waypoint == this.parentGui.selectedWaypoint) {
                     this.parentGui.setSelectedWaypoint(null);
                 }

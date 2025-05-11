@@ -6,8 +6,11 @@ import com.mamiyaotaru.voxelmap.WaypointManager;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
 import com.mamiyaotaru.voxelmap.util.CommandUtils;
 import com.mamiyaotaru.voxelmap.util.DimensionContainer;
+import com.mamiyaotaru.voxelmap.util.DimensionManager;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
+
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
 import java.util.TreeSet;
@@ -23,6 +26,7 @@ import net.minecraft.network.chat.Component;
 public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     protected final MapSettingsManager options;
     protected final WaypointManager waypointManager;
+    protected final DimensionManager dimensionManager;
     protected Component screenTitle;
     private GuiSlotWaypoints waypointList;
     private Button buttonEdit;
@@ -44,12 +48,14 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     protected Waypoint newWaypoint;
     private final Random generator = new Random();
     private boolean changedSort;
+    private DimensionContainer dimension;
 
     public GuiWaypoints(Screen parentScreen) {
         this.parentScreen = parentScreen;
         this.options = VoxelConstants.getVoxelMapInstance().getMapOptions();
         this.waypointManager = VoxelConstants.getVoxelMapInstance().getWaypointManager();
         this.highlightedWaypoint = this.waypointManager.getHighlightedWaypoint();
+        this.dimensionManager = VoxelConstants.getVoxelMapInstance().getDimensionManager();
     }
 
     public void tick() {
@@ -63,9 +69,13 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.addRenderableWidget(this.buttonSortCreated = new Button.Builder(Component.translatable("voxelmap.waypoints.sort.created"), button -> this.sortClicked(1)).bounds(this.getWidth() / 2, 34, 77, 20).build());
         this.addRenderableWidget(this.buttonSortColor = new Button.Builder(Component.translatable("voxelmap.waypoints.sort.color"), button -> this.sortClicked(4)).bounds(this.getWidth() / 2 + 77, 34, 77, 20).build());
         int filterStringWidth = this.getFontRenderer().width(I18n.get("voxelmap.waypoints.filter") + ":");
-        this.filter = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 153 + filterStringWidth + 5, this.getHeight() - 80, 305 - filterStringWidth - 5, 20, null);
+        this.filter = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 153 + filterStringWidth + 5, this.getHeight() - 80, 224 - filterStringWidth, 20, null);
         this.filter.setMaxLength(35);
+        this.filter.setFocused(true);
+        this.setFocused(this.filter);
         this.addRenderableWidget(this.filter);
+        this.dimension = this.dimensionManager.getDimensions().getFirst();
+        this.addRenderableWidget(new Button.Builder(Component.literal(this.dimension.getDisplayName()), this::updateDimension).bounds(this.getWidth() / 2 + 80, this.getHeight() - 80, 74, 20).build());
         this.addRenderableWidget(new Button.Builder(Component.translatable("voxelmap.waypoints.new_waypoint"), button -> this.addWaypoint()).bounds(this.getWidth() / 2 - 154, this.getHeight() - 52, 74, 20).build());
         this.addRenderableWidget(this.buttonEdit = new Button.Builder(Component.translatable("selectServer.edit"), button -> this.editWaypoint(this.selectedWaypoint)).bounds(this.getWidth() / 2 - 76, this.getHeight() - 52, 74, 20).build());
         this.addRenderableWidget(this.buttonDelete = new Button.Builder(Component.translatable("selectServer.delete"), button -> this.deleteClicked()).bounds(this.getWidth() / 2 + 2, this.getHeight() - 52, 74, 20).build());
@@ -74,8 +84,6 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.addRenderableWidget(this.buttonShare = new Button.Builder(Component.translatable("voxelmap.waypoint_share"), button -> CommandUtils.sendWaypoint(this.selectedWaypoint)).bounds(this.getWidth() / 2 - 76, this.getHeight() - 28, 74, 20).build());
         this.addRenderableWidget(new Button.Builder(Component.translatable("menu.options"), button -> VoxelConstants.getMinecraft().setScreen(new GuiWaypointsOptions(this, this.options))).bounds(this.getWidth() / 2 + 2, this.getHeight() - 28, 74, 20).build());
         this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), button -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 + 80, this.getHeight() - 28, 74, 20).build());
-        this.setFocused(this.filter);
-        this.filter.setFocused(true);
         boolean isSomethingSelected = this.selectedWaypoint != null;
         this.buttonEdit.active = isSomethingSelected;
         this.buttonDelete.active = isSomethingSelected;
@@ -114,6 +122,18 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
             this.buttonSortColor.setMessage(Component.translatable("voxelmap.waypoints.sort.color"));
         }
 
+    }
+
+    private void updateDimension(Button button) {
+        ArrayList<DimensionContainer> dimensions = this.dimensionManager.getDimensions();
+        int i = dimensions.indexOf(this.dimension) + 1;
+        if (i >= dimensions.size()) {
+            i = 0;
+        }
+        this.dimension = dimensions.get(i);
+        button.setMessage(Component.literal(this.dimension.getDisplayName()));
+
+        this.waypointList.updateDimensionFilter(this.dimension);
     }
 
     private void deleteClicked() {
