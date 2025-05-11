@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,16 +33,20 @@ public class WaypointContainer {
     public static class ExtendedWaypoint implements Comparable<ExtendedWaypoint> {
         public Waypoint waypoint;
         public double diff;
+        public boolean target;
 
         public ExtendedWaypoint(Waypoint waypoint) {
             this.waypoint = waypoint;
         }
 
         public int compareTo(ExtendedWaypoint o) {
-            if (this.diff < 0.0 && o.diff >= 0.0) return 1;
-            if (this.diff >= 0.0 && o.diff < 0.0) return -1;
+            boolean skip1 = diff == -1.0 || (!waypoint.enabled && !target);
+            boolean skip2 = o.diff == -1.0 || (!o.waypoint.enabled && !o.target);
 
-            return Double.compare(this.diff, o.diff);
+            if (skip1 && !skip2) return 1;
+            if (!skip1 && skip2) return -1;
+
+            return Double.compare(diff, o.diff);
         }
     }
 
@@ -81,22 +86,24 @@ public class WaypointContainer {
 
         if (this.options.showWaypointSigns && !minecraft.options.hideGui) {
             TextureAtlas textureAtlas = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas();
-            this.wayPts.sort(Collections.reverseOrder(ExtendedWaypoint::compareTo));
+            this.wayPts.sort(Comparator.reverseOrder());
             boolean shiftDown = minecraft.options.keyShift.isDown();
             int last = this.wayPts.size() - 1;
             int count = 0;
             for (ExtendedWaypoint pt : this.wayPts) {
-                if (pt.waypoint.isActive() || pt.waypoint == this.highlightedWaypoint) {
+                boolean highlighted = pt.waypoint == this.highlightedWaypoint;
+                if (pt.waypoint.isActive() || highlighted) {
                     int x = pt.waypoint.getX();
                     int z = pt.waypoint.getZ();
                     int y = pt.waypoint.getY();
                     double distance = Math.sqrt(pt.waypoint.getDistanceSqToCamera(camera));
-                    if ((distance < this.options.maxWaypointDisplayDistance || this.options.maxWaypointDisplayDistance < 0 || pt.waypoint == this.highlightedWaypoint)) {
+                    if (highlighted || this.options.maxWaypointDisplayDistance < 0 || distance < this.options.maxWaypointDisplayDistance) {
                         pt.diff = this.getDiff(pt.waypoint, distance, camera);
+                        pt.target = highlighted;
                         if (shiftDown) {
-                            this.renderIcon(poseStack, bufferSource, pt.waypoint, x - renderPosX, false, pt.diff >= 0.0, distance, y - renderPosY + 1.12, z - renderPosZ, textureAtlas);
+                            this.renderIcon(poseStack, bufferSource, pt.waypoint, false, pt.diff != -1.0, distance, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ, textureAtlas);
                         } else {
-                            this.renderIcon(poseStack, bufferSource, pt.waypoint, x - renderPosX, false, pt.diff >= 0.0 && count == last, distance, y - renderPosY + 1.12, z - renderPosZ, textureAtlas);
+                            this.renderIcon(poseStack, bufferSource, pt.waypoint, false, pt.diff != -1.0 && count == last, distance, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ, textureAtlas);
                         }
                     }
                 }
@@ -109,7 +116,7 @@ public class WaypointContainer {
                 int y = this.highlightedWaypoint.getY();
                 double distance = Math.sqrt(this.highlightedWaypoint.getDistanceSqToCamera(camera));
                 boolean showLabel = this.getDiff(this.highlightedWaypoint, distance, camera) >= 0.0;
-                this.renderIcon(poseStack, bufferSource, this.highlightedWaypoint, x - renderPosX, true, showLabel, distance, y - renderPosY + 1.12, z - renderPosZ, textureAtlas);
+                this.renderIcon(poseStack, bufferSource, this.highlightedWaypoint, true, showLabel, distance, x - renderPosX, y - renderPosY + 1.12, z - renderPosZ, textureAtlas);
             }
         }
     }
@@ -179,7 +186,7 @@ public class WaypointContainer {
         }
     }
 
-    private void renderIcon(PoseStack poseStack, BufferSource bufferSource, Waypoint pt, double baseX, boolean target, boolean showLabel, double distance, double baseY, double baseZ, TextureAtlas textureAtlas) {
+    private void renderIcon(PoseStack poseStack, BufferSource bufferSource, Waypoint pt, boolean target, boolean showLabel, double distance, double baseX, double baseY, double baseZ, TextureAtlas textureAtlas) {
         float red = pt.red;
         float green = pt.green;
         float blue = pt.blue;

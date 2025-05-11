@@ -1604,9 +1604,10 @@ public class Map implements Runnable, IChangeObserver {
             Waypoint highlightedPoint = this.waypointManager.getHighlightedWaypoint();
 
             for (Waypoint pt : this.waypointManager.getWaypoints()) {
-                if (pt.isActive() || pt == highlightedPoint) {
+                boolean highlighted = pt == highlightedPoint;
+                if (pt.isActive() || highlighted) {
                     double distanceSq = pt.getDistanceSqToEntity(minecraft.getCameraEntity());
-                    if (distanceSq < (this.options.maxWaypointDisplayDistance * this.options.maxWaypointDisplayDistance) || this.options.maxWaypointDisplayDistance < 0 || pt == highlightedPoint) {
+                    if (highlighted || this.options.maxWaypointDisplayDistance < 0 || distanceSq < (this.options.maxWaypointDisplayDistance * this.options.maxWaypointDisplayDistance)) {
                         this.drawWaypoint(guiGraphics, pt, false, lastXDouble, lastZDouble, textureAtlas, layoutVariables);
                     }
                 }
