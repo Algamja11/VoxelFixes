@@ -39,8 +39,8 @@ public class WaypointContainer {
         }
 
         public int compareTo(ExtendedWaypoint o) {
-            boolean skip1 = diff == -1.0 || (!waypoint.enabled && !target);
-            boolean skip2 = o.diff == -1.0 || (!o.waypoint.enabled && !o.target);
+            boolean skip1 = diff == -1.0 || (!waypoint.enabled && !target) || !waypoint.inWorld || !waypoint.inDimension;
+            boolean skip2 = o.diff == -1.0 || (!o.waypoint.enabled && !o.target) || !o.waypoint.inWorld || !o.waypoint.inDimension;
 
             if (skip1 && !skip2) return 1;
             if (!skip1 && skip2) return -1;
