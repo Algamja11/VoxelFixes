@@ -38,10 +38,6 @@ public class GameVariableAccessShim {
         return VoxelConstants.getMinecraft().screen != null && VoxelConstants.getMinecraft().screen.isPauseScreen() ? VoxelConstants.getMinecraft().getCameraEntity().getY() : VoxelConstants.getMinecraft().getCameraEntity().yo + (VoxelConstants.getMinecraft().getCameraEntity().getY() - VoxelConstants.getMinecraft().getCameraEntity().yo) * VoxelConstants.getMinecraft().getDeltaTracker().getGameTimeDeltaPartialTick(false);
     }
 
-    public static BlockPos blockPos() {
-        return Minecraft.getInstance().player.blockPosition();
-    }
-
     public static float rotationYaw() {
         return VoxelConstants.getMinecraft().getCameraEntity().yRotO + (VoxelConstants.getMinecraft().getCameraEntity().getYRot() - VoxelConstants.getMinecraft().getCameraEntity().yRotO) * VoxelConstants.getMinecraft().getDeltaTracker().getGameTimeDeltaPartialTick(false);
     }

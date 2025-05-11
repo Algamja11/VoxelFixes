@@ -836,7 +836,7 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (offsetX != 0 || offsetZ != 0 && this.options.showBiomeLabel) {
-            this.currentBiomeName = BiomeRepository.getName(world.getBiome(GameVariableAccessShim.blockPos()).value());
+            this.currentBiomeName = BiomeRepository.getName(this.lastBiome);
         }
 
     }
