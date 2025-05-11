@@ -40,7 +40,8 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     private Button buttonSortCreated;
     private Button buttonSortDistance;
     private Button buttonSortColor;
-    protected EditBox filter;
+    private EditBox filter;
+    private DimensionContainer dimension;
     private boolean addClicked;
     private Component tooltip;
     protected Waypoint selectedWaypoint;
@@ -48,7 +49,6 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     protected Waypoint newWaypoint;
     private final Random generator = new Random();
     private boolean changedSort;
-    private DimensionContainer dimension;
 
     public GuiWaypoints(Screen parentScreen) {
         this.parentScreen = parentScreen;
@@ -91,8 +91,6 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.buttonShare.active = isSomethingSelected;
         this.buttonTeleport.active = isSomethingSelected && this.canTeleport();
         this.sort();
-        this.waypointList.updateFilter(this.filter.getValue().toLowerCase());
-        this.waypointList.updateDimensionFilter(this.dimension);
     }
 
     private void sort() {
@@ -135,7 +133,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.dimension = dimensions.get(i);
         button.setMessage(Component.literal(this.dimension.getDisplayName()));
 
-        this.waypointList.updateDimensionFilter(this.dimension);
+        this.waypointList.updateFilter(this.filter.getValue().toLowerCase(), this.dimension);
     }
 
     private void deleteClicked() {
@@ -167,7 +165,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         boolean OK = super.keyPressed(keyCode, scanCode, modifiers);
         if (this.filter.isFocused()) {
-            this.waypointList.updateFilter(this.filter.getValue().toLowerCase());
+            this.waypointList.updateFilter(this.filter.getValue().toLowerCase(), this.dimension);
         }
 
         return OK;
@@ -176,7 +174,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     public boolean charTyped(char chr, int modifiers) {
         boolean OK = super.charTyped(chr, modifiers);
         if (this.filter.isFocused()) {
-            this.waypointList.updateFilter(this.filter.getValue().toLowerCase());
+            this.waypointList.updateFilter(this.filter.getValue().toLowerCase(), this.dimension);
         }
 
         return OK;

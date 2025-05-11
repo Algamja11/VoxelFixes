@@ -24,7 +24,7 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
     private ArrayList<?> waypointsFiltered;
     final GuiWaypoints parentGui;
     private String filterString = "";
-    private DimensionContainer dimension;
+    private DimensionContainer filterDimension;
     static final Component TOOLTIP_ENABLE = Component.translatable("voxelmap.waypoints.tooltip.enable");
     static final Component TOOLTIP_DISABLE = Component.translatable("voxelmap.waypoints.tooltip.disable");
     static final Component TOOLTIP_HIGHLIGHT = Component.translatable("voxelmap.waypoints.tooltip.highlight");
@@ -39,6 +39,8 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
         super(VoxelConstants.getMinecraft(), par1GuiWaypoints.getWidth(), par1GuiWaypoints.getHeight() - 140, 54, 18);
         this.parentGui = par1GuiWaypoints;
         this.waypoints = new ArrayList<>();
+
+        this.filterDimension = this.parentGui.dimensionManager.getDimensionContainerByWorld(VoxelConstants.getPlayer().level());
 
         for (Waypoint pt : this.parentGui.waypointManager.getWaypoints()) {
             if (pt.inWorld) {
@@ -87,38 +89,19 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
             });
         }
 
-        this.updateFilter(this.filterString);
+        this.updateFilter(this.filterString, this.filterDimension);
     }
 
-    protected void updateFilter(String filterString) {
+    protected void updateFilter(String filterString, DimensionContainer filterDimension) {
         this.clearEntries();
         this.filterString = filterString;
+        this.filterDimension = filterDimension;
         this.waypointsFiltered = new ArrayList<>(this.waypoints);
         Iterator<?> iterator = this.waypointsFiltered.iterator();
 
         while (iterator.hasNext()) {
             Waypoint waypoint = ((WaypointItem) iterator.next()).waypoint;
-            if (!TextUtils.scrubCodes(waypoint.name).toLowerCase().contains(filterString)) {
-                if (waypoint == this.parentGui.selectedWaypoint) {
-                    this.parentGui.setSelectedWaypoint(null);
-                }
-
-                iterator.remove();
-            }
-        }
-
-        this.waypointsFiltered.forEach(x -> this.addEntry((WaypointItem) x));
-    }
-
-    protected void updateDimensionFilter(DimensionContainer dimension) {
-        this.clearEntries();
-        this.dimension = dimension;
-        this.waypointsFiltered = new ArrayList<>(this.waypoints);
-        Iterator<?> iterator = this.waypointsFiltered.iterator();
-
-        while (iterator.hasNext()) {
-            Waypoint waypoint = ((WaypointItem) iterator.next()).waypoint;
-            if (!waypoint.dimensions.contains(this.dimension)) {
+            if (!TextUtils.scrubCodes(waypoint.name).toLowerCase().contains(filterString) || !waypoint.dimensions.contains(filterDimension)) {
                 if (waypoint == this.parentGui.selectedWaypoint) {
                     this.parentGui.setSelectedWaypoint(null);
                 }
