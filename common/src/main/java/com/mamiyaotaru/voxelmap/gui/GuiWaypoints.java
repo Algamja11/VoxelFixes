@@ -74,7 +74,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.filter.setFocused(true);
         this.setFocused(this.filter);
         this.addRenderableWidget(this.filter);
-        this.dimension = this.dimensionManager.getDimensions().getFirst();
+        this.dimension = this.dimensionManager.getDimensionContainerByWorld(VoxelConstants.getPlayer().level());
         this.addRenderableWidget(new Button.Builder(Component.literal(this.dimension.getDisplayName()), this::updateDimension).bounds(this.getWidth() / 2 + 80, this.getHeight() - 80, 74, 20).build());
         this.addRenderableWidget(new Button.Builder(Component.translatable("voxelmap.waypoints.new_waypoint"), button -> this.addWaypoint()).bounds(this.getWidth() / 2 - 154, this.getHeight() - 52, 74, 20).build());
         this.addRenderableWidget(this.buttonEdit = new Button.Builder(Component.translatable("selectServer.edit"), button -> this.editWaypoint(this.selectedWaypoint)).bounds(this.getWidth() / 2 - 76, this.getHeight() - 52, 74, 20).build());
@@ -91,6 +91,8 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.buttonShare.active = isSomethingSelected;
         this.buttonTeleport.active = isSomethingSelected && this.canTeleport();
         this.sort();
+        this.waypointList.updateFilter(this.filter.getValue().toLowerCase());
+        this.waypointList.updateDimensionFilter(this.dimension);
     }
 
     private void sort() {
