@@ -23,7 +23,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class GuiAddWaypoint extends GuiScreenMinimap {
     private static final ResourceLocation BLANK = ResourceLocation.parse("textures/misc/white.png");
-    private static final ResourceLocation PICKER = ResourceLocation.parse("voxelmap:images/colorpicker.png");
+    private static final ResourceLocation PICKER = ResourceLocation.parse("voxelmap:images/color_picker.png");
     private static final ResourceLocation TARGET = ResourceLocation.parse("voxelmap:images/waypoints/target.png");
     final WaypointManager waypointManager;
     final ColorManager colorManager;
