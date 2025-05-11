@@ -41,7 +41,7 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
         this.waypoints = new ArrayList<>();
 
         for (Waypoint pt : this.parentGui.waypointManager.getWaypoints()) {
-            if (pt.inWorld && pt.inDimension) {
+            if (pt.inWorld) {
                 this.waypoints.add(new WaypointItem(this.parentGui, pt));
             }
         }
