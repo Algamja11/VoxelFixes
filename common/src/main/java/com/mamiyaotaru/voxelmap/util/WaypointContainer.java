@@ -265,7 +265,7 @@ public class WaypointContainer {
 
             int textColor = (int) (255.0F * fade) << 24 | 0x00FFFFFF;
             int textColorNoDepth = (int) (255.0F * fadeNoDepth) << 24 | 0x00FFFFFF;
-            int labelY = aboveIcon ? -20 : 10;
+            int labelY = aboveIcon ? -18 : 10;
             int halfLabelWidth = fontRenderer.width(name) / 2;
             float zOffset = 0.1F;
 
@@ -300,11 +300,11 @@ public class WaypointContainer {
             }
 
             if (!distanceStr.isEmpty()) {
-                labelY = aboveIcon ? -40 : 30;
+                labelY = aboveIcon ? -34 : 26;
                 halfLabelWidth = fontRenderer.width(distanceStr) / 2;
 
                 poseStack.pushPose();
-                poseStack.scale(0.65F, 0.65F, 1.0F);
+                poseStack.scale(0.75F, 0.75F, 1.0F);
 
                 renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHTEST;
                 vertexConsumer = bufferSource.getBuffer(renderType);

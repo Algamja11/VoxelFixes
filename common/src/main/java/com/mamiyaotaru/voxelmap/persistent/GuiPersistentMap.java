@@ -799,7 +799,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             if (icon == null) {
                 icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
             }
-            int color = target ? 0xFFFF0000 : pt.getUnifiedColor(!pt.enabled && !hover ? 0.5F: 1.0F);
+            int color = target ? 0xFFFF0000 : pt.getUnifiedColor(!pt.enabled && !hover ? 0.5F : 1.0F);
 
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(x, y, 0.0f);

@@ -63,7 +63,7 @@ public class MapSettingsManager implements ISettingsManager {
     public int deathpoints = 1;
     public boolean autoUnitConversion = true;
     public int showWaypointNames = 2;
-    public int showWaypointDistances = 2;
+    public int showWaypointDistances = 1;
     public float waypointFontSize = 1.0F;
     public boolean showWaypointNamesOnMap = false;
     public int sort = 1;
@@ -371,9 +371,9 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.showWaypointNames == 0) {
                     return I18n.get("options.off");
                 } else if (this.showWaypointNames == 1) {
-                    return I18n.get("options.voxelmap.waypoints.show_waypoint_names.above_icon");
+                    return I18n.get("options.voxelmap.waypoints.show_names.above_icon");
                 } else if (this.showWaypointNames == 2) {
-                    return I18n.get("options.voxelmap.waypoints.show_waypoint_names.below_icon");
+                    return I18n.get("options.voxelmap.waypoints.show_names.below_icon");
                 }
 
                 return I18n.get("voxelmap.ui.error");
@@ -382,9 +382,9 @@ public class MapSettingsManager implements ISettingsManager {
                 if (this.showWaypointDistances == 0) {
                     return I18n.get("options.off");
                 } else if (this.showWaypointDistances == 1) {
-                    return this.showWaypointNames == 0 ? I18n.get("options.voxelmap.waypoints.show_waypoint_distances.above_icon") : I18n.get("options.voxelmap.waypoints.show_waypoint_distances.beside_name");
+                    return this.showWaypointNames == 0 ? I18n.get("options.voxelmap.waypoints.show_distances.above_icon") : I18n.get("options.voxelmap.waypoints.show_distances.beside_name");
                 } else if (this.showWaypointDistances == 2) {
-                    return this.showWaypointNames == 0 ? I18n.get("options.voxelmap.waypoints.show_waypoint_distances.below_icon") : I18n.get("options.voxelmap.waypoints.show_waypoint_distances.below_name");
+                    return this.showWaypointNames == 0 ? I18n.get("options.voxelmap.waypoints.show_distances.below_icon") : I18n.get("options.voxelmap.waypoints.show_distances.below_name");
                 }
 
                 return I18n.get("voxelmap.ui.error");

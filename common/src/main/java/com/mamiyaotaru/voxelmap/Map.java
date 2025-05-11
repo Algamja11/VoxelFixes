@@ -1727,7 +1727,7 @@ public class Map implements Runnable, IChangeObserver {
             if (icon == null) {
                 icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/marker.png");
             }
-            int color = target ? 0xFFFF0000 : pt.getUnifiedColor(!pt.enabled ? 0.5F: 1.0F);
+            int color = target ? 0xFFFF0000 : pt.getUnifiedColor(!pt.enabled ? 0.5F : 1.0F);
 
             try {
                 guiGraphics.pose().pushPose();
@@ -1756,7 +1756,7 @@ public class Map implements Runnable, IChangeObserver {
                     icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
                 }
             }
-            int color = target ? 0xFFFF0000 : pt.getUnifiedColor(!pt.enabled ? 0.5F: 1.0F);
+            int color = target ? 0xFFFF0000 : pt.getUnifiedColor(!pt.enabled ? 0.5F : 1.0F);
 
             try {
                 guiGraphics.pose().pushPose();
