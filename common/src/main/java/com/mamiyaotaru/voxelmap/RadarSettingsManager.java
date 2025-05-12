@@ -19,7 +19,6 @@ public class RadarSettingsManager implements ISubSettingsManager {
     private boolean somethingChanged;
     public boolean showRadar = true;
     public int radarMode = 2;
-    public int showMobs = 1;
     public boolean showHostiles = true;
     public boolean showNeutrals;
     public boolean showMobNames = true;
@@ -48,7 +47,6 @@ public class RadarSettingsManager implements ISubSettingsManager {
                 switch (curLine[0]) {
                     case "Show Radar" -> this.showRadar = Boolean.parseBoolean(curLine[1]);
                     case "Radar Mode" -> this.radarMode = Math.max(1, Math.min(2, Integer.parseInt(curLine[1])));
-                    case "Show Mobs" -> this.showMobs = Math.max(0, Math.min(3, Integer.parseInt(curLine[1])));
                     case "Show Hostiles" -> this.showHostiles = Boolean.parseBoolean(curLine[1]);
                     case "Show Neutrals" -> this.showNeutrals = Boolean.parseBoolean(curLine[1]);
                     case "Show Mob Names" -> this.showMobNames = Boolean.parseBoolean(curLine[1]);
@@ -74,7 +72,6 @@ public class RadarSettingsManager implements ISubSettingsManager {
     public void saveAll(PrintWriter out) {
         out.println("Show Radar:" + this.showRadar);
         out.println("Radar Mode:" + this.radarMode);
-        out.println("Show Mobs:" + this.showMobs);
         out.println("Show Hostiles:" + this.showHostiles);
         out.println("Show Neutrals:" + this.showNeutrals);
         out.println("Show Mob Names:" + this.showMobNames);
@@ -141,17 +138,15 @@ public class RadarSettingsManager implements ISubSettingsManager {
                 return I18n.get("voxelmap.ui.error");
             }
             case SHOW_MOBS -> {
-                if (this.showMobs == 0) {
-                    return I18n.get("options.off");
-                } else if (this.showMobs == 1) {
-                    return I18n.get("options.voxelmap.radar.show_mobs.hostiles");
-                } else if (this.showMobs == 2) {
-                    return I18n.get("options.voxelmap.radar.show_mobs.neutrals");
-                } else if (this.showMobs == 3) {
+                if (this.showNeutrals && this.showHostiles) {
                     return I18n.get("options.voxelmap.radar.show_mobs.both");
+                } else if (this.showNeutrals) {
+                    return I18n.get("options.voxelmap.radar.show_mobs.neutrals");
+                } else if (this.showHostiles) {
+                    return I18n.get("options.voxelmap.radar.show_mobs.hostiles");
                 }
 
-                return I18n.get("voxelmap.ui.error");
+                return I18n.get("options.off");
             }
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         }
@@ -186,21 +181,15 @@ public class RadarSettingsManager implements ISubSettingsManager {
                 }
             }
             case SHOW_MOBS -> {
-                ++this.showMobs;
-                if (this.showMobs > 3) {
-                    this.showMobs = 0;
-                }
-                if (this.showMobs == 0) {
-                    this.showHostiles = false;
+                if (this.showNeutrals && this.showHostiles) {
                     this.showNeutrals = false;
-                } else if (this.showMobs == 1) {
+                    this.showHostiles = false;
+                } else if (this.showNeutrals) {
+                    this.showNeutrals = false;
                     this.showHostiles = true;
-                    this.showNeutrals = false;
-                } else if (this.showMobs == 2) {
-                    this.showHostiles = false;
+                } else if (this.showHostiles) {
                     this.showNeutrals = true;
-                } else if (this.showMobs == 3) {
-                    this.showHostiles = true;
+                } else {
                     this.showNeutrals = true;
                 }
             }
