@@ -23,8 +23,8 @@ public class GuiButtonRowListPlayers extends AbstractSelectionList<GuiButtonRowL
     final GuiSelectPlayer parentGui;
     final Row everyoneRow;
     static final Component ALL = Component.translatable("voxelmap.waypoint_share.everyone");
-    static final Component TITLE = Component.translatable("voxelmap.waypoint_share.share_with.everyone_confirm1");
-    static final Component EXPLANATION = Component.translatable("voxelmap.waypoint_share.share_with_everyone_confirm2");
+    static final Component TITLE = Component.translatable("voxelmap.waypoint_share.share_with.everyone.confirm1");
+    static final Component EXPLANATION = Component.translatable("voxelmap.waypoint_share.share_with.everyone.confirm2");
     static final Component AFFIRM = Component.translatable("gui.yes");
     static final Component DENY = Component.translatable("gui.cancel");
 

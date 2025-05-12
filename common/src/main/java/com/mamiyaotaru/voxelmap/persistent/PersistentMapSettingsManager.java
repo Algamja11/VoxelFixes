@@ -36,8 +36,8 @@ public class PersistentMapSettingsManager implements ISubSettingsManager {
                     case "Worldmap Minimum Zoom" -> this.minZoom = Float.parseFloat(curLine[1]);
                     case "Worldmap Maximum Zoom" -> this.maxZoom = Float.parseFloat(curLine[1]);
                     case "Worldmap Cache Size" -> this.cacheSize = Integer.parseInt(curLine[1]);
-                    case "Show Worldmap Waypoints" -> this.showWaypoints = Boolean.parseBoolean(curLine[1]);
-                    case "Show Worldmap Waypoint Names" -> this.showWaypointNames = Boolean.parseBoolean(curLine[1]);
+                    case "Show Waypoints on Worldmap" -> this.showWaypoints = Boolean.parseBoolean(curLine[1]);
+                    case "Show Waypoint Names on Worldmap" -> this.showWaypointNames = Boolean.parseBoolean(curLine[1]);
                     case "Output Images" -> this.outputImages = Boolean.parseBoolean(curLine[1]);
                 }
             }

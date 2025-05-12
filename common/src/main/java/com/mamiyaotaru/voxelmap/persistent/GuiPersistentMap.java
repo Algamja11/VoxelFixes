@@ -680,7 +680,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                     }
                 }
             }
-        } //TODO VoxelFixes: optimize biome overlay
+        }
         guiGraphics.pose().popPose();
 
         if (VoxelMap.mapOptions.waypointsAllowed && this.options.showWaypoints) {

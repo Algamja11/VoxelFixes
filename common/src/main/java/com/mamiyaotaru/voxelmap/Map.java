@@ -43,6 +43,7 @@ import java.util.OptionalInt;
 import java.util.Random;
 import java.util.TreeSet;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -59,6 +60,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -137,7 +139,6 @@ public class Map implements Runnable, IChangeObserver {
     private int scWidth;
     private int scHeight;
     private String message = "";
-//    private final Component[] welcomeText = new Component[8];
     private long zTimer;
     private int heightMapFudge;
     private int timer;
@@ -158,6 +159,7 @@ public class Map implements Runnable, IChangeObserver {
     private static double minTablistOffset;
     private static float statusIconOffset = 0.0F;
     private String currentBiomeName;
+    private final ArrayList<MutableComponent> welcomeText = new ArrayList<MutableComponent>();
 
     private final ResourceLocation[] resourceMapImageFiltered = new ResourceLocation[5];
     private final ResourceLocation[] resourceMapImageUnfiltered = new ResourceLocation[5];
@@ -377,17 +379,17 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (minecraft.screen == null && this.options.keyBindEnlargedMap.consumeClick()) {
-            this.enlargedMap = !this.fullscreenMap && !this.enlargedMap;
-        }
-
-        if (minecraft.screen == null && this.options.keyBindFullscreenMap.consumeClick()) {
             this.showWelcomeScreen = false;
             if (this.options.welcome) {
                 this.options.welcome = false;
                 this.options.saveAll();
             } else {
-                this.fullscreenMap = !this.fullscreenMap && !this.enlargedMap;
+                this.enlargedMap = !this.fullscreenMap && !this.enlargedMap;
             }
+        }
+
+        if (minecraft.screen == null && this.options.keyBindFullscreenMap.consumeClick()) {
+            this.fullscreenMap = !this.fullscreenMap && !this.enlargedMap;
         }
 
         this.checkForChanges();
@@ -655,7 +657,7 @@ public class Map implements Runnable, IChangeObserver {
                         }
                     }
                 }
-                float resFactor = (float) scHeight / minecraft.getWindow().getGuiScaledHeight();
+                float resFactor = (float) this.scHeight / minecraft.getWindow().getGuiScaledHeight();
                 mapY += (int) (statusIconOffset * resFactor);
             }
         }
@@ -674,7 +676,7 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (this.showWelcomeScreen) {
-//            this.drawWelcomeScreen(drawContext, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
+            this.drawWelcomeScreen(drawContext, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
         }
     }
 
@@ -1973,62 +1975,70 @@ public class Map implements Runnable, IChangeObserver {
         drawContext.drawString(minecraft.font, text, (int) x, (int) y, color);
     }
 
-//    private void drawWelcomeScreen(GuiGraphics drawContext, int scWidth, int scHeight) {
-//        if (this.welcomeText[1] == null || this.welcomeText[1].getString().equals("voxelmap.ui.welcome2")) {
-//            this.welcomeText[0] = (Component.literal("")).append((Component.literal("VoxelMap! ")).withStyle(ChatFormatting.RED)).append(Component.translatable("voxelmap.ui.welcome1"));
-//            this.welcomeText[1] = Component.translatable("voxelmap.ui.welcome2");
-//            this.welcomeText[2] = Component.translatable("voxelmap.ui.welcome3");
-//            this.welcomeText[3] = Component.translatable("voxelmap.ui.welcome4");
-//            this.welcomeText[4] = (Component.literal("")).append((Component.keybind(this.options.keyBindZoomIn.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("voxelmap.ui.welcome5a")).append(", ")
-//                    .append((Component.keybind(this.options.keyBindMenu.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("voxelmap.ui.welcome5b"));
-//            this.welcomeText[5] = (Component.literal("")).append((Component.keybind(this.options.keyBindFullscreen.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("voxelmap.ui.welcome6"));
-//            this.welcomeText[6] = (Component.literal("")).append((Component.keybind(this.options.keyBindWaypoint.getName())).withStyle(ChatFormatting.AQUA)).append(": ").append(Component.translatable("voxelmap.ui.welcome7"));
-//            this.welcomeText[7] = this.options.keyBindZoomIn.getTranslatedKeyMessage().copy().append(": ").append((Component.translatable("voxelmap.ui.welcome8")).withStyle(ChatFormatting.GRAY));
-//        }
-//
-//        int maxSize = 0;
-//        int border = 2;
-//        Component head = this.welcomeText[0];
-//
-//        int height;
-//        for (height = 1; height < this.welcomeText.length - 1; ++height) {
-//            if (this.textWidth(this.welcomeText[height]) > maxSize) {
-//                maxSize = this.textWidth(this.welcomeText[height]);
-//            }
-//        }
-//
-//        int title = this.textWidth(head);
-//        int centerX = (int) ((scWidth + 5) / 2.0);
-//        int centerY = (int) ((scHeight + 5) / 2.0);
-//        Component hide = this.welcomeText[this.welcomeText.length - 1];
-//        int footer = this.textWidth(hide);
-//        int leftX = centerX - title / 2 - border;
-//        int rightX = centerX + title / 2 + border;
-//        int topY = centerY - (height - 1) / 2 * 10 - border - 20;
-//        int botY = centerY - (height - 1) / 2 * 10 + border - 10;
-//        this.drawBox(drawContext, leftX, rightX, topY, botY);
-//        leftX = centerX - maxSize / 2 - border;
-//        rightX = centerX + maxSize / 2 + border;
-//        topY = centerY - (height - 1) / 2 * 10 - border;
-//        botY = centerY + (height - 1) / 2 * 10 + border;
-//        this.drawBox(drawContext, leftX, rightX, topY, botY);
-//        leftX = centerX - footer / 2 - border;
-//        rightX = centerX + footer / 2 + border;
-//        topY = centerY + (height - 1) / 2 * 10 - border + 10;
-//        botY = centerY + (height - 1) / 2 * 10 + border + 20;
-//        this.drawBox(drawContext, leftX, rightX, topY, botY);
-//        drawContext.drawString(minecraft.font, head, (centerX - title / 2), (centerY - (height - 1) * 10 / 2 - 19), Color.WHITE.getRGB());
-//        for (int n = 1; n < height; ++n) {
-//            drawContext.drawString(minecraft.font, this.welcomeText[n], (centerX - maxSize / 2), (centerY - (height - 1) * 10 / 2 + n * 10 - 9), Color.WHITE.getRGB());
-//        }
-//
-//        drawContext.drawString(minecraft.font, hide, (centerX - footer / 2), ((scHeight + 5) / 2 + (height - 1) * 10 / 2 + 11), Color.WHITE.getRGB());
-//    }  TODO VoxelFixes: Make WelcomeScreen Using GuiScreen
-//
-//    private void drawBox(GuiGraphics drawContext, int leftX, int rightX, int topY, int botY) {
-//        float opacity = minecraft.options.textBackgroundOpacity().get().floatValue();
-//        drawContext.fill(leftX, topY, rightX, botY, ARGB.colorFromFloat(opacity, 0.0F, 0.0F, 0.0F));
-//    }
+    private void drawWelcomeScreen(GuiGraphics drawContext, int scWidth, int scHeight) {
+        if (this.welcomeText.isEmpty()) {
+            this.welcomeText.add(Component.empty()
+                    .append(Component.empty().append("VoxelMap! ").withStyle(ChatFormatting.RED))
+                    .append(Component.translatable("voxelmap.ui.welcome1", "MamiyaOtaru"))); // Maintainer
+            this.welcomeText.add(Component.translatable("voxelmap.ui.welcome2"));
+            this.welcomeText.add(Component.translatable("voxelmap.ui.welcome3"));
+            this.welcomeText.add(Component.translatable("voxelmap.ui.welcome4"));
+            this.welcomeText.add(Component.empty());
+            int count = 0;
+            for (KeyMapping key : this.options.keyBindings) {
+                MutableComponent text = Component.empty()
+                        .append(Component.empty().append("[").append(key.getTranslatedKeyMessage().copy()).append("] ").withStyle(ChatFormatting.AQUA))
+                        .append(Component.translatable(key.getName()));
+
+                if (count % 2 == 0) {
+                    this.welcomeText.add(text);
+                } else {
+                    this.welcomeText.getLast().append(", ").append(text);
+                }
+
+                ++count;
+            }
+
+            MutableComponent text = Component.empty()
+                    .append(Component.empty().append("[").append(this.options.keyBindEnlargedMap.getTranslatedKeyMessage().copy()).append("] ").withStyle(ChatFormatting.DARK_RED))
+                    .append(Component.empty().append(Component.translatable("voxelmap.ui.welcome5")).withStyle(ChatFormatting.GRAY));
+            this.welcomeText.add(text);
+        }
+
+        int centerX = scWidth / 2;
+        int centerY = scHeight / 2;
+
+        int startIndex = 1;
+        int lastIndex = this.welcomeText.size() - 1;
+
+        int textHeight = 10;
+        int boxWidth = 0;
+        for (int i = startIndex; i < lastIndex; ++i) {
+            boxWidth = Math.max(boxWidth, this.textWidth(this.welcomeText.get(i)));
+        }
+        int boxHeight = textHeight * (lastIndex - startIndex);
+
+        this.textBox(drawContext, centerX - boxWidth / 2, centerY - boxHeight / 2, centerX + boxWidth / 2, centerY + boxHeight / 2, 1);
+        for (int i = startIndex; i < lastIndex; ++i) {
+            int textY = textHeight * (i - startIndex);
+            drawContext.drawString(minecraft.font, this.welcomeText.get(i), centerX - boxWidth / 2, centerY - boxHeight / 2 + textY, 0xFFFFFF);
+        }
+
+        Component head = this.welcomeText.getFirst();
+        int textWidth = this.textWidth(head);
+        this.textBox(drawContext, centerX - textWidth / 2, centerY - boxHeight / 2 - 15, centerX + textWidth / 2, centerY - boxHeight / 2 - 5, 1);
+        drawContext.drawCenteredString(minecraft.font, head, centerX, centerY - boxHeight / 2 - 15, 0xFFFFFF);
+
+        Component hide = this.welcomeText.getLast();
+        textWidth = this.textWidth(hide);
+        this.textBox(drawContext, centerX - textWidth / 2, centerY + boxHeight / 2 + 5, centerX + textWidth / 2, centerY + boxHeight / 2 + 15, 1);
+        drawContext.drawCenteredString(minecraft.font, hide, centerX, centerY + boxHeight / 2 + 5, 0xFFFFFF);
+    }
+
+    private void textBox(GuiGraphics drawContext, int x, int y, int x2, int y2, int grow) {
+        float opacity = minecraft.options.textBackgroundOpacity().get().floatValue();
+        drawContext.fill(x - grow, y - grow, x2 + grow, y2 + grow, (int) (opacity * 255.0F) << 24);
+    }
 
     public static double getMinTablistOffset() {
         return minTablistOffset;

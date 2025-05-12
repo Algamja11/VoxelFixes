@@ -39,7 +39,7 @@ public class GuiSlotKeyMapping extends AbstractSelectionList<GuiSlotKeyMapping.R
 
     private Button buildButton(int index, boolean resetButton) {
         if (!resetButton) {
-            return new Button.Builder(Component.literal(""), button -> this.keyForEdit = this.options.keyBindings[index]).bounds(0, 0, 75, 20).build();
+            return new Button.Builder(null, button -> this.keyForEdit = this.options.keyBindings[index]).bounds(0, 0, 75, 20).build();
         } else {
             return new Button.Builder(Component.translatable("controls.reset"), button -> this.resetKeyMapping(index)).bounds(0, 0, 50, 20).build();
         }
@@ -113,24 +113,26 @@ public class GuiSlotKeyMapping extends AbstractSelectionList<GuiSlotKeyMapping.R
         private final Button button;
         private final Button buttonReset;
         private final KeyMapping keyMapping;
+        private final Component keyName;
 
         protected RowItem(GuiMinimapControls parentScreen, Button button, Button buttonReset, KeyMapping keyMapping) {
             this.parentGui = parentScreen;
             this.button = button;
             this.buttonReset = buttonReset;
             this.keyMapping = keyMapping;
+            this.keyName = Component.translatable(keyMapping.getName());
         }
 
         @Override
         public void render(GuiGraphics guiGraphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float ticks) {
             if (this.button != null && this.buttonReset != null) {
-                guiGraphics.drawString(this.parentGui.getFontRenderer(), I18n.get(this.keyMapping.getName()), x + 80, y + 9, 16777215);
+                guiGraphics.drawString(this.parentGui.getFontRenderer(), this.keyName, x + 80, y + 9, 0xFFFFFF);
 
                 this.button.setX(x);
                 this.button.setY(y + 2);
                 MutableComponent keyText = this.keyMapping.getTranslatedKeyMessage().copy();
                 if (GuiSlotKeyMapping.this.keyForEdit != null && GuiSlotKeyMapping.this.keyForEdit == this.keyMapping) {
-                    keyText = Component.literal("> ").withStyle(ChatFormatting.YELLOW).append(keyText.copy()).append(" <");
+                    keyText = Component.empty().withStyle(ChatFormatting.YELLOW).append("> ").append(keyText.copy()).append(" <");
                 } else if (GuiSlotKeyMapping.this.duplicateKeys.contains(this.keyMapping)) {
                     keyText.withStyle(ChatFormatting.RED);
                 }

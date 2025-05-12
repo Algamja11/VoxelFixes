@@ -94,7 +94,7 @@ public class MapSettingsManager implements ISettingsManager {
 
     public MapSettingsManager() {
         instance = this;
-        this.keyBindings = new KeyMapping[] { this.keyBindMenu, this.keyBindWaypointMenu, this.keyBindZoomIn, this.keyBindZoomOut, this.keyBindEnlargedMap, this.keyBindFullscreenMap, this.keyBindWaypoint, this.keyBindMobToggle, this.keyBindWaypointToggle };
+        this.keyBindings = new KeyMapping[] { this.keyBindMenu, this.keyBindWaypointMenu, this.keyBindZoomIn, this.keyBindZoomOut, this.keyBindEnlargedMap, this.keyBindFullscreenMap, this.keyBindWaypointToggle, this.keyBindMobToggle, this.keyBindWaypoint };
     }
 
     public void addSecondaryOptionsManager(ISubSettingsManager secondarySettingsManager) {
