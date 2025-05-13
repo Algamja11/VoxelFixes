@@ -831,8 +831,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     private void drawPlayerHead(GuiGraphics guiGraphics, ResourceLocation icon, double playerX, double playerZ) {
         int x = this.width / 2;
         int y = this.height / 2;
-        int maxX = x - 4;
-        int maxY = y - this.top - 4;
+        int maxX = x - 6;
+        int maxY = y - this.top - 6;
 
         double wayX = this.mapCenterX - (this.oldNorth ? -playerZ : playerX);
         double wayY = this.mapCenterZ - (this.oldNorth ? playerX : playerZ);
@@ -847,6 +847,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         hypot *= Math.min(farX ? maxX / Math.abs(dispX) : 1.0, farY ? maxY / Math.abs(dispY) : 1.0);
 
         guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.0F, 0.0F, 10.0F);
+
         guiGraphics.pose().translate(x, y, 0.0f);
         guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-locate));
         guiGraphics.pose().translate(0.0f, -hypot, 0.0f);
