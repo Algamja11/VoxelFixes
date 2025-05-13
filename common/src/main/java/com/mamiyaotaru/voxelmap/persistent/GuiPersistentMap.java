@@ -568,35 +568,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 cursorCoordZ = cursorY * this.mouseDirectToMap + (this.mapCenterZ - this.centerY * this.guiToMap);
             }
 
-            if (gotSkin) {
-                float playerX = (float) GameVariableAccessShim.xCoordDouble();
-                float playerZ = (float) GameVariableAccessShim.zCoordDouble();
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().scale(this.guiToMap, this.guiToMap, 1);
-                if (this.oldNorth) {
-                    guiGraphics.pose().translate(playerX * this.mapToGui, playerZ * this.mapToGui, 0.0f);
-                    guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-90.0F));
-                    guiGraphics.pose().translate(-(playerX * this.mapToGui), -(playerZ * this.mapToGui), 0.0f);
-                }
-                float x = -6.0F + playerX * this.mapToGui;
-                float y = -6.0F + playerZ * this.mapToGui;
-                float width = 12.0F;
-                float height = 12.0F;
-                guiGraphics.drawSpecial(bufferSource -> {
-                    Matrix4f matrix4f = guiGraphics.pose().last().pose();
-
-                    RenderType renderType = GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH.apply(voxelmapSkinLocation);
-                    VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
-
-                    vertexConsumer.addVertex(matrix4f, x + 0.0F, y + height, 0).setUv(0.0F, 1.0F).setColor(0xffffffff);
-                    vertexConsumer.addVertex(matrix4f, x + width, y + height, 0).setUv(1.0F, 1.0F).setColor(0xffffffff);
-                    vertexConsumer.addVertex(matrix4f, x + width, y + 0.0F, 0).setUv(1.0F, 0.0F).setColor(0xffffffff);
-                    vertexConsumer.addVertex(matrix4f, x + 0.0F, y + 0.0F, 0).setUv(0.0F, 0.0F).setColor(0xffffffff);
-                });
-
-                guiGraphics.pose().popPose();
-            }
-
             if (this.oldNorth) {
                 guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-90.0F));
             }
@@ -696,6 +667,12 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             }
         }
 
+        if (gotSkin) {
+            float playerX = (float) GameVariableAccessShim.xCoordDouble();
+            float playerZ = (float) GameVariableAccessShim.zCoordDouble();
+            this.drawPlayerHead(guiGraphics, voxelmapSkinLocation, playerX, playerZ);
+        }
+
         if (this.keyboardInput) {
             int scWidth = minecraft.getWindow().getGuiScaledWidth();
             int scHeight = minecraft.getWindow().getGuiScaledHeight();
@@ -752,10 +729,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             return;
         }
 
-        int x = width / 2;
-        int y = height / 2;
+        int x = this.width / 2;
+        int y = this.height / 2;
         int maxX = x - 4;
-        int maxY = y - top - 4;
+        int maxY = y - this.top - 4;
 
         boolean showLabel = this.options.showWaypointNames;
         String name = pt.name;
@@ -777,11 +754,16 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
         boolean uprightIcon = icon != null;
 
-        float ptX = (this.oldNorth ? -pt.getZ() : pt.getX()) + 0.5F;
-        float ptZ = (this.oldNorth ? pt.getX() : pt.getZ()) + 0.5F;
+        float ptX = pt.getX() + 0.5F;
+        float ptZ = pt.getZ() + 0.5F;
 
         boolean hover = cursorCoordX > ptX - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordX < ptX + 18.0F * this.guiToMap / this.guiToDirectMouse
                 && cursorCoordZ > ptZ - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordZ < ptZ + 18.0F * this.guiToMap / this.guiToDirectMouse;
+
+        if (this.oldNorth) {
+            ptX = -pt.getZ() + 0.5F;
+            ptZ = pt.getX() + 0.5F;
+        }
 
         double wayX = this.mapCenterX - ptX;
         double wayY = this.mapCenterZ - ptZ;
@@ -844,6 +826,35 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
             }
             guiGraphics.pose().popPose();
         }
+    }
+
+    private void drawPlayerHead(GuiGraphics guiGraphics, ResourceLocation icon, double playerX, double playerZ) {
+        int x = this.width / 2;
+        int y = this.height / 2;
+        int maxX = x - 4;
+        int maxY = y - this.top - 4;
+
+        double wayX = this.mapCenterX - (this.oldNorth ? -playerZ : playerX);
+        double wayY = this.mapCenterZ - (this.oldNorth ? playerX : playerZ);
+        float locate = (float) Math.toDegrees(Math.atan2(wayX, wayY));
+        float hypot = (float) Math.sqrt(wayX * wayX + wayY * wayY) * mapToGui;
+
+        double radLocate = Math.toRadians(locate - 90.0);
+        double dispX = hypot * Math.cos(radLocate);
+        double dispY = hypot * Math.sin(radLocate);
+        boolean farX = Math.abs(dispX) > maxX;
+        boolean farY = Math.abs(dispY) > maxY;
+        hypot *= Math.min(farX ? maxX / Math.abs(dispX) : 1.0, farY ? maxY / Math.abs(dispY) : 1.0);
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(x, y, 0.0f);
+        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-locate));
+        guiGraphics.pose().translate(0.0f, -hypot, 0.0f);
+        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(locate));
+        guiGraphics.pose().translate(-x, -y, 0.0f);
+
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, icon, x - 6, y - 6, 0.0F, 0.0f, 12, 12, 12, 12, 0xFFFFFFFF);
+        guiGraphics.pose().popPose();
     }
 
     private void overlayBackground(GuiGraphics guiGraphics) {
