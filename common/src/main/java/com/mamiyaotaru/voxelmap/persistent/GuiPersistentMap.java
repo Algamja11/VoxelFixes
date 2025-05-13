@@ -777,8 +777,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
         boolean uprightIcon = icon != null;
 
-        float ptX = pt.getX() + 0.5F;
-        float ptZ = pt.getZ() + 0.5F;
+        float ptX = (this.oldNorth ? -pt.getZ() : pt.getX()) + 0.5F;
+        float ptZ = (this.oldNorth ? pt.getX() : pt.getZ()) + 0.5F;
 
         boolean hover = cursorCoordX > ptX - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordX < ptX + 18.0F * this.guiToMap / this.guiToDirectMouse
                 && cursorCoordZ > ptZ - 18.0F * this.guiToMap / this.guiToDirectMouse && cursorCoordZ < ptZ + 18.0F * this.guiToMap / this.guiToDirectMouse;
