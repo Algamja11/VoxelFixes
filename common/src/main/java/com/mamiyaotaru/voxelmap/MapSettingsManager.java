@@ -60,12 +60,13 @@ public class MapSettingsManager implements ISettingsManager {
 
     public int maxWaypointDisplayDistance = 1000;
     public float waypointIconSize = 1.0F;
+    public float waypointFontSize = 1.0F;
+    public boolean showWaypointNamesOnMap;
     public int deathpoints = 1;
     public boolean autoUnitConversion = true;
     public int showWaypointNames = 2;
     public int showWaypointDistances = 1;
-    public float waypointFontSize = 1.0F;
-    public boolean showWaypointNamesOnMap = false;
+    public boolean dynamicWaypointRendering;
     public int sort = 1;
 
     public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoom_in", GLFW.GLFW_KEY_UP, "controls.voxelmap.title");
@@ -140,10 +141,11 @@ public class MapSettingsManager implements ISettingsManager {
                         case "Waypoint Icon Size" -> this.waypointIconSize = Math.max(0.5F, Math.min(2.0F, Float.parseFloat(curLine[1])));
                         case "Deathpoints" -> this.deathpoints = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
                         case "Auto Unit Conversion" -> this.autoUnitConversion = Boolean.parseBoolean(curLine[1]);
-                        case "Show Waypoint Names" -> this.showWaypointNames = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
-                        case "Show Waypoint Distances" -> this.showWaypointDistances = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
                         case "Waypoint Font Size" -> this.waypointFontSize = Math.max(0.75F, Math.min(2.0F, Float.parseFloat(curLine[1])));
                         case "Show Waypoint Names on Map" -> this.showWaypointNamesOnMap = Boolean.parseBoolean(curLine[1]);
+                        case "Show Waypoint Names" -> this.showWaypointNames = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
+                        case "Show Waypoint Distances" -> this.showWaypointDistances = Math.max(0, Math.min(2, Integer.parseInt(curLine[1])));
+                        case "Dynamic Waypoint Rendering" -> this.dynamicWaypointRendering = Boolean.parseBoolean(curLine[1]);
                         case "Waypoint Sort By" -> this.sort = Math.max(1, Math.min(4, Integer.parseInt(curLine[1])));
                         case "Zoom In Key" -> this.bindKey(this.keyBindZoomIn, curLine[1]);
                         case "Zoom Out Key" -> this.bindKey(this.keyBindZoomOut, curLine[1]);
@@ -210,12 +212,13 @@ public class MapSettingsManager implements ISettingsManager {
             out.println("Teleport Command:" + this.teleportCommand);
             out.println("Waypoint Max Distance:" + this.maxWaypointDisplayDistance);
             out.println("Waypoint Icon Size:" + this.waypointIconSize);
+            out.println("Waypoint Font Size:" + this.waypointFontSize);
+            out.println("Show Waypoint Names on Map:" + this.showWaypointNamesOnMap);
             out.println("Deathpoints:" + this.deathpoints);
             out.println("Auto Unit Conversion:" + this.autoUnitConversion);
             out.println("Show Waypoint Names:" + this.showWaypointNames);
             out.println("Show Waypoint Distances:" + this.showWaypointDistances);
-            out.println("Waypoint Font Size:" + this.waypointFontSize);
-            out.println("Show Waypoint Names on Map:" + this.showWaypointNamesOnMap);
+            out.println("Dynamic Waypoint Rendering:" + this.dynamicWaypointRendering);
             out.println("Waypoint Sort By:" + this.sort);
             out.println("Zoom In Key:" + this.keyBindZoomIn.saveString());
             out.println("Zoom Out Key:" + this.keyBindZoomOut.saveString());
@@ -283,8 +286,9 @@ public class MapSettingsManager implements ISettingsManager {
             case CHUNK_GRID -> this.chunkGrid;
             case SLIME_CHUNKS -> this.slimeChunks;
             case WORLD_BORDER -> this.worldborder;
-            case AUTO_UNIT_CONVERSION -> this.autoUnitConversion;
             case SHOW_WAYPOINT_NAMES_ON_MAP -> this.showWaypointNamesOnMap;
+            case AUTO_UNIT_CONVERSION -> this.autoUnitConversion;
+            case DYNAMIC_WAYPOINT_RENDERING -> this.dynamicWaypointRendering;
             case WELCOME_SCREEN -> this.welcome;
             default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
         };
@@ -434,8 +438,9 @@ public class MapSettingsManager implements ISettingsManager {
             case CHUNK_GRID -> this.chunkGrid = !this.chunkGrid;
             case SLIME_CHUNKS -> this.slimeChunks = !this.slimeChunks;
             case WORLD_BORDER -> this.worldborder = !this.worldborder;
-            case AUTO_UNIT_CONVERSION -> this.autoUnitConversion = !this.autoUnitConversion;
             case SHOW_WAYPOINT_NAMES_ON_MAP -> this.showWaypointNamesOnMap = !this.showWaypointNamesOnMap;
+            case AUTO_UNIT_CONVERSION -> this.autoUnitConversion = !this.autoUnitConversion;
+            case DYNAMIC_WAYPOINT_RENDERING -> this.dynamicWaypointRendering = !this.dynamicWaypointRendering;
             case WELCOME_SCREEN -> this.welcome = !this.welcome;
             case SHOW_COORDINATES -> {
                 ++this.coordsMode;

@@ -89,14 +89,14 @@ public class Map implements Runnable, IChangeObserver {
     private final float[] lastLightBrightnessTable = new float[16];
     private final Object coordinateLock = new Object();
     private final ResourceLocation resourceArrow = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/mmarrow.png");
-    private final ResourceLocation resourceSquareMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/square_map.png");
-    private final ResourceLocation resourceRoundMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/round_map.png");
-    private final ResourceLocation resourceEnlargedSquareMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_square_map.png");
-    private final ResourceLocation resourceEnlargedRoundMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_round_map.png");
-    private final ResourceLocation squareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/square_map_stencil.png");
-    private final ResourceLocation roundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/round_map_stencil.png");
-    private final ResourceLocation enlargedSquareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_square_map_stencil.png");
-    private final ResourceLocation enlargedRoundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_round_map_stencil.png");
+    private final ResourceLocation resourceSquareMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/squaremap.png");
+    private final ResourceLocation resourceRoundMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/roundmap.png");
+    private final ResourceLocation resourceEnlargedSquareMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_squaremap.png");
+    private final ResourceLocation resourceEnlargedRoundMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_roundmap.png");
+    private final ResourceLocation squareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/squaremap_stencil.png");
+    private final ResourceLocation roundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/roundmap_stencil.png");
+    private final ResourceLocation enlargedSquareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_squaremap_stencil.png");
+    private final ResourceLocation enlargedRoundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_roundmap_stencil.png");
     private ClientLevel world;
     private final MapSettingsManager options;
     private final LayoutVariables layoutVariables;
@@ -1519,7 +1519,7 @@ public class Map implements Runnable, IChangeObserver {
             scale = 1.4142F;
         }
 
-        guiGraphics.blit(RenderType::guiTextured, this.getMapStencil(layoutVariables), mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
+        guiGraphics.blit(RenderType::guiTextured, getMapStencil(layoutVariables), mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
 
         synchronized (this.coordinateLock) {
             if (this.imageChanged) {
@@ -1597,7 +1597,7 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         guiGraphics.pose().translate(0, 0, 10);
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, this.getMapFrame(layoutVariables), mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, getMapFrame(layoutVariables), mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
 
         if (VoxelMap.mapOptions.waypointsAllowed) {
             double lastXDouble = GameVariableAccessShim.xCoordDouble();

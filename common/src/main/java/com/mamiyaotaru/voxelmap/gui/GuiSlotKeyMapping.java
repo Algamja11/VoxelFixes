@@ -126,7 +126,7 @@ public class GuiSlotKeyMapping extends AbstractSelectionList<GuiSlotKeyMapping.R
         @Override
         public void render(GuiGraphics guiGraphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float ticks) {
             if (this.button != null && this.buttonReset != null) {
-                guiGraphics.drawString(this.parentGui.getFontRenderer(), this.keyName, x + 80, y + 9, 0xFFFFFF);
+                guiGraphics.drawString(this.parentGui.getFont(), this.keyName, x + 80, y + 9, 0xFFFFFF);
 
                 this.button.setX(x);
                 this.button.setY(y + 2);

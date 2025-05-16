@@ -250,7 +250,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         }
 
         this.worldNameDisplay = worldNameBuilder.toString();
-        this.worldNameDisplayLength = this.getFontRenderer().width(this.worldNameDisplay);
+        this.worldNameDisplayLength = this.getFont().width(this.worldNameDisplay);
 
     }
 
@@ -684,12 +684,12 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         this.overlayBackground(guiGraphics);
 
         if (VoxelMap.mapOptions.worldmapAllowed) {
-            guiGraphics.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 16, 0xFFFFFF);
+            guiGraphics.drawCenteredString(this.getFont(), this.screenTitle, this.getWidth() / 2, 16, 0xFFFFFF);
             int x = (int) Math.floor(cursorCoordX);
             int z = (int) Math.floor(cursorCoordZ);
             if (mapOptions.coordsMode != 0) {
-                guiGraphics.drawString(this.getFontRenderer(), "X: " + x, this.sideMargin, 16, 0xFFFFFF);
-                guiGraphics.drawString(this.getFontRenderer(), "Z: " + z, this.sideMargin + 64, 16, 0xFFFFFF);
+                guiGraphics.drawString(this.getFont(), "X: " + x, this.sideMargin, 16, 0xFFFFFF);
+                guiGraphics.drawString(this.getFont(), "Z: " + z, this.sideMargin + 64, 16, 0xFFFFFF);
             }
 
             String subworldDescriptor = waypointManager.getCurrentSubworldDescriptor(true);
@@ -709,9 +709,9 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 }
             }
 
-            guiGraphics.drawString(this.getFontRenderer(), this.worldNameDisplay, this.getWidth() - this.sideMargin - this.worldNameDisplayLength, 16, 0xFFFFFF);
+            guiGraphics.drawString(this.getFont(), this.worldNameDisplay, this.getWidth() - this.sideMargin - this.worldNameDisplayLength, 16, 0xFFFFFF);
         } else {
-            guiGraphics.drawString(this.getFontRenderer(), Component.translatable("voxelmap.worldmap.disabled"), this.sideMargin, 16, 0xFFFFFF);
+            guiGraphics.drawString(this.getFont(), Component.translatable("voxelmap.worldmap.disabled"), this.sideMargin, 16, 0xFFFFFF);
         }
 
         this.sidebarPanel.drawPanel(guiGraphics, mouseX, mouseY, delta, width / 3);
@@ -1113,11 +1113,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     }
 
     private int chkLen(String string) {
-        return this.getFontRenderer().width(string);
+        return this.getFont().width(string);
     }
 
     private void write(GuiGraphics drawContext, String string, float x, float y, int color) {
-        drawContext.drawString(this.font, string, (int) x, (int) y, color);
+        drawContext.drawString(this.getFont(), string, (int) x, (int) y, color);
     }
 
     private class SidebarPanel {
@@ -1229,7 +1229,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                     float blue = hover ? 0.65F : 1.0F;
                     Sprite icon = parentGui.waypointManager.getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/waypoint" + waypoint.imageSuffix + ".png");
                     icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, sidebarLeft, itemY, 20, 20, waypoint.getUnifiedColor(alpha));
-                    guiGraphics.drawString(parentGui.getFontRenderer(), waypoint.name, sidebarLeft + 20, itemY + 7, ARGB.colorFromFloat(alpha, 1.0F, 1.0F, blue));
+                    guiGraphics.drawString(parentGui.getFont(), waypoint.name, sidebarLeft + 20, itemY + 7, ARGB.colorFromFloat(alpha, 1.0F, 1.0F, blue));
 
                     if (hover && clicked) setupMove(waypoint.getX(), waypoint.getZ());
                 }
@@ -1253,10 +1253,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 setButtonState(ElementType.WAYPOINT_LIST_RIGHT_ARROW, drawTexturedElement(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, arrowIcon, buttonX - 8, buttonY - 8, buttonX + 8, buttonY + 8, mouseX, mouseY, buttonColor));
                 guiGraphics.pose().popPose();
 
-                guiGraphics.drawCenteredString(parentGui.getFontRenderer(), (this.waypointListPage + 1) + " / " + pageCount, sidebarMiddle, parentGui.bottom - 15, 0xFFFFFF);
+                guiGraphics.drawCenteredString(parentGui.getFont(), (this.waypointListPage + 1) + " / " + pageCount, sidebarMiddle, parentGui.bottom - 15, 0xFFFFFF);
 
             } else {
-                guiGraphics.drawCenteredString(parentGui.getFontRenderer(), "§E" + I18n.get("voxelmap.waypoints.no_waypoints_exist"), sidebarMiddle, parentGui.bottom - 15, 0xFFFFFF);
+                guiGraphics.drawCenteredString(parentGui.getFont(), "§E" + I18n.get("voxelmap.waypoints.no_waypoints_exist"), sidebarMiddle, parentGui.bottom - 15, 0xFFFFFF);
             }
         }
 

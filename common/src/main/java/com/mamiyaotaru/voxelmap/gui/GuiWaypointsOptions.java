@@ -6,16 +6,25 @@ import com.mamiyaotaru.voxelmap.gui.overridden.EnumOptionsMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionButtonMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionSliderMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
+import com.mamiyaotaru.voxelmap.util.TextUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
+
+import java.util.ArrayList;
 
 public class GuiWaypointsOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.WAYPOINT_ICON_SIZE, EnumOptionsMinimap.DEATHPOINTS, EnumOptionsMinimap.AUTO_UNIT_CONVERSION, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES, EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCES, EnumOptionsMinimap.WAYPOINT_FONT_SIZE, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES_ON_MAP};
+    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.WAYPOINT_ICON_SIZE, EnumOptionsMinimap.WAYPOINT_FONT_SIZE, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES_ON_MAP, EnumOptionsMinimap.DEATHPOINTS, EnumOptionsMinimap.AUTO_UNIT_CONVERSION, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES, EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCES, EnumOptionsMinimap.DYNAMIC_WAYPOINT_RENDERING };
     private final MapSettingsManager options;
     protected Component screenTitle;
+    private String tooltip;
+    private final String tooltipDeathpoints = I18n.get("options.voxelmap.waypoints.deathpoints.tooltip");
+    private final String tooltipDynamicRendering = I18n.get("options.voxelmap.waypoints.dynamic_rendering.tooltip1") + " " + I18n.get("options.voxelmap.waypoints.dynamic_rendering.tooltip2");
 
     public GuiWaypointsOptions(Screen parent, MapSettingsManager options) {
         this.parentScreen = parent;
@@ -53,8 +62,27 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
     }
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        for (Object buttonObj : this.getButtonList()) {
-            if (buttonObj instanceof GuiOptionSliderMinimap slider) {
+        this.renderDefaultBackground(drawContext);
+        drawContext.flush();
+        drawContext.drawCenteredString(this.getFont(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
+
+        super.render(drawContext, mouseX, mouseY, delta);
+
+        this.tooltip = null;
+
+        for (Object element : this.getButtonList()) {
+            if (element instanceof GuiOptionButtonMinimap button) {
+                EnumOptionsMinimap option = button.returnEnumOptions();
+
+                if (button.isHovered()) {
+                    switch (option) {
+                        case DEATHPOINTS -> this.tooltip = this.tooltipDeathpoints;
+                        case DYNAMIC_WAYPOINT_RENDERING -> this.tooltip = this.tooltipDynamicRendering;
+                    }
+                }
+            }
+
+            if (element instanceof GuiOptionSliderMinimap slider) {
                 EnumOptionsMinimap option = slider.returnEnumOptions();
                 float fValue = this.convertFloatValue(option, this.options.getFloatValue(option));
 
@@ -64,11 +92,9 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
             }
         }
 
-        this.renderDefaultBackground(drawContext);
-        drawContext.flush();
-        drawContext.drawCenteredString(this.font, this.screenTitle, this.getWidth() / 2, 20, 16777215);
-
-        super.render(drawContext, mouseX, mouseY, delta);
+        if (this.tooltip != null) {
+            drawContext.renderComponentTooltip(this.getFont(), TextUtils.wrapLines(this.getFont(), this.tooltip, 200), mouseX, mouseY);
+        }
     }
 
     private void iterateButtonOptions() {

@@ -35,9 +35,9 @@ public class GuiMinimapControls extends GuiScreenMinimap {
 
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         this.renderDefaultBackground(guiGraphics);
-        guiGraphics.drawCenteredString(this.getFontRenderer(), I18n.get("controls.voxelmap.unbind1"), this.getWidth() / 2, this.getHeight() - 64, 16777215);
-        guiGraphics.drawCenteredString(this.getFontRenderer(), I18n.get("controls.voxelmap.unbind2"), this.getWidth() / 2, this.getHeight() - 48, 16777215);
-        guiGraphics.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
+        guiGraphics.drawCenteredString(this.getFont(), I18n.get("controls.voxelmap.unbind1"), this.getWidth() / 2, this.getHeight() - 64, 16777215);
+        guiGraphics.drawCenteredString(this.getFont(), I18n.get("controls.voxelmap.unbind2"), this.getWidth() / 2, this.getHeight() - 48, 16777215);
+        guiGraphics.drawCenteredString(this.getFont(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
         super.render(guiGraphics, mouseX, mouseY, delta);
     }
 }

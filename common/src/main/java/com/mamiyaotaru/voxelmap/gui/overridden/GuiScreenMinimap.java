@@ -25,11 +25,6 @@ public class GuiScreenMinimap extends Screen {
         MapSettingsManager.instance.saveAll();
     }
 
-    public void renderTooltip(GuiGraphics drawContext, Component text, int x, int y) {
-        if (!(text != null && text.getString() != null && !text.getString().isEmpty())) return;
-        drawContext.renderTooltip(VoxelConstants.getMinecraft().font, text, x, y);
-    }
-
     public int getWidth() {
         return width;
     }
@@ -40,10 +35,6 @@ public class GuiScreenMinimap extends Screen {
 
     public List<? extends GuiEventListener> getButtonList() {
         return children();
-    }
-
-    public Font getFontRenderer() {
-        return font;
     }
 
     public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {

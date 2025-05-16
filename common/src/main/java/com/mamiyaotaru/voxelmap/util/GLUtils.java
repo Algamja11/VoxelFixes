@@ -14,6 +14,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
@@ -165,68 +166,134 @@ public class GLUtils {
                     .createCompositeState(false)
     );
 
-    public static final RenderPipeline WAYPOINT_ICON_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+    public static final RenderPipeline WAYPOINT_ICON_DEPTHWRITE_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_icon_depthtest"))
             .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
             .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
             .withDepthWrite(true)
             .build();
 
-    public static final RenderPipeline WAYPOINT_ICON_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+    public static final RenderPipeline WAYPOINT_ICON_DEPTHWRITE_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_icon_no_depthtest"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
             .withDepthWrite(true)
             .build();
 
-    public static final Function<ResourceLocation, RenderType> WAYPOINT_ICON_DEPTHTEST = Util.memoize(
+    public static final RenderPipeline WAYPOINT_ICON_NO_DEPTHWRITE_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_icon_depthtest"))
+            .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
+            .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
+            .withDepthWrite(false)
+            .build();
+
+    public static final RenderPipeline WAYPOINT_ICON_NO_DEPTHWRITE_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_icon_no_depthtest"))
+            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+            .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
+            .withDepthWrite(false)
+            .build();
+
+    public static final Function<ResourceLocation, RenderType> WAYPOINT_ICON_DEPTHWRITE_DEPTHTEST = Util.memoize(
             resourceLocation -> RenderType.create(
                     "voxelmap:waypoint_icon_depthtest",
                     0x00C000, // buffer size
-                    WAYPOINT_ICON_DEPTHTEST_PIPELINE,
+                    WAYPOINT_ICON_DEPTHWRITE_DEPTHTEST_PIPELINE,
                     RenderType.CompositeState.builder()
                             .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, TriState.TRUE, false))
                             .createCompositeState(false)
             )
     );
 
-    public static final Function<ResourceLocation, RenderType> WAYPOINT_ICON_NO_DEPTHTEST = Util.memoize(
+    public static final Function<ResourceLocation, RenderType> WAYPOINT_ICON_DEPTHWRITE_NO_DEPTHTEST = Util.memoize(
             resourceLocation -> RenderType.create(
                     "voxelmap:waypoint_icon_no_depthtest",
                     0x00C000, // buffer size
-                    WAYPOINT_ICON_NO_DEPTHTEST_PIPELINE,
+                    WAYPOINT_ICON_DEPTHWRITE_NO_DEPTHTEST_PIPELINE,
                     RenderType.CompositeState.builder()
                             .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, TriState.TRUE, false))
                             .createCompositeState(false)
             )
     );
 
-    public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
+    public static final Function<ResourceLocation, RenderType> WAYPOINT_ICON_NO_DEPTHWRITE_DEPTHTEST = Util.memoize(
+            resourceLocation -> RenderType.create(
+                    "voxelmap:waypoint_icon_depthtest",
+                    0x00C000, // buffer size
+                    WAYPOINT_ICON_NO_DEPTHWRITE_DEPTHTEST_PIPELINE,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, TriState.TRUE, false))
+                            .createCompositeState(false)
+            )
+    );
+
+    public static final Function<ResourceLocation, RenderType> WAYPOINT_ICON_NO_DEPTHWRITE_NO_DEPTHTEST = Util.memoize(
+            resourceLocation -> RenderType.create(
+                    "voxelmap:waypoint_icon_no_depthtest",
+                    0x00C000, // buffer size
+                    WAYPOINT_ICON_NO_DEPTHWRITE_NO_DEPTHTEST_PIPELINE,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, TriState.TRUE, false))
+                            .createCompositeState(false)
+            )
+    );
+
+    public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_text_background_depthtest"))
             .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
             .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
             .withDepthWrite(true)
             .build();
 
-    public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
+    public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_text_background_no_depthtest"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
             .withDepthWrite(true)
             .build();
 
-    public static final RenderType WAYPOINT_TEXT_BACKGROUND_DEPTHTEST = RenderType.create(
+    public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_text_background_depthtest"))
+            .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
+            .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
+            .withDepthWrite(false)
+            .build();
+
+    public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_text_background_no_depthtest"))
+            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+            .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
+            .withDepthWrite(false)
+            .build();
+
+    public static final RenderType WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_DEPTHTEST = RenderType.create(
             "voxelmap:waypoint_text_background_depthtest",
             0x00C000, // buffer size
-            WAYPOINT_TEXT_BACKGROUND_DEPTHTEST_PIPELINE,
+            WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_DEPTHTEST_PIPELINE,
             RenderType.CompositeState.builder()
                     .createCompositeState(false)
     );
 
-    public static final RenderType WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST = RenderType.create(
+    public static final RenderType WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_NO_DEPTHTEST = RenderType.create(
             "voxelmap:waypoint_text_background_no_depthtest",
             0x00C000, // buffer size
-            WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST_PIPELINE,
+            WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_NO_DEPTHTEST_PIPELINE,
+            RenderType.CompositeState.builder()
+                    .createCompositeState(false)
+    );
+
+    public static final RenderType WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_DEPTHTEST = RenderType.create(
+            "voxelmap:waypoint_text_background_depthtest",
+            0x00C000, // buffer size
+            WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_DEPTHTEST_PIPELINE,
+            RenderType.CompositeState.builder()
+                    .createCompositeState(false)
+    );
+
+    public static final RenderType WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_NO_DEPTHTEST = RenderType.create(
+            "voxelmap:waypoint_text_background_no_depthtest",
+            0x00C000, // buffer size
+            WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_NO_DEPTHTEST_PIPELINE,
             RenderType.CompositeState.builder()
                     .createCompositeState(false)
     );
@@ -251,5 +318,14 @@ public class GLUtils {
             .withShaderDefine("ALPHA_CUTOUT", 0.1F)
             .withBlend(BlendFunction.TRANSLUCENT)
             .build();
+
+    public static void polygonOffset(PoseStack poseStack, float offset) {
+        poseStack.pushPose();
+        poseStack.translate(0.0F, 0.0F, offset);
+    }
+
+    public static void endPolygonOffset(PoseStack poseStack) {
+        poseStack.popPose();
+    }
 
 }

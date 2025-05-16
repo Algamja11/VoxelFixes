@@ -68,8 +68,8 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.addRenderableWidget(this.buttonSortDistance = new Button.Builder(Component.translatable("voxelmap.waypoints.sort.distance"), button -> this.sortClicked(3)).bounds(this.getWidth() / 2 - 77, 34, 77, 20).build());
         this.addRenderableWidget(this.buttonSortCreated = new Button.Builder(Component.translatable("voxelmap.waypoints.sort.created"), button -> this.sortClicked(1)).bounds(this.getWidth() / 2, 34, 77, 20).build());
         this.addRenderableWidget(this.buttonSortColor = new Button.Builder(Component.translatable("voxelmap.waypoints.sort.color"), button -> this.sortClicked(4)).bounds(this.getWidth() / 2 + 77, 34, 77, 20).build());
-        int filterStringWidth = this.getFontRenderer().width(I18n.get("voxelmap.waypoints.filter") + ":");
-        this.filter = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 153 + filterStringWidth + 5, this.getHeight() - 80, 224 - filterStringWidth, 20, null);
+        int filterStringWidth = this.getFont().width(I18n.get("voxelmap.waypoints.filter") + ":");
+        this.filter = new EditBox(this.getFont(), this.getWidth() / 2 - 153 + filterStringWidth + 5, this.getHeight() - 80, 224 - filterStringWidth, 20, null);
         this.filter.setMaxLength(35);
         this.filter.setFocused(true);
         this.setFocused(this.filter);
@@ -290,12 +290,12 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.renderDefaultBackground(drawContext);
         this.tooltip = null;
         this.waypointList.render(drawContext, mouseX, mouseY, delta);
-        drawContext.drawCenteredString(this.getFontRenderer(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
+        drawContext.drawCenteredString(this.getFont(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
         super.render(drawContext, mouseX, mouseY, delta);
-        drawContext.drawString(this.getFontRenderer(), I18n.get("voxelmap.waypoints.filter") + ":", this.getWidth() / 2 - 153, this.getHeight() - 75, 10526880);
+        drawContext.drawString(this.getFont(), I18n.get("voxelmap.waypoints.filter") + ":", this.getWidth() / 2 - 153, this.getHeight() - 75, 10526880);
         this.filter.render(drawContext, mouseX, mouseY, delta);
         if (this.tooltip != null) {
-            this.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
+            drawContext.renderTooltip(this.getFont(), this.tooltip, mouseX, mouseY);
         }
 
     }

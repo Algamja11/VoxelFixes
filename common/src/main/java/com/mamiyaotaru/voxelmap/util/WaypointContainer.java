@@ -220,24 +220,25 @@ public class WaypointContainer {
         fade = Math.min(fade, !pt.enabled ? 0.5F : 1.0F);
         float fadeNoDepth = fade * 0.5F;
         float width = 10.0F;
+        boolean depthWrite = !this.options.dynamicWaypointRendering || distance < maxDistance;
         Sprite icon = target ? textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png") : textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
         if (icon == textureAtlas.getMissingImage()) {
             icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
         }
 
-        RenderType renderType = GLUtils.WAYPOINT_ICON_DEPTHTEST.apply(icon.getResourceLocation());
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType);
-        vertexConsumer.addVertex(poseStack.last(), -width, -width, 0.0F).setUv(icon.getMinU(), icon.getMinV()).setColor(red, green, blue, fade);
-        vertexConsumer.addVertex(poseStack.last(), -width, width, 0.0F).setUv(icon.getMinU(), icon.getMaxV()).setColor(red, green, blue, fade);
-        vertexConsumer.addVertex(poseStack.last(), width, width, 0.0F).setUv(icon.getMaxU(), icon.getMaxV()).setColor(red, green, blue, fade);
-        vertexConsumer.addVertex(poseStack.last(), width, -width, 0.0F).setUv(icon.getMaxU(), icon.getMinV()).setColor(red, green, blue,  fade);
+        RenderType renderType = depthWrite ? GLUtils.WAYPOINT_ICON_DEPTHWRITE_DEPTHTEST.apply(icon.getResourceLocation()) : GLUtils.WAYPOINT_ICON_NO_DEPTHWRITE_DEPTHTEST.apply(icon.getResourceLocation());
+        VertexConsumer vertexIconDepthtest = bufferSource.getBuffer(renderType);
+        vertexIconDepthtest.addVertex(poseStack.last(), -width, -width, 0.0F).setUv(icon.getMinU(), icon.getMinV()).setColor(red, green, blue, fade);
+        vertexIconDepthtest.addVertex(poseStack.last(), -width, width, 0.0F).setUv(icon.getMinU(), icon.getMaxV()).setColor(red, green, blue, fade);
+        vertexIconDepthtest.addVertex(poseStack.last(), width, width, 0.0F).setUv(icon.getMaxU(), icon.getMaxV()).setColor(red, green, blue, fade);
+        vertexIconDepthtest.addVertex(poseStack.last(), width, -width, 0.0F).setUv(icon.getMaxU(), icon.getMinV()).setColor(red, green, blue,  fade);
 
-        renderType = GLUtils.WAYPOINT_ICON_NO_DEPTHTEST.apply(icon.getResourceLocation());
-        vertexConsumer = bufferSource.getBuffer(renderType);
-        vertexConsumer.addVertex(poseStack.last(), -width, -width, 0.0F).setUv(icon.getMinU(), icon.getMinV()).setColor(red, green, blue, fadeNoDepth);
-        vertexConsumer.addVertex(poseStack.last(), -width, width, 0.0F).setUv(icon.getMinU(), icon.getMaxV()).setColor(red, green, blue, fadeNoDepth);
-        vertexConsumer.addVertex(poseStack.last(), width, width, 0.0F).setUv(icon.getMaxU(), icon.getMaxV()).setColor(red, green, blue, fadeNoDepth);
-        vertexConsumer.addVertex(poseStack.last(), width, -width, 0.0F).setUv(icon.getMaxU(), icon.getMinV()).setColor(red, green, blue, fadeNoDepth);
+        renderType = depthWrite ? GLUtils.WAYPOINT_ICON_DEPTHWRITE_NO_DEPTHTEST.apply(icon.getResourceLocation()) : GLUtils.WAYPOINT_ICON_NO_DEPTHWRITE_NO_DEPTHTEST.apply(icon.getResourceLocation());
+        VertexConsumer vertexIconNoDepthtest = bufferSource.getBuffer(renderType);
+        vertexIconNoDepthtest.addVertex(poseStack.last(), -width, -width, 0.0F).setUv(icon.getMinU(), icon.getMinV()).setColor(red, green, blue, fadeNoDepth);
+        vertexIconNoDepthtest.addVertex(poseStack.last(), -width, width, 0.0F).setUv(icon.getMinU(), icon.getMaxV()).setColor(red, green, blue, fadeNoDepth);
+        vertexIconNoDepthtest.addVertex(poseStack.last(), width, width, 0.0F).setUv(icon.getMaxU(), icon.getMaxV()).setColor(red, green, blue, fadeNoDepth);
+        vertexIconNoDepthtest.addVertex(poseStack.last(), width, -width, 0.0F).setUv(icon.getMaxU(), icon.getMinV()).setColor(red, green, blue, fadeNoDepth);
 
         Font fontRenderer = minecraft.font;
         if (showLabel) {
@@ -267,36 +268,38 @@ public class WaypointContainer {
             int textColorNoDepth = (int) (255.0F * fadeNoDepth) << 24 | 0x00FFFFFF;
             int labelY = aboveIcon ? -18 : 10;
             int halfLabelWidth = fontRenderer.width(name) / 2;
-            float zOffset = 0.1F;
 
             if (!name.isEmpty()) {
-                renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHTEST;
-                vertexConsumer = bufferSource.getBuffer(renderType);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                renderType = depthWrite ? GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_DEPTHTEST : GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_DEPTHTEST;
+                VertexConsumer vertexBackgroundDepthtest = bufferSource.getBuffer(renderType);
+                vertexBackgroundDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexBackgroundDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexBackgroundDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexBackgroundDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                GLUtils.polygonOffset(poseStack, 0.1F);
+                vertexBackgroundDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexBackgroundDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexBackgroundDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexBackgroundDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                GLUtils.endPolygonOffset(poseStack);
 
-                renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST;
-                vertexConsumer = bufferSource.getBuffer(renderType);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                renderType = depthWrite ? GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_NO_DEPTHTEST : GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_NO_DEPTHTEST;
+                VertexConsumer vertexBackgroundNoDepthtest = bufferSource.getBuffer(renderType);
+                vertexBackgroundNoDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexBackgroundNoDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexBackgroundNoDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexBackgroundNoDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                GLUtils.polygonOffset(poseStack, 0.1F);
+                vertexBackgroundNoDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexBackgroundNoDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexBackgroundNoDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexBackgroundNoDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                GLUtils.endPolygonOffset(poseStack);
 
-                poseStack.pushPose();
-                poseStack.translate(0.0F, 0.0F, zOffset * 2.0F);
+                GLUtils.polygonOffset(poseStack, 0.2F);
                 fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
                 fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
-                poseStack.popPose();
+                GLUtils.endPolygonOffset(poseStack);
             }
 
             if (!distanceStr.isEmpty()) {
@@ -306,31 +309,36 @@ public class WaypointContainer {
                 poseStack.pushPose();
                 poseStack.scale(0.75F, 0.75F, 1.0F);
 
-                renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHTEST;
-                vertexConsumer = bufferSource.getBuffer(renderType);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                renderType = depthWrite ? GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_DEPTHTEST : GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_DEPTHTEST;
+                vertexIconDepthtest = bufferSource.getBuffer(renderType);
+                vertexIconDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexIconDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexIconDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                vertexIconDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fade);
+                GLUtils.polygonOffset(poseStack, 0.1F);
+                vertexIconDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexIconDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexIconDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                vertexIconDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fade);
+                GLUtils.endPolygonOffset(poseStack);
 
-                renderType = GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST;
-                vertexConsumer = bufferSource.getBuffer(renderType);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
-                vertexConsumer.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), zOffset).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                renderType = depthWrite ? GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_NO_DEPTHTEST : GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_NO_DEPTHTEST;
+                vertexIconDepthtest = bufferSource.getBuffer(renderType);
+                vertexIconDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexIconDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexIconDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 2), (9 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                vertexIconDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 2), (-2 + labelY), 0.0F).setColor(pt.red, pt.green, pt.blue, 0.6F * fadeNoDepth);
+                GLUtils.polygonOffset(poseStack, 0.1F);
+                vertexIconDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 1), (-1 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexIconDepthtest.addVertex(poseStack.last(), (-halfLabelWidth - 1), (8 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexIconDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 1), (8 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                vertexIconDepthtest.addVertex(poseStack.last(), (halfLabelWidth + 1), (-1 + labelY), 0.0F).setColor(0.0F, 0.0F, 0.0F, 0.15F * fadeNoDepth);
+                GLUtils.endPolygonOffset(poseStack);
 
-                poseStack.translate(0.0F, 0.0F, zOffset * 2.0F);
+                GLUtils.polygonOffset(poseStack, 0.2F);
                 fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
                 fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                GLUtils.endPolygonOffset(poseStack);
 
                 poseStack.popPose();
             }

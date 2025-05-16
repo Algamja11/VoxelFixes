@@ -220,10 +220,14 @@ public final class VoxelConstants {
             //IrisApi.getInstance().assignPipeline(GLUtils.GUI_TEXTURED_EQUAL_DEPTH_PIPELINE, IrisProgram.BASIC);
             //IrisApi.getInstance().assignPipeline(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_PIPELINE, IrisProgram.BASIC);
             IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_BEAM_PIPELINE, IrisProgram.BASIC);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_NO_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_DEPTHWRITE_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_DEPTHWRITE_NO_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_NO_DEPTHWRITE_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_NO_DEPTHWRITE_NO_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHWRITE_NO_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
+            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHWRITE_NO_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
             //IrisApi.getInstance().assignPipeline(GLUtils.ENTITY_ICON, IrisProgram.TEXTURED);
         }
     }

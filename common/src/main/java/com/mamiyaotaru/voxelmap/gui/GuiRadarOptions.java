@@ -80,45 +80,43 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 
         this.renderDefaultBackground(drawContext);
         drawContext.flush();
-        drawContext.drawCenteredString(getFontRenderer(), screenTitle, getWidth() / 2, 20, 16777215);
+        drawContext.drawCenteredString(this.getFont(), screenTitle, getWidth() / 2, 20, 16777215);
 
         super.render(drawContext, mouseX, mouseY, delta);
     }
 
     private void iterateButtonOptions() {
         for (GuiEventListener element : getButtonList()) {
-            if (!(element instanceof GuiOptionButtonMinimap button)) continue;
+            if (element instanceof GuiOptionButtonMinimap button) {
+                EnumOptionsMinimap option = button.returnEnumOptions();
 
-            EnumOptionsMinimap option = button.returnEnumOptions();
+                if (option != EnumOptionsMinimap.SHOW_RADAR) button.active = options.showRadar;
 
-            if (option != EnumOptionsMinimap.SHOW_RADAR) button.active = options.showRadar;
+                if (option == EnumOptionsMinimap.SHOW_MOBS) {
+                    button.active = button.active && (options.radarAllowed || options.radarMobsAllowed);
+                    continue;
+                }
 
-            if (option == EnumOptionsMinimap.SHOW_MOBS) {
-                button.active = button.active && (options.radarAllowed || options.radarMobsAllowed);
-                continue;
+                if (option == EnumOptionsMinimap.SHOW_MOB_NAMES || option == EnumOptionsMinimap.SHOW_MOB_HELMETS) {
+                    button.active = button.active && (options.showNeutrals || options.showHostiles) && (options.radarAllowed || options.radarMobsAllowed);
+                    continue;
+                }
+
+                if (option == EnumOptionsMinimap.SHOW_PLAYERS) {
+                    button.active = button.active && (options.radarAllowed || options.radarPlayersAllowed);
+                    continue;
+                }
+
+                if (option == EnumOptionsMinimap.SHOW_PLAYER_NAMES || option == EnumOptionsMinimap.SHOW_PLAYER_HELMETS) {
+                    button.active = button.active && options.showPlayers && (options.radarAllowed || options.radarPlayersAllowed);
+                }
             }
 
-            if (option == EnumOptionsMinimap.SHOW_MOB_NAMES || option == EnumOptionsMinimap.SHOW_MOB_HELMETS) {
-                button.active = button.active && (options.showNeutrals || options.showHostiles) && (options.radarAllowed || options.radarMobsAllowed);
-                continue;
+            if (element instanceof GuiOptionSliderMinimap slider) {
+                EnumOptionsMinimap option = slider.returnEnumOptions();
+
+                if (option == EnumOptionsMinimap.RADAR_FONT_SIZE) slider.active = options.showRadar;
             }
-
-            if (option == EnumOptionsMinimap.SHOW_PLAYERS) {
-                button.active = button.active && (options.radarAllowed || options.radarPlayersAllowed);
-                continue;
-            }
-
-            if (option == EnumOptionsMinimap.SHOW_PLAYER_NAMES || option == EnumOptionsMinimap.SHOW_PLAYER_HELMETS) {
-                button.active = button.active && options.showPlayers && (options.radarAllowed || options.radarPlayersAllowed);
-            }
-        }
-
-        for (GuiEventListener element : getButtonList()) {
-            if (!(element instanceof GuiOptionSliderMinimap slider)) continue;
-
-            EnumOptionsMinimap option = slider.returnEnumOptions();
-
-            if (option == EnumOptionsMinimap.RADAR_FONT_SIZE) slider.active = options.showRadar;
         }
     }
 

@@ -69,17 +69,17 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
 
     public void init() {
         this.clearWidgets();
-        this.waypointName = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 100, this.getHeight() / 6 + 13, 200, 20, null);
+        this.waypointName = new EditBox(this.getFont(), this.getWidth() / 2 - 100, this.getHeight() / 6 + 13, 200, 20, null);
         this.waypointName.setValue(this.waypoint.name);
-        this.waypointX = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 100, this.getHeight() / 6 + 41 + 13, 56, 20, null);
+        this.waypointX = new EditBox(this.getFont(), this.getWidth() / 2 - 100, this.getHeight() / 6 + 41 + 13, 56, 20, null);
         this.waypointX.setMaxLength(128);
         this.waypointX.setHint(Component.literal(String.valueOf(playerX)).withStyle(ChatFormatting.DARK_GRAY));
         this.waypointX.setValue(String.valueOf(this.waypoint.getX()));
-        this.waypointY = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 28, this.getHeight() / 6 + 41 + 13, 56, 20, null);
+        this.waypointY = new EditBox(this.getFont(), this.getWidth() / 2 - 28, this.getHeight() / 6 + 41 + 13, 56, 20, null);
         this.waypointY.setMaxLength(128);
         this.waypointY.setHint(Component.literal(String.valueOf(playerY)).withStyle(ChatFormatting.DARK_GRAY));
         this.waypointY.setValue(String.valueOf(this.waypoint.getY()));
-        this.waypointZ = new EditBox(this.getFontRenderer(), this.getWidth() / 2 + 44, this.getHeight() / 6 + 41 + 13, 56, 20, null);
+        this.waypointZ = new EditBox(this.getFont(), this.getWidth() / 2 + 44, this.getHeight() / 6 + 41 + 13, 56, 20, null);
         this.waypointZ.setMaxLength(128);
         this.waypointZ.setHint(Component.literal(String.valueOf(playerZ)).withStyle(ChatFormatting.DARK_GRAY));
         this.waypointZ.setValue(String.valueOf(this.waypoint.getZ()));
@@ -207,11 +207,11 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         this.buttonEnabled.setMessage(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
         this.renderDefaultBackground(drawContext);
-        drawContext.drawCenteredString(this.getFontRenderer(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("voxelmap.waypoints.new") : I18n.get("voxelmap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
-        drawContext.drawString(this.getFontRenderer(), I18n.get("voxelmap.waypoints.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 16777215);
-        drawContext.drawString(this.getFontRenderer(), I18n.get("X"), this.getWidth() / 2 - 100, this.getHeight() / 6 + 41, 16777215);
-        drawContext.drawString(this.getFontRenderer(), I18n.get("Y"), this.getWidth() / 2 - 28, this.getHeight() / 6 + 41, 16777215);
-        drawContext.drawString(this.getFontRenderer(), I18n.get("Z"), this.getWidth() / 2 + 44, this.getHeight() / 6 + 41, 16777215);
+        drawContext.drawCenteredString(this.getFont(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("voxelmap.waypoints.new") : I18n.get("voxelmap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
+        drawContext.drawString(this.getFont(), I18n.get("voxelmap.waypoints.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 16777215);
+        drawContext.drawString(this.getFont(), I18n.get("X"), this.getWidth() / 2 - 100, this.getHeight() / 6 + 41, 16777215);
+        drawContext.drawString(this.getFont(), I18n.get("Y"), this.getWidth() / 2 - 28, this.getHeight() / 6 + 41, 16777215);
+        drawContext.drawString(this.getFont(), I18n.get("Z"), this.getWidth() / 2 + 44, this.getHeight() / 6 + 41, 16777215);
         super.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
 
         int buttonListY = this.getHeight() / 6 + 88;
@@ -231,7 +231,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
                 int pickedColor = this.pickColor(mouseX, mouseY, 200);
                 if (pickedColor != -1) {
                     drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, TARGET, mouseX - 8, mouseY - 8, 0f, 0f, 16, 16, 16, 16);
-                    drawContext.drawCenteredString(this.getFontRenderer(), "R: " + ARGB.red(pickedColor) + ", G: " + ARGB.green(pickedColor) + ", B: " + ARGB.blue(pickedColor), this.getWidth() / 2, this.getHeight() / 2 + pickerSize / 2 + 8, pickedColor);
+                    drawContext.drawCenteredString(this.getFont(), "R: " + ARGB.red(pickedColor) + ", G: " + ARGB.green(pickedColor) + ", B: " + ARGB.blue(pickedColor), this.getWidth() / 2, this.getHeight() / 2 + pickerSize / 2 + 8, pickedColor);
                 }
             } else if (this.choosingIcon) {
                 TextureAtlas chooser = waypointManager.getTextureAtlasChooser();
@@ -255,7 +255,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         }
 
         if (this.tooltip != null) {
-            this.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
+            drawContext.renderTooltip(this.getFont(), this.tooltip, mouseX, mouseY);
         }
 
     }

@@ -1,5 +1,7 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.FormattedText;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import net.minecraft.network.chat.Style;
 
 public final class TextUtils {
     private static final Pattern CODE_SCRUBBING_PATTERN = Pattern.compile("(§.)");
+    private static final List<Component> TEMP_COMPONENT_LIST = new ArrayList<>();
 
     private TextUtils() {}
 
@@ -143,5 +146,15 @@ public final class TextUtils {
         if (style.isObfuscated()) stringBuilder.append(ChatFormatting.OBFUSCATED);
         if (style.isStrikethrough()) stringBuilder.append(ChatFormatting.STRIKETHROUGH);
         return stringBuilder.toString();
+    }
+
+    @NotNull
+    public static List<Component> wrapLines(Font font, String str, int maxWidth) {
+        TEMP_COMPONENT_LIST.clear();
+        for (FormattedText text : font.getSplitter().splitLines(str, maxWidth, Style.EMPTY)) {
+            TEMP_COMPONENT_LIST.add(Component.literal(text.getString()));
+        }
+
+        return List.copyOf(TEMP_COMPONENT_LIST);
     }
 }

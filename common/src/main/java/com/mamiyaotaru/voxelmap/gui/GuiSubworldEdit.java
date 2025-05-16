@@ -34,7 +34,7 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements BooleanConsumer
 
     public void init() {
         this.clearWidgets();
-        this.subworldNameField = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 100, this.getHeight() / 6 + 13, 200, 20, null);
+        this.subworldNameField = new EditBox(this.getFont(), this.getWidth() / 2 - 100, this.getHeight() / 6 + 13, 200, 20, null);
         this.setFocused(this.subworldNameField);
         this.subworldNameField.setFocused(true);
         this.subworldNameField.setValue(this.originalSubworldName);
@@ -113,8 +113,8 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements BooleanConsumer
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
         this.renderDefaultBackground(drawContext);
         drawContext.flush();
-        drawContext.drawCenteredString(this.getFontRenderer(), Component.translatable("voxelmap.worldmap.subworld.edit"), this.getWidth() / 2, 20, 16777215);
-        drawContext.drawString(this.getFontRenderer(), Component.translatable("voxelmap.worldmap.subworld.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 10526880);
+        drawContext.drawCenteredString(this.getFont(), Component.translatable("voxelmap.worldmap.subworld.edit"), this.getWidth() / 2, 20, 16777215);
+        drawContext.drawString(this.getFont(), Component.translatable("voxelmap.worldmap.subworld.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 10526880);
         this.subworldNameField.render(drawContext, mouseX, mouseY, delta);
         super.render(drawContext, mouseX, mouseY, delta);
     }
