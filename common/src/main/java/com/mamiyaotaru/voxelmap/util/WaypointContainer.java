@@ -201,7 +201,7 @@ public class WaypointContainer {
             }
         }
 
-        double maxDistance = minecraft.options.simulationDistance().get() * 16.0 * 0.99;
+        double maxDistance = minecraft.options.simulationDistance().get() * 16.0 - 2.0;
         double adjustedDistance = distance;
         if (distance > maxDistance) {
             baseX = baseX / distance * maxDistance;
@@ -220,7 +220,7 @@ public class WaypointContainer {
         fade = Math.min(fade, !pt.enabled ? 0.5F : 1.0F);
         float fadeNoDepth = fade * 0.5F;
         float width = 10.0F;
-        boolean depthWrite = !this.options.dynamicWaypointRendering || distance < maxDistance;
+        boolean depthWrite = !this.options.dynamicWaypointRendering || distance < maxDistance * 0.75;
         Sprite icon = target ? textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png") : textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
         if (icon == textureAtlas.getMissingImage()) {
             icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint.png");
@@ -297,8 +297,12 @@ public class WaypointContainer {
                 GLUtils.endPolygonOffset(poseStack);
 
                 GLUtils.polygonOffset(poseStack, 0.2F);
-                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
-                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                if (depthWrite) {
+                    fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
+                    fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                } else {
+                    fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                }
                 GLUtils.endPolygonOffset(poseStack);
             }
 
@@ -336,8 +340,12 @@ public class WaypointContainer {
                 GLUtils.endPolygonOffset(poseStack);
 
                 GLUtils.polygonOffset(poseStack, 0.2F);
-                fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
-                fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                if (depthWrite) {
+                    fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
+                    fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                } else {
+                    fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                }
                 GLUtils.endPolygonOffset(poseStack);
 
                 poseStack.popPose();
