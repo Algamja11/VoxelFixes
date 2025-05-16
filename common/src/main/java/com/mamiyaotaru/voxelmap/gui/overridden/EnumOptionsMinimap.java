@@ -47,7 +47,6 @@ public enum EnumOptionsMinimap {
     AUTO_UNIT_CONVERSION("options.voxelmap.waypoints.auto_unit_conversion", false, true, false),
     SHOW_WAYPOINT_NAMES("options.voxelmap.waypoints.show_names", false, false, true),
     SHOW_WAYPOINT_DISTANCES("options.voxelmap.waypoints.show_distances", false, false, true),
-    DYNAMIC_WAYPOINT_RENDERING("options.voxelmap.waypoints.dynamic_rendering", false, true, false),
 
     WORLDMAP_MIN_ZOOM("options.voxelmap.worldmap.min_zoom", true, false, false),
     WORLDMAP_MAX_ZOOM("options.voxelmap.worldmap.max_zoom", true, false, false),

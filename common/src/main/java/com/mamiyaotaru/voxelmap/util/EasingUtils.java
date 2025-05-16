@@ -11,6 +11,11 @@ public class EasingUtils {
         return a + (b - a) * t;
     }
 
+    public static float lerpInversed(float a, float b, float t) {
+        if (a == b) return 0.0F;
+        return (t - a) / (b - a);
+    }
+
     // sine
     public static float easeInSine(float startValue, float finalValue, float elapsedTime, float totalTime) {
         float timeFactor = elapsedTime / totalTime;

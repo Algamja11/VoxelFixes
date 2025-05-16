@@ -19,7 +19,7 @@ import net.minecraft.network.chat.Style;
 import java.util.ArrayList;
 
 public class GuiWaypointsOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.WAYPOINT_ICON_SIZE, EnumOptionsMinimap.WAYPOINT_FONT_SIZE, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES_ON_MAP, EnumOptionsMinimap.DEATHPOINTS, EnumOptionsMinimap.AUTO_UNIT_CONVERSION, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES, EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCES, EnumOptionsMinimap.DYNAMIC_WAYPOINT_RENDERING };
+    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.WAYPOINT_ICON_SIZE, EnumOptionsMinimap.WAYPOINT_FONT_SIZE, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES_ON_MAP, EnumOptionsMinimap.DEATHPOINTS, EnumOptionsMinimap.AUTO_UNIT_CONVERSION, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES, EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCES };
     private final MapSettingsManager options;
     protected Component screenTitle;
     private String tooltip;
@@ -75,10 +75,10 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
                 EnumOptionsMinimap option = button.returnEnumOptions();
 
                 if (button.isHovered()) {
-                    switch (option) {
-                        case DEATHPOINTS -> this.tooltip = this.tooltipDeathpoints;
-                        case DYNAMIC_WAYPOINT_RENDERING -> this.tooltip = this.tooltipDynamicRendering;
-                    }
+//                    switch (option) {
+//                        case DEATHPOINTS -> this.tooltip = this.tooltipDeathpoints;
+//                    }
+                    this.tooltip = this.tooltipDeathpoints;
                 }
             }
 
