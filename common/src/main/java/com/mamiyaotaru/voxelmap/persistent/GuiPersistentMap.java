@@ -646,7 +646,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                             float x = biomeLabel.x * biomeScaleX / this.scScale;
                             float z = biomeLabel.z * biomeScaleY / this.scScale;
 
-                            TextUtils.writeCentered(guiGraphics, label, x, this.top + z - 3.0F, 0xFFFFFF);
+                            TextUtils.writeCentered(guiGraphics, label, x, this.top + z - 3.0F, 0xFFFFFF, true);
                         }
                     }
                 }
@@ -822,7 +822,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 int halfStringWidth = minecraft.font.width(name) / 2;
                 guiGraphics.fill((int) (x / fontSize - halfStringWidth - 2), (int) ((y + 8) / fontSize + 10), (int) (x / fontSize + halfStringWidth + 2), (int) ((y + 8) / fontSize - 2), backgroundColor);
                 guiGraphics.fill((int) (x / fontSize - halfStringWidth - 1), (int) ((y + 8) / fontSize + 9), (int) (x / fontSize + halfStringWidth + 1), (int) ((y + 8) / fontSize - 1), 0x30000000);
-                TextUtils.writeCentered(guiGraphics, name, x / fontSize, (y + 8) / fontSize, 0xFFFFFF);
+                TextUtils.writeCentered(guiGraphics, name, x / fontSize, (y + 8) / fontSize, 0xFFFFFF, false);
             }
             guiGraphics.pose().popPose();
         }

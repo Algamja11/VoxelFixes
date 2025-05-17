@@ -147,19 +147,20 @@ public final class TextUtils {
         return stringBuilder.toString();
     }
 
-    public static void write(GuiGraphics drawContext, String text, float x, float y, int color) {
-        write(drawContext, Component.nullToEmpty(text), x, y, color);
+    public static void write(GuiGraphics drawContext, String text, float x, float y, int color, boolean shadows) {
+        write(drawContext, Component.nullToEmpty(text), x, y, color, shadows);
     }
 
-    public static void write(GuiGraphics drawContext, Component text, float x, float y, int color) {
-        drawContext.drawString(Minecraft.getInstance().font, text, (int) x, (int) y, color);
+    public static void write(GuiGraphics drawContext, Component text, float x, float y, int color, boolean shadows) {
+        drawContext.drawString(Minecraft.getInstance().font, text, (int) x, (int) y, color, shadows);
     }
 
-    public static void writeCentered(GuiGraphics drawContext, String text, float x, float y, int color) {
-        writeCentered(drawContext, Component.nullToEmpty(text), x, y, color);
+    public static void writeCentered(GuiGraphics drawContext, String text, float x, float y, int color, boolean shadows) {
+        writeCentered(drawContext, Component.nullToEmpty(text), x, y, color, shadows);
     }
 
-    public static void writeCentered(GuiGraphics drawContext, Component text, float x, float y, int color) {
-        drawContext.drawCenteredString(Minecraft.getInstance().font, text, (int) x, (int) y, color);
+    public static void writeCentered(GuiGraphics drawContext, Component text, float x, float y, int color, boolean shadows) {
+        int halfWidth = Minecraft.getInstance().font.width(text) / 2;
+        write(drawContext, text, x - halfWidth, y, color, shadows);
     }
 }
