@@ -146,21 +146,4 @@ public final class TextUtils {
         if (style.isStrikethrough()) stringBuilder.append(ChatFormatting.STRIKETHROUGH);
         return stringBuilder.toString();
     }
-
-    public static void write(GuiGraphics drawContext, String text, float x, float y, int color, boolean shadows) {
-        write(drawContext, Component.nullToEmpty(text), x, y, color, shadows);
-    }
-
-    public static void write(GuiGraphics drawContext, Component text, float x, float y, int color, boolean shadows) {
-        drawContext.drawString(Minecraft.getInstance().font, text, (int) x, (int) y, color, shadows);
-    }
-
-    public static void writeCentered(GuiGraphics drawContext, String text, float x, float y, int color, boolean shadows) {
-        writeCentered(drawContext, Component.nullToEmpty(text), x, y, color, shadows);
-    }
-
-    public static void writeCentered(GuiGraphics drawContext, Component text, float x, float y, int color, boolean shadows) {
-        int halfWidth = Minecraft.getInstance().font.width(text) / 2;
-        write(drawContext, text, x - halfWidth, y, color, shadows);
-    }
 }

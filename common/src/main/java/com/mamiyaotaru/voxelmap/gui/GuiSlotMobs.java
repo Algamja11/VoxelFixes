@@ -138,7 +138,6 @@ class GuiSlotMobs extends AbstractSelectionList<GuiSlotMobs.MobItem> {
                 sprite.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, x + 2, y - 2, 18, 18);
             }
             drawContext.blit(RenderType::guiTextured, isEnabled ? GuiSlotMobs.this.visibleIconIdentifier : GuiSlotMobs.this.invisibleIconIdentifier, x + 198, y - 2, 0.0F, 0.0F, 18, 18, 18, 18);
-            drawContext.flush();
         }
 
         @Override

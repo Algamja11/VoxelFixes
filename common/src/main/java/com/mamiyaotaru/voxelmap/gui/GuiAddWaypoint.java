@@ -8,6 +8,7 @@ import com.mamiyaotaru.voxelmap.textures.Sprite;
 import com.mamiyaotaru.voxelmap.textures.TextureAtlas;
 import com.mamiyaotaru.voxelmap.util.DimensionContainer;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
+import com.mamiyaotaru.voxelmap.util.GuiUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -203,16 +204,16 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
 
     @Override
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
+        super.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
+
         this.tooltip = null;
         this.buttonEnabled.setMessage(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
-        this.renderDefaultBackground(drawContext);
         drawContext.drawCenteredString(this.getFont(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("voxelmap.waypoints.new") : I18n.get("voxelmap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
         drawContext.drawString(this.getFont(), I18n.get("voxelmap.waypoints.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 16777215);
         drawContext.drawString(this.getFont(), I18n.get("X"), this.getWidth() / 2 - 100, this.getHeight() / 6 + 41, 16777215);
         drawContext.drawString(this.getFont(), I18n.get("Y"), this.getWidth() / 2 - 28, this.getHeight() / 6 + 41, 16777215);
         drawContext.drawString(this.getFont(), I18n.get("Z"), this.getWidth() / 2 + 44, this.getHeight() / 6 + 41, 16777215);
-        super.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
 
         int buttonListY = this.getHeight() / 6 + 88;
         int color = this.waypoint.getUnifiedColor();
@@ -221,7 +222,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         waypointSprite.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, this.getWidth() / 2 - 25, buttonListY + 48 + 2, 16, 16, color);
         drawContext.pose().translate(0, 0, 20);
         if (this.choosingColor || this.choosingIcon) {
-            this.renderDefaultBackground(drawContext);
+            super.renderBackground(drawContext, mouseX, mouseY, delta);
 
             if (this.choosingColor) {
                 int pickerSize = 200;
@@ -255,7 +256,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         }
 
         if (this.tooltip != null) {
-            this.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
+            GuiUtils.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
         }
 
     }

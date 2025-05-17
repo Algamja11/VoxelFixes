@@ -22,6 +22,7 @@ import com.mamiyaotaru.voxelmap.util.DimensionContainer;
 import com.mamiyaotaru.voxelmap.util.EasingUtils;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
+import com.mamiyaotaru.voxelmap.util.GuiUtils;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
 import com.mamiyaotaru.voxelmap.util.MessageUtils;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
@@ -646,7 +647,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                             float x = biomeLabel.x * biomeScaleX / this.scScale;
                             float z = biomeLabel.z * biomeScaleY / this.scScale;
 
-                            TextUtils.writeCentered(guiGraphics, label, x, this.top + z - 3.0F, 0xFFFFFF, true);
+                            GuiUtils.drawCenteredString(guiGraphics, label, x, this.top + z - 3.0F, 0xFFFFFF, true);
                         }
                     }
                 }
@@ -822,7 +823,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 int halfStringWidth = minecraft.font.width(name) / 2;
                 guiGraphics.fill((int) (x / fontSize - halfStringWidth - 2), (int) ((y + 8) / fontSize + 10), (int) (x / fontSize + halfStringWidth + 2), (int) ((y + 8) / fontSize - 2), backgroundColor);
                 guiGraphics.fill((int) (x / fontSize - halfStringWidth - 1), (int) ((y + 8) / fontSize + 9), (int) (x / fontSize + halfStringWidth + 1), (int) ((y + 8) / fontSize - 1), 0x30000000);
-                TextUtils.writeCentered(guiGraphics, name, x / fontSize, (y + 8) / fontSize, 0xFFFFFF, false);
+                GuiUtils.drawCenteredString(guiGraphics, name, x / fontSize, (y + 8) / fontSize, 0xFFFFFF, false);
             }
             guiGraphics.pose().popPose();
         }

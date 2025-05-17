@@ -183,7 +183,6 @@ public class GuiMinimapOptions extends GuiScreenMinimap {
     }
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        this.renderDefaultBackground(drawContext);
         drawContext.drawCenteredString(this.getFont(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
         super.render(drawContext, mouseX, mouseY, delta);
     }

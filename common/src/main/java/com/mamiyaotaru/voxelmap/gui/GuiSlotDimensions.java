@@ -109,7 +109,6 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
             // 2 int: height, width on screen
             // 2 int: height, width full texture in pixels
             drawContext.blit(RenderType::guiTextured, this.parentGui.waypoint.dimensions.contains(this.dim) ? CONFIRM : CANCEL, x + width - iconWidth, y - 3, 0, 0, 18, 18, 18, 18);
-            drawContext.flush();
         }
 
         public boolean mouseClicked(double mouseX, double mouseY, int button) {

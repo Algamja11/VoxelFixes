@@ -2,6 +2,7 @@ package com.mamiyaotaru.voxelmap.gui;
 
 import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
+import com.mamiyaotaru.voxelmap.util.GuiUtils;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -119,18 +120,17 @@ public class GuiSelectPlayer extends GuiScreenMinimap implements BooleanConsumer
     }
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        this.renderDefaultBackground(drawContext);
+        super.render(drawContext, mouseX, mouseY, delta);
         this.tooltip = null;
         this.playerList.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawCenteredString(this.getFont(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
-        super.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawString(this.getFont(), SHARE_MESSAGE, this.getWidth() / 2 - 153, 39, 10526880);
         this.message.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawCenteredString(this.getFont(), SHARE_WITH, this.getWidth() / 2, 75, 16777215);
         drawContext.drawString(this.getFont(), I18n.get("voxelmap.waypoints.filter") + ":", this.getWidth() / 2 - 153, this.getHeight() - 50, 10526880);
         this.filter.render(drawContext, mouseX, mouseY, delta);
         if (this.tooltip != null) {
-            this.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
+            GuiUtils.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
         }
 
     }

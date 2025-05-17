@@ -16,7 +16,6 @@ import org.lwjgl.glfw.GLFW;
 
 public class GuiScreenMinimap extends Screen {
     protected Screen parentScreen;
-    private final ArrayList<Component> tooltipList = new ArrayList<>();
 
     protected GuiScreenMinimap() {
         this (Component.literal(""));
@@ -42,12 +41,10 @@ public class GuiScreenMinimap extends Screen {
         return children();
     }
 
-    public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {
-    }
-
-    public void renderDefaultBackground(GuiGraphics context) {
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         this.renderBlurredBackground();
-        this.renderMenuBackground(context);
+        this.renderMenuBackground(guiGraphics);
     }
 
     @Override
@@ -57,18 +54,5 @@ public class GuiScreenMinimap extends Screen {
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    public void renderTooltip(GuiGraphics guiGraphics, Component tooltip, int mouseX, int mouseY) {
-        renderTooltip(guiGraphics, tooltip.getString(), mouseX, mouseY);
-    }
-
-    public void renderTooltip(GuiGraphics guiGraphics, String tooltip, int mouseX, int mouseY) {
-        tooltipList.clear();
-        for (FormattedText text : font.getSplitter().splitLines(tooltip, 250, Style.EMPTY)) {
-            tooltipList.add(Component.literal(text.getString()));
-        }
-
-        guiGraphics.renderComponentTooltip(font, tooltipList, mouseX, mouseY);
     }
 }

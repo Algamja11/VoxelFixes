@@ -90,12 +90,10 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
             }
         }
 
-        this.renderDefaultBackground(drawContext);
-        drawContext.flush();
+        super.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawCenteredString(this.getFont(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
         drawContext.drawCenteredString(this.getFont(), this.cacheSettings, this.getWidth() / 2, this.getHeight() / 6 + 24, 16777215);
         drawContext.drawCenteredString(this.getFont(), this.warning, this.getWidth() / 2, this.getHeight() / 6 + 34, 16777215);
-        super.render(drawContext, mouseX, mouseY, delta);
     }
 
     private float convertFloatValue(EnumOptionsMinimap option, float sValue) {

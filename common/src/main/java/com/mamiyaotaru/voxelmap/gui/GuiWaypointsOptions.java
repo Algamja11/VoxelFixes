@@ -6,6 +6,7 @@ import com.mamiyaotaru.voxelmap.gui.overridden.EnumOptionsMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionButtonMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionSliderMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
+import com.mamiyaotaru.voxelmap.util.GuiUtils;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -62,11 +63,8 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
     }
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        this.renderDefaultBackground(drawContext);
-        drawContext.flush();
-        drawContext.drawCenteredString(this.getFont(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
-
         super.render(drawContext, mouseX, mouseY, delta);
+        drawContext.drawCenteredString(this.getFont(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
 
         this.tooltip = null;
 
@@ -92,7 +90,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
         }
 
         if (this.tooltip != null) {
-            this.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
+            GuiUtils.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
         }
     }
 

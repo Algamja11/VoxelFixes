@@ -4,6 +4,7 @@ import com.mamiyaotaru.voxelmap.RadarSettingsManager;
 import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.VoxelMap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
+import com.mamiyaotaru.voxelmap.util.GuiUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -114,18 +115,17 @@ public class GuiMobs extends GuiScreenMinimap {
     }
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        this.renderDefaultBackground(drawContext);
+        super.render(drawContext, mouseX, mouseY, delta);
         this.tooltip = null;
         this.mobsList.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawCenteredString(this.getFont(), this.screenTitle, this.getWidth() / 2, 20, 16777215);
         boolean isSomethingSelected = this.selectedMobId != null;
         this.buttonEnable.active = isSomethingSelected && !this.isMobEnabled(this.selectedMobId);
         this.buttonDisable.active = isSomethingSelected && this.isMobEnabled(this.selectedMobId);
-        super.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawString(this.getFont(), I18n.get("voxelmap.waypoints.filter") + ":", this.getWidth() / 2 - 153, this.getHeight() - 51, 10526880);
         this.filter.render(drawContext, mouseX, mouseY, delta);
         if (this.tooltip != null) {
-            this.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
+            GuiUtils.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
         }
 
     }

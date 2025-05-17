@@ -5,6 +5,7 @@ import com.mamiyaotaru.voxelmap.interfaces.IRadar;
 import com.mamiyaotaru.voxelmap.util.Contact;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
+import com.mamiyaotaru.voxelmap.util.GuiUtils;
 import com.mamiyaotaru.voxelmap.util.LayoutVariables;
 import com.mamiyaotaru.voxelmap.util.MobCategory;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
@@ -254,7 +255,7 @@ public class Radar implements IRadar {
                         int textColor = ((int) (contact.brightness * 255.0F) << 24) | (contact.entity.getTeamColor() & 0x00FFFFFF);
                         int halfStringWidth = minecraft.font.width(contact.name) / 2;
                         guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 1), (int) ((mapY + 3) / fontSize + 9), (int) (mapX / fontSize + halfStringWidth + 1), (int) ((mapY + 3) / fontSize - 1), 0x40000000);
-                        TextUtils.writeCentered(guiGraphics, contact.name, mapX / fontSize, (mapY + 3) / fontSize, textColor, false);
+                        GuiUtils.drawCenteredString(guiGraphics, contact.name, mapX / fontSize, (mapY + 3) / fontSize, textColor, false);
                     }
                 } catch (Exception e) {
                     VoxelConstants.getLogger().error("Error rendering mob icon! " + e.getLocalizedMessage() + " contact type " + BuiltInRegistries.ENTITY_TYPE.getKey(contact.entity.getType()), e);

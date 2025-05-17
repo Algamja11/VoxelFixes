@@ -78,11 +78,9 @@ public class GuiRadarOptions extends GuiScreenMinimap {
             }
         }
 
-        this.renderDefaultBackground(drawContext);
-        drawContext.flush();
-        drawContext.drawCenteredString(this.getFont(), screenTitle, getWidth() / 2, 20, 16777215);
-
         super.render(drawContext, mouseX, mouseY, delta);
+
+        drawContext.drawCenteredString(this.getFont(), screenTitle, getWidth() / 2, 20, 16777215);
     }
 
     private void iterateButtonOptions() {
