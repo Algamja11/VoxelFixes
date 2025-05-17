@@ -24,6 +24,7 @@ import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
 import com.mamiyaotaru.voxelmap.util.MessageUtils;
+import com.mamiyaotaru.voxelmap.util.TextUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -642,11 +643,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                     for (AbstractMapData.BiomeLabel biomeLabel : labels) {
                         if (biomeLabel.segmentSize > minimumSize) {
                             String label = biomeLabel.name; // + " (" + biomeLabel.x + "," + biomeLabel.z + ")";
-                            int nameWidth = this.chkLen(label);
                             float x = biomeLabel.x * biomeScaleX / this.scScale;
                             float z = biomeLabel.z * biomeScaleY / this.scScale;
 
-                            this.write(guiGraphics, label, x - (nameWidth / 2f), this.top + z - 3.0F, 0xFFFFFF);
+                            TextUtils.writeCentered(guiGraphics, label, x, this.top + z - 3.0F, 0xFFFFFF);
                         }
                     }
                 }
@@ -819,10 +819,10 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 guiGraphics.pose().scale(fontSize, fontSize, 1.0F);
 
                 int backgroundColor = pt.getUnifiedColor(!pt.enabled && !hover ? 0.25F : 0.5F);
-                int halfStringWidth = this.chkLen(name) / 2;
+                int halfStringWidth = minecraft.font.width(name) / 2;
                 guiGraphics.fill((int) (x / fontSize - halfStringWidth - 2), (int) ((y + 8) / fontSize + 10), (int) (x / fontSize + halfStringWidth + 2), (int) ((y + 8) / fontSize - 2), backgroundColor);
                 guiGraphics.fill((int) (x / fontSize - halfStringWidth - 1), (int) ((y + 8) / fontSize + 9), (int) (x / fontSize + halfStringWidth + 1), (int) ((y + 8) / fontSize - 1), 0x30000000);
-                this.write(guiGraphics, name, x / fontSize - halfStringWidth, (y + 8) / fontSize, 0xFFFFFF);
+                TextUtils.writeCentered(guiGraphics, name, x / fontSize, (y + 8) / fontSize, 0xFFFFFF);
             }
             guiGraphics.pose().popPose();
         }
@@ -1110,14 +1110,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         }
 
         minecraft.setScreen(this);
-    }
-
-    private int chkLen(String string) {
-        return this.getFont().width(string);
-    }
-
-    private void write(GuiGraphics drawContext, String string, float x, float y, int color) {
-        drawContext.drawString(this.getFont(), string, (int) x, (int) y, color);
     }
 
     private class SidebarPanel {

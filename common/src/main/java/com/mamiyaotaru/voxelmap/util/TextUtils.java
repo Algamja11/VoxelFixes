@@ -1,7 +1,7 @@
 package com.mamiyaotaru.voxelmap.util;
 
-import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.FormattedText;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -15,7 +15,6 @@ import net.minecraft.network.chat.Style;
 
 public final class TextUtils {
     private static final Pattern CODE_SCRUBBING_PATTERN = Pattern.compile("(§.)");
-    private static final List<Component> TEMP_COMPONENT_LIST = new ArrayList<>();
 
     private TextUtils() {}
 
@@ -146,5 +145,21 @@ public final class TextUtils {
         if (style.isObfuscated()) stringBuilder.append(ChatFormatting.OBFUSCATED);
         if (style.isStrikethrough()) stringBuilder.append(ChatFormatting.STRIKETHROUGH);
         return stringBuilder.toString();
+    }
+
+    public static void write(GuiGraphics drawContext, String text, float x, float y, int color) {
+        write(drawContext, Component.nullToEmpty(text), x, y, color);
+    }
+
+    public static void write(GuiGraphics drawContext, Component text, float x, float y, int color) {
+        drawContext.drawString(Minecraft.getInstance().font, text, (int) x, (int) y, color);
+    }
+
+    public static void writeCentered(GuiGraphics drawContext, String text, float x, float y, int color) {
+        writeCentered(drawContext, Component.nullToEmpty(text), x, y, color);
+    }
+
+    public static void writeCentered(GuiGraphics drawContext, Component text, float x, float y, int color) {
+        drawContext.drawCenteredString(Minecraft.getInstance().font, text, (int) x, (int) y, color);
     }
 }

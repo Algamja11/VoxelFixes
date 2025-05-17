@@ -22,6 +22,7 @@ import com.mamiyaotaru.voxelmap.util.MapUtils;
 import com.mamiyaotaru.voxelmap.util.MutableBlockPos;
 import com.mamiyaotaru.voxelmap.util.MutableBlockPosCache;
 import com.mamiyaotaru.voxelmap.util.ScaledDynamicMutableTexture;
+import com.mamiyaotaru.voxelmap.util.TextUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.buffers.GpuBuffer;
@@ -1658,13 +1659,12 @@ public class Map implements Runnable, IChangeObserver {
         for (AbstractMapData.BiomeLabel o : labels) {
             if (o.segmentSize > minimumSize) {
                 String name = o.name;
-                int nameWidth = this.textWidth(name);
                 float x = (o.x / mapWidth) * scale;
                 float z = (o.z / mapWidth) * scale;
                 if (this.options.oldNorth) {
-                    this.write(guiGraphics, name, (left + mapSize) - z - (nameWidth / 2f), top + x - 3.0F, textColor);
+                    TextUtils.writeCentered(guiGraphics, name, (left + mapSize) - z, top + x, textColor);
                 } else {
-                    this.write(guiGraphics, name, left + x - (nameWidth / 2.0F), top + z - 3.0F, textColor);
+                    TextUtils.writeCentered(guiGraphics, name, left + x, top + z, textColor);
                 }
             }
         }
@@ -1771,10 +1771,10 @@ public class Map implements Runnable, IChangeObserver {
                     guiGraphics.pose().scale(fontSize, fontSize, 1.0F);
 
                     int backgroundColor = pt.getUnifiedColor(!pt.enabled ? 0.25F : 0.5F);
-                    int halfStringWidth = this.textWidth(name) / 2;
+                    int halfStringWidth = minecraft.font.width(name) / 2;
                     guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 2), (int) ((mapY + 4) / fontSize + 10), (int) (mapX / fontSize + halfStringWidth + 2), (int) ((mapY + 4) / fontSize - 2), backgroundColor);
                     guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 1), (int) ((mapY + 4) / fontSize + 9), (int) (mapX / fontSize + halfStringWidth + 1), (int) ((mapY + 4) / fontSize - 1), 0x30000000);
-                    this.write(guiGraphics, name, mapX / fontSize - halfStringWidth, (mapY + 4) / fontSize, 0xFFFFFF);
+                    TextUtils.writeCentered(guiGraphics, name, mapX / fontSize, (mapY + 4) / fontSize, 0xFFFFFF);
                 }
             } catch (Exception var42) {
                 showMessage("Error: waypoint overlay not found!", 2000);
@@ -1838,19 +1838,19 @@ public class Map implements Runnable, IChangeObserver {
 
         poseStack.pushPose();
         poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate - 90.0))), distance * Math.cos(Math.toRadians(-(rotate - 90.0))), 100.0);
-        this.write(drawContext, "N", mapX / scale - 2.0F, mapY / scale - 4.0F, 16777215);
+        TextUtils.writeCentered(drawContext, "N", mapX / scale, mapY / scale - 4.5F, 16777215);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(distance * Math.sin(Math.toRadians(-rotate)), distance * Math.cos(Math.toRadians(-rotate)), 10.0);
-        this.write(drawContext, "E", mapX / scale - 2.0F, mapY / scale - 4.0F, 16777215);
+        TextUtils.writeCentered(drawContext, "E", mapX / scale, mapY / scale - 4.5F, 16777215);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate + 90.0))), distance * Math.cos(Math.toRadians(-(rotate + 90.0))), 10.0);
-        this.write(drawContext, "S", mapX / scale - 2.0F, mapY / scale - 4.0F, 16777215);
+        TextUtils.writeCentered(drawContext, "S", mapX / scale, mapY / scale - 4.5F, 16777215);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate + 180.0))), distance * Math.cos(Math.toRadians(-(rotate + 180.0))), 10.0);
-        this.write(drawContext, "W", mapX / scale - 2.0F, mapY / scale - 4.0F, 16777215);
+        TextUtils.writeCentered(drawContext, "W", mapX / scale, mapY / scale - 4.5F, 16777215);
         poseStack.popPose();
 
         poseStack.popPose();
@@ -1879,34 +1879,28 @@ public class Map implements Runnable, IChangeObserver {
 
         if (!this.options.hide && !this.fullscreenMap) {
             String text;
-            int halfTextWidth;
             float textY = 0.0F;
             if (this.options.coordsMode == 2) {
                 text = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.yCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
-                halfTextWidth = this.textWidth(text) / 2;
-                this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // X, Y, Z
+                TextUtils.writeCentered(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF); // X, Y, Z
             } else {
                 text = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
-                halfTextWidth = this.textWidth(text) / 2;
-                this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // X, Z
+                TextUtils.writeCentered(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF); // X, Z
 
                 text = this.dCoord(GameVariableAccessShim.yCoord());
-                halfTextWidth = this.textWidth(text) / 2;
                 textY += (invertY ? -10.0F : 10.0F);
-                this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // Y
+                TextUtils.writeCentered(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF); // Y
             }
 
             if (this.options.showBiomeLabel) {
                 text = this.currentBiomeName;
-                halfTextWidth = this.textWidth(text) / 2;
                 textY += (invertY ? -10.0F : 10.0F);
-                this.write(drawContext, text, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // BIOME
+                TextUtils.writeCentered(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF); // BIOME
             }
 
             if (this.zTimer != 0) {
-                halfTextWidth = this.textWidth(this.message) / 2;
                 textY += (invertY ? -10.0F : 10.0F);
-                this.write(drawContext, this.message, mapX / scale - halfTextWidth, textStart / scale + textY, 0xFFFFFF); // WORLD NAME
+                TextUtils.writeCentered(drawContext, this.message, mapX / scale, textStart / scale + textY, 0xFFFFFF); // WORLD NAME
             }
         } else {
             int heading = (int) (this.direction + this.northRotate);
@@ -1927,8 +1921,7 @@ public class Map implements Runnable, IChangeObserver {
             }
 
             String text = "(" + this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.yCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord()) + ") " + heading + "' " + ns + ew;
-            int halfTextWidth = this.textWidth(text) / 2;
-            this.write(drawContext, text, mapX / scale - halfTextWidth, 5.0F, 0xFFFFFF);
+            TextUtils.writeCentered(drawContext, text, mapX / scale, 5.0F, 0xFFFFFF);
 
             text = "";
             if (this.options.showBiomeLabel) {
@@ -1937,8 +1930,7 @@ public class Map implements Runnable, IChangeObserver {
             if (this.zTimer > 0) {
                 text += ", " + this.message;
             }
-            halfTextWidth = this.textWidth(text) / 2;
-            this.write(drawContext, text, mapX / scale - halfTextWidth, 15.0F, 0xFFFFFF);
+            TextUtils.writeCentered(drawContext, text, mapX / scale, 15.0F, 0xFFFFFF);
         }
 
         poseStack.popPose();
@@ -1955,22 +1947,6 @@ public class Map implements Runnable, IChangeObserver {
         } else {
             return paramInt1 > 0 ? "+" + paramInt1 : " " + paramInt1;
         }
-    }
-
-    private int textWidth(String string) {
-        return minecraft.font.width(string);
-    }
-
-    private void write(GuiGraphics drawContext, String text, float x, float y, int color) {
-        write(drawContext, Component.nullToEmpty(text), x, y, color);
-    }
-
-    private int textWidth(Component text) {
-        return minecraft.font.width(text);
-    }
-
-    private void write(GuiGraphics drawContext, Component text, float x, float y, int color) {
-        drawContext.drawString(minecraft.font, text, (int) x, (int) y, color);
     }
 
     private void drawWelcomeScreen(GuiGraphics drawContext, int scWidth, int scHeight) {
@@ -2012,7 +1988,7 @@ public class Map implements Runnable, IChangeObserver {
         int textHeight = 10;
         int boxWidth = 0;
         for (int i = startIndex; i < lastIndex; ++i) {
-            boxWidth = Math.max(boxWidth, this.textWidth(this.welcomeText.get(i)));
+            boxWidth = Math.max(boxWidth, minecraft.font.width(this.welcomeText.get(i)));
         }
         int boxHeight = textHeight * (lastIndex - startIndex);
 
@@ -2023,14 +1999,14 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         Component head = this.welcomeText.getFirst();
-        int textWidth = this.textWidth(head);
+        int textWidth = minecraft.font.width(head);
         this.textBox(drawContext, centerX - textWidth / 2, centerY - boxHeight / 2 - 15, centerX + textWidth / 2, centerY - boxHeight / 2 - 5, 1);
-        drawContext.drawCenteredString(minecraft.font, head, centerX, centerY - boxHeight / 2 - 15, 0xFFFFFF);
+        TextUtils.writeCentered(drawContext, head, centerX, centerY - boxHeight / 2 - 15, 0xFFFFFF);
 
         Component hide = this.welcomeText.getLast();
-        textWidth = this.textWidth(hide);
+        textWidth = minecraft.font.width(hide);
         this.textBox(drawContext, centerX - textWidth / 2, centerY + boxHeight / 2 + 5, centerX + textWidth / 2, centerY + boxHeight / 2 + 15, 1);
-        drawContext.drawCenteredString(minecraft.font, hide, centerX, centerY + boxHeight / 2 + 5, 0xFFFFFF);
+        TextUtils.writeCentered(drawContext, hide, centerX, centerY + boxHeight / 2 + 5, 0xFFFFFF);
     }
 
     private void textBox(GuiGraphics drawContext, int x, int y, int x2, int y2, int grow) {
