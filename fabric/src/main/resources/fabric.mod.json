@@ -30,8 +30,5 @@
   "depends": {
     "fabricloader": ">=0.16.7",
     "fabric": "*"
-  },
-  "breaks": {
-    "iris": "<1.8.11-"
   }
 }

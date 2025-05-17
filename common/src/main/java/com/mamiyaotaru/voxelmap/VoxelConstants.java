@@ -3,10 +3,7 @@ package com.mamiyaotaru.voxelmap;
 import com.mamiyaotaru.voxelmap.persistent.ThreadManager;
 import com.mamiyaotaru.voxelmap.util.BiomeRepository;
 import com.mamiyaotaru.voxelmap.util.CommandUtils;
-import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.irisshaders.iris.api.v0.IrisApi;
-import net.irisshaders.iris.api.v0.IrisProgram;
 import net.minecraft.client.Camera;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.gui.GuiGraphics;
@@ -198,12 +195,12 @@ public final class VoxelConstants {
         return events;
     }
 
-    public static PacketBridge getPacketBridge() {
-        return packetBridge;
-    }
-
     public static void setPacketBridge(PacketBridge packetBridge) {
         VoxelConstants.packetBridge = packetBridge;
+    }
+
+    public static PacketBridge getPacketBridge() {
+        return packetBridge;
     }
 
     public static void setModApiBride(ModApiBridge modApiBridge) {
@@ -212,19 +209,5 @@ public final class VoxelConstants {
 
     public static ModApiBridge getModApiBridge() {
         return modApiBridge;
-    }
-
-    public static void registerIrisPipelines() {
-        if (modApiBridge.isModEnabled("iris")) {
-            getLogger().info("Register Voxelmap Pipelines to Iris");
-            //IrisApi.getInstance().assignPipeline(GLUtils.GUI_TEXTURED_EQUAL_DEPTH_PIPELINE, IrisProgram.BASIC);
-            //IrisApi.getInstance().assignPipeline(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_PIPELINE, IrisProgram.BASIC);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_BEAM_PIPELINE, IrisProgram.BASIC);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_ICON_NO_DEPTHTEST_PIPELINE, IrisProgram.TEXTURED);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
-            IrisApi.getInstance().assignPipeline(GLUtils.WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST_PIPELINE, IrisProgram.BASIC);
-            //IrisApi.getInstance().assignPipeline(GLUtils.ENTITY_ICON, IrisProgram.TEXTURED);
-        }
     }
 }

@@ -22,13 +22,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LevelRenderer.class)
 public abstract class MixinWorldRenderer {
     @Shadow @Final private Minecraft minecraft;
-    @Unique private final PoseStack poseStack = new PoseStack();
+    @Unique private final PoseStack voxelmap_poseStack = new PoseStack();
 
     @Inject(method = "renderLevel", at = @At("RETURN"))
     private void postRender(GraphicsResourceAllocator graphicsResourceAllocator, DeltaTracker deltaTracker, boolean bl, Camera camera, GameRenderer gameRenderer, Matrix4f matrix4f, Matrix4f matrix4f2, CallbackInfo ci) {
-        poseStack.last().pose().set(matrix4f);
+        voxelmap_poseStack.last().pose().set(matrix4f);
         BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
-        VoxelConstants.onRenderWaypoints(deltaTracker.getGameTimeDeltaPartialTick(false), poseStack, bufferSource, camera);
+        VoxelConstants.onRenderWaypoints(deltaTracker.getGameTimeDeltaPartialTick(false), voxelmap_poseStack, bufferSource, camera);
     }
 
     @Inject(method = "setSectionDirty(IIIZ)V", at = @At("RETURN"))
