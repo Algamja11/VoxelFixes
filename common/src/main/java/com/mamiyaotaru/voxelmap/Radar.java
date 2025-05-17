@@ -75,10 +75,7 @@ public class Radar implements IRadar {
             }
 
             if (this.timer > 15) {
-                // long t0 = System.nanoTime();
                 this.calculateMobs(layoutVariables);
-                // long t1 = System.nanoTime();
-                // VoxelConstants.getLogger().info("Calculate Mobs " + calculateMobsPart + " took " + ((t1 - t0) / 1000) + " micros");
                 this.timer = 0;
             }
 
@@ -105,13 +102,28 @@ public class Radar implements IRadar {
             }
             try {
                 if (this.isEntityShown(entity)) {
-                    int halfMapSize = layoutVariables.mapSize / 2;
                     int wayX = GameVariableAccessShim.xCoord() - (int) entity.position().x();
                     int wayZ = GameVariableAccessShim.zCoord() - (int) entity.position().z();
                     int wayY = GameVariableAccessShim.yCoord() - (int) entity.position().y();
-                    double hypot = wayX * wayX + wayZ * wayZ + wayY * wayY;
+
+                    float range = layoutVariables.mapSize / 2.0F - 3.5F;
+                    range *= range;
+                    double hypot = wayX * wayX + wayZ * wayZ;
                     hypot *= layoutVariables.positionScale * layoutVariables.positionScale;
-                    if (hypot < halfMapSize * halfMapSize) {
+
+                    boolean inRange = false;
+                    if (Math.abs(wayY) <= layoutVariables.zoomScaleAdjusted * 32.0) {
+                        if (!layoutVariables.squareMap) {
+                            inRange = hypot <= range;
+                        } else {
+                            double radLocate = Math.atan2(wayX, wayZ);
+                            double dispX = hypot * Math.cos(radLocate);
+                            double dispY = hypot * Math.sin(radLocate);
+                            inRange = Math.abs(dispX) <= range && Math.abs(dispY) <= range;
+                        }
+                    }
+
+                    if (inRange) {
 
                         Contact contact = new Contact((LivingEntity) entity, MobCategory.forEntity(entity));
                         if (contact.entity.getVehicle() != null && this.isEntityShown(contact.entity.getVehicle())) {
@@ -160,9 +172,9 @@ public class Radar implements IRadar {
     public void renderMapMobs(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
-        int halfMapSize = layoutVariables.mapSize / 2;
         int scScale = layoutVariables.scScale;
 
+        float range = layoutVariables.mapSize / 2.0F - 3.5F;
         double max = layoutVariables.zoomScaleAdjusted * 32.0;
         double lastX = GameVariableAccessShim.xCoordDouble();
         double lastZ = GameVariableAccessShim.zCoordDouble();
@@ -204,12 +216,12 @@ public class Radar implements IRadar {
 
             boolean inRange;
             if (!layoutVariables.squareMap) {
-                inRange = contact.distance < (halfMapSize - 3.5);
+                inRange = contact.distance <= range;
             } else {
                 double radLocate = Math.toRadians(contact.angle);
                 double dispX = contact.distance * Math.cos(radLocate);
                 double dispY = contact.distance * Math.sin(radLocate);
-                inRange = Math.abs(dispX) <= (halfMapSize - 3.5) && Math.abs(dispY) <= (halfMapSize - 3.5);
+                inRange = Math.abs(dispX) <= range && Math.abs(dispY) <= range;
             }
 
             if (inRange) {
@@ -231,33 +243,6 @@ public class Radar implements IRadar {
                     if (contact.entity.getVehicle() != null && this.isEntityShown(contact.entity.getVehicle())) {
                         yOffset = -4.0F;
                     }
-
-                    // if (Stream.of(EnumMobs.GHAST, EnumMobs.GHASTATTACKING, EnumMobs.WITHER, EnumMobs.WITHERINVULNERABLE, EnumMobs.VEX, EnumMobs.VEXCHARGING, EnumMobs.PUFFERFISH, EnumMobs.PUFFERFISHHALF, EnumMobs.PUFFERFISHFULL).anyMatch(enumMobs -> contact.type == enumMobs)) {
-                    // if (contact.type != EnumMobs.GHAST && contact.type != EnumMobs.GHASTATTACKING) {
-                    // if (contact.type != EnumMobs.WITHER && contact.type != EnumMobs.WITHERINVULNERABLE) {
-                    // if (contact.type != EnumMobs.VEX && contact.type != EnumMobs.VEXCHARGING) {
-                    // int size = ((Pufferfish) contact.entity).getPuffState();
-                    // switch (size) {
-                    // case 0 -> contact.type = EnumMobs.PUFFERFISH;
-                    // case 1 -> contact.type = EnumMobs.PUFFERFISHHALF;
-                    // case 2 -> contact.type = EnumMobs.PUFFERFISHFULL;
-                    // }
-                    // } else {
-                    // if (contact.entity instanceof Vex vex) {
-                    // contact.type = vex.isCharging() ? EnumMobs.VEXCHARGING : EnumMobs.VEX;
-                    // }
-                    // }
-                    // } else {
-                    // if (contact.entity instanceof WitherBoss witherBoss) {
-                    // contact.type = witherBoss.getInvulnerableTicks() > 0 ? EnumMobs.WITHERINVULNERABLE : EnumMobs.WITHER;
-                    // }
-                    // }
-                    // } else {
-                    // if (contact.entity instanceof Ghast ghast) {
-                    // contact.type = ghast.isCharging() ? EnumMobs.GHASTATTACKING : EnumMobs.GHAST;
-                    // }
-                    // }
-                    // }
 
                     float imageSize = contact.icon.getIconWidth() / 8.0F;
                     contact.icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, mapX - imageSize / 2, mapY + yOffset - imageSize / 2, imageSize, imageSize, color);

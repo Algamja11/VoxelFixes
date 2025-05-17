@@ -640,7 +640,7 @@ public class Map implements Runnable, IChangeObserver {
         int mapOffset = mapSize / 2 + 5;
         int mapX = this.fullscreenMap ? this.scWidth / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 3 ? this.scWidth - mapOffset : mapOffset;
         int mapY = this.fullscreenMap ? this.scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - mapOffset : mapOffset;
-        int mapMode = this.fullscreenMap ? 2 : this.enlargedMap ? 1 : 0;
+        LayoutVariables.MapMode mapMode = this.fullscreenMap ? LayoutVariables.MapMode.FULLSCREEN_MAP : this.enlargedMap ? LayoutVariables.MapMode.ENLARGED_MAP : LayoutVariables.MapMode.MINIMAP;
 
         minTablistOffset = minecraft.getWindow().getGuiScale() * mapSize;
 
@@ -663,7 +663,7 @@ public class Map implements Runnable, IChangeObserver {
         }
         Map.statusIconOffset = statusIconOffset;
 
-        this.layoutVariables.updateVars(scScale, scaleProj, mapX, mapY, mapSize, mapMode, this.zoomScale, this.zoomScaleAdjusted);
+        this.layoutVariables.updateVars(scScale, scaleProj, mapX, mapY, this.zoomScale, this.zoomScaleAdjusted, mapSize, mapMode);
 
         if (!this.options.hide) {
             this.renderMap(drawContext, this.layoutVariables);
@@ -1625,19 +1625,17 @@ public class Map implements Runnable, IChangeObserver {
 
     private ResourceLocation getMapFrame(LayoutVariables layoutVariables) {
         return switch (layoutVariables.mapMode) {
-            case 0 -> layoutVariables.squareMap ? resourceSquareMap : resourceRoundMap;
-            case 1 -> layoutVariables.squareMap ? resourceEnlargedSquareMap : resourceEnlargedRoundMap;
-            case 2 -> resourceEnlargedSquareMap;
-            default -> null;
+            case MINIMAP -> layoutVariables.squareMap ? resourceSquareMap : resourceRoundMap;
+            case ENLARGED_MAP -> layoutVariables.squareMap ? resourceEnlargedSquareMap : resourceEnlargedRoundMap;
+            case FULLSCREEN_MAP -> resourceEnlargedSquareMap;
         };
     }
 
     private ResourceLocation getMapStencil(LayoutVariables layoutVariables) {
         return switch (layoutVariables.mapMode) {
-            case 0 -> layoutVariables.squareMap ? squareMapStencil : roundMapStencil;
-            case 1 -> layoutVariables.squareMap ? enlargedSquareMapStencil : enlargedRoundMapStencil;
-            case 2 -> enlargedSquareMapStencil;
-            default -> null;
+            case MINIMAP -> layoutVariables.squareMap ? squareMapStencil : roundMapStencil;
+            case ENLARGED_MAP -> layoutVariables.squareMap ? enlargedSquareMapStencil : enlargedRoundMapStencil;
+            case FULLSCREEN_MAP -> enlargedSquareMapStencil;
         };
     }
 

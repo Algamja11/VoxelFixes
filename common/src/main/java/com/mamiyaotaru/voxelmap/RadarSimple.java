@@ -98,13 +98,28 @@ public class RadarSimple implements IRadar {
             try {
                 if (entity != null && !entity.isInvisibleTo(VoxelConstants.getPlayer()) && (this.options.showHostiles && (this.options.radarAllowed || this.options.radarMobsAllowed) && MobCategory.isHostile(entity)
                         || this.options.showPlayers && (this.options.radarAllowed || this.options.radarPlayersAllowed) && MobCategory.isPlayer(entity) || this.options.showNeutrals && this.options.radarMobsAllowed && MobCategory.isNeutral(entity))) {
-                    int halfMapSize = layoutVariables.mapSize / 2;
                     int wayX = GameVariableAccessShim.xCoord() - (int) entity.position().x();
                     int wayZ = GameVariableAccessShim.zCoord() - (int) entity.position().z();
                     int wayY = GameVariableAccessShim.yCoord() - (int) entity.position().y();
-                    double hypot = wayX * wayX + wayZ * wayZ + wayY * wayY;
+
+                    float range = layoutVariables.mapSize / 2.0F - 3.5F;
+                    range *= range;
+                    double hypot = wayX * wayX + wayZ * wayZ;
                     hypot *= layoutVariables.positionScale * layoutVariables.positionScale;
-                    if (hypot < halfMapSize * halfMapSize) {
+
+                    boolean inRange = false;
+                    if (Math.abs(wayY) <= layoutVariables.zoomScaleAdjusted * 32.0) {
+                        if (!layoutVariables.squareMap) {
+                            inRange = hypot <= range;
+                        } else {
+                            double radLocate = Math.atan2(wayX, wayZ);
+                            double dispX = hypot * Math.cos(radLocate);
+                            double dispY = hypot * Math.sin(radLocate);
+                            inRange = Math.abs(dispX) <= range && Math.abs(dispY) <= range;
+                        }
+                    }
+
+                    if (inRange) {
                         Contact contact = new Contact((LivingEntity) entity, MobCategory.forEntity(entity));
                         this.contacts.add(contact);
                     }
@@ -120,8 +135,8 @@ public class RadarSimple implements IRadar {
     public void renderMapMobs(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
         int mapX = layoutVariables.mapX;
         int mapY = layoutVariables.mapY;
-        int halfMapSize = layoutVariables.mapSize / 2;
 
+        float range = layoutVariables.mapSize / 2.0F - 3.5F;
         double max = layoutVariables.zoomScaleAdjusted * 32.0;
 
         for (Contact contact : this.contacts) {
@@ -148,12 +163,12 @@ public class RadarSimple implements IRadar {
 
             boolean inRange;
             if (!layoutVariables.squareMap) {
-                inRange = contact.distance < (halfMapSize - 3.5);
+                inRange = contact.distance <= range;
             } else {
                 double radLocate = Math.toRadians(contact.angle);
                 double dispX = contact.distance * Math.cos(radLocate);
                 double dispY = contact.distance * Math.sin(radLocate);
-                inRange = Math.abs(dispX) <= (halfMapSize - 3.5) && Math.abs(dispY) <= (halfMapSize - 3.5);
+                inRange = Math.abs(dispX) <= range && Math.abs(dispY) <= range;
             }
 
             if (inRange) {
