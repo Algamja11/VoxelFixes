@@ -125,7 +125,7 @@ public class GuiMobs extends GuiScreenMinimap {
         drawContext.drawString(this.getFont(), I18n.get("voxelmap.waypoints.filter") + ":", this.getWidth() / 2 - 153, this.getHeight() - 51, 10526880);
         this.filter.render(drawContext, mouseX, mouseY, delta);
         if (this.tooltip != null) {
-            drawContext.renderTooltip(this.getFont(), this.tooltip, mouseX, mouseY);
+            this.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
         }
 
     }

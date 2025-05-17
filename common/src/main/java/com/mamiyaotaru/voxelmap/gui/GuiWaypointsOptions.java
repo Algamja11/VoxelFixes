@@ -75,10 +75,9 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
                 EnumOptionsMinimap option = button.returnEnumOptions();
 
                 if (button.isHovered()) {
-//                    switch (option) {
-//                        case DEATHPOINTS -> this.tooltip = this.tooltipDeathpoints;
-//                    }
-                    this.tooltip = this.tooltipDeathpoints;
+                    switch (option) {
+                        case DEATHPOINTS -> this.tooltip = this.tooltipDeathpoints;
+                    }
                 }
             }
 
@@ -93,7 +92,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
         }
 
         if (this.tooltip != null) {
-            drawContext.renderComponentTooltip(this.getFont(), TextUtils.wrapLines(this.getFont(), this.tooltip, 200), mouseX, mouseY);
+            this.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
         }
     }
 

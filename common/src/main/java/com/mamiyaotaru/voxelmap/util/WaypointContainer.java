@@ -264,7 +264,6 @@ public class WaypointContainer {
             }
 
             int textColor = (int) (255.0F * fade) << 24 | 0x00FFFFFF;
-            int textColorNoDepth = (int) (255.0F * fadeNoDepth) << 24 | 0x00FFFFFF;
             int labelY = aboveIcon ? -24 : 10;
             int halfLabelWidth = fontRenderer.width(name) / 2;
 
@@ -296,8 +295,7 @@ public class WaypointContainer {
                 GLUtils.resetPolygonOffset(poseStack);
 
                 GLUtils.polygonOffset(poseStack, 0.2F);
-                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
-                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
                 GLUtils.resetPolygonOffset(poseStack);
             }
 
@@ -335,8 +333,7 @@ public class WaypointContainer {
                 GLUtils.resetPolygonOffset(poseStack);
 
                 GLUtils.polygonOffset(poseStack, 0.2F);
-                fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
-                fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColorNoDepth, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
+                fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
                 GLUtils.resetPolygonOffset(poseStack);
 
                 poseStack.popPose();

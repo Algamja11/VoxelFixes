@@ -147,14 +147,4 @@ public final class TextUtils {
         if (style.isStrikethrough()) stringBuilder.append(ChatFormatting.STRIKETHROUGH);
         return stringBuilder.toString();
     }
-
-    @NotNull
-    public static List<Component> wrapLines(Font font, String str, int maxWidth) {
-        TEMP_COMPONENT_LIST.clear();
-        for (FormattedText text : font.getSplitter().splitLines(str, maxWidth, Style.EMPTY)) {
-            TEMP_COMPONENT_LIST.add(Component.literal(text.getString()));
-        }
-
-        return List.copyOf(TEMP_COMPONENT_LIST);
-    }
 }

@@ -255,7 +255,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         }
 
         if (this.tooltip != null) {
-            drawContext.renderTooltip(this.getFont(), this.tooltip, mouseX, mouseY);
+            this.renderTooltip(drawContext, this.tooltip, mouseX, mouseY);
         }
 
     }
