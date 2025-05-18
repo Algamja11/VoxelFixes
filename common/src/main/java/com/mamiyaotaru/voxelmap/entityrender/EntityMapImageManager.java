@@ -78,10 +78,10 @@ import org.joml.Matrix4f;
 public class EntityMapImageManager {
     private final Minecraft minecraft = Minecraft.getInstance();
 
+    private final Class<?>[] rootRenderModels = { CodModel.class, DolphinModel.class, LavaSlimeModel.class, SalmonModel.class, SlimeModel.class, TropicalFishModelA.class, TropicalFishModelB.class };
     private final PoseStack poseStack = new PoseStack();
     private final TextureAtlas textureAtlas;
     public static final ResourceLocation resourceTextureAtlasMarker = ResourceLocation.fromNamespaceAndPath("voxelmap", "atlas/mobs");
-    private static final Class<?>[] rootRenderModels = { CodModel.class, DolphinModel.class, LavaSlimeModel.class, SalmonModel.class, SlimeModel.class, TropicalFishModelA.class, TropicalFishModelB.class };
 
     private GpuTexture fboTexture;
     private GpuTexture fboDepthTexture;

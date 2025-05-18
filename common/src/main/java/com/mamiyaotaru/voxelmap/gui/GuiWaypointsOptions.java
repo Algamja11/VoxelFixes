@@ -25,7 +25,6 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
     protected Component screenTitle;
     private String tooltip;
     private final String tooltipDeathpoints = I18n.get("options.voxelmap.waypoints.deathpoints.tooltip");
-    private final String tooltipDynamicRendering = I18n.get("options.voxelmap.waypoints.dynamic_rendering.tooltip1") + " " + I18n.get("options.voxelmap.waypoints.dynamic_rendering.tooltip2");
 
     public GuiWaypointsOptions(Screen parent, MapSettingsManager options) {
         this.parentScreen = parent;
@@ -73,8 +72,8 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
                 EnumOptionsMinimap option = button.returnEnumOptions();
 
                 if (button.isHovered()) {
-                    switch (option) {
-                        case DEATHPOINTS -> this.tooltip = this.tooltipDeathpoints;
+                    if (option == EnumOptionsMinimap.DEATHPOINTS) {
+                        this.tooltip = this.tooltipDeathpoints;
                     }
                 }
             }

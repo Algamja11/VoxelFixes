@@ -13,10 +13,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.DimensionItem> {
-    private static final Component APPLIES = Component.translatable("voxelmap.waypoints.dimension.tooltip.applies");
-    private static final Component NOT_APPLIES = Component.translatable("voxelmap.waypoints.dimension.tooltip.not_applies");
-    private static final ResourceLocation CONFIRM = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
-    private static final ResourceLocation CANCEL = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
+    private static final Component TOOLTIP_APPLIES = Component.translatable("voxelmap.waypoints.dimension.tooltip.applies");
+    private static final Component TOOLTIP_NOT_APPLIES = Component.translatable("voxelmap.waypoints.dimension.tooltip.not_applies");
+    private static final ResourceLocation ENABLED_ICON = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
+    private static final ResourceLocation DISABLED_ICON = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
 
     private final GuiAddWaypoint parentGui;
     private final ArrayList<DimensionItem> dimensions;
@@ -95,7 +95,7 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
             if (mouseX >= x + padding && mouseY >= y && mouseX <= x + width + padding && mouseY <= y + GuiSlotDimensions.this.itemHeight) {
                 Component tooltip;
                 if (mouseX >= x + width - iconWidth - padding && mouseX <= x + width) {
-                    tooltip = this.parentGui.waypoint.dimensions.contains(this.dim) ? APPLIES : NOT_APPLIES;
+                    tooltip = this.parentGui.waypoint.dimensions.contains(this.dim) ? TOOLTIP_APPLIES : TOOLTIP_NOT_APPLIES;
                 } else {
                     tooltip = null;
                 }
@@ -108,7 +108,7 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
             // 2 float: u,v start texture (in pixels - see last 2 int)
             // 2 int: height, width on screen
             // 2 int: height, width full texture in pixels
-            drawContext.blit(RenderType::guiTextured, this.parentGui.waypoint.dimensions.contains(this.dim) ? CONFIRM : CANCEL, x + width - iconWidth, y - 3, 0, 0, 18, 18, 18, 18);
+            drawContext.blit(RenderType::guiTextured, this.parentGui.waypoint.dimensions.contains(this.dim) ? ENABLED_ICON : DISABLED_ICON, x + width - iconWidth, y - 3, 0, 0, 18, 18, 18, 18);
         }
 
         public boolean mouseClicked(double mouseX, double mouseY, int button) {

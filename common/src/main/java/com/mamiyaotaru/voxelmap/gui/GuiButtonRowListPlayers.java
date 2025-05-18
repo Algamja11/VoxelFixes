@@ -22,9 +22,9 @@ public class GuiButtonRowListPlayers extends AbstractSelectionList<GuiButtonRowL
     private ArrayList<PlayerInfo> playersFiltered;
     final GuiSelectPlayer parentGui;
     final Row everyoneRow;
-    static final Component ALL = Component.translatable("voxelmap.waypoint_share.everyone");
-    static final Component TITLE = Component.translatable("voxelmap.waypoint_share.share_with.everyone.confirm1");
-    static final Component EXPLANATION = Component.translatable("voxelmap.waypoint_share.share_with.everyone.confirm2");
+    static final Component EVERYONE = Component.translatable("voxelmap.waypoint_share.everyone");
+    static final Component EVERYONE_CONFIRM1 = Component.translatable("voxelmap.waypoint_share.share_with.everyone.confirm1");
+    static final Component EVERYONE_CONFIRM2 = Component.translatable("voxelmap.waypoint_share.share_with.everyone.confirm2");
     static final Component AFFIRM = Component.translatable("gui.yes");
     static final Component DENY = Component.translatable("gui.cancel");
 
@@ -34,7 +34,7 @@ public class GuiButtonRowListPlayers extends AbstractSelectionList<GuiButtonRowL
         ClientPacketListener netHandlerPlayClient = VoxelConstants.getPlayer().connection;
         this.players = new ArrayList<>(netHandlerPlayClient.getOnlinePlayers());
         this.sort();
-        Button everyoneButton = new Button(this.parentGui.getWidth() / 2 - 75, 0, 150, 20, ALL, null, null) {
+        Button everyoneButton = new Button(this.parentGui.getWidth() / 2 - 75, 0, 150, 20, EVERYONE, null, null) {
             public void onPress() {
             }
         };
@@ -99,7 +99,7 @@ public class GuiButtonRowListPlayers extends AbstractSelectionList<GuiButtonRowL
     public void buttonClicked(int id) {
         if (id == -1) {
             this.parentGui.allClicked = true;
-            ConfirmScreen confirmScreen = new ConfirmScreen(this.parentGui, TITLE, EXPLANATION, AFFIRM, DENY);
+            ConfirmScreen confirmScreen = new ConfirmScreen(this.parentGui, EVERYONE_CONFIRM1, EVERYONE_CONFIRM2, AFFIRM, DENY);
             this.minecraft.setScreen(confirmScreen);
         } else {
             PlayerInfo ScoreboardEntry = this.playersFiltered.get(id);

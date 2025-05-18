@@ -25,12 +25,12 @@ class GuiSlotMobs extends AbstractSelectionList<GuiSlotMobs.MobItem> {
     private final ArrayList<MobItem> mobs;
     private ArrayList<Entry<?>> mobsFiltered;
     final GuiMobs parentGui;
-    static final Component ENABLED = Component.translatable("options.voxelmap.select_mobs.enabled");
-    static final Component DISABLED = Component.translatable("options.voxelmap.select_mobs.disabled");
-    static final Component TOOLTIP_ENABLE = Component.translatable("options.voxelmap.select_mobs.tooltip.enable");
-    static final Component TOOLTIP_DISABLE = Component.translatable("options.voxelmap.select_mobs.tooltip.disable");
-    final ResourceLocation visibleIconIdentifier = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
-    final ResourceLocation invisibleIconIdentifier = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
+    static final Component TOOLTIP_ENABLED = Component.translatable("options.voxelmap.select_mobs.enabled");
+    static final Component TOOLTIP_DISABLED = Component.translatable("options.voxelmap.select_mobs.disabled");
+    static final Component TOOLTIP_CLICK_TO_ENABLE = Component.translatable("options.voxelmap.select_mobs.tooltip.enable");
+    static final Component TOOLTIP_CLICK_TO_DISABLE = Component.translatable("options.voxelmap.select_mobs.tooltip.disable");
+    final ResourceLocation resourceEnabledIcon = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
+    final ResourceLocation resourceDisabledIcon = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
 
     GuiSlotMobs(GuiMobs par1GuiMobs) {
         super(VoxelConstants.getMinecraft(), par1GuiMobs.getWidth(), par1GuiMobs.getHeight() - 110, 40, 18);
@@ -126,9 +126,9 @@ class GuiSlotMobs extends AbstractSelectionList<GuiSlotMobs.MobItem> {
             if (mouseX >= x - padding && mouseY >= y && mouseX <= x + 215 + padding && mouseY <= y + GuiSlotMobs.this.itemHeight) {
                 Component tooltip;
                 if (mouseX >= x + 215 - 16 - padding && mouseX <= x + 215 + padding) {
-                    tooltip = isEnabled ? GuiSlotMobs.TOOLTIP_DISABLE : GuiSlotMobs.TOOLTIP_ENABLE;
+                    tooltip = isEnabled ? GuiSlotMobs.TOOLTIP_CLICK_TO_DISABLE : GuiSlotMobs.TOOLTIP_CLICK_TO_ENABLE;
                 } else {
-                    tooltip = isEnabled ? GuiSlotMobs.ENABLED : GuiSlotMobs.DISABLED;
+                    tooltip = isEnabled ? GuiSlotMobs.TOOLTIP_ENABLED : GuiSlotMobs.TOOLTIP_DISABLED;
                 }
 
                 GuiMobs.setTooltip(this.parentGui, tooltip);
@@ -137,7 +137,7 @@ class GuiSlotMobs extends AbstractSelectionList<GuiSlotMobs.MobItem> {
             if (sprite != null) {
                 sprite.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, x + 2, y - 2, 18, 18);
             }
-            drawContext.blit(RenderType::guiTextured, isEnabled ? GuiSlotMobs.this.visibleIconIdentifier : GuiSlotMobs.this.invisibleIconIdentifier, x + 198, y - 2, 0.0F, 0.0F, 18, 18, 18, 18);
+            drawContext.blit(RenderType::guiTextured, isEnabled ? GuiSlotMobs.this.resourceEnabledIcon : GuiSlotMobs.this.resourceDisabledIcon, x + 198, y - 2, 0.0F, 0.0F, 18, 18, 18, 18);
         }
 
         @Override

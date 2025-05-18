@@ -24,8 +24,8 @@ import org.lwjgl.glfw.GLFW;
 
 public class GuiAddWaypoint extends GuiScreenMinimap {
     private static final ResourceLocation BLANK = ResourceLocation.parse("textures/misc/white.png");
-    private static final ResourceLocation PICKER = ResourceLocation.parse("voxelmap:images/color_picker.png");
-    private static final ResourceLocation TARGET = ResourceLocation.parse("voxelmap:images/waypoints/target.png");
+    private static final ResourceLocation COLOR_PICKER = ResourceLocation.parse("voxelmap:images/color_picker.png");
+    private static final ResourceLocation POINTER = ResourceLocation.parse("voxelmap:images/waypoints/target.png");
     final WaypointManager waypointManager;
     final ColorManager colorManager;
     private final IGuiWaypoints parentGui;
@@ -228,10 +228,10 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
                 int pickerSize = 200;
                 int pickerX = this.getWidth() / 2 - pickerSize / 2;
                 int pickerY = this.getHeight() / 2 - pickerSize / 2;
-                drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, PICKER, pickerX, pickerY, 0f, 0f, 200, 200, 200, 200);
+                drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, COLOR_PICKER, pickerX, pickerY, 0f, 0f, 200, 200, 200, 200);
                 int pickedColor = this.pickColor(mouseX, mouseY, 200);
                 if (pickedColor != -1) {
-                    drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, TARGET, mouseX - 8, mouseY - 8, 0f, 0f, 16, 16, 16, 16);
+                    drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, POINTER, mouseX - 8, mouseY - 8, 0f, 0f, 16, 16, 16, 16);
                     drawContext.drawCenteredString(this.getFont(), "R: " + ARGB.red(pickedColor) + ", G: " + ARGB.green(pickedColor) + ", B: " + ARGB.blue(pickedColor), this.getWidth() / 2, this.getHeight() / 2 + pickerSize / 2 + 8, pickedColor);
                 }
             } else if (this.choosingIcon) {
