@@ -821,8 +821,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
                 int backgroundColor = pt.getUnifiedColor(!pt.enabled && !hover ? 0.25F : 0.5F);
                 int halfStringWidth = minecraft.font.width(name) / 2;
-                guiGraphics.fill((int) (x / fontSize - halfStringWidth - 2), (int) ((y + 8) / fontSize + 10), (int) (x / fontSize + halfStringWidth + 2), (int) ((y + 8) / fontSize - 2), backgroundColor);
-                guiGraphics.fill((int) (x / fontSize - halfStringWidth - 1), (int) ((y + 8) / fontSize + 9), (int) (x / fontSize + halfStringWidth + 1), (int) ((y + 8) / fontSize - 1), 0x30000000);
+                guiGraphics.fill((int) (x / fontSize - halfStringWidth - 2), (int) ((y + 8) / fontSize + 9), (int) (x / fontSize + halfStringWidth + 2), (int) ((y + 8) / fontSize - 2), backgroundColor);
+                guiGraphics.fill((int) (x / fontSize - halfStringWidth - 1), (int) ((y + 8) / fontSize + 8), (int) (x / fontSize + halfStringWidth + 1), (int) ((y + 8) / fontSize - 1), 0x30000000);
                 GuiUtils.drawCenteredString(guiGraphics, name, x / fontSize, (y + 8) / fontSize, 0xFFFFFF, false);
             }
             guiGraphics.pose().popPose();

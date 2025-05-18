@@ -99,7 +99,6 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         this.setFocused(this.waypointName);
         this.waypointName.setFocused(true);
         this.dimensionList = new GuiSlotDimensions(this);
-        this.addRenderableWidget(dimensionList);
     }
 
     protected void cancelWaypoint() {
@@ -198,6 +197,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
             }
             return false;
         }
+        this.dimensionList.mouseClicked(mouseX, mouseY, button);
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -207,6 +207,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         super.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
 
         this.tooltip = null;
+        this.dimensionList.render(drawContext, mouseX, mouseY, delta);
         this.buttonEnabled.setMessage(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
         drawContext.drawCenteredString(this.getFont(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("voxelmap.waypoints.new") : I18n.get("voxelmap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
@@ -244,13 +245,12 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
                     int iconX = pickedIcon.getOriginX() + chooserX;
                     int iconY = pickedIcon.getOriginY() + chooserY;
                     pickedIcon.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, iconX - 4, iconY - 4, 40, 40, color);
-                    String iconName = pickedIcon.getIconName().toString().replace("voxelmap:images/waypoints/waypoint", "").replace(".png", "");
-                    if (iconName.isEmpty()) {
-                        iconName = "Waypoint";
-                    } else {
-                        iconName = iconName.substring(0, 1).toUpperCase() + iconName.substring(1);
+                    String suffix = pickedIcon.getIconName().toString().replace("voxelmap:images/waypoints/waypoint", "").replace(".png", "");
+                    String translated = I18n.get("voxelmap.waypoints.icons." + suffix);
+                    if (translated.equals("voxelmap.waypoints.icons." + suffix)) {
+                        translated = suffix;
                     }
-                    this.tooltip = Component.literal(iconName);
+                    this.tooltip = Component.literal(translated);
                 }
             }
         }

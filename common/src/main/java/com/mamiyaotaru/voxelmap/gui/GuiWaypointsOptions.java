@@ -7,24 +7,20 @@ import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionButtonMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionSliderMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
 import com.mamiyaotaru.voxelmap.util.GuiUtils;
-import com.mamiyaotaru.voxelmap.util.TextUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
-
-import java.util.ArrayList;
 
 public class GuiWaypointsOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.WAYPOINT_ICON_SIZE, EnumOptionsMinimap.WAYPOINT_FONT_SIZE, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES_ON_MAP, EnumOptionsMinimap.DEATHPOINTS, EnumOptionsMinimap.AUTO_UNIT_CONVERSION, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES, EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCES };
+    private static final EnumOptionsMinimap[] relevantOptions = { EnumOptionsMinimap.WAYPOINT_DISTANCE, EnumOptionsMinimap.WAYPOINT_ICON_SIZE, EnumOptionsMinimap.WAYPOINT_FONT_SIZE, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES_ON_MAP, EnumOptionsMinimap.DEATHPOINTS, EnumOptionsMinimap.DISTANCE_UNIT_CONVERSION, EnumOptionsMinimap.SHOW_WAYPOINT_NAMES, EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCES };
     private final MapSettingsManager options;
     protected Component screenTitle;
-    private String tooltip;
-    private final String tooltipDeathpoints = I18n.get("options.voxelmap.waypoints.deathpoints.tooltip");
+    private Component tooltip;
+    private final Component tooltipDeathpoints = Component.translatable("options.voxelmap.waypoints.deathpoints.tooltip");
+    private final Component tooltipUnitConversion = Component.translatable("options.voxelmap.waypoints.distance_unit_conversion.tooltip");
 
     public GuiWaypointsOptions(Screen parent, MapSettingsManager options) {
         this.parentScreen = parent;
@@ -74,6 +70,8 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
                 if (button.isHovered()) {
                     if (option == EnumOptionsMinimap.DEATHPOINTS) {
                         this.tooltip = this.tooltipDeathpoints;
+                    } else if (option == EnumOptionsMinimap.DISTANCE_UNIT_CONVERSION) {
+                        this.tooltip = this.tooltipUnitConversion;
                     }
                 }
             }

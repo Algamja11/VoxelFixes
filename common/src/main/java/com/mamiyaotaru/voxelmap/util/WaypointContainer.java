@@ -253,7 +253,7 @@ public class WaypointContainer {
                 name = "";
             }
             if (this.options.showWaypointDistances != 0) {
-                if (this.options.autoUnitConversion && distance >= 10000.0) {
+                if (this.options.distanceUnitConversion && distance >= 10000.0) {
                     double converted = distance / 1000.0;
                     distanceStr = (int) distance + "." + (int) ((converted - (int) converted) * 10) + "km";
                 } else {

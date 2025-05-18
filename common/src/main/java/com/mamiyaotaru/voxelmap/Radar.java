@@ -254,7 +254,7 @@ public class Radar implements IRadar {
 
                         int textColor = ((int) (contact.brightness * 255.0F) << 24) | (contact.entity.getTeamColor() & 0x00FFFFFF);
                         int halfStringWidth = minecraft.font.width(contact.name) / 2;
-                        guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 1), (int) ((mapY + 3) / fontSize + 9), (int) (mapX / fontSize + halfStringWidth + 1), (int) ((mapY + 3) / fontSize - 1), 0x40000000);
+                        guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 1), (int) ((mapY + 3) / fontSize + 8), (int) (mapX / fontSize + halfStringWidth + 1), (int) ((mapY + 3) / fontSize - 1), 0x40000000);
                         GuiUtils.drawCenteredString(guiGraphics, contact.name, mapX / fontSize, (mapY + 3) / fontSize, textColor, false);
                     }
                 } catch (Exception e) {

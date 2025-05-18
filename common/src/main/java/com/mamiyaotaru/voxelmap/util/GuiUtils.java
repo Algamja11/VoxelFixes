@@ -12,13 +12,13 @@ public class GuiUtils {
     private static final Minecraft minecraft = Minecraft.getInstance();
     private static final ArrayList<Component> tooltipList = new ArrayList<>();
 
-    public static void renderTooltip(GuiGraphics guiGraphics, Component tooltip, int mouseX, int mouseY) {
-        renderTooltip(guiGraphics, tooltip.getString(), mouseX, mouseY);
+    public static void renderTooltip(GuiGraphics guiGraphics, String tooltip, int mouseX, int mouseY) {
+        renderTooltip(guiGraphics, Component.literal(tooltip), mouseX, mouseY);
     }
 
-    public static void renderTooltip(GuiGraphics guiGraphics, String tooltip, int mouseX, int mouseY) {
+    public static void renderTooltip(GuiGraphics guiGraphics, Component tooltip, int mouseX, int mouseY) {
         tooltipList.clear();
-        for (FormattedText text : minecraft.font.getSplitter().splitLines(tooltip, 250, Style.EMPTY)) {
+        for (FormattedText text : minecraft.font.getSplitter().splitLines(tooltip, 150, Style.EMPTY)) {
             tooltipList.add(Component.literal(text.getString()));
         }
 

@@ -634,14 +634,16 @@ public class Map implements Runnable, IChangeObserver {
     public void drawMinimap(GuiGraphics drawContext) {
         int scScaleOrig = Math.max(1, Math.min(minecraft.getWindow().getWidth() / 320, minecraft.getWindow().getHeight() / 240));
         int scScale = scScaleOrig + (this.fullscreenMap ? 2 : this.options.sizeModifier);
+        float scaleProj = (float) (scScale / minecraft.getWindow().getGuiScale());
+
         this.scWidth = Mth.ceil((double) minecraft.getWindow().getWidth() / scScale);
         this.scHeight = Mth.ceil((double) minecraft.getWindow().getHeight() / scScale);
-        float scaleProj = (float) (scScale / minecraft.getWindow().getGuiScale());
+
         int mapSize = this.fullscreenMap ? Math.min(this.scWidth, this.scHeight) - 24 : this.enlargedMap ? 128 : 64;
-        int mapOffset = mapSize / 2 + 5;
-        int mapX = this.fullscreenMap ? this.scWidth / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 3 ? this.scWidth - mapOffset : mapOffset;
-        int mapY = this.fullscreenMap ? this.scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - mapOffset : mapOffset;
-        LayoutVariables.MapMode mapMode = this.fullscreenMap ? LayoutVariables.MapMode.FULLSCREEN_MAP : this.enlargedMap ? LayoutVariables.MapMode.ENLARGED_MAP : LayoutVariables.MapMode.MINIMAP;
+        int offset = mapSize / 2 + 5;
+        int mapX = this.fullscreenMap ? this.scWidth / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 3 ? this.scWidth - offset : offset;
+        int mapY = this.fullscreenMap ? this.scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - offset : offset;
+        int mapMode = this.fullscreenMap ? 2 : this.enlargedMap ? 1 : 0;
 
         minTablistOffset = minecraft.getWindow().getGuiScale() * mapSize;
 
@@ -1625,19 +1627,23 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private ResourceLocation getMapFrame(LayoutVariables layoutVariables) {
-        return switch (layoutVariables.mapMode) {
-            case MINIMAP -> layoutVariables.squareMap ? resourceSquareMap : resourceRoundMap;
-            case ENLARGED_MAP -> layoutVariables.squareMap ? resourceEnlargedSquareMap : resourceEnlargedRoundMap;
-            case FULLSCREEN_MAP -> resourceEnlargedSquareMap;
-        };
+        if (layoutVariables.mapMode == 2) {
+            return resourceEnlargedSquareMap;
+        } else if (layoutVariables.mapMode == 1) {
+            return layoutVariables.squareMap ? resourceEnlargedSquareMap : resourceEnlargedRoundMap;
+        } else {
+            return layoutVariables.squareMap ? resourceSquareMap : resourceRoundMap;
+        }
     }
 
     private ResourceLocation getMapStencil(LayoutVariables layoutVariables) {
-        return switch (layoutVariables.mapMode) {
-            case MINIMAP -> layoutVariables.squareMap ? squareMapStencil : roundMapStencil;
-            case ENLARGED_MAP -> layoutVariables.squareMap ? enlargedSquareMapStencil : enlargedRoundMapStencil;
-            case FULLSCREEN_MAP -> enlargedSquareMapStencil;
-        };
+        if (layoutVariables.mapMode == 2) {
+            return enlargedSquareMapStencil;
+        } else if (layoutVariables.mapMode == 1) {
+            return layoutVariables.squareMap ? enlargedSquareMapStencil : enlargedRoundMapStencil;
+        } else {
+            return layoutVariables.squareMap ? squareMapStencil : roundMapStencil;
+        }
     }
 
     private void drawBiomeLabel(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
@@ -1772,8 +1778,8 @@ public class Map implements Runnable, IChangeObserver {
 
                     int backgroundColor = pt.getUnifiedColor(!pt.enabled ? 0.25F : 0.5F);
                     int halfStringWidth = minecraft.font.width(name) / 2;
-                    guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 2), (int) ((mapY + 4) / fontSize + 10), (int) (mapX / fontSize + halfStringWidth + 2), (int) ((mapY + 4) / fontSize - 2), backgroundColor);
-                    guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 1), (int) ((mapY + 4) / fontSize + 9), (int) (mapX / fontSize + halfStringWidth + 1), (int) ((mapY + 4) / fontSize - 1), 0x30000000);
+                    guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 2), (int) ((mapY + 4) / fontSize + 9), (int) (mapX / fontSize + halfStringWidth + 2), (int) ((mapY + 4) / fontSize - 2), backgroundColor);
+                    guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 1), (int) ((mapY + 4) / fontSize + 8), (int) (mapX / fontSize + halfStringWidth + 1), (int) ((mapY + 4) / fontSize - 1), 0x30000000);
                     GuiUtils.drawCenteredString(guiGraphics, name, mapX / fontSize, (mapY + 4) / fontSize, 0xFFFFFF, false);
                 }
             } catch (Exception var42) {

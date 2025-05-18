@@ -44,7 +44,7 @@ public enum EnumOptionsMinimap {
     WAYPOINT_FONT_SIZE("options.voxelmap.waypoints.font_size", true, false, false),
     SHOW_WAYPOINT_NAMES_ON_MAP("options.voxelmap.waypoints.show_waypoint_names_on_map", false, true, false),
     DEATHPOINTS("options.voxelmap.waypoints.deathpoints", false, false, true),
-    AUTO_UNIT_CONVERSION("options.voxelmap.waypoints.auto_unit_conversion", false, true, false),
+    DISTANCE_UNIT_CONVERSION("options.voxelmap.waypoints.distance_unit_conversion", false, true, false),
     SHOW_WAYPOINT_NAMES("options.voxelmap.waypoints.show_names", false, false, true),
     SHOW_WAYPOINT_DISTANCES("options.voxelmap.waypoints.show_distances", false, false, true),
 
