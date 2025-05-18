@@ -123,10 +123,11 @@ public class WaypointManager {
             String name = resourceLocation.toString();
             if (name.toLowerCase().contains("waypoints/waypoint")) {
                 this.textureAtlasChooser.registerIconForResource(resourceLocation);
+                this.textureAtlasChooser.stitchNew();
             }
         }
 
-        this.textureAtlasChooser.stitch();
+//        this.textureAtlasChooser.stitch();
     }
 
     public TextureAtlas getTextureAtlas() {

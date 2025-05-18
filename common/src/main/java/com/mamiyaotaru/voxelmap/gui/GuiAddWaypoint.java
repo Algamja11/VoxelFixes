@@ -229,16 +229,16 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
                 int pickerSize = 200;
                 int pickerX = this.getWidth() / 2 - pickerSize / 2;
                 int pickerY = this.getHeight() / 2 - pickerSize / 2;
-                drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, COLOR_PICKER, pickerX, pickerY, 0f, 0f, 200, 200, 200, 200);
+                drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, COLOR_PICKER, pickerX, pickerY, 0.0F, 0.0F, 200, 200, 200, 200);
                 int pickedColor = this.pickColor(mouseX, mouseY, 200);
                 if (pickedColor != -1) {
-                    drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, POINTER, mouseX - 8, mouseY - 8, 0f, 0f, 16, 16, 16, 16);
+                    drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, POINTER, mouseX - 8, mouseY - 8, 0.0F, 0.0F, 16, 16, 16, 16);
                     drawContext.drawCenteredString(this.getFont(), "R: " + ARGB.red(pickedColor) + ", G: " + ARGB.green(pickedColor) + ", B: " + ARGB.blue(pickedColor), this.getWidth() / 2, this.getHeight() / 2 + pickerSize / 2 + 8, pickedColor);
                 }
             } else if (this.choosingIcon) {
                 TextureAtlas chooser = waypointManager.getTextureAtlasChooser();
-                int chooserX = (int) (this.getWidth() / 2f - chooser.getWidth() / 2f);
-                int chooserY = (int) (this.getHeight() / 2f - chooser.getHeight() / 2f);
+                int chooserX = this.getWidth() / 2 - chooser.getWidth() / 2;
+                int chooserY = this.getHeight() / 2 - chooser.getHeight() / 2;
                 drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, WaypointManager.resourceTextureAtlasWaypointChooser, chooserX, chooserY, 0f, 0f, chooser.getWidth(), chooser.getHeight(), chooser.getWidth(), chooser.getHeight(), 0xBFFFFFFF);
                 Sprite pickedIcon = this.pickIcon(mouseX, mouseY);
                 if (pickedIcon != null) {
