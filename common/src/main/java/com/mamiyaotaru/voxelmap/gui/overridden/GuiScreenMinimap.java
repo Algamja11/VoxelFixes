@@ -39,13 +39,6 @@ public class GuiScreenMinimap extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        this.renderBlurredBackground();
-        this.renderMenuBackground(guiGraphics);
-        guiGraphics.flush();
-    }
-
-    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             VoxelConstants.getMinecraft().setScreen(this.parentScreen);

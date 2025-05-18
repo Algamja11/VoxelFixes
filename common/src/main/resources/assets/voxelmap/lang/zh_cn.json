@@ -132,10 +132,10 @@
   "voxelmap.worldmap.multiworld.title": "VoxelMap - 多世界选择",
   "voxelmap.worldmap.multiworld.select": "你在哪个世界?",
   "voxelmap.worldmap.multiworld.new_name": "新名称",
-  "voxelmap.worldmap.multiworld.is_multiworld": "这是多世界服务器吗?",
+  "voxelmap.worldmap.multiworld.ismultiworld": "这是多世界服务器吗?",
   "voxelmap.worldmap.multiworld.explanation": "如果你不清楚, 请选择“否”, 你可以稍后在选项里修改.",
   "voxelmap.worldmap.multiworld.new_world": "新世界",
-  "voxelmap.worldmap.multiworld.detected_world.1": "检测到新世界",
-  "voxelmap.worldmap.multiworld.detected_world.2": "如果检测不正确, 请在多世界选项中重新选择.",
-  "voxelmap.worldmap.multiworld.unknown_subworld": "未知的世界! 请在多世界选项中重新选择."
+  "voxelmap.worldmap.multiworld.detected1": "检测到新世界",
+  "voxelmap.worldmap.multiworld.detected2": "如果检测不正确, 请在多世界选项中重新选择.",
+  "voxelmap.worldmap.multiworld.unknown": "未知的世界! 请在多世界选项中重新选择."
 }

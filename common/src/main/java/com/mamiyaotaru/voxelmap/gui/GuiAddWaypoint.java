@@ -155,7 +155,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         }
 
         boolean keyPressed = super.keyPressed(keyCode, scanCode, modifiers);
-        boolean acceptable = !this.waypointName.getValue().isEmpty();
+        boolean acceptable = this.isAcceptable();
 
         this.doneButton.active = acceptable;
         if ((keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) && acceptable) {
@@ -172,11 +172,29 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         }
 
         boolean charTyped = super.charTyped(chr, modifiers);
-        boolean acceptable = !this.waypointName.getValue().isEmpty();
 
-        this.doneButton.active = acceptable;
+        this.doneButton.active = this.isAcceptable();
 
         return charTyped;
+    }
+
+    private boolean isAcceptable() {
+        if (this.waypointName.getValue().isEmpty()) {
+            return false;
+        }
+
+        try {
+            String xString = this.waypointX.getValue();
+            String yString = this.waypointY.getValue();
+            String zString = this.waypointZ.getValue();
+            if (!xString.isEmpty()) Float.parseFloat(xString);
+            if (!yString.isEmpty()) Float.parseFloat(yString);
+            if (!zString.isEmpty()) Float.parseFloat(zString);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

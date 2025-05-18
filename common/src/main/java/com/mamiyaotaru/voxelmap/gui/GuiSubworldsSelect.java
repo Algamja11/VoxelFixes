@@ -49,7 +49,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
     public void init() {
         ArrayList<String> knownSubworldNames = new ArrayList<>(this.waypointManager.getKnownSubworldNames());
         if (!this.multiworld && !this.waypointManager.isMultiworld() && !VoxelConstants.isRealmServer()) {
-            ConfirmScreen confirmScreen = new ConfirmScreen(this, Component.translatable("voxelmap.worldmap.multiworld.is_multiworld"), Component.translatable("voxelmap.worldmap.multiworld.explanation"), Component.translatable("gui.yes"), Component.translatable("gui.no"));
+            ConfirmScreen confirmScreen = new ConfirmScreen(this, Component.translatable("voxelmap.worldmap.multiworld.ismultiworld"), Component.translatable("voxelmap.worldmap.multiworld.explanation"), Component.translatable("gui.yes"), Component.translatable("gui.no"));
             VoxelConstants.getMinecraft().setScreen(confirmScreen);
         } else {
             VoxelConstants.getMinecraft().options.setCameraType(CameraType.FIRST_PERSON);
@@ -155,7 +155,12 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
         super.tick();
     }
 
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    }
+
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
+        super.render(drawContext, mouseX, mouseY, delta);
         int titleStringWidth = this.getFont().width(this.title);
         titleStringWidth = Math.max(titleStringWidth, this.getFont().width(this.select));
         drawContext.fill(this.getWidth() / 2 - titleStringWidth / 2 - 5, 0, this.getWidth() / 2 + titleStringWidth / 2 + 5, 27, -1073741824);
@@ -170,9 +175,8 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
         this.camera.xOld = this.camera.xo = this.thePlayer.getX() - var4 * Math.sin(this.yaw / 180.0 * Math.PI);
         this.camera.zOld = this.camera.zo = this.thePlayer.getZ() + var4 * Math.cos(this.yaw / 180.0 * Math.PI);
         this.camera.setPosRaw(this.camera.xo, this.camera.yo, this.camera.zo);
-        float var5 = 1.0F;
+        float var5 = 5.0F * delta;
         this.yaw = (float) (this.yaw + var5 * (1.0 + 0.7F * Math.cos((this.yaw + 45.0F) / 45.0 * Math.PI)));
-        super.render(drawContext, mouseX, mouseY, delta);
         if (this.newWorld) {
             this.newNameField.render(drawContext, mouseX, mouseY, delta);
         }

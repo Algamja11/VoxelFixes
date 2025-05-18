@@ -61,7 +61,7 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements BooleanConsumer
 
     private void deleteClicked() {
         this.deleteClicked = true;
-        Component title = Component.translatable("voxelmap.worldmap.subworld.deleteconfirm");
+        Component title = Component.translatable("voxelmap.worldmap.multiworld.delete_confirm");
         Component explanation = Component.translatable("selectServer.deleteWarning", this.originalSubworldName);
         Component affirm = Component.translatable("selectServer.deleteButton");
         Component deny = Component.translatable("gui.cancel");
@@ -112,8 +112,8 @@ public class GuiSubworldEdit extends GuiScreenMinimap implements BooleanConsumer
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
         super.render(drawContext, mouseX, mouseY, delta);
-        drawContext.drawCenteredString(this.getFont(), Component.translatable("voxelmap.worldmap.subworld.edit"), this.getWidth() / 2, 20, 16777215);
-        drawContext.drawString(this.getFont(), Component.translatable("voxelmap.worldmap.subworld.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 10526880);
+        drawContext.drawCenteredString(this.getFont(), Component.translatable("voxelmap.worldmap.multiworld.edit"), this.getWidth() / 2, 20, 16777215);
+        drawContext.drawString(this.getFont(), Component.translatable("voxelmap.worldmap.multiworld.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 10526880);
         this.subworldNameField.render(drawContext, mouseX, mouseY, delta);
     }
 

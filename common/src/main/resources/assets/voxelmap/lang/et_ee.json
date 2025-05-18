@@ -129,10 +129,10 @@
   "voxelmap.worldmap.multiworld.title": "VoxelMap - mitmikmaailma valik",
   "voxelmap.worldmap.multiworld.select": "Millises maailmas sa hetkel oled?",
   "voxelmap.worldmap.multiworld.new_name": "Uus nimi",
-  "voxelmap.worldmap.multiworld.is_multiworld": "Kas see on mitmikmaailmatega server?",
+  "voxelmap.worldmap.multiworld.ismultiworld": "Kas see on mitmikmaailmatega server?",
   "voxelmap.worldmap.multiworld.explanation": "Vasta \"ei\" kui pole kindel, sa saad hiljem oma valikut muuta.",
   "voxelmap.worldmap.multiworld.new_world": "Uus maailm",
-  "voxelmap.worldmap.multiworld.detected_world.1": "Tuvastatud maailm",
-  "voxelmap.worldmap.multiworld.detected_world.2": "Kui see pole õige, vali oma praegune maailm mitmikmaailma valikutest.",
-  "voxelmap.worldmap.multiworld.unknown_subworld": "Tundmatu maailm! Palun vali oma praegune maailm mitmikmaailma valikutest."
+  "voxelmap.worldmap.multiworld.detected1": "Tuvastatud maailm",
+  "voxelmap.worldmap.multiworld.detected2": "Kui see pole õige, vali oma praegune maailm mitmikmaailma valikutest.",
+  "voxelmap.worldmap.multiworld.unknown": "Tundmatu maailm! Palun vali oma praegune maailm mitmikmaailma valikutest."
 }
