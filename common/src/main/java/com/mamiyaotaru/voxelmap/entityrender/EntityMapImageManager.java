@@ -79,7 +79,6 @@ public class EntityMapImageManager {
     private final Minecraft minecraft = Minecraft.getInstance();
 
     private final Class<?>[] rootRenderModels = { CodModel.class, DolphinModel.class, LavaSlimeModel.class, SalmonModel.class, SlimeModel.class, TropicalFishModelA.class, TropicalFishModelB.class };
-    private final PoseStack poseStack = new PoseStack();
     private final TextureAtlas textureAtlas;
     public static final ResourceLocation resourceTextureAtlasMarker = ResourceLocation.fromNamespaceAndPath("voxelmap", "atlas/mobs");
 
@@ -197,22 +196,23 @@ public class EntityMapImageManager {
 
         float scale = 64.0F;
 
-        poseStack.pushPose();
-        poseStack.translate(0.0f, 0.0f, -3000.0f);
-        poseStack.scale(scale, scale, -scale);
+        PoseStack pose = new PoseStack();
+        pose.pushPose();
+        pose.translate(0.0f, 0.0f, -3000.0f);
+        pose.scale(scale, scale, -scale);
 
         switch (baseRenderer) {
             case AbstractHorseRenderer<?, ?, ?> ignored -> {
-                poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
-                poseStack.mulPose(Axis.XP.rotationDegrees(35.0F));
+                pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+                pose.mulPose(Axis.XP.rotationDegrees(35.0F));
             }
-            case CodRenderer ignored -> poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
-            case GoatRenderer ignored -> poseStack.mulPose(Axis.XP.rotationDegrees(20.0F));
-            case HoglinRenderer ignored -> poseStack.mulPose(Axis.XP.rotationDegrees(60.0F));
-            case ParrotRenderer ignored -> poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
-            case SalmonRenderer ignored -> poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
-            case TropicalFishRenderer ignored -> poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
-            case ZoglinRenderer ignored -> poseStack.mulPose(Axis.XP.rotationDegrees(60.0F));
+            case CodRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+            case GoatRenderer ignored -> pose.mulPose(Axis.XP.rotationDegrees(20.0F));
+            case HoglinRenderer ignored -> pose.mulPose(Axis.XP.rotationDegrees(60.0F));
+            case ParrotRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+            case SalmonRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+            case TropicalFishRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+            case ZoglinRenderer ignored -> pose.mulPose(Axis.XP.rotationDegrees(60.0F));
             default -> {}
         }
 
@@ -223,13 +223,13 @@ public class EntityMapImageManager {
             part.xRot = 0.0F;
             part.yRot = 0.0F;
             part.zRot = 0.0F;
-            part.render(poseStack, bufferBuilder, 15, 0, 0xFFFFFFFF); // light, overlay, color //TODO set model tint
+            part.render(pose, bufferBuilder, 15, 0, 0xFFFFFFFF); // light, overlay, color //TODO set model tint
         }
 
         if (baseRenderer instanceof SlimeRenderer slimeRenderer) {
             SlimeOuterLayer slimeOuter = (SlimeOuterLayer) slimeRenderer.layers.getFirst();
             slimeOuter.model.resetPose();
-            slimeOuter.model.root().render(poseStack, bufferBuilder, 15, 0, 0xFFFFFFFF); // light, overlay, color
+            slimeOuter.model.root().render(pose, bufferBuilder, 15, 0, 0xFFFFFFFF); // light, overlay, color
         }
 
         ResourceLocation resourceLocation = variant.getPrimaryTexture();
