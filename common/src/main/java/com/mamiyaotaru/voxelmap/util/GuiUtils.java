@@ -25,20 +25,20 @@ public class GuiUtils {
         guiGraphics.renderComponentTooltip(minecraft.font, tooltipList, mouseX, mouseY);
     }
 
-    public static void drawString(GuiGraphics drawContext, String text, float x, float y, int color, boolean shadows) {
-        drawString(drawContext, Component.nullToEmpty(text), x, y, color, shadows);
+    public static void drawString(GuiGraphics drawContext, String text, float x, float y, int color, boolean shadow) {
+        drawString(drawContext, Component.nullToEmpty(text), x, y, color, shadow);
     }
 
-    public static void drawString(GuiGraphics drawContext, Component text, float x, float y, int color, boolean shadows) {
-        drawContext.drawString(minecraft.font, text, (int) x, (int) y, color, shadows);
+    public static void drawString(GuiGraphics drawContext, Component text, float x, float y, int color, boolean shadow) {
+        drawContext.drawString(minecraft.font, text, (int) x, (int) y, color, shadow);
     }
 
-    public static void drawCenteredString(GuiGraphics drawContext, String text, float x, float y, int color, boolean shadows) {
-        drawCenteredString(drawContext, Component.nullToEmpty(text), x, y, color, shadows);
+    public static void drawCenteredString(GuiGraphics drawContext, String text, float x, float y, int color, boolean shadow) {
+        drawCenteredString(drawContext, Component.nullToEmpty(text), x, y, color, shadow);
     }
 
-    public static void drawCenteredString(GuiGraphics drawContext, Component text, float x, float y, int color, boolean shadows) {
+    public static void drawCenteredString(GuiGraphics drawContext, Component text, float x, float y, int color, boolean shadow) {
         int halfWidth = minecraft.font.width(text) / 2;
-        drawString(drawContext, text, x - halfWidth, y, color, shadows);
+        drawString(drawContext, text, x - halfWidth, y, color, shadow);
     }
 }

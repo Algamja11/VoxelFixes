@@ -1921,7 +1921,7 @@ public class Map implements Runnable, IChangeObserver {
             }
 
             String text = "(" + this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.yCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord()) + ") " + heading + "' " + ns + ew;
-            GuiUtils.drawCenteredString(drawContext, text, mapX / scale, 5.0F, 0xFFFFFF, true);
+            GuiUtils.drawCenteredString(drawContext, text, this.scWidth / 2.0F / scale, 5.0F, 0xFFFFFF, true);
 
             text = "";
             if (this.options.showBiomeLabel) {
@@ -1930,7 +1930,7 @@ public class Map implements Runnable, IChangeObserver {
             if (this.zTimer > 0) {
                 text += ", " + this.message;
             }
-            GuiUtils.drawCenteredString(drawContext, text, mapX / scale, 15.0F, 0xFFFFFF, true);
+            GuiUtils.drawCenteredString(drawContext, text, this.scWidth / 2.0F / scale, 15.0F, 0xFFFFFF, true);
         }
 
         poseStack.popPose();
