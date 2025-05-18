@@ -127,6 +127,10 @@ public class WaypointManager {
             }
         }
 
+//        ** README **
+//        I don't know a better way to sort texture atlas items by name :(
+//        If you know, please fix this code :)
+//
 //        this.textureAtlasChooser.stitch();
     }
 

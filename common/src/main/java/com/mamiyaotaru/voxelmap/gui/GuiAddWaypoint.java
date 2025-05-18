@@ -89,7 +89,8 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         this.addRenderableWidget(this.waypointY);
         this.addRenderableWidget(this.waypointZ);
         int buttonListY = this.getHeight() / 6 + 82 + 6;
-        this.addRenderableWidget(this.buttonEnabled = new Button.Builder(Component.literal("Enabled: " + (this.waypoint.enabled ? "On" : "Off")), button -> this.waypoint.enabled = !this.waypoint.enabled).bounds(this.getWidth() / 2 - 101, buttonListY, 100, 20).build());
+        this.buttonEnabled = new Button.Builder(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))), button -> this.waypoint.enabled = !this.waypoint.enabled).bounds(this.getWidth() / 2 - 101, buttonListY, 100, 20).build();
+        this.addRenderableWidget(this.buttonEnabled);
         this.addRenderableWidget(new Button.Builder(Component.literal(I18n.get("voxelmap.waypoints.sort.color") + ":     "), button -> this.choosingColor = true).bounds(this.getWidth() / 2 - 101, buttonListY + 24, 100, 20).build());
         this.addRenderableWidget(new Button.Builder(Component.literal(I18n.get("voxelmap.waypoints.sort.icon") + ":     "), button -> this.choosingIcon = true).bounds(this.getWidth() / 2 - 101, buttonListY + 48, 100, 20).build());
         this.doneButton = new Button.Builder(Component.translatable("addServer.add"), button -> this.acceptWaypoint()).bounds(this.getWidth() / 2 - 155, this.getHeight() / 6 + 168, 150, 20).build();
@@ -207,7 +208,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         super.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
 
         this.tooltip = null;
-        this.dimensionList.render(drawContext, mouseX, mouseY, delta);
+        this.dimensionList.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
         this.buttonEnabled.setMessage(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
         drawContext.drawCenteredString(this.getFont(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("voxelmap.waypoints.new") : I18n.get("voxelmap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
