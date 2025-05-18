@@ -53,7 +53,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
 
         this.addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), buttonx -> VoxelConstants.getMinecraft().setScreen(this.parentScreen)).bounds(this.getWidth() / 2 - 100, this.getHeight() / 6 + 168, 200, 20).build());
 
-        for (Object buttonObj : this.getButtonList()) {
+        for (Object buttonObj : this.children()) {
             if (buttonObj instanceof GuiOptionButtonMinimap button) {
                 if (button.returnEnumOptions() == EnumOptionsMinimap.WORLDMAP_SHOW_WAYPOINT_NAMES) {
                     button.active = this.options.showWaypoints && VoxelMap.mapOptions.waypointsAllowed;
@@ -68,7 +68,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
         this.options.setValue(option);
         par1GuiButton.setMessage(Component.literal(this.options.getKeyText(option)));
 
-        for (Object buttonObj : this.getButtonList()) {
+        for (Object buttonObj : this.children()) {
             if (buttonObj instanceof GuiOptionButtonMinimap button) {
                 if (button.returnEnumOptions() == EnumOptionsMinimap.WORLDMAP_SHOW_WAYPOINT_NAMES) {
                     button.active = this.options.showWaypoints && VoxelMap.mapOptions.waypointsAllowed;
@@ -79,7 +79,7 @@ public class GuiPersistentMapOptions extends GuiScreenMinimap {
     }
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        for (Object buttonObj : this.getButtonList()) {
+        for (Object buttonObj : this.children()) {
             if (buttonObj instanceof GuiOptionSliderMinimap slider) {
                 EnumOptionsMinimap option = slider.returnEnumOptions();
                 float fValue = this.convertFloatValue(option, this.options.getFloatValue(option));

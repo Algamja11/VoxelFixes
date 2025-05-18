@@ -87,11 +87,11 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
         }
 
         public void render(GuiGraphics drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            drawContext.drawCenteredString(this.parentGui.getFont(), this.dim.getDisplayName(), this.parentGui.getWidth() / 2 + GuiSlotDimensions.this.width / 2, y + 3, 16777215);
+            drawContext.drawCenteredString(this.parentGui.getFont(), this.dim.getDisplayName(), this.parentGui.getWidth() / 2 + GuiSlotDimensions.this.getWidth() / 2, y + 3, 16777215);
             byte padding = 4;
             byte iconWidth = 18;
             x = this.parentGui.getWidth() / 2;
-            int width = GuiSlotDimensions.this.width;
+            int width = GuiSlotDimensions.this.getWidth();
             if (mouseX >= x + padding && mouseY >= y && mouseX <= x + width + padding && mouseY <= y + GuiSlotDimensions.this.itemHeight) {
                 Component tooltip;
                 if (mouseX >= x + width - iconWidth - padding && mouseX <= x + width) {

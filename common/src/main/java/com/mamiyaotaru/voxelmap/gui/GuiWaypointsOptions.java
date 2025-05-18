@@ -67,7 +67,7 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
 
         this.tooltip = null;
 
-        for (Object element : this.getButtonList()) {
+        for (Object element : this.children()) {
             if (element instanceof GuiOptionButtonMinimap button) {
                 EnumOptionsMinimap option = button.returnEnumOptions();
 
@@ -94,23 +94,21 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
     }
 
     private void iterateButtonOptions() {
-        for (GuiEventListener element : this.getButtonList()) {
-            if (!(element instanceof GuiOptionButtonMinimap button)) continue;
+        for (GuiEventListener element : this.children()) {
+            if (element instanceof GuiOptionButtonMinimap button) {
+                EnumOptionsMinimap option = button.returnEnumOptions();
 
-            EnumOptionsMinimap option = button.returnEnumOptions();
-
-            if (option == EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCES) {
-                button.setMessage(Component.literal(this.options.getKeyText(option)));
+                if (option == EnumOptionsMinimap.SHOW_WAYPOINT_DISTANCES) {
+                    button.setMessage(Component.literal(this.options.getKeyText(option)));
+                }
             }
-        }
 
-        for (GuiEventListener element : this.getButtonList()) {
-            if (!(element instanceof GuiOptionSliderMinimap slider)) continue;
+            if (element instanceof GuiOptionSliderMinimap slider) {
+                EnumOptionsMinimap option = slider.returnEnumOptions();
 
-            EnumOptionsMinimap option = slider.returnEnumOptions();
-
-            if (option == EnumOptionsMinimap.WAYPOINT_FONT_SIZE) {
-                slider.active = this.options.showWaypointNamesOnMap;
+                if (option == EnumOptionsMinimap.WAYPOINT_FONT_SIZE) {
+                    slider.active = this.options.showWaypointNamesOnMap;
+                }
             }
         }
     }

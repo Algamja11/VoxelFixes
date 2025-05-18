@@ -1,5 +1,6 @@
 package com.mamiyaotaru.voxelmap.entityrender;
 
+import com.mamiyaotaru.voxelmap.RadarSettingsManager;
 import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.entityrender.variants.DefaultEntityVariantData;
 import com.mamiyaotaru.voxelmap.entityrender.variants.DefaultEntityVariantDataFactory;
@@ -37,17 +38,21 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.model.AbstractEquineModel;
 import net.minecraft.client.model.CamelModel;
-import net.minecraft.client.model.ChickenModel;
 import net.minecraft.client.model.CodModel;
 import net.minecraft.client.model.DolphinModel;
+import net.minecraft.client.model.EndermiteModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.LavaSlimeModel;
 import net.minecraft.client.model.LlamaModel;
+import net.minecraft.client.model.RavagerModel;
 import net.minecraft.client.model.SalmonModel;
+import net.minecraft.client.model.SilverfishModel;
 import net.minecraft.client.model.SlimeModel;
 import net.minecraft.client.model.TropicalFishModelA;
 import net.minecraft.client.model.TropicalFishModelB;
+import net.minecraft.client.model.WitherBossModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.AbstractHorseRenderer;
@@ -72,7 +77,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.PlayerModelPart;
 import org.joml.Matrix4f;
 
 public class EntityMapImageManager {
@@ -89,8 +93,10 @@ public class EntityMapImageManager {
 
     private int imageCreationRequests;
     private int fulfilledImageCreationRequests;
+    private final HashMap<String, Properties> entityProperties = new HashMap<>();
     private final HashMap<EntityType<?>, EntityVariantDataFactory> variantDataFactories = new HashMap<>();
     private ConcurrentLinkedQueue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
+    private final RadarSettingsManager options = VoxelConstants.getVoxelMapInstance().getRadarOptions();
 
     public EntityMapImageManager() {
         this.textureAtlas = new TextureAtlas("mobsmap", resourceTextureAtlasMarker);
@@ -101,6 +107,7 @@ public class EntityMapImageManager {
         this.fboDepthTexture = RenderSystem.getDevice().createTexture("voxelmap-radarfbodepth", TextureFormat.DEPTH32, fboTextureSize, fboTextureSize, 1);
         Minecraft.getInstance().getTextureManager().register(resourceFboTexture, fboTexture);
 
+        reset();
     }
 
     public void reset() {
@@ -112,12 +119,14 @@ public class EntityMapImageManager {
         textureAtlas.registerIconForBufferedImage("tame", ImageUtils.loadImage(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/radar/tame.png"), 0, 0, 16, 16, 16, 16));
         textureAtlas.stitch();
 
+        entityProperties.clear();
         variantDataFactories.clear();
+
         addVariantDataFactory(new DefaultEntityVariantDataFactory(EntityType.BOGGED, ResourceLocation.withDefaultNamespace("textures/entity/skeleton/bogged_overlay.png")));
         addVariantDataFactory(new DefaultEntityVariantDataFactory(EntityType.DROWNED, ResourceLocation.withDefaultNamespace("textures/entity/zombie/drowned_outer_layer.png")));
         addVariantDataFactory(new DefaultEntityVariantDataFactory(EntityType.ENDERMAN, ResourceLocation.withDefaultNamespace("textures/entity/enderman/enderman_eyes.png")));
-//        addVariantDataFactory(new TropicalFishVariantDataFactory(EntityType.TROPICAL_FISH, null));
         addVariantDataFactory(new HorseVariantDataFactory(EntityType.HORSE));
+//        addVariantDataFactory(new TropicalFishVariantDataFactory(EntityType.TROPICAL_FISH, null));
 
         if (VoxelConstants.DEBUG) {
             BuiltInRegistries.ENTITY_TYPE.forEach(t -> {
@@ -179,16 +188,22 @@ public class EntityMapImageManager {
         }
         MessageUtils.printDebugInfo("EntityMapImageManager: Rendering Mob of type " + entity.getType().getDescriptionId());
 
-        Properties properties = new Properties();
+        Properties properties;
         String filePath = ("textures/icons/" + entity.getType().getDescriptionId() + ".properties").toLowerCase();
-        Optional<Resource> resource = minecraft.getResourceManager().getResource(ResourceLocation.parse(filePath));
-        if (resource.isPresent()) {
-            try (InputStream inputStream = resource.get().open()) {
-                properties.load(inputStream);
-            } catch (Exception ignored) {
+        if (entityProperties.containsKey(filePath)) {
+            properties = entityProperties.get(filePath);
+        } else {
+            properties = new Properties();
+            Optional<Resource> resource = minecraft.getResourceManager().getResource(ResourceLocation.parse(filePath));
+            if (resource.isPresent()) {
+                try (InputStream inputStream = resource.get().open()) {
+                    properties.load(inputStream);
+                } catch (Exception ignored) {
+                }
             }
+
+            entityProperties.put(filePath, properties);
         }
-        float scaleProperty = Float.parseFloat(properties.getProperty("scale", "1.0"));
 
         Sprite sprite = textureAtlas.registerEmptyIcon(variant);
         RenderPipeline renderPipeline = GLUtils.ENTITY_ICON;
@@ -201,20 +216,7 @@ public class EntityMapImageManager {
         pose.translate(0.0f, 0.0f, -3000.0f);
         pose.scale(scale, scale, -scale);
 
-        switch (baseRenderer) {
-            case AbstractHorseRenderer<?, ?, ?> ignored -> {
-                pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
-                pose.mulPose(Axis.XP.rotationDegrees(35.0F));
-            }
-            case CodRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
-            case GoatRenderer ignored -> pose.mulPose(Axis.XP.rotationDegrees(20.0F));
-            case HoglinRenderer ignored -> pose.mulPose(Axis.XP.rotationDegrees(60.0F));
-            case ParrotRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
-            case SalmonRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
-            case TropicalFishRenderer ignored -> pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
-            case ZoglinRenderer ignored -> pose.mulPose(Axis.XP.rotationDegrees(60.0F));
-            default -> {}
-        }
+        rotateModel(pose, baseRenderer);
 
         EntityModel model = ((LivingEntityRenderer) baseRenderer).getModel();
         model.resetPose();
@@ -273,13 +275,13 @@ public class EntityMapImageManager {
         }
         imageCreationRequests++;
         GLUtils.readTextureContentsToBufferedImage(fboTexture, image2 -> {
-            postProcessRenderedMobImage(entity, sprite, model, image2, scaleProperty);
+            postProcessRenderedMobImage(entity, sprite, model, image2, properties);
         });
 
         return sprite;
     }
 
-    private void postProcessRenderedMobImage(Entity entity, Sprite sprite, EntityModel model, BufferedImage image2, float scale) {
+    private void postProcessRenderedMobImage(Entity entity, Sprite sprite, EntityModel model, BufferedImage image2, Properties properties) {
         Util.backgroundExecutor().execute(() -> {
             BufferedImage image = image2;
             image = ImageUtils.flipHorizontal(image);
@@ -291,11 +293,21 @@ public class EntityMapImageManager {
             if (model instanceof LlamaModel) {
                 Graphics2D g = image.createGraphics();
                 g.setComposite(AlphaComposite.Clear);
-                g.fillRect(0, 248, image.getWidth(), image.getHeight());
+                g.fillRect(0, 252, image.getWidth(), image.getHeight());
             }
             image = ImageUtils.trim(image);
+
+            float scale = Float.parseFloat(properties.getProperty("scale", "1.0"));
+            float targetSize = Float.parseFloat(properties.getProperty("targetSize", "0.0"));
+
+            if (targetSize > 0.0F) {
+                int maxSize = Math.max(image.getWidth(), image.getHeight());
+                if (maxSize > 0) {
+                    image = ImageUtils.scaleImage(image, targetSize / maxSize);
+                }
+            }
             image = ImageUtils.scaleImage(image, scale);
-            image = ImageUtils.fillOutline(ImageUtils.pad(image), true, 2);
+            image = ImageUtils.fillOutline(ImageUtils.pad(image), options.outlines, 2);
 
             BufferedImage image3 = image;
             taskQueue.add(() -> {
@@ -314,51 +326,55 @@ public class EntityMapImageManager {
         });
     }
 
+    private void rotateModel(PoseStack pose, EntityRenderer baseRenderer) {
+        if (baseRenderer instanceof AbstractHorseRenderer<?, ?, ?>) {
+            pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+            pose.mulPose(Axis.XP.rotationDegrees(35.0F));
+        } else if (baseRenderer instanceof CodRenderer) {
+            pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+        } else if (baseRenderer instanceof GoatRenderer) {
+            pose.mulPose(Axis.XP.rotationDegrees(20.0F));
+        } else if (baseRenderer instanceof HoglinRenderer) {
+            pose.mulPose(Axis.XP.rotationDegrees(60.0F));
+        } else if (baseRenderer instanceof ParrotRenderer) {
+            pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+        } else if (baseRenderer instanceof SalmonRenderer) {
+            pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+        } else if (baseRenderer instanceof TropicalFishRenderer) {
+            pose.mulPose(Axis.YP.rotationDegrees(-90.0F));
+        } else if (baseRenderer instanceof ZoglinRenderer) {
+            pose.mulPose(Axis.XP.rotationDegrees(60.0F));
+        }
+    }
+
     private ModelPart[] getPartToRender(EntityModel<?> model) {
         for (Class<?> clazz : rootRenderModels) {
             if (clazz.isInstance(model)) {
                 return new ModelPart[] { model.root() };
             }
         }
-        // chicken
-        if (model instanceof ChickenModel chickenModel) {
-            ModelPart chickenBody = chickenModel.root().getChild("body");
-            chickenBody.y = 12.0F;
-            chickenBody.yScale = 6.0F / 8.0F;
-            return new ModelPart[] { chickenModel.head, chickenBody };
+
+        if (model instanceof AbstractEquineModel<?> equineModel) {
+            return new ModelPart[] { equineModel.headParts };
+        } else if (model instanceof EndermiteModel endermiteModel) {
+            return new ModelPart[] { endermiteModel.root().getChild("segment0"), endermiteModel.root().getChild("segment1") };
+        } else if (model instanceof RavagerModel ravagerModel) {
+            return new ModelPart[] { ravagerModel.root().getChild("neck").getChild("head") };
+        } else if (model instanceof SilverfishModel silverfishModel) {
+            return new ModelPart[] { silverfishModel.root().getChild("segment0"), silverfishModel.root().getChild("segment1") };
+        } else if (model instanceof WitherBossModel witherModel) {
+            return new ModelPart[]{witherModel.root().getChild("left_head"), witherModel.root().getChild("center_head"), witherModel.root().getChild("right_head")};
         }
-        // horses
-        for (ModelPart part : model.allParts()) {
-            if (part.hasChild("head_parts")) {
-                return new ModelPart[] { part.getChild("head_parts") };
-            }
-        }
-        // most mobs
-        for (ModelPart part : model.allParts()) {
-            if (part.hasChild("head")) {
-                if (part.hasChild("body0")) {
-                    // spider
-                    return new ModelPart[] { part.getChild("head"), part.getChild("body0") };
+
+        for (ModelPart modelPart : model.allParts()) {
+            if (modelPart.hasChild("head")) return new ModelPart[] { modelPart.getChild("head") };
+            if (modelPart.hasChild("body")) {
+                ModelPart bodyPart = modelPart.getChild("body");
+                if (bodyPart.hasChild("head")) {
+                    return new ModelPart[] { bodyPart.getChild("head") };
                 }
-                return new ModelPart[] { part.getChild("head") };
-            }
-        }
-        // bee, ghast
-        for (ModelPart part : model.allParts()) {
-            if (part.hasChild("body")) {
-                return new ModelPart[] { part.getChild("body") };
-            }
-        }
-        // bee, ghast, slime
-        for (ModelPart part : model.allParts()) {
-            if (part.hasChild("cube")) {
-                return new ModelPart[] { part.getChild("cube") };
-            }
-        }
-        // silverfish, endermite
-        for (ModelPart part : model.allParts()) {
-            if (part.hasChild("segment0")) {
-                return new ModelPart[] { part.getChild("segment0"), part.getChild("segment1") };
+
+                return new ModelPart[] { bodyPart };
             }
         }
 

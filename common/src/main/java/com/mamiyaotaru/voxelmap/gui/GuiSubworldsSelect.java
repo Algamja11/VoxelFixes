@@ -59,15 +59,15 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
         this.title = Component.translatable("voxelmap.worldmap.multiworld.title");
         this.select = Component.translatable("voxelmap.worldmap.multiworld.select");
         this.clearWidgets();
-        int centerX = this.width / 2;
-        int buttonsPerRow = this.width / 150;
+        int centerX = this.getWidth() / 2;
+        int buttonsPerRow = this.getWidth() / 150;
         if (buttonsPerRow == 0) {
             buttonsPerRow = 1;
         }
 
-        int buttonWidth = this.width / buttonsPerRow - 5;
-        int xSpacing = (this.width - buttonsPerRow * buttonWidth) / 2;
-        Button cancelBtn = new Button.Builder(Component.translatable("gui.cancel"), button -> VoxelConstants.getMinecraft().setScreen(null)).bounds(centerX - 100, this.height - 30, 200, 20).build();
+        int buttonWidth = this.getWidth() / buttonsPerRow - 5;
+        int xSpacing = (this.getWidth() - buttonsPerRow * buttonWidth) / 2;
+        Button cancelBtn = new Button.Builder(Component.translatable("gui.cancel"), button -> VoxelConstants.getMinecraft().setScreen(null)).bounds(centerX - 100, this.getHeight() - 30, 200, 20).build();
         this.addRenderableWidget(cancelBtn);
         knownSubworldNames.sort((name1, name2) -> -String.CASE_INSENSITIVE_ORDER.compare(name1, name2));
         int numKnownSubworlds = knownSubworldNames.size();
@@ -86,8 +86,8 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
             this.worlds[t] = knownSubworldNames.get(t);
             int tt = t;
             int i = (buttonsPerRow - shiftBy - t % buttonsPerRow) * buttonWidth;
-            selectButtons[t] = new Button.Builder(Component.literal(this.worlds[t]), button -> this.worldSelected(this.worlds[tt])).bounds(i + xSpacing, this.height - 60 - t / buttonsPerRow * 21, buttonWidth - 32, 20).build();
-            editButtons[t] = new Button.Builder(Component.literal("⚒"), button -> this.editWorld(this.worlds[tt])).bounds(i + xSpacing + buttonWidth - 32, this.height - 60 - t / buttonsPerRow * 21, 30, 20).build();
+            selectButtons[t] = new Button.Builder(Component.literal(this.worlds[t]), button -> this.worldSelected(this.worlds[tt])).bounds(i + xSpacing, this.getHeight() - 60 - t / buttonsPerRow * 21, buttonWidth - 32, 20).build();
+            editButtons[t] = new Button.Builder(Component.literal("⚒"), button -> this.editWorld(this.worlds[tt])).bounds(i + xSpacing + buttonWidth - 32, this.getHeight() - 60 - t / buttonsPerRow * 21, 30, 20).build();
             this.addRenderableWidget(selectButtons[t]);
             this.addRenderableWidget(editButtons[t]);
         }
@@ -98,11 +98,11 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
             selectButtons[numButtons] = new Button.Builder(Component.literal("< " + I18n.get("voxelmap.worldmap.multiworld.new_name") + " >"), button -> {
                 this.newWorld = true;
                 this.newNameField.setFocused(true);
-            }).bounds(i + xSpacing, this.height - 60 - numButtons / buttonsPerRow * 21, buttonWidth - 2, 20).build();
+            }).bounds(i + xSpacing, this.getHeight() - 60 - numButtons / buttonsPerRow * 21, buttonWidth - 2, 20).build();
             this.addRenderableWidget(selectButtons[numButtons]);
         }
 
-        this.newNameField = new EditBox(this.getFont(), i + xSpacing + 1, this.height - 60 - numButtons / buttonsPerRow * 21 + 1, buttonWidth - 4, 18, null);
+        this.newNameField = new EditBox(this.getFont(), i + xSpacing + 1, this.getHeight() - 60 - numButtons / buttonsPerRow * 21 + 1, buttonWidth - 4, 18, null);
     }
 
     public void accept(boolean b) {
@@ -158,9 +158,9 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
         int titleStringWidth = this.getFont().width(this.title);
         titleStringWidth = Math.max(titleStringWidth, this.getFont().width(this.select));
-        drawContext.fill(this.width / 2 - titleStringWidth / 2 - 5, 0, this.width / 2 + titleStringWidth / 2 + 5, 27, -1073741824);
-        drawContext.drawCenteredString(this.getFont(), this.title, this.width / 2, 5, 16777215);
-        drawContext.drawCenteredString(this.getFont(), this.select, this.width / 2, 15, 16711680);
+        drawContext.fill(this.getWidth() / 2 - titleStringWidth / 2 - 5, 0, this.getWidth() / 2 + titleStringWidth / 2 + 5, 27, -1073741824);
+        drawContext.drawCenteredString(this.getFont(), this.title, this.getWidth() / 2, 5, 16777215);
+        drawContext.drawCenteredString(this.getFont(), this.select, this.getWidth() / 2, 15, 16711680);
         this.camera.xRotO = 0.0F;
         this.camera.setXRot(0.0F);
         this.camera.yRotO = this.yaw;

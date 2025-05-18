@@ -25,6 +25,7 @@ public class GuiScreenMinimap extends Screen {
         super (title);
     }
 
+    @Override
     public void removed() {
         MapSettingsManager.instance.saveAll();
     }
@@ -37,14 +38,11 @@ public class GuiScreenMinimap extends Screen {
         return height;
     }
 
-    public List<? extends GuiEventListener> getButtonList() {
-        return children();
-    }
-
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         this.renderBlurredBackground();
         this.renderMenuBackground(guiGraphics);
+        guiGraphics.flush();
     }
 
     @Override

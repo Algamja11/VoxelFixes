@@ -67,7 +67,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
     }
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        for (Object buttonObj : this.getButtonList()) {
+        for (Object buttonObj : this.children()) {
             if (buttonObj instanceof GuiOptionSliderMinimap slider) {
                 EnumOptionsMinimap option = slider.returnEnumOptions();
                 float fValue = this.convertFloatValue(option, this.options.getFloatValue(option));
@@ -84,7 +84,7 @@ public class GuiRadarOptions extends GuiScreenMinimap {
     }
 
     private void iterateButtonOptions() {
-        for (GuiEventListener element : getButtonList()) {
+        for (GuiEventListener element : children()) {
             if (element instanceof GuiOptionButtonMinimap button) {
                 EnumOptionsMinimap option = button.returnEnumOptions();
 

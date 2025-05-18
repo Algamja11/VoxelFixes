@@ -195,7 +195,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         this.sideMargin = 10;
         int buttonCount = 5;
         int buttonSeparation = 4;
-        int buttonWidth = (this.width - this.sideMargin * 2 - buttonSeparation * (buttonCount - 1)) / buttonCount;
+        int buttonWidth = (this.getWidth() - this.sideMargin * 2 - buttonSeparation * (buttonCount - 1)) / buttonCount;
         this.buttonWaypoints = new PopupGuiButton(this.sideMargin, this.getHeight() - 28, buttonWidth, 20, Component.translatable("options.voxelmap.waypoints"), button -> minecraft.setScreen(new GuiWaypoints(this)), this);
         this.addRenderableWidget(this.buttonWaypoints);
         this.multiworldButtonName = Component.translatable(VoxelConstants.isRealmServer() ? "menu.online" : "options.voxelmap.worldmap.multiworld");
