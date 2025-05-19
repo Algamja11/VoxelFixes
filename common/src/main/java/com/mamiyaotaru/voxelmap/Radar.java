@@ -113,7 +113,7 @@ public class Radar implements IRadar {
                     hypot *= layoutVariables.positionScale * layoutVariables.positionScale;
 
                     boolean inRange = false;
-                    if (Math.abs(wayY) <= layoutVariables.zoomScaleAdjusted * 32.0) {
+                    if (Math.abs(wayY) <= layoutVariables.zoomScale * 32.0) {
                         if (!layoutVariables.squareMap) {
                             inRange = hypot <= range;
                         } else {
@@ -176,7 +176,7 @@ public class Radar implements IRadar {
         int scScale = layoutVariables.scScale;
 
         float range = layoutVariables.mapSize / 2.0F - 3.5F;
-        double max = layoutVariables.zoomScaleAdjusted * 32.0;
+        double max = layoutVariables.zoomScale * 32.0;
         double lastX = GameVariableAccessShim.xCoordDouble();
         double lastZ = GameVariableAccessShim.zCoordDouble();
         double lastY = GameVariableAccessShim.yCoordDouble();
