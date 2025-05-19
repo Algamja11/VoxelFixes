@@ -19,6 +19,7 @@
   "key.voxelmap.waypoint_hotkey": "Waypoint Hotkey",
   "key.voxelmap.toggle_mobs": "Toggle Mobs",
   "key.voxelmap.toggle_waypoints": "Toggle Waypoints",
+  "key.voxelmap.toggle_minimap": "Toggle Minimap",
   "options.voxelmap.title": "Minimap Options",
   "options.voxelmap.show_coordinates": "Display Coordinates",
   "options.voxelmap.show_coordinates.mode1": "Mode 1",

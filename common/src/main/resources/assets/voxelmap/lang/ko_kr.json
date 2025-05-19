@@ -19,6 +19,7 @@
   "key.voxelmap.waypoint_hotkey": "빠른 경유지 추가",
   "key.voxelmap.toggle_mobs": "레이더 토글",
   "key.voxelmap.toggle_waypoints": "경유지 토글",
+  "key.voxelmap.toggle_minimap": "미니맵 토글",
   "options.voxelmap.title": "미니맵 설정",
   "options.voxelmap.show_coordinates": "좌표 표시",
   "options.voxelmap.show_coordinates.mode1": "모드 1",

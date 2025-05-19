@@ -389,6 +389,11 @@ public class Map implements Runnable, IChangeObserver {
             }
         }
 
+        if (minecraft.screen == null && this.options.keyBindMinimapToggle.consumeClick()) {
+            this.options.hide = !this.options.hide;
+            this.options.saveAll();
+        }
+
         if (minecraft.screen == null && this.options.keyBindFullscreenMap.consumeClick()) {
             this.fullscreenMap = !this.fullscreenMap && !this.enlargedMap;
         }

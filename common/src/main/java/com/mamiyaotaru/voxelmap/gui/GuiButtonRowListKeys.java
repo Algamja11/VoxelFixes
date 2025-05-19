@@ -21,27 +21,23 @@ public class GuiButtonRowListKeys extends AbstractSelectionList<GuiButtonRowList
     private final MapSettingsManager options;
     private final GuiMinimapControls parentGui;
     private KeyMapping keyForEdit;
+    private final ArrayList<RowItem> rowItems = new ArrayList<>();
     private final ArrayList<KeyMapping> duplicateKeys = new ArrayList<>();
 
     public GuiButtonRowListKeys(GuiMinimapControls parentScreen) {
         super(VoxelConstants.getMinecraft(), parentScreen.getWidth(), parentScreen.getHeight() - 114, 40, 28);
         this.parentGui = parentScreen;
         this.options = VoxelConstants.getVoxelMapInstance().getMapOptions();
-        ArrayList<RowItem> keyMappings = new ArrayList<>();
         for (int i = 0; i < this.options.keyBindings.length; ++i) {
-            keyMappings.add(new RowItem(this.parentGui, this.buildButton(i, false), this.buildButton(i, true), this.options.keyBindings[i]));
+            int ii = i;
+            this.rowItems.add(new RowItem(this.parentGui,
+                    new Button.Builder(null, button -> this.keyForEdit = this.options.keyBindings[ii]).bounds(0, 0, 75, 20).build(),
+                    new Button.Builder(Component.translatable("controls.reset"), button -> this.resetKeyMapping(ii)).bounds(0, 0, 50, 20).build(),
+                    this.options.keyBindings[i]));
         }
-        keyMappings.sort(Comparator.comparing(entry -> entry.keyMapping));
+        this.rowItems.sort(Comparator.comparing(entry -> entry.keyMapping));
         this.checkDuplicateKeys();
-        keyMappings.forEach(this::addEntry);
-    }
-
-    private Button buildButton(int index, boolean resetButton) {
-        if (!resetButton) {
-            return new Button.Builder(null, button -> this.keyForEdit = this.options.keyBindings[index]).bounds(0, 0, 75, 20).build();
-        } else {
-            return new Button.Builder(Component.translatable("controls.reset"), button -> this.resetKeyMapping(index)).bounds(0, 0, 50, 20).build();
-        }
+        this.rowItems.forEach(this::addEntry);
     }
 
     public boolean keyEditing() {
