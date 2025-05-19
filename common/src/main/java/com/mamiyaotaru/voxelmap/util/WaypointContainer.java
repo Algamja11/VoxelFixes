@@ -303,7 +303,7 @@ public class WaypointContainer {
                 GLUtils.resetPolygonOffset(poseStack);
 
                 GLUtils.polygonOffset(poseStack, 0.2F);
-                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
+                fontRenderer.drawInBatch(Component.literal(name), (-fontRenderer.width(name) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
                 bufferSource.endLastBatch();
                 GLUtils.resetPolygonOffset(poseStack);
             }
@@ -344,7 +344,7 @@ public class WaypointContainer {
                 GLUtils.resetPolygonOffset(poseStack);
 
                 GLUtils.polygonOffset(poseStack, 0.2F);
-                fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.NORMAL, 0, 0x00F000F0);
+                fontRenderer.drawInBatch(Component.literal(distanceStr), (-fontRenderer.width(distanceStr) / 2f), labelY, textColor, false, poseStack.last().pose(), bufferSource, DisplayMode.SEE_THROUGH, 0, 0x00F000F0);
                 bufferSource.endLastBatch();
                 GLUtils.resetPolygonOffset(poseStack);
 
