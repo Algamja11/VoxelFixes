@@ -25,7 +25,6 @@ import org.lwjgl.glfw.GLFW;
 public class GuiAddWaypoint extends GuiScreenMinimap {
     private static final ResourceLocation BLANK = ResourceLocation.parse("textures/misc/white.png");
     private static final ResourceLocation COLOR_PICKER = ResourceLocation.parse("voxelmap:images/color_picker.png");
-    private static final ResourceLocation POINTER = ResourceLocation.parse("voxelmap:images/waypoints/target.png");
     final WaypointManager waypointManager;
     final ColorManager colorManager;
     private final IGuiWaypoints parentGui;
@@ -158,8 +157,12 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         boolean acceptable = this.isAcceptable();
 
         this.doneButton.active = acceptable;
-        if ((keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) && acceptable) {
+        if (acceptable && (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER)) {
             this.acceptWaypoint();
+        }
+
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            this.cancelWaypoint();
         }
 
         return keyPressed;
@@ -187,9 +190,9 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
             String xString = this.waypointX.getValue();
             String yString = this.waypointY.getValue();
             String zString = this.waypointZ.getValue();
-            if (!xString.isEmpty()) Float.parseFloat(xString);
-            if (!yString.isEmpty()) Float.parseFloat(yString);
-            if (!zString.isEmpty()) Float.parseFloat(zString);
+            if (!xString.isEmpty()) Integer.parseInt(xString);
+            if (!yString.isEmpty()) Integer.parseInt(yString);
+            if (!zString.isEmpty()) Integer.parseInt(zString);
         } catch (NumberFormatException e) {
             return false;
         }
@@ -225,15 +228,15 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
         super.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
 
-        this.tooltip = null;
-        this.dimensionList.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
-        this.buttonEnabled.setMessage(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
-
         drawContext.drawCenteredString(this.getFont(), (this.parentGui == null || !this.parentGui.isEditing()) && !this.editing ? I18n.get("voxelmap.waypoints.new") : I18n.get("voxelmap.waypoints.edit"), this.getWidth() / 2, 20, 16777215);
         drawContext.drawString(this.getFont(), I18n.get("voxelmap.waypoints.name"), this.getWidth() / 2 - 100, this.getHeight() / 6, 16777215);
         drawContext.drawString(this.getFont(), I18n.get("X"), this.getWidth() / 2 - 100, this.getHeight() / 6 + 41, 16777215);
         drawContext.drawString(this.getFont(), I18n.get("Y"), this.getWidth() / 2 - 28, this.getHeight() / 6 + 41, 16777215);
         drawContext.drawString(this.getFont(), I18n.get("Z"), this.getWidth() / 2 + 44, this.getHeight() / 6 + 41, 16777215);
+
+        this.tooltip = null;
+        this.dimensionList.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
+        this.buttonEnabled.setMessage(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
         int buttonListY = this.getHeight() / 6 + 88;
         int color = this.waypoint.getUnifiedColor();
@@ -251,9 +254,10 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
                 drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, COLOR_PICKER, pickerX, pickerY, 0.0F, 0.0F, 200, 200, 200, 200);
                 int pickedColor = this.pickColor(mouseX, mouseY, 200);
                 if (pickedColor != -1) {
-                    drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, POINTER, mouseX - 8, mouseY - 8, 0.0F, 0.0F, 16, 16, 16, 16);
                     drawContext.drawCenteredString(this.getFont(), "R: " + ARGB.red(pickedColor) + ", G: " + ARGB.green(pickedColor) + ", B: " + ARGB.blue(pickedColor), this.getWidth() / 2, this.getHeight() / 2 + pickerSize / 2 + 8, pickedColor);
                 }
+
+                drawContext.drawCenteredString(this.getFont(), I18n.get("voxelmap.waypoints.choose_color"), this.getWidth() / 2, 20, 16777215);
             } else if (this.choosingIcon) {
                 TextureAtlas chooser = waypointManager.getTextureAtlasChooser();
                 int chooserX = this.getWidth() / 2 - chooser.getWidth() / 2;
@@ -264,6 +268,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
                     int iconX = pickedIcon.getOriginX() + chooserX;
                     int iconY = pickedIcon.getOriginY() + chooserY;
                     pickedIcon.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, iconX - 4, iconY - 4, 40, 40, color);
+
                     String suffix = pickedIcon.getIconName().toString().replace("voxelmap:images/waypoints/waypoint", "").replace(".png", "");
                     String translated = I18n.get("voxelmap.waypoints.icons." + suffix);
                     if (translated.equals("voxelmap.waypoints.icons." + suffix)) {
@@ -271,6 +276,8 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
                     }
                     this.tooltip = Component.literal(translated);
                 }
+
+                drawContext.drawCenteredString(this.getFont(), I18n.get("voxelmap.waypoints.choose_icon"), this.getWidth() / 2, 20, 16777215);
             }
         }
 

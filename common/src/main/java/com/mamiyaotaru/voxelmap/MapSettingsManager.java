@@ -68,15 +68,15 @@ public class MapSettingsManager implements ISettingsManager {
     public int showWaypointDistances = 1;
     public int sort = 1;
 
-    public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoom_in", GLFW.GLFW_KEY_UP, "controls.voxelmap.title");
-    public final KeyMapping keyBindZoomOut = new KeyMapping("key.voxelmap.zoom_out", GLFW.GLFW_KEY_DOWN, "controls.voxelmap.title");
-    public final KeyMapping keyBindEnlargedMap = new KeyMapping("key.voxelmap.toggle_enlarged_map", GLFW.GLFW_KEY_Z, "controls.voxelmap.title");
-    public final KeyMapping keyBindFullscreenMap = new KeyMapping("key.voxelmap.toggle_fullscreen_map", GLFW.GLFW_KEY_X, "controls.voxelmap.title");
-    public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmap_menu", GLFW.GLFW_KEY_M, "controls.voxelmap.title");
-    public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypoint_menu", GLFW.GLFW_KEY_U, "controls.voxelmap.title");
-    public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypoint_hotkey", GLFW.GLFW_KEY_N, "controls.voxelmap.title");
-    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.toggle_mobs", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title");
-    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggle_waypoints", GLFW.GLFW_KEY_UNKNOWN, "controls.voxelmap.title");
+    public final KeyMapping keyBindZoomIn = new KeyMapping("key.voxelmap.zoom_in", GLFW.GLFW_KEY_UP, "key.voxelmap.category");
+    public final KeyMapping keyBindZoomOut = new KeyMapping("key.voxelmap.zoom_out", GLFW.GLFW_KEY_DOWN, "key.voxelmap.categorye");
+    public final KeyMapping keyBindEnlargedMap = new KeyMapping("key.voxelmap.toggle_enlarged_map", GLFW.GLFW_KEY_Z, "key.voxelmap.category");
+    public final KeyMapping keyBindFullscreenMap = new KeyMapping("key.voxelmap.toggle_fullscreen_map", GLFW.GLFW_KEY_X, "key.voxelmap.category");
+    public final KeyMapping keyBindMenu = new KeyMapping("key.voxelmap.voxelmap_menu", GLFW.GLFW_KEY_M, "key.voxelmap.category");
+    public final KeyMapping keyBindWaypointMenu = new KeyMapping("key.voxelmap.waypoint_menu", GLFW.GLFW_KEY_U, "key.voxelmap.category");
+    public final KeyMapping keyBindWaypoint = new KeyMapping("key.voxelmap.waypoint_hotkey", GLFW.GLFW_KEY_N, "key.voxelmap.category");
+    public final KeyMapping keyBindMobToggle = new KeyMapping("key.voxelmap.toggle_mobs", GLFW.GLFW_KEY_UNKNOWN, "key.voxelmap.category");
+    public final KeyMapping keyBindWaypointToggle = new KeyMapping("key.voxelmap.toggle_waypoints", GLFW.GLFW_KEY_UNKNOWN, "key.voxelmap.category");
     public final KeyMapping[] keyBindings;
 
     protected boolean welcome = true;
