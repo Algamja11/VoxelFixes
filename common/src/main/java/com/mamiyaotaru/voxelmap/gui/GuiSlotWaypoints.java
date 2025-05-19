@@ -144,9 +144,11 @@ class GuiSlotWaypoints extends AbstractSelectionList<GuiSlotWaypoints.WaypointIt
                 } else if (mouseX >= x + padding && mouseX <= x + iconWidth + padding) {
                     tooltip = this.waypoint == this.parentGui.highlightedWaypoint ? TOOLTIP_REMOVE_HIGHLIGHT : TOOLTIP_HIGHLIGHT;
                 } else {
-                    String tooltipText = "X: " + this.waypoint.getX() + " Z: " + this.waypoint.getZ();
+                    String tooltipText;
                     if (this.waypoint.getY() > minecraft.level.getMinY()) {
-                        tooltipText = tooltipText + " Y: " + this.waypoint.getY();
+                        tooltipText = "X:" + this.waypoint.getX() + ", Y:" + this.waypoint.getY() + ", Z:" + this.waypoint.getZ();
+                    } else {
+                        tooltipText = "X:" + this.waypoint.getX() + ", Z:" + this.waypoint.getZ();
                     }
 
                     tooltip = Component.literal(tooltipText);

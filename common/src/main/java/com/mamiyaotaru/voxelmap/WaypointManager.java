@@ -520,7 +520,7 @@ public class WaypointManager {
                         dimensionsString.append(VoxelConstants.getVoxelMapInstance().getDimensionManager().getDimensionContainerByResourceLocation(BuiltinDimensionTypes.OVERWORLD.location()).getStorageName());
                     }
 
-                    out.println("name:" + TextUtils.scrubName(pt.name) + ",x:" + pt.x + ",z:" + pt.z + ",y:" + pt.y + ",enabled:" + pt.enabled + ",red:" + pt.red + ",green:" + pt.green + ",blue:" + pt.blue + ",deathpoint:" + pt.isDeathpoint + ",suffix:" + pt.imageSuffix + ",world:" + TextUtils.scrubName(pt.world) + ",dimensions:" + dimensionsString);
+                    out.println("name:" + TextUtils.scrubName(pt.name) + ",x:" + pt.x + ",y:" + pt.y + ",z:" + pt.z + ",enabled:" + pt.enabled + ",red:" + pt.red + ",green:" + pt.green + ",blue:" + pt.blue + ",deathpoint:" + pt.isDeathpoint + ",suffix:" + pt.imageSuffix + ",world:" + TextUtils.scrubName(pt.world) + ",dimensions:" + dimensionsString);
                 }
             }
 

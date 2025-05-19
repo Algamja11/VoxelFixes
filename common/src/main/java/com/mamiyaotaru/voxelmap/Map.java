@@ -192,10 +192,10 @@ public class Map implements Runnable, IChangeObserver {
 
         java.util.Map<String, Integer> categoryOrder = KeyMapping.CATEGORY_SORT_ORDER;
         VoxelConstants.getLogger().warn("CATEGORY ORDER IS " + categoryOrder.size());
-        Integer categoryPlace = categoryOrder.get("controls.voxelmap.title");
+        Integer categoryPlace = categoryOrder.get("key.voxelmap.category");
         if (categoryPlace == null) {
             int currentSize = categoryOrder.size();
-            categoryOrder.put("controls.voxelmap.title", currentSize + 1);
+            categoryOrder.put("key.voxelmap.category", currentSize + 1);
         }
 
         this.showWelcomeScreen = this.options.welcome;
