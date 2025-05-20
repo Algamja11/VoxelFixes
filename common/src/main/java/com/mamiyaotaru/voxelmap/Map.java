@@ -634,7 +634,7 @@ public class Map implements Runnable, IChangeObserver {
 
     public void drawMinimap(GuiGraphics drawContext) {
         int scScaleOrig = Math.max(1, Math.min(minecraft.getWindow().getWidth() / 320, minecraft.getWindow().getHeight() / 240));
-        layoutVariables.scScale = this.fullscreenMap ? scScaleOrig + 1 : scScaleOrig + this.options.sizeModifier;
+        layoutVariables.scScale = !this.options.hide && this.fullscreenMap ? scScaleOrig + 1 : scScaleOrig + this.options.sizeModifier;
         layoutVariables.scaleProj = (float) (layoutVariables.scScale / minecraft.getWindow().getGuiScale());
 
         this.scWidth = Mth.ceil((double) minecraft.getWindow().getWidth() / layoutVariables.scScale);
@@ -643,7 +643,7 @@ public class Map implements Runnable, IChangeObserver {
         layoutVariables.mapSize = this.fullscreenMap ? Math.min(this.scWidth, this.scHeight) - 16 : this.enlargedMap ? 128 : 64;
         int offset = layoutVariables.mapSize / 2 + 5;
         layoutVariables.mapX = this.fullscreenMap ? this.scWidth / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 3 ? this.scWidth - offset : offset;
-        layoutVariables.mapY = this.fullscreenMap ? this.scHeight / 2 + 5 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - offset : offset;
+        layoutVariables.mapY = this.fullscreenMap ? this.scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - offset : offset;
 
         layoutVariables.rotates = !this.enlargedMap && !this.fullscreenMap && this.options.rotates;
         layoutVariables.isSquareMap = this.fullscreenMap || this.options.squareMap;
@@ -1888,30 +1888,44 @@ public class Map implements Runnable, IChangeObserver {
         poseStack.scale(scale, scale, 1.0F);
         poseStack.translate(0.0F, 0.0F, 150.0F);
 
-        if (!this.options.hide && !this.fullscreenMap) {
-            String text;
-            float textY = 0.0F;
-            if (this.options.coordsMode == 2) {
-                text = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.yCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
-                GuiUtils.drawCenteredString(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF, true); // X, Y, Z
+        if (!this.options.hide) {
+            if (!this.fullscreenMap) {
+                String text;
+                float textY = 0.0F;
+                if (this.options.coordsMode == 2) {
+                    text = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.yCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
+                    GuiUtils.drawCenteredString(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF, true); // X, Y, Z
+                } else {
+                    text = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
+                    GuiUtils.drawCenteredString(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF, true); // X, Z
+
+                    text = this.dCoord(GameVariableAccessShim.yCoord());
+                    textY += (invertY ? -10.0F : 10.0F);
+                    GuiUtils.drawCenteredString(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF, true); // Y
+                }
+
+                if (this.options.showBiomeLabel) {
+                    text = this.currentBiomeName;
+                    textY += (invertY ? -10.0F : 10.0F);
+                    GuiUtils.drawCenteredString(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF, true); // BIOME
+                }
+
+                if (this.zTimer != 0) {
+                    textY += (invertY ? -10.0F : 10.0F);
+                    GuiUtils.drawCenteredString(drawContext, this.message, mapX / scale, textStart / scale + textY, 0xFFFFFF, true); // WORLD NAME
+                }
             } else {
-                text = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
-                GuiUtils.drawCenteredString(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF, true); // X, Z
+                String text = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.yCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
+                GuiUtils.drawString(drawContext, text, (mapX - mapSize / 2.0F) / scale, (mapY + mapSize / 2.0F - 4.5F) / scale, 0xFFFFFF, true);
 
-                text = this.dCoord(GameVariableAccessShim.yCoord());
-                textY += (invertY ? -10.0F : 10.0F);
-                GuiUtils.drawCenteredString(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF, true); // Y
-            }
-
-            if (this.options.showBiomeLabel) {
-                text = this.currentBiomeName;
-                textY += (invertY ? -10.0F : 10.0F);
-                GuiUtils.drawCenteredString(drawContext, text, mapX / scale, textStart / scale + textY, 0xFFFFFF, true); // BIOME
-            }
-
-            if (this.zTimer != 0) {
-                textY += (invertY ? -10.0F : 10.0F);
-                GuiUtils.drawCenteredString(drawContext, this.message, mapX / scale, textStart / scale + textY, 0xFFFFFF, true); // WORLD NAME
+                text = "";
+                if (this.options.showBiomeLabel) {
+                    text = this.currentBiomeName;
+                }
+                if (this.zTimer > 0) {
+                    text += ", " + this.message;
+                }
+                GuiUtils.drawString(drawContext, text, (mapX - mapSize / 2.0F) / scale, (mapY + mapSize / 2.0F - 9.0F) / scale, 0xFFFFFF, true);
             }
         } else {
             int heading = (int) (this.direction + this.northRotate);
