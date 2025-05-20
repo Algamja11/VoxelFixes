@@ -30,17 +30,18 @@ public class BlockRepository {
     public static Block darkOakLeaves;
     public static Block mangroveLeaves;
 
-    public static Block grassBlock;
-    public static Block grass;
-    public static Block tallGrass;
-    public static Block fern;
-    public static Block largeFern;
+    public static Block bush;
     public static Block leafLitter;
     public static Block lilypad;
     public static Block redstone;
     public static Block reeds;
     public static Block vine;
     public static Block water;
+    public static Block fern;
+    public static Block largeFern;
+    public static Block grass;
+    public static Block tallGrass;
+    public static Block grassBlock;
 
     public static Block barrier;
     public static Block cobweb;
@@ -49,6 +50,7 @@ public class BlockRepository {
     public static Block ice;
     public static Block ladder;
     public static Block lava;
+    public static Block light;
     public static Block piston;
     public static Block stickyPiston;
     public static MovingPistonBlock movingPiston;
@@ -78,16 +80,17 @@ public class BlockRepository {
         darkOakLeaves = Blocks.DARK_OAK_LEAVES;
         mangroveLeaves = Blocks.MANGROVE_LEAVES;
 
-        grassBlock = Blocks.GRASS_BLOCK;
-        grass = Blocks.SHORT_GRASS;
-        tallGrass = Blocks.TALL_GRASS;
-        fern = Blocks.FERN;
-        largeFern = Blocks.LARGE_FERN;
+        bush = Blocks.BUSH;
         leafLitter = Blocks.LEAF_LITTER;
         lilypad = Blocks.LILY_PAD;
         redstone = Blocks.REDSTONE_WIRE;
         reeds = Blocks.SUGAR_CANE;
         vine = Blocks.VINE;
+        fern = Blocks.FERN;
+        largeFern = Blocks.LARGE_FERN;
+        grass = Blocks.SHORT_GRASS;
+        tallGrass = Blocks.TALL_GRASS;
+        grassBlock = Blocks.GRASS_BLOCK;
         water = Blocks.WATER;
 
         barrier = Blocks.BARRIER;
@@ -97,13 +100,14 @@ public class BlockRepository {
         ice = Blocks.ICE;
         ladder = Blocks.LADDER;
         lava = Blocks.LAVA;
+        light = Blocks.LIGHT;
         piston = Blocks.PISTON;
         stickyPiston = Blocks.STICKY_PISTON;
         movingPiston = (MovingPistonBlock) Blocks.MOVING_PISTON;
 
-        Block[] biomeBlocksArray = new Block[]{grassBlock, oakLeaves, spruceLeaves, birchLeaves, jungleLeaves, acaciaLeaves, darkOakLeaves, mangroveLeaves, grass, fern, tallGrass, largeFern, reeds, vine, lilypad, leafLitter, water};
-        Block[] shapedBlocksArray = new Block[]{ladder, vine, chorusPlant, chorusFlower};
-        Block[] leafBlocksArray = new Block[]{oakLeaves, spruceLeaves, birchLeaves, jungleLeaves, acaciaLeaves, darkOakLeaves, mangroveLeaves};
+        Block[] biomeBlocksArray = new Block[] { oakLeaves, spruceLeaves, birchLeaves, jungleLeaves, acaciaLeaves, darkOakLeaves, mangroveLeaves, bush, leafLitter, lilypad, redstone, reeds, vine, fern, largeFern, grass, tallGrass, grassBlock, water };
+        Block[] shapedBlocksArray = new Block[] { ladder, vine, chorusPlant, chorusFlower };
+        Block[] leafBlocksArray = new Block[] { oakLeaves, spruceLeaves, birchLeaves, jungleLeaves, acaciaLeaves, darkOakLeaves, mangroveLeaves };
 
         biomeBlocks = new HashSet<>(Arrays.asList(biomeBlocksArray));
         shapedBlocks = new HashSet<>(Arrays.asList(shapedBlocksArray));

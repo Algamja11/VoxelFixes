@@ -109,7 +109,7 @@ public class RadarSimple implements IRadar {
 
                     boolean inRange = false;
                     if (Math.abs(wayY) <= layoutVariables.zoomScale * 32.0) {
-                        if (!layoutVariables.squareMap) {
+                        if (!layoutVariables.isSquareMap) {
                             inRange = hypot <= range;
                         } else {
                             double radLocate = Math.atan2(wayX, wayZ);
@@ -162,7 +162,7 @@ public class RadarSimple implements IRadar {
             }
 
             boolean inRange;
-            if (!layoutVariables.squareMap) {
+            if (!layoutVariables.isSquareMap) {
                 inRange = contact.distance <= range;
             } else {
                 double radLocate = Math.toRadians(contact.angle);

@@ -262,8 +262,13 @@ public class ColorManager {
             blockStateID = BlockRepository.getStateId(blockState);
         }
 
-        for (Iterator<BlockState> var6 = BlockRepository.barrier.getStateDefinition().getPossibleStates().iterator(); var6.hasNext(); this.blockColors[blockStateID] = 0) {
-            BlockState blockState = var6.next();
+        for (Iterator<BlockState> blockStateIterator = BlockRepository.barrier.getStateDefinition().getPossibleStates().iterator(); blockStateIterator.hasNext(); this.blockColors[blockStateID] = 0) {
+            BlockState blockState = blockStateIterator.next();
+            blockStateID = BlockRepository.getStateId(blockState);
+        }
+
+        for (Iterator<BlockState> blockStateIterator = BlockRepository.light.getStateDefinition().getPossibleStates().iterator(); blockStateIterator.hasNext(); this.blockColors[blockStateID] = 0) {
+            BlockState blockState = blockStateIterator.next();
             blockStateID = BlockRepository.getStateId(blockState);
         }
 

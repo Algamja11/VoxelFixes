@@ -89,15 +89,15 @@ public class Map implements Runnable, IChangeObserver {
     private final Minecraft minecraft = Minecraft.getInstance();
     private final float[] lastLightBrightnessTable = new float[16];
     private final Object coordinateLock = new Object();
-    private final ResourceLocation blankImage = ResourceLocation.parse("textures/misc/white.png");
-    private final ResourceLocation arrowImage = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/mmarrow.png");
-    private final ResourceLocation squareMapFrame = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/squaremap.png");
-    private final ResourceLocation squareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/squaremap_stencil.png");
-    private final ResourceLocation roundMapFrame = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/roundmap.png");
+    private final ResourceLocation resourceBlank = ResourceLocation.parse("textures/misc/white.png");
+    private final ResourceLocation resourceArrow = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/mmarrow.png");
+    private final ResourceLocation resourceSquareMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/squaremap.png");
+    private final ResourceLocation resourceRoundMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/roundmap.png");
+    private final ResourceLocation resourceEnlargedSquareMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_squaremap.png");
+    private final ResourceLocation resourceEnlargedRoundMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_roundmap.png");
     private final ResourceLocation roundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/roundmap_stencil.png");
-    private final ResourceLocation enlargedSquareMapFrame = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_squaremap.png");
+    private final ResourceLocation squareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/squaremap_stencil.png");
     private final ResourceLocation enlargedSquareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_squaremap_stencil.png");
-    private final ResourceLocation enlargedRoundMapFrame = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_roundmap.png");
     private final ResourceLocation enlargedRoundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_roundmap_stencil.png");
     private ClientLevel world;
     private final MapSettingsManager options;
@@ -640,16 +640,18 @@ public class Map implements Runnable, IChangeObserver {
         this.scWidth = Mth.ceil((double) minecraft.getWindow().getWidth() / layoutVariables.scScale);
         this.scHeight = Mth.ceil((double) minecraft.getWindow().getHeight() / layoutVariables.scScale);
 
-        layoutVariables.mapSize = this.fullscreenMap ? Math.min(this.scWidth, this.scHeight) - 24 : this.enlargedMap ? 128 : 64;
+        layoutVariables.mapSize = this.fullscreenMap ? Math.min(this.scWidth, this.scHeight) - 16 : this.enlargedMap ? 128 : 64;
         int offset = layoutVariables.mapSize / 2 + 5;
         layoutVariables.mapX = this.fullscreenMap ? this.scWidth / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 3 ? this.scWidth - offset : offset;
-        layoutVariables.mapY = this.fullscreenMap ? this.scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - offset : offset;
-        layoutVariables.mapMode = this.fullscreenMap ? 2 : this.enlargedMap ? 1 : 0;
+        layoutVariables.mapY = this.fullscreenMap ? this.scHeight / 2 + 5 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - offset : offset;
 
-        layoutVariables.rotates = layoutVariables.mapMode == 0 && this.options.rotates;
-        layoutVariables.squareMap = layoutVariables.mapMode == 2 || this.options.squareMap;
+        layoutVariables.rotates = !this.enlargedMap && !this.fullscreenMap && this.options.rotates;
+        layoutVariables.isSquareMap = this.fullscreenMap || this.options.squareMap;
 
-        this.mapSafeScale = layoutVariables.squareMap && layoutVariables.rotates ? 1.4142F : 1.0625F;
+        this.mapSafeScale =  layoutVariables.isSquareMap && layoutVariables.rotates ? 1.4142F : 1.0F;
+        if (this.fullscreenMap) {
+            this.mapSafeScale *= 1.125F;
+        }
         layoutVariables.zoomScale = this.zoomScaleOrig / this.mapSafeScale;
         layoutVariables.positionScale = (layoutVariables.mapSize / 64.0F) / (float) layoutVariables.zoomScale;
 
@@ -677,9 +679,7 @@ public class Map implements Runnable, IChangeObserver {
         if (!this.options.hide) {
             this.renderMap(drawContext, this.layoutVariables);
             this.drawArrow(drawContext, this.layoutVariables);
-            if (!this.fullscreenMap) {
-                this.drawDirections(drawContext, this.layoutVariables);
-            }
+            this.drawDirections(drawContext, this.layoutVariables);
         }
 
         if (this.options.coordsMode != 0) {
@@ -1525,7 +1525,7 @@ public class Map implements Runnable, IChangeObserver {
         guiGraphics.pose().scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0F);
         guiGraphics.pose().translate(0, 0, 122);
 
-        guiGraphics.blit(RenderType::guiTextured, getMapStencil(layoutVariables), mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
+        guiGraphics.blit(RenderType::guiTextured, this.getMapStencil(), mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
 
         synchronized (this.coordinateLock) {
             if (this.imageChanged) {
@@ -1603,8 +1603,8 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         guiGraphics.pose().translate(0, 0, 10);
-        if (!this.fullscreenMap) {
-            guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, getMapFrame(layoutVariables), mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
+        if (!this.fullscreenMap){
+            guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, this.getMapFrame(), mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
         }
 
         if (VoxelMap.mapOptions.waypointsAllowed) {
@@ -1631,21 +1631,21 @@ public class Map implements Runnable, IChangeObserver {
         guiGraphics.pose().popPose();
     }
 
-    private ResourceLocation getMapFrame(LayoutVariables layoutVariables) {
-        if (layoutVariables.mapMode == 0) {
-            return layoutVariables.squareMap ? squareMapFrame : roundMapFrame;
+    private ResourceLocation getMapFrame() {
+        if (this.enlargedMap) {
+            return layoutVariables.isSquareMap ? resourceEnlargedSquareMap : resourceEnlargedRoundMap;
         } else {
-            return layoutVariables.squareMap ? enlargedSquareMapFrame : enlargedRoundMapFrame;
+            return layoutVariables.isSquareMap ? resourceSquareMap : resourceRoundMap;
         }
     }
 
-    private ResourceLocation getMapStencil(LayoutVariables layoutVariables) {
-        if (this.fullscreenMap) {
-            return blankImage;
-        } else if (layoutVariables.mapMode == 0) {
-            return layoutVariables.squareMap ? squareMapStencil : roundMapStencil;
+    private ResourceLocation getMapStencil() {
+        if (this.fullscreenMap){
+            return resourceBlank;
+        } else if (this.enlargedMap) {
+            return layoutVariables.isSquareMap ? enlargedSquareMapStencil : enlargedRoundMapStencil;
         } else {
-            return layoutVariables.squareMap ? enlargedSquareMapStencil : enlargedRoundMapStencil;
+            return layoutVariables.isSquareMap ? squareMapStencil : roundMapStencil;
         }
     }
 
@@ -1717,7 +1717,7 @@ public class Map implements Runnable, IChangeObserver {
             locate -= this.northRotate;
         }
 
-        if (layoutVariables.squareMap) {
+        if (layoutVariables.isSquareMap) {
             double radLocate = Math.toRadians(locate);
             double dispX = hypot * Math.cos(radLocate);
             double dispY = hypot * Math.sin(radLocate);
@@ -1808,7 +1808,7 @@ public class Map implements Runnable, IChangeObserver {
 
         guiGraphics.pose().translate(0, 0, 200.0f);
 
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, arrowImage, mapX - 4, mapY - 4, 0, 0, 8, 8, 8, 8);
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, resourceArrow, mapX - 4, mapY - 4, 0, 0, 8, 8, 8, 8);
 
         guiGraphics.pose().popPose();
     }
@@ -1820,6 +1820,12 @@ public class Map implements Runnable, IChangeObserver {
 
         PoseStack poseStack = drawContext.pose();
         float scale = 0.5F;
+
+        poseStack.pushPose();
+        poseStack.scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0F);
+        poseStack.scale(scale, scale, 1.0F);
+        poseStack.translate(0, 0, 150);
+
         float rotate;
         if (layoutVariables.rotates) {
             rotate = -this.direction - 90.0F - this.northRotate;
@@ -1828,7 +1834,7 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         float distance;
-        if (layoutVariables.squareMap) {
+        if (layoutVariables.isSquareMap) {
             if (layoutVariables.rotates) {
                 float tempdir = this.direction % 90.0F;
                 tempdir = 45.0F - Math.abs(45.0F - tempdir);
@@ -1839,26 +1845,24 @@ public class Map implements Runnable, IChangeObserver {
         } else {
             distance = halfMapSize / scale;
         }
+        if (this.fullscreenMap) {
+            distance -= 10.0F;
+        }
 
         poseStack.pushPose();
-        poseStack.scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0F);
-        poseStack.scale(scale, scale, 1.0F);
-        poseStack.translate(0, 0, 150);
-
-        poseStack.pushPose();
-        poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate - 90.0))), distance * Math.cos(Math.toRadians(-(rotate - 90.0))), 100.0);
+        poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate - 90.0))), distance * Math.cos(Math.toRadians(-(rotate - 90.0))), 0.0);
         GuiUtils.drawCenteredString(drawContext, "N", mapX / scale, mapY / scale - 4.5F, 16777215, true);
         poseStack.popPose();
         poseStack.pushPose();
-        poseStack.translate(distance * Math.sin(Math.toRadians(-rotate)), distance * Math.cos(Math.toRadians(-rotate)), 10.0);
+        poseStack.translate(distance * Math.sin(Math.toRadians(-rotate)), distance * Math.cos(Math.toRadians(-rotate)), 0.0);
         GuiUtils.drawCenteredString(drawContext, "E", mapX / scale, mapY / scale - 4.5F, 16777215, true);
         poseStack.popPose();
         poseStack.pushPose();
-        poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate + 90.0))), distance * Math.cos(Math.toRadians(-(rotate + 90.0))), 10.0);
+        poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate + 90.0))), distance * Math.cos(Math.toRadians(-(rotate + 90.0))), 0.0);
         GuiUtils.drawCenteredString(drawContext, "S", mapX / scale, mapY / scale - 4.5F, 16777215, true);
         poseStack.popPose();
         poseStack.pushPose();
-        poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate + 180.0))), distance * Math.cos(Math.toRadians(-(rotate + 180.0))), 10.0);
+        poseStack.translate(distance * Math.sin(Math.toRadians(-(rotate + 180.0))), distance * Math.cos(Math.toRadians(-(rotate + 180.0))), 0.0);
         GuiUtils.drawCenteredString(drawContext, "W", mapX / scale, mapY / scale - 4.5F, 16777215, true);
         poseStack.popPose();
 
@@ -1885,6 +1889,7 @@ public class Map implements Runnable, IChangeObserver {
         poseStack.pushPose();
         poseStack.scale(layoutVariables.scaleProj, layoutVariables.scaleProj, 1.0F);
         poseStack.scale(scale, scale, 1.0F);
+        poseStack.translate(0.0F, 0.0F, 150.0F);
 
         if (!this.options.hide && !this.fullscreenMap) {
             String text;
