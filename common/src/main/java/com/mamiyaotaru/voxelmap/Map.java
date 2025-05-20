@@ -1916,7 +1916,9 @@ public class Map implements Runnable, IChangeObserver {
                 }
             } else {
                 String text = this.dCoord(GameVariableAccessShim.xCoord()) + ", " + this.dCoord(GameVariableAccessShim.yCoord()) + ", " + this.dCoord(GameVariableAccessShim.zCoord());
-                GuiUtils.drawString(drawContext, text, (mapX - mapSize / 2.0F) / scale, (mapY + mapSize / 2.0F - 4.5F) / scale, 0xFFFFFF, true);
+                float textX = mapX - mapSize / 2.0F + 2.0F;
+                float textY = mapY + mapSize / 2.0F - 6.5F;
+                GuiUtils.drawString(drawContext, text, textX / scale, textY / scale, 0xFFFFFF, true);
 
                 text = "";
                 if (this.options.showBiomeLabel) {
@@ -1925,7 +1927,7 @@ public class Map implements Runnable, IChangeObserver {
                 if (this.zTimer > 0) {
                     text += ", " + this.message;
                 }
-                GuiUtils.drawString(drawContext, text, (mapX - mapSize / 2.0F) / scale, (mapY + mapSize / 2.0F - 9.0F) / scale, 0xFFFFFF, true);
+                GuiUtils.drawString(drawContext, text, textX / scale, (textY - 4.5F) / scale, 0xFFFFFF, true);
             }
         } else {
             int heading = (int) (this.direction + this.northRotate);
