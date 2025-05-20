@@ -648,10 +648,7 @@ public class Map implements Runnable, IChangeObserver {
         layoutVariables.rotates = !this.enlargedMap && !this.fullscreenMap && this.options.rotates;
         layoutVariables.isSquareMap = this.fullscreenMap || this.options.squareMap;
 
-        this.mapSafeScale =  layoutVariables.isSquareMap && layoutVariables.rotates ? 1.4142F : 1.0F;
-        if (this.fullscreenMap) {
-            this.mapSafeScale *= 1.125F;
-        }
+        this.mapSafeScale = this.fullscreenMap ? 1.125F : layoutVariables.isSquareMap && layoutVariables.rotates ? 1.4142F : 1.0625F;
         layoutVariables.zoomScale = this.zoomScaleOrig / this.mapSafeScale;
         layoutVariables.positionScale = (layoutVariables.mapSize / 64.0F) / (float) layoutVariables.zoomScale;
 
