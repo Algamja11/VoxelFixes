@@ -1688,7 +1688,7 @@ public class Map implements Runnable, IChangeObserver {
         int mapY = layoutVariables.mapY;
         int halfMapSize = layoutVariables.mapSize / 2;
 
-        boolean showLabel = this.options.showWaypointNamesOnMap;
+        boolean showLabel = this.options.showWaypointNamesOnMap || this.enlargedMap || this.fullscreenMap;
         String name = pt.name;
         if (target) {
             if (pt.red == 2.0F && pt.green == 0.0F && pt.blue == 0.0F) {
