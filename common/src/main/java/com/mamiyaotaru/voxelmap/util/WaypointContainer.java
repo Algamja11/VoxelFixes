@@ -186,7 +186,7 @@ public class WaypointContainer {
     }
 
     private void renderIcon(PoseStack poseStack, BufferSource bufferSource, Waypoint pt, boolean target, boolean showLabel, double distance, double baseX, double baseY, double baseZ, TextureAtlas textureAtlas) {
-        boolean depthTest = showLabel;
+        boolean depthTest = !showLabel;
 
         float red = pt.red;
         float green = pt.green;
@@ -215,13 +215,13 @@ public class WaypointContainer {
 
         float scale = ((float) adjustedDistance * 0.1F + 1.0F) * 0.0266F * this.options.waypointIconSize;
         float alpha = 1.0F;
-        if (!depthTest) {
+        if (depthTest) {
             alpha = distance > 5.0 ? 1.0F : (float) distance / 5.0F;
             if (!pt.enabled) {
                 alpha *= 0.5F;
             }
         }
-        float alphaNoDepth = depthTest ? 1.0F : alpha * 0.5F;
+        float alphaNoDepth = depthTest ? alpha * 0.5F : 1.0F;
         float width = 10.0F;
         Sprite icon = target ? textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png") : textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
         if (icon == textureAtlas.getMissingImage()) {
