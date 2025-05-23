@@ -197,30 +197,16 @@ public class GLUtils {
             )
     );
 
-    public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
-            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_text_background_depthtest"))
-            .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
-            .withBlend(BlendFunction.TRANSLUCENT)
-            .build();
-
-    public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
-            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_text_background_no_depthtest"))
+    public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_text_background"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .withBlend(BlendFunction.TRANSLUCENT)
             .build();
 
-    public static final RenderType WAYPOINT_TEXT_BACKGROUND_DEPTHTEST = RenderType.create(
-            "voxelmap:waypoint_text_background_depthtest",
+    public static final RenderType WAYPOINT_TEXT_BACKGROUND = RenderType.create(
+            "voxelmap:waypoint_text_background",
             0x00C000, // buffer size
-            WAYPOINT_TEXT_BACKGROUND_DEPTHTEST_PIPELINE,
-            RenderType.CompositeState.builder()
-                    .createCompositeState(false)
-    );
-
-    public static final RenderType WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST = RenderType.create(
-            "voxelmap:waypoint_text_background_no_depthtest",
-            0x00C000, // buffer size
-            WAYPOINT_TEXT_BACKGROUND_NO_DEPTHTEST_PIPELINE,
+            WAYPOINT_TEXT_BACKGROUND_PIPELINE,
             RenderType.CompositeState.builder()
                     .createCompositeState(false)
     );

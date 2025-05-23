@@ -100,14 +100,6 @@ public class GuiWaypointsOptions extends GuiScreenMinimap {
                     button.setMessage(Component.literal(this.options.getKeyText(option)));
                 }
             }
-
-            if (element instanceof GuiOptionSliderMinimap slider) {
-                EnumOptionsMinimap option = slider.returnEnumOptions();
-
-                if (option == EnumOptionsMinimap.WAYPOINT_FONT_SIZE) {
-                    slider.active = this.options.showWaypointNamesOnMap;
-                }
-            }
         }
     }
 
