@@ -121,7 +121,7 @@ public class WaypointContainer {
     }
 
     private double getDiff(Waypoint waypoint, double distance, Camera camera) {
-        double degrees = 3.0 + Math.min(5.0 / distance, 5.0);
+        double degrees = 3.0 + 3.0 / distance;
         double angle = Math.toRadians(degrees);
         double size = Math.sin(angle) * distance * options.waypointIconSize;
         Vec3 cameraPos = camera.getPosition();
@@ -214,14 +214,11 @@ public class WaypointContainer {
         }
 
         float scale = ((float) adjustedDistance * 0.1F + 1.0F) * 0.0266F * this.options.waypointIconSize;
-        float alpha = 1.0F;
-        if (depthTest) {
-            alpha = distance > 5.0 ? 1.0F : (float) distance / 5.0F;
-            if (!pt.enabled) {
-                alpha *= 0.5F;
-            }
+        float alpha = distance > 5.0 ? 1.0F : (float) distance / 5.0F;
+        if (!pt.enabled) {
+            alpha *= 0.5F;
         }
-        float alphaNoDepth = depthTest ? alpha * 0.5F : 1.0F;
+        float alphaNoDepth = depthTest ? alpha * 0.5F : alpha;
         float width = 10.0F;
         Sprite icon = target ? textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png") : textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypoint" + pt.imageSuffix + ".png");
         if (icon == textureAtlas.getMissingImage()) {

@@ -748,8 +748,7 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         Sprite icon = null;
         if (target) {
             icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/target.png");
-        }
-        if (pt.isDeathpoint) {
+        } else if (pt.isDeathpoint) {
             icon = textureAtlas.getAtlasSprite("voxelmap:images/waypoints/waypointskull.png");
         }
 
