@@ -6,7 +6,7 @@ import com.mamiyaotaru.voxelmap.util.Contact;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
 import com.mamiyaotaru.voxelmap.util.ImageUtils;
-import com.mamiyaotaru.voxelmap.util.LayoutVariables;
+import com.mamiyaotaru.voxelmap.util.MapVariables;
 import com.mamiyaotaru.voxelmap.util.MobCategory;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.math.Axis;
@@ -63,7 +63,7 @@ public class RadarSimple implements IRadar {
     }
 
     @Override
-    public void onTickInGame(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
+    public void onTickInGame(GuiGraphics guiGraphics, MapVariables mapVariables) {
         if (this.options.radarAllowed || this.options.radarMobsAllowed || this.options.radarPlayersAllowed) {
             if (this.options.isChanged()) {
                 this.timer = 500;
@@ -80,18 +80,18 @@ public class RadarSimple implements IRadar {
             }
 
             if (this.completedLoading && this.timer > 95) {
-                this.calculateMobs(layoutVariables);
+                this.calculateMobs(mapVariables);
                 this.timer = 0;
             }
 
             ++this.timer;
             if (this.completedLoading) {
-                this.renderMapMobs(guiGraphics, layoutVariables);
+                this.renderMapMobs(guiGraphics, mapVariables);
             }
         }
     }
 
-    public void calculateMobs(LayoutVariables layoutVariables) {
+    public void calculateMobs(MapVariables mapVariables) {
         this.contacts.clear();
 
         for (Entity entity : VoxelConstants.getClientWorld().entitiesForRendering()) {
@@ -102,14 +102,14 @@ public class RadarSimple implements IRadar {
                     int wayZ = GameVariableAccessShim.zCoord() - (int) entity.position().z();
                     int wayY = GameVariableAccessShim.yCoord() - (int) entity.position().y();
 
-                    float range = layoutVariables.mapSize / 2.0F - 3.5F;
+                    float range = mapVariables.mapSize / 2.0F - 3.5F;
                     range *= range;
                     double hypot = wayX * wayX + wayZ * wayZ;
-                    hypot *= layoutVariables.positionScale * layoutVariables.positionScale;
+                    hypot *= mapVariables.positionScale * mapVariables.positionScale;
 
                     boolean inRange = false;
-                    if (Math.abs(wayY) <= layoutVariables.zoomScale * 32.0) {
-                        if (!layoutVariables.isSquareMap) {
+                    if (Math.abs(wayY) <= mapVariables.zoomScale * 32.0) {
+                        if (!mapVariables.squareMap) {
                             inRange = hypot <= range;
                         } else {
                             double radLocate = Math.atan2(wayX, wayZ);
@@ -132,12 +132,12 @@ public class RadarSimple implements IRadar {
         this.contacts.sort(Comparator.comparingDouble(contact -> contact.y));
     }
 
-    public void renderMapMobs(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
-        int mapX = layoutVariables.mapX;
-        int mapY = layoutVariables.mapY;
+    public void renderMapMobs(GuiGraphics guiGraphics, MapVariables mapVariables) {
+        int mapX = mapVariables.mapX;
+        int mapY = mapVariables.mapY;
 
-        float range = layoutVariables.mapSize / 2.0F - 3.5F;
-        double max = layoutVariables.zoomScale * 32.0;
+        float range = mapVariables.mapSize / 2.0F - 3.5F;
+        double max = mapVariables.zoomScale * 32.0;
 
         for (Contact contact : this.contacts) {
             contact.updateLocation();
@@ -151,18 +151,18 @@ public class RadarSimple implements IRadar {
             contact.brightness = (float) Math.max(adjustedDiff / max, 0.0);
             contact.brightness *= contact.brightness;
             contact.angle = (float) Math.toDegrees(Math.atan2(wayX, wayZ));
-            contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) * layoutVariables.positionScale;
+            contact.distance = Math.sqrt(wayX * wayX + wayZ * wayZ) * mapVariables.positionScale;
 
             int color = wayY < 0 ? ARGB.colorFromFloat(contact.brightness, 1, 1, 1) : ARGB.colorFromFloat(1, contact.brightness, contact.brightness, contact.brightness);
 
-            if (layoutVariables.rotates) {
+            if (mapVariables.rotates) {
                 contact.angle += this.direction;
             } else if (this.minimapOptions.oldNorth) {
                 contact.angle -= 90.0F;
             }
 
             boolean inRange;
-            if (!layoutVariables.isSquareMap) {
+            if (!mapVariables.squareMap) {
                 inRange = contact.distance <= range;
             } else {
                 double radLocate = Math.toRadians(contact.angle);
@@ -175,7 +175,7 @@ public class RadarSimple implements IRadar {
                 try {
                     guiGraphics.pose().pushPose();
                     float contactFacing = contact.entity.getYHeadRot();
-                    if (layoutVariables.rotates) {
+                    if (mapVariables.rotates) {
                         contactFacing -= this.direction;
                     } else if (this.minimapOptions.oldNorth) {
                         contactFacing += 90.0F;
