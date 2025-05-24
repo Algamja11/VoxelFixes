@@ -87,84 +87,94 @@ import org.joml.Vector4f;
 
 public class Map implements Runnable, IChangeObserver {
     private final Minecraft minecraft = Minecraft.getInstance();
-    private final float[] lastLightBrightnessTable = new float[16];
+    private final Random random = new Random();
     private final Object coordinateLock = new Object();
-    private final ResourceLocation resourceBlank = ResourceLocation.parse("textures/misc/white.png");
-    private final ResourceLocation resourceArrow = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/mmarrow.png");
-    private final ResourceLocation resourceSquareMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/squaremap.png");
-    private final ResourceLocation resourceRoundMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/roundmap.png");
-    private final ResourceLocation resourceEnlargedSquareMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_squaremap.png");
-    private final ResourceLocation resourceEnlargedRoundMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_roundmap.png");
-    private final ResourceLocation roundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/roundmap_stencil.png");
-    private final ResourceLocation squareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/squaremap_stencil.png");
-    private final ResourceLocation enlargedSquareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_squaremap_stencil.png");
-    private final ResourceLocation enlargedRoundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_roundmap_stencil.png");
-    private ClientLevel world;
+
     private final MapSettingsManager options;
     private final LayoutVariables layoutVariables;
     private final ColorManager colorManager;
     private final WaypointManager waypointManager;
+
     private final int availableProcessors = Runtime.getRuntime().availableProcessors();
     private final boolean multicore = this.availableProcessors > 1;
+    private final boolean threading = this.multicore;
     private final int heightMapResetHeight = this.multicore ? 2 : 5;
     private final int heightMapResetTime = this.multicore ? 300 : 3000;
-    private final boolean threading = this.multicore;
+
+    private ClientLevel world;
     private final FullMapData[] mapData = new FullMapData[5];
     private final MapChunkCache[] chunkCache = new MapChunkCache[5];
     private DynamicMoveableTexture[] mapImages;
-    private ResourceLocation[] mapResources;
     private final DynamicMoveableTexture[] mapImagesFiltered = new DynamicMoveableTexture[5];
     private final DynamicMoveableTexture[] mapImagesUnfiltered = new DynamicMoveableTexture[5];
+    private ResourceLocation[] mapResources;
+    private final ResourceLocation[] resourceMapImageFiltered = new ResourceLocation[5];
+    private final ResourceLocation[] resourceMapImageUnfiltered = new ResourceLocation[5];
+
+    private Thread zCalc = new Thread(this, "Voxelmap LiveMap Calculation Thread");
+    private int zCalcTicker;
+    private int timer;
+    private boolean imageChanged = true;
+    private boolean doFullRender = true;
+    private int heightMapFudge;
     private BlockState transparentBlockState;
     private BlockState surfaceBlockState;
-    private boolean imageChanged = true;
     private LightTexture lightmapTexture;
     private boolean needLightmapRefresh = true;
     private int tickWithLightChange;
+    private int[] lightmapColors = new int[256];
+    private int zoom;
+    private double zoomScaleRaw = 1.0;
+    private boolean zoomChanged;
+    private float direction;
+    private int northRotate;
+    private String currentBiomeName = "";
+
+    private int scWidth;
+    private int scHeight;
+    private boolean enlargedMap;
+    private boolean fullscreenMap;
+    private String message = "";
+    private long messageDuration;
+    private float mapSafeScale = 1.0F;
+    private static double minTablistOffset;
+    private static float statusIconOffset = 0.0F;
+    private boolean showWelcomeScreen;
+
+    private Screen lastGuiScreen;
     private boolean lastPaused = true;
     private double lastGamma;
     private float lastSunBrightness;
     private float lastLightning;
     private float lastPotion;
-    private final int[] lastLightmapValues = { -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216 };
     private boolean lastBeneathRendering;
     private boolean needSkyColor;
     private boolean lastAboveHorizon = true;
     private int lastBiome;
     private int lastSkyColor;
-    private final Random generator = new Random();
-    private boolean showWelcomeScreen;
-    private Screen lastGuiScreen;
-    private boolean enlargedMap;
-    private boolean fullscreenMap;
-    private int zoom;
-    private int scWidth;
-    private int scHeight;
-    private String message = "";
-    private long zTimer;
-    private int heightMapFudge;
-    private int timer;
-    private boolean doFullRender = true;
-    private boolean zoomChanged;
-    private int lastX;
-    private int lastZ;
-    private int lastY;
-    private int lastImageX;
-    private int lastImageZ;
-    private float direction;
-    private int northRotate;
-    private Thread zCalc = new Thread(this, "Voxelmap LiveMap Calculation Thread");
-    private int zCalcTicker;
-    private int[] lightmapColors = new int[256];
-    private double zoomScaleOrig = 1.0;
-    private float mapSafeScale = 1.0F;
-    private static double minTablistOffset;
-    private static float statusIconOffset = 0.0F;
-    private String currentBiomeName = "";
+    private final int[] lastX = new int[5];
+    private final int[] lastZ = new int[5];
+    private final int[] lastY = new int[5];
+    private final int[] lastImageX = new int[5];
+    private final int[] lastImageZ = new int[5];
+    private final int[] lastLightmapValues = { -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216 };
+    private final float[] lastLightBrightnessTable = new float[16];
+
     private final ArrayList<MutableComponent> welcomeText = new ArrayList<>();
 
-    private final ResourceLocation[] resourceMapImageFiltered = new ResourceLocation[5];
-    private final ResourceLocation[] resourceMapImageUnfiltered = new ResourceLocation[5];
+    private final ResourceLocation resourceBlank = ResourceLocation.parse("textures/misc/white.png");
+    private final ResourceLocation resourceArrow = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/mmarrow.png");
+
+    private final ResourceLocation resourceSquareMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/squaremap.png");
+    private final ResourceLocation resourceRoundMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/roundmap.png");
+    private final ResourceLocation resourceEnlargedSquareMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_squaremap.png");
+    private final ResourceLocation resourceEnlargedRoundMap = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_roundmap.png");
+
+    private final ResourceLocation roundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/roundmap_stencil.png");
+    private final ResourceLocation squareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/squaremap_stencil.png");
+    private final ResourceLocation enlargedSquareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_squaremap_stencil.png");
+    private final ResourceLocation enlargedRoundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_roundmap_stencil.png");
+
     private GpuTexture fboTexture;
     private Tesselator fboTessellator = new Tesselator(4096);
     private final ResourceLocation resourceFboTexture = ResourceLocation.fromNamespaceAndPath("voxelmap", "map/fbo");
@@ -274,7 +284,7 @@ public class Map implements Runnable, IChangeObserver {
                             this.mapCalc(this.doFullRender);
                             if (!this.doFullRender) {
                                 MutableBlockPos blockPos = MutableBlockPosCache.get();
-                                this.chunkCache[this.zoom].centerChunks(blockPos.withXYZ(this.lastX, 0, this.lastZ));
+                                this.chunkCache[this.zoom].centerChunks(blockPos.withXYZ(this.lastX[this.zoom], 0, this.lastZ[this.zoom]));
                                 MutableBlockPosCache.release(blockPos);
                                 this.chunkCache[this.zoom].checkIfChunksChanged();
                             }
@@ -349,9 +359,9 @@ public class Map implements Runnable, IChangeObserver {
                     g = 1.0F;
                     b = 0.0F;
                 } else {
-                    r = this.generator.nextFloat();
-                    g = this.generator.nextFloat();
-                    b = this.generator.nextFloat();
+                    r = this.random.nextFloat();
+                    g = this.random.nextFloat();
+                    b = this.random.nextFloat();
                 }
 
                 TreeSet<DimensionContainer> dimensions = new TreeSet<>();
@@ -431,7 +441,7 @@ public class Map implements Runnable, IChangeObserver {
                 this.mapCalc(this.doFullRender);
                 if (!this.doFullRender) {
                     MutableBlockPos blockPos = MutableBlockPosCache.get();
-                    this.chunkCache[this.zoom].centerChunks(blockPos.withXYZ(this.lastX, 0, this.lastZ));
+                    this.chunkCache[this.zoom].centerChunks(blockPos.withXYZ(this.lastX[this.zoom], 0, this.lastZ[this.zoom]));
                     MutableBlockPosCache.release(blockPos);
                     this.chunkCache[this.zoom].checkIfChunksChanged();
                 }
@@ -452,7 +462,7 @@ public class Map implements Runnable, IChangeObserver {
             this.direction += 360.0F;
         }
 
-        if (!this.message.isEmpty() && this.zTimer == 0L) {
+        if (!this.message.isEmpty() && this.messageDuration == 0L) {
             this.message = "";
         }
 
@@ -462,8 +472,8 @@ public class Map implements Runnable, IChangeObserver {
 
         this.timer = this.timer > 5000 ? 0 : this.timer + 1;
 
-        if (System.currentTimeMillis() > this.zTimer) {
-            this.zTimer = 0;
+        if (System.currentTimeMillis() > this.messageDuration) {
+            this.messageDuration = 0;
         }
     }
 
@@ -499,7 +509,7 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private void setZoomScale() {
-        this.zoomScaleOrig = Math.pow(2.0, this.zoom) / 2.0;
+        this.zoomScaleRaw = Math.pow(2.0, this.zoom) / 2.0;
 
     }
 
@@ -649,7 +659,7 @@ public class Map implements Runnable, IChangeObserver {
         layoutVariables.isSquareMap = this.fullscreenMap || this.options.squareMap;
 
         this.mapSafeScale = this.fullscreenMap ? 1.125F : layoutVariables.isSquareMap && layoutVariables.rotates ? 1.4142F : 1.0625F;
-        layoutVariables.zoomScale = this.zoomScaleOrig / this.mapSafeScale;
+        layoutVariables.zoomScale = this.zoomScaleRaw / this.mapSafeScale;
         layoutVariables.positionScale = (layoutVariables.mapSize / 64.0F) / (float) layoutVariables.zoomScale;
 
         if (this.options.hide || this.fullscreenMap) {
@@ -723,10 +733,10 @@ public class Map implements Runnable, IChangeObserver {
         int currentX = GameVariableAccessShim.xCoord();
         int currentZ = GameVariableAccessShim.zCoord();
         int currentY = GameVariableAccessShim.yCoord();
-        int offsetX = currentX - this.lastX;
-        int offsetZ = currentZ - this.lastZ;
-        int offsetY = currentY - this.lastY;
         int zoom = this.zoom;
+        int offsetX = currentX - this.lastX[zoom];
+        int offsetZ = currentZ - this.lastZ[zoom];
+        int offsetY = currentY - this.lastY[zoom];
         int multi = (int) Math.pow(2.0, zoom);
         ClientLevel world = this.world;
         boolean needHeightAndID;
@@ -756,11 +766,11 @@ public class Map implements Runnable, IChangeObserver {
         }
 
         if (full || Math.abs(offsetY) >= this.heightMapResetHeight || this.heightMapFudge > this.heightMapResetTime) {
-            if (this.lastY != currentY) {
+            if (this.lastY[zoom] != currentY) {
                 needHeightMap = true;
             }
 
-            this.lastY = currentY;
+            this.lastY[zoom] = currentY;
             this.heightMapFudge = 0;
         }
 
@@ -772,7 +782,7 @@ public class Map implements Runnable, IChangeObserver {
         boolean caves = false;
         boolean netherPlayerInOpen;
         MutableBlockPos blockPos = MutableBlockPosCache.get();
-        blockPos.setXYZ(this.lastX, Math.max(Math.min(GameVariableAccessShim.yCoord(), world.getMaxY() - 1), world.getMinY()), this.lastZ);
+        blockPos.setXYZ(this.lastX[zoom], Math.max(Math.min(GameVariableAccessShim.yCoord(), world.getMaxY() - 1), world.getMinY()), this.lastZ[zoom]);
         if (VoxelConstants.getPlayer().level().dimensionType().hasCeiling()) {
 
             netherPlayerInOpen = world.getChunk(blockPos).getHeight(Heightmap.Types.MOTION_BLOCKING, blockPos.getX() & 15, blockPos.getZ() & 15) <= currentY;
@@ -804,8 +814,8 @@ public class Map implements Runnable, IChangeObserver {
                 this.mapImages[zoom].moveX(offsetX);
             }
 
-            this.lastX = currentX;
-            this.lastZ = currentZ;
+            this.lastX[zoom] = currentX;
+            this.lastZ[zoom] = currentZ;
         }
         int startX = currentX - 16 * multi;
         int startZ = currentZ - 16 * multi;
@@ -874,8 +884,9 @@ public class Map implements Runnable, IChangeObserver {
         boolean nether = false;
         boolean caves = false;
         boolean netherPlayerInOpen;
+        int zoom = this.zoom;
         MutableBlockPos blockPos = MutableBlockPosCache.get();
-        blockPos.setXYZ(this.lastX, Math.max(Math.min(GameVariableAccessShim.yCoord(), world.getMaxY()), world.getMinY()), this.lastZ);
+        blockPos.setXYZ(this.lastX[zoom], Math.max(Math.min(GameVariableAccessShim.yCoord(), world.getMaxY()), world.getMinY()), this.lastZ[zoom]);
         int currentY = GameVariableAccessShim.yCoord();
         if (VoxelConstants.getPlayer().level().dimensionType().hasCeiling()) {
             netherPlayerInOpen = this.world.getChunk(blockPos).getHeight(Heightmap.Types.MOTION_BLOCKING, blockPos.getX() & 15, blockPos.getZ() & 15) <= currentY;
@@ -893,9 +904,8 @@ public class Map implements Runnable, IChangeObserver {
         }
         MutableBlockPosCache.release(blockPos);
 
-        int zoom = this.zoom;
-        int startX = this.lastX;
-        int startZ = this.lastZ;
+        int startX = this.lastX[zoom];
+        int startZ = this.lastZ[zoom];
         ClientLevel world = this.world;
         int multi = (int) Math.pow(2.0, zoom);
         startX -= 16 * multi;
@@ -1112,7 +1122,7 @@ public class Map implements Runnable, IChangeObserver {
             }
 
             if (surfaceHeight == Short.MIN_VALUE) {
-                surfaceHeight = this.lastY + 1;
+                surfaceHeight = this.lastY[zoom] + 1;
                 solid = true;
             }
 
@@ -1329,7 +1339,7 @@ public class Map implements Runnable, IChangeObserver {
 
     private int getNetherHeight(int x, int z) {
         MutableBlockPos blockPos = MutableBlockPosCache.get();
-        int y = this.lastY;
+        int y = this.lastY[this.zoom];
         blockPos.setXYZ(x, y, z);
         BlockState blockState = this.world.getBlockState(blockPos);
         if (blockState.getLightBlock() == 0 && blockState.getBlock() != Blocks.LAVA) {
@@ -1345,7 +1355,7 @@ public class Map implements Runnable, IChangeObserver {
             MutableBlockPosCache.release(blockPos);
             return y;
         } else {
-            while (y <= this.lastY + 10 && y < world.getMaxY()) {
+            while (y <= this.lastY[this.zoom] + 10 && y < world.getMaxY()) {
                 ++y;
                 blockPos.setXYZ(x, y, z);
                 blockState = this.world.getBlockState(blockPos);
@@ -1404,7 +1414,7 @@ public class Map implements Runnable, IChangeObserver {
             int diff;
             double sc = 0.0;
             if (!this.options.slopemap) {
-                diff = height - this.lastY;
+                diff = height - this.lastY[zoom];
                 sc = Math.log10(Math.abs(diff) / 8.0 + 1.0) / 1.8;
                 if (diff < 0) {
                     sc = 0.0 - sc;
@@ -1472,7 +1482,7 @@ public class Map implements Runnable, IChangeObserver {
                 }
 
                 if (this.options.heightmap) {
-                    diff = height - this.lastY;
+                    diff = height - this.lastY[zoom];
                     double heightsc = Math.log10(Math.abs(diff) / 8.0 + 1.0) / 3.0;
                     sc = diff > 0 ? sc + heightsc : sc - heightsc;
                 }
@@ -1533,14 +1543,14 @@ public class Map implements Runnable, IChangeObserver {
             if (this.imageChanged) {
                 this.imageChanged = false;
                 this.mapImages[this.zoom].upload();
-                this.lastImageX = this.lastX;
-                this.lastImageZ = this.lastZ;
+                this.lastImageX[this.zoom] = this.lastX[this.zoom];
+                this.lastImageZ[this.zoom] = this.lastZ[this.zoom];
             }
         }
 
-        float multi = (float) (1.0 / this.zoomScaleOrig);
-        float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX) * multi;
-        float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ) * multi;
+        float multi = (float) (1.0 / this.zoomScaleRaw);
+        float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX[this.zoom]) * multi;
+        float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ[this.zoom]) * multi;
         guiGraphics.pose().pushPose();
         guiGraphics.pose().setIdentity();
 
@@ -1908,7 +1918,7 @@ public class Map implements Runnable, IChangeObserver {
                 GuiUtils.drawCenteredString(drawContext, this.currentBiomeName, mapX / scale, textY / scale, 0xFFFFFF, true); // BIOME
             }
 
-            if (this.zTimer != 0) {
+            if (this.messageDuration != 0) {
                 textY += (invertY ? -4.5F : 4.5F);
                 GuiUtils.drawCenteredString(drawContext, this.message, mapX / scale, textY / scale, 0xFFFFFF, true); // WORLD NAME
             }
@@ -1943,7 +1953,7 @@ public class Map implements Runnable, IChangeObserver {
                 text = this.currentBiomeName;
             }
 
-            if (this.zTimer != 0) {
+            if (this.messageDuration != 0) {
                 if (!text.isEmpty()) {
                     text += ", ";
                 }
@@ -1960,7 +1970,7 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     private void showMessage(String string, int duration) {
-        this.zTimer = System.currentTimeMillis() + duration;
+        this.messageDuration = System.currentTimeMillis() + duration;
         this.message = string;
     }
 
