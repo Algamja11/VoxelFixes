@@ -24,23 +24,13 @@ import com.mamiyaotaru.voxelmap.util.MutableBlockPos;
 import com.mamiyaotaru.voxelmap.util.MutableBlockPosCache;
 import com.mamiyaotaru.voxelmap.util.ScaledDynamicMutableTexture;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
-import com.mojang.blaze3d.ProjectionType;
-import com.mojang.blaze3d.buffers.GpuBuffer;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.systems.RenderPass;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTexture;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.math.Axis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.OptionalInt;
 import java.util.Random;
 import java.util.TreeSet;
 
@@ -54,7 +44,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.language.I18n;
@@ -82,7 +71,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
 public class Map implements Runnable, IChangeObserver {
@@ -127,17 +115,17 @@ public class Map implements Runnable, IChangeObserver {
     private int zoom;
     private double zoomScaleRaw = 1.0;
     private boolean zoomChanged;
+    private float mapScale = 1.0F;
     private float direction;
     private int northRotate;
-    private String currentBiomeName = "";
 
     private int scWidth;
     private int scHeight;
     private boolean enlargedMap;
     private boolean fullscreenMap;
+    private String currentBiomeName = "";
     private String message = "";
     private long messageDuration;
-    private float mapSafeScale = 1.0F;
     private static double minTablistOffset;
     private static float statusIconOffset = 0.0F;
     private boolean showWelcomeScreen;
@@ -176,10 +164,6 @@ public class Map implements Runnable, IChangeObserver {
     private final ResourceLocation enlargedSquareMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_squaremap_stencil.png");
     private final ResourceLocation enlargedRoundMapStencil = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/enlarged_roundmap_stencil.png");
 
-    private GpuTexture fboTexture;
-    private Tesselator fboTessellator = new Tesselator(4096);
-    private final ResourceLocation resourceFboTexture = ResourceLocation.fromNamespaceAndPath("voxelmap", "map/fbo");
-
     public Map() {
         resourceMapImageFiltered[0] = ResourceLocation.fromNamespaceAndPath("voxelmap", "map/filtered/0");
         resourceMapImageFiltered[1] = ResourceLocation.fromNamespaceAndPath("voxelmap", "map/filtered/1");
@@ -191,7 +175,6 @@ public class Map implements Runnable, IChangeObserver {
         resourceMapImageUnfiltered[2] = ResourceLocation.fromNamespaceAndPath("voxelmap", "map/unfiltered/2");
         resourceMapImageUnfiltered[3] = ResourceLocation.fromNamespaceAndPath("voxelmap", "map/unfiltered/3");
         resourceMapImageUnfiltered[4] = ResourceLocation.fromNamespaceAndPath("voxelmap", "map/unfiltered/4");
-
 
         this.options = VoxelConstants.getVoxelMapInstance().getMapOptions();
         this.colorManager = VoxelConstants.getVoxelMapInstance().getColorManager();
@@ -263,11 +246,6 @@ public class Map implements Runnable, IChangeObserver {
 
         this.zoom = this.options.zoom;
         this.setZoomScale();
-
-        final int fboTextureSize = 512;
-        DynamicTexture fboTexture = new DynamicTexture("voxelmap-fbotexture", fboTextureSize, fboTextureSize, true);
-        minecraft.getTextureManager().register(resourceFboTexture, fboTexture);
-        this.fboTexture = fboTexture.getTexture();
     }
 
     public void forceFullRender(boolean forceFullRender) {
@@ -659,8 +637,8 @@ public class Map implements Runnable, IChangeObserver {
         layoutVariables.rotates = !this.enlargedMap && !this.fullscreenMap && this.options.rotates;
         layoutVariables.squareMap = this.fullscreenMap || this.options.squareMap;
 
-        this.mapSafeScale = this.fullscreenMap ? 1.125F : layoutVariables.squareMap && layoutVariables.rotates ? 1.4142F : 1.0625F;
-        layoutVariables.zoomScale = this.zoomScaleRaw / this.mapSafeScale;
+        this.mapScale = this.fullscreenMap ? 1.125F : layoutVariables.squareMap && layoutVariables.rotates ? 1.4142F : 1.0625F;
+        layoutVariables.zoomScale = this.zoomScaleRaw / this.mapScale;
         layoutVariables.positionScale = (layoutVariables.mapSize / 64.0F) / (float) layoutVariables.zoomScale;
 
         if (this.options.hide || this.fullscreenMap) {
@@ -1553,59 +1531,18 @@ public class Map implements Runnable, IChangeObserver {
         float percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX[this.zoom]) * multi;
         float percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ[this.zoom]) * multi;
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().setIdentity();
-
-        guiGraphics.pose().translate(256, 256, 0);
+        guiGraphics.pose().translate(mapX, mapY, 0.0F);
         if (!layoutVariables.rotates) {
-            guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-this.northRotate));
+            guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(this.northRotate));
         } else {
-            guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(this.direction));
+            guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-this.direction));
         }
-        guiGraphics.pose().scale(this.mapSafeScale, this.mapSafeScale, 1);
-        guiGraphics.pose().translate(-256, -256, 0);
-        guiGraphics.pose().translate(-percentX * 512.0F / 64.0F, percentY * 512.0F / 64.0F, 0.0f);
+        guiGraphics.pose().scale(this.mapScale, this.mapScale, 1.0F);
+        guiGraphics.pose().translate(-mapX, -mapY, 0.0F);
+        guiGraphics.pose().translate(-percentX * mapSize / 64.0F, -percentY * mapSize / 64.0F, 0.0F);
 
-        guiGraphics.flush();
-
-        Matrix4f matrix4f = guiGraphics.pose().last().pose();
-        BufferBuilder bufferBuilder = fboTessellator.begin(Mode.QUADS, RenderPipelines.GUI_TEXTURED.getVertexFormat());
-        bufferBuilder.addVertex(matrix4f, 0, 512, 0).setUv(0, 0).setColor(0xFFFFFFFF);
-        bufferBuilder.addVertex(matrix4f, 512, 512, 0).setUv(1, 0).setColor(0xFFFFFFFF);
-        bufferBuilder.addVertex(matrix4f, 512, 0, 0).setUv(1, 1).setColor(0xFFFFFFFF);
-        bufferBuilder.addVertex(matrix4f, 0, 0, 0).setUv(0, 1).setColor(0xFFFFFFFF);
-
-        ProjectionType originalProjectionType = RenderSystem.getProjectionType();
-        Matrix4f originalProjectionMatrix = RenderSystem.getProjectionMatrix();
-        RenderSystem.setProjectionMatrix(new Matrix4f().ortho(0.0F, 512.0F, 512.0F, 0.0F, 1000.0F, 21000.0F), ProjectionType.ORTHOGRAPHIC);
-
-        RenderPipeline renderPipeline = RenderPipelines.GUI_TEXTURED;
-        try (MeshData meshData = bufferBuilder.build()) {
-            GpuBuffer vertexBuffer = renderPipeline.getVertexFormat().uploadImmediateVertexBuffer(meshData.vertexBuffer());
-            GpuBuffer indexBuffer;
-            VertexFormat.IndexType indexType;
-            if (meshData.indexBuffer() == null) {
-                RenderSystem.AutoStorageIndexBuffer autoStorageIndexBuffer = RenderSystem.getSequentialBuffer(meshData.drawState().mode());
-                indexBuffer = autoStorageIndexBuffer.getBuffer(meshData.drawState().indexCount());
-                indexType = autoStorageIndexBuffer.type();
-            } else {
-                indexBuffer = renderPipeline.getVertexFormat().uploadImmediateIndexBuffer(meshData.indexBuffer());
-                indexType = meshData.drawState().indexType();
-            }
-
-            try (RenderPass renderPass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(fboTexture, OptionalInt.of(0xff000000))) {
-                renderPass.setPipeline(renderPipeline);
-                renderPass.bindSampler("Sampler0", mapImages[this.zoom].getTexture());
-                renderPass.setVertexBuffer(0, vertexBuffer);
-                renderPass.setIndexBuffer(indexBuffer, indexType);
-                renderPass.drawIndexed(0, meshData.drawState().indexCount());
-            }
-        }
-        RenderSystem.setProjectionMatrix(originalProjectionMatrix, originalProjectionType);
-        fboTessellator.clear();
-
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, mapResources[this.zoom], mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
         guiGraphics.pose().popPose();
-
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, resourceFboTexture, mapX - mapSize / 2, mapY - mapSize / 2, 0, 0, mapSize, mapSize, mapSize, mapSize);
 
         if (this.options.biomeOverlay != 0 && (this.enlargedMap || this.fullscreenMap)) {
             this.drawBiomeLabel(guiGraphics, layoutVariables);
