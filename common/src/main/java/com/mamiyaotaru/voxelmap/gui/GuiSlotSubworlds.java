@@ -35,7 +35,7 @@ class GuiSlotSubworlds extends AbstractSelectionList<GuiSlotSubworlds.WorldItem>
 
     @Override
     public int getRowWidth() {
-        return 100;
+        return 101;
     }
 
     @Override
@@ -62,12 +62,11 @@ class GuiSlotSubworlds extends AbstractSelectionList<GuiSlotSubworlds.WorldItem>
         }
 
         public void render(GuiGraphics drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            int itemWidth = GuiSlotSubworlds.this.getWidth();
+            int width = GuiSlotSubworlds.this.getWidth();
+            drawContext.drawCenteredString(parentGui.getFont(), subworldName, x + width / 2, y + 3, 0xFFFFFF);
 
-            drawContext.drawCenteredString(parentGui.getFont(), subworldName, x + itemWidth / 2, y + 3, 0xFFFFFF);
-
-            int iconWidth = 18;
-            drawContext.blit(RenderType::guiTextured, parentGui.waypoint.world.equals(subworldName) ? ENABLED_ICON : DISABLED_ICON, x + itemWidth - iconWidth - 4, y - 3, 0, 0, 18, 18, 18, 18);
+            byte iconWidth = 18;
+            drawContext.blit(RenderType::guiTextured, parentGui.waypoint.world.equals(subworldName) ? ENABLED_ICON : DISABLED_ICON, x + width - iconWidth, y - 3, 0, 0, 18, 18, 18, 18);
         }
 
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -76,7 +75,7 @@ class GuiSlotSubworlds extends AbstractSelectionList<GuiSlotSubworlds.WorldItem>
             }
 
             GuiSlotSubworlds.this.setSelected(this);
-            int iconWidth = 18;
+            byte iconWidth = 18;
             int rightEdge = GuiSlotSubworlds.this.getX() + GuiSlotSubworlds.this.getWidth();
             if (mouseX >= (rightEdge - iconWidth) && mouseX <= rightEdge) {
                 parentGui.selectOrToggleSubworld(subworldName);

@@ -12,6 +12,7 @@ import com.mamiyaotaru.voxelmap.util.GuiUtils;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -58,11 +59,9 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
     private boolean choosingIcon;
     private final boolean editing;
 
-    private boolean subworldListOpen;
+    private AbstractSelectionList<?> selectedList;
     private GuiSlotSubworlds subworldList;
-    private String selectedSubworld;
-
-    private boolean dimensionListOpen = true;
+    protected String selectedSubworld;
     private GuiSlotDimensions dimensionList;
     protected DimensionContainer selectedDimension;
 
@@ -116,24 +115,14 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         this.doneButton.active = this.isAcceptable();
         this.setFocused(this.waypointName);
         this.waypointName.setFocused(true);
+        this.dimensionList = new GuiSlotDimensions(this);
+        this.selectedList = this.dimensionList;
         if (waypointManager.isMultiworld()) {
-            this.addRenderableWidget(new Button.Builder(Component.empty(), button -> {
-                this.subworldListOpen = false;
-                this.dimensionListOpen = true;
-            }).bounds(this.getWidth() / 2 + 102, buttonListY, 20, 20).build());
-
-            this.addRenderableWidget(new Button.Builder(Component.empty(), button -> {
-                this.subworldListOpen = true;
-                this.dimensionListOpen = false;
-            }).bounds(this.getWidth() / 2 + 102, buttonListY + 24, 20, 20).build());
-
             this.subworldList = new GuiSlotSubworlds(this);
             this.selectedSubworld = this.waypoint.world;
-        } else {
-            this.subworldListOpen = false;
-            this.dimensionListOpen = true;
+            this.addRenderableWidget(new Button.Builder(Component.empty(), button -> this.selectedList = this.dimensionList).bounds(this.getWidth() / 2 + 102, buttonListY, 20, 20).build());
+            this.addRenderableWidget(new Button.Builder(Component.empty(), button -> this.selectedList = this.subworldList).bounds(this.getWidth() / 2 + 102, buttonListY + 24, 20, 20).build());
         }
-        this.dimensionList = new GuiSlotDimensions(this);
     }
 
     protected void cancelWaypoint() {
@@ -258,14 +247,27 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
             return false;
         }
 
-        if (this.subworldListOpen) {
-            this.subworldList.mouseClicked(mouseX, mouseY, button);
-        }
-        if (this.dimensionListOpen) {
-            this.dimensionList.mouseClicked(mouseX, mouseY, button);
-        }
+        this.selectedList.mouseClicked(mouseX, mouseY, button);
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        this.selectedList.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        this.selectedList.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double amount) {
+        this.selectedList.mouseScrolled(mouseX, mouseY, horizontalAmount, amount);
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, amount);
     }
 
     @Override
@@ -279,12 +281,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         drawContext.drawString(this.getFont(), I18n.get("Z"), this.getWidth() / 2 + 44, this.getHeight() / 6 + 41, 16777215);
 
         this.tooltip = null;
-        if (this.subworldListOpen) {
-            this.subworldList.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
-        }
-        if (this.dimensionListOpen) {
-            this.dimensionList.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
-        }
+        this.selectedList.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
         this.buttonEnabled.setMessage(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
         int buttonListY = this.getHeight() / 6 + 88;

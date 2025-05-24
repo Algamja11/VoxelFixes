@@ -49,7 +49,7 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
 
     @Override
     public int getRowWidth() {
-        return 100;
+        return 101;
     }
 
     @Override
@@ -88,14 +88,14 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
         }
 
         public void render(GuiGraphics drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            drawContext.drawCenteredString(this.parentGui.getFont(), this.dim.getDisplayName(), this.parentGui.getWidth() / 2 + GuiSlotDimensions.this.getWidth() / 2, y + 3, 16777215);
-            byte padding = 4;
-            byte iconWidth = 18;
-            x = this.parentGui.getWidth() / 2;
             int width = GuiSlotDimensions.this.getWidth();
-            if (mouseX >= x + padding && mouseY >= y && mouseX <= x + width + padding && mouseY <= y + GuiSlotDimensions.this.itemHeight) {
+            drawContext.drawCenteredString(this.parentGui.getFont(), this.dim.getDisplayName(), x + width / 2, y + 3, 16777215);
+
+            byte iconWidth = 18;
+
+            if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + entryHeight) {
                 Component tooltip;
-                if (mouseX >= x + width - iconWidth - padding && mouseX <= x + width) {
+                if (mouseX >= x + width - iconWidth && mouseX <= x + width) {
                     tooltip = this.parentGui.waypoint.dimensions.contains(this.dim) ? TOOLTIP_APPLIES : TOOLTIP_NOT_APPLIES;
                 } else {
                     tooltip = null;
