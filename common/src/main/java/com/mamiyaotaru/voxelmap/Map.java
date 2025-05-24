@@ -622,6 +622,24 @@ public class Map implements Runnable, IChangeObserver {
     }
 
     public void drawMinimap(GuiGraphics drawContext) {
+        this.updateVariables(this.layoutVariables);
+
+        if (!this.options.hide) {
+            this.renderMap(drawContext, this.layoutVariables);
+            this.drawArrow(drawContext, this.layoutVariables);
+            if (!this.fullscreenMap) {
+                this.drawDirections(drawContext, this.layoutVariables);
+            }
+        }
+
+        this.showCoords(drawContext, this.layoutVariables);
+
+        if (this.showWelcomeScreen) {
+            this.drawWelcomeScreen(drawContext, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
+        }
+    }
+
+    private void updateVariables(LayoutVariables layoutVariables) {
         int scScaleOrig = Math.max(1, Math.min(minecraft.getWindow().getWidth() / 320, minecraft.getWindow().getHeight() / 240));
         layoutVariables.scScale = !this.options.hide && this.fullscreenMap ? scScaleOrig + 1 : scScaleOrig + this.options.sizeModifier;
         layoutVariables.scaleProj = (float) (layoutVariables.scScale / minecraft.getWindow().getGuiScale());
@@ -629,17 +647,19 @@ public class Map implements Runnable, IChangeObserver {
         this.scWidth = Mth.ceil((double) minecraft.getWindow().getWidth() / layoutVariables.scScale);
         this.scHeight = Mth.ceil((double) minecraft.getWindow().getHeight() / layoutVariables.scScale);
 
-        layoutVariables.mapSize = this.fullscreenMap ? Math.min(this.scWidth, this.scHeight) - 16 : this.enlargedMap ? 128 : 64;
-        int offset = layoutVariables.mapSize / 2 + 5;
-        layoutVariables.mapX = this.fullscreenMap ? this.scWidth / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 3 ? this.scWidth - offset : offset;
-        layoutVariables.mapY = this.fullscreenMap ? this.scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - offset : offset;
+        if (!this.options.hide) {
+            layoutVariables.mapSize = this.fullscreenMap ? Math.min(this.scWidth, this.scHeight) - 16 : this.enlargedMap ? 128 : 64;
+            int offset = layoutVariables.mapSize / 2 + 5;
+            layoutVariables.mapX = this.fullscreenMap ? this.scWidth / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 3 ? this.scWidth - offset : offset;
+            layoutVariables.mapY = this.fullscreenMap ? this.scHeight / 2 : this.options.mapCorner != 0 && this.options.mapCorner != 1 ? this.scHeight - offset : offset;
 
-        layoutVariables.rotates = !this.enlargedMap && !this.fullscreenMap && this.options.rotates;
-        layoutVariables.squareMap = this.fullscreenMap || this.options.squareMap;
+            layoutVariables.rotates = !this.enlargedMap && !this.fullscreenMap && this.options.rotates;
+            layoutVariables.squareMap = this.fullscreenMap || this.options.squareMap;
 
-        this.mapScale = this.fullscreenMap ? 1.125F : layoutVariables.squareMap && layoutVariables.rotates ? 1.4142F : 1.0625F;
-        layoutVariables.zoomScale = this.zoomScaleRaw / this.mapScale;
-        layoutVariables.positionScale = (layoutVariables.mapSize / 64.0F) / (float) layoutVariables.zoomScale;
+            this.mapScale = this.fullscreenMap ? 1.125F : layoutVariables.squareMap && layoutVariables.rotates ? 1.4142F : 1.0625F;
+            layoutVariables.zoomScale = this.zoomScaleRaw / this.mapScale;
+            layoutVariables.positionScale = (layoutVariables.mapSize / 64.0F) / (float) layoutVariables.zoomScale;
+        }
 
         if (this.options.hide || this.fullscreenMap) {
             minTablistOffset = 0.0F;
@@ -665,20 +685,6 @@ public class Map implements Runnable, IChangeObserver {
                 }
             }
             Map.statusIconOffset = statusIconOffset;
-        }
-
-        if (!this.options.hide) {
-            this.renderMap(drawContext, this.layoutVariables);
-            this.drawArrow(drawContext, this.layoutVariables);
-            if (!this.fullscreenMap) {
-                this.drawDirections(drawContext, this.layoutVariables);
-            }
-        }
-
-        this.showCoords(drawContext, this.layoutVariables);
-
-        if (this.showWelcomeScreen) {
-            this.drawWelcomeScreen(drawContext, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
         }
     }
 

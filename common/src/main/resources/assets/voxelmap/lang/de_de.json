@@ -138,7 +138,7 @@
   "voxelmap.worldmap.multiworld.detected1": "Passende Welt entdeckt",
   "voxelmap.worldmap.multiworld.detected2": "Wenn das nicht richtig sei, die richtige Welt auf dem Multiworldschirm auswählen",
   "voxelmap.worldmap.multiworld.unknown": "Unbekannte Welt!  Bitte auf dem Multiworldschirm die aktuelle Welt auswählen",
-  "voxelmap.worldmap.multiworld.edit": "Welt Name anpassen",
-  "voxelmap.worldmap.multiworld.name": "Welt Name",
-  "voxelmap.worldmap.multiworld.delete_confirm": "Welt löschen bestätigen"
+  "voxelmap.worldmap.subworld.edit": "Welt Name anpassen",
+  "voxelmap.worldmap.subworld.name": "Welt Name",
+  "voxelmap.worldmap.subworld.delete_confirm": "Welt löschen bestätigen"
 }

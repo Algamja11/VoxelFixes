@@ -52,6 +52,7 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
         return 100;
     }
 
+    @Override
     public void setSelected(DimensionItem entry) {
         super.setSelected(entry);
         if (this.getSelected() instanceof DimensionItem) {
@@ -62,13 +63,13 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
         this.parentGui.setSelectedDimension(entry.dim);
     }
 
+    @Override
     protected boolean isSelectedItem(int index) {
         return this.dimensions.get(index).dim.equals(this.parentGui.selectedDimension);
     }
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {

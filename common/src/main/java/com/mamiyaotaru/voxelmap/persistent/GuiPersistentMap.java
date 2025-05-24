@@ -1171,8 +1171,9 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         private final EnumMap<ElementType, Boolean> buttonStates = new EnumMap<>(ElementType.class);
         private final ElementType[] sidebarButtons = { ElementType.BUTTON_WAYPOINT_LIST };
 
-        private final ResourceLocation arrowIcon = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/worldmap_sidebar/arrow.png");
-        private final ResourceLocation waypointListIcon = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/worldmap_sidebar/waypoint_list.png");
+        private final ResourceLocation leftArrowIcon = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/icons/left_arrow.png");
+        private final ResourceLocation rightArrowIcon = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/icons/right_arrow.png");
+        private final ResourceLocation waypointListIcon = ResourceLocation.fromNamespaceAndPath("voxelmap", "images/icons/waypoint_list.png");
 
         private SidebarPanel() {
             parentGui = GuiPersistentMap.this;
@@ -1260,21 +1261,11 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
                 int buttonX = sidebarMiddle - 30;
                 int buttonY = parentGui.bottom - 10;
                 int buttonColor = getButtonState(ElementType.WAYPOINT_LIST_LEFT_ARROW) ? 0xFFCCCCCC : 0xFFFFFFFF;
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().translate(buttonX, buttonY, 0.0F);
-                guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-90.0F));
-                guiGraphics.pose().translate(-buttonX, -buttonY, 0.0F);
-                setButtonState(ElementType.WAYPOINT_LIST_LEFT_ARROW, drawTexturedElement(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, arrowIcon, buttonX - 8, buttonY - 8, buttonX + 8, buttonY + 8, mouseX, mouseY, buttonColor));
-                guiGraphics.pose().popPose();
+                setButtonState(ElementType.WAYPOINT_LIST_LEFT_ARROW, drawTexturedElement(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, leftArrowIcon, buttonX - 8, buttonY - 8, buttonX + 8, buttonY + 8, mouseX, mouseY, buttonColor));
 
                 buttonX = sidebarMiddle + 30;
                 buttonColor = getButtonState(ElementType.WAYPOINT_LIST_RIGHT_ARROW) ? 0xFFCCCCCC : 0xFFFFFFFF;
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().translate(buttonX, buttonY, 0.0F);
-                guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(90.0F));
-                guiGraphics.pose().translate(-buttonX, -buttonY, 0.0F);
-                setButtonState(ElementType.WAYPOINT_LIST_RIGHT_ARROW, drawTexturedElement(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, arrowIcon, buttonX - 8, buttonY - 8, buttonX + 8, buttonY + 8, mouseX, mouseY, buttonColor));
-                guiGraphics.pose().popPose();
+                setButtonState(ElementType.WAYPOINT_LIST_RIGHT_ARROW, drawTexturedElement(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH, rightArrowIcon, buttonX - 8, buttonY - 8, buttonX + 8, buttonY + 8, mouseX, mouseY, buttonColor));
 
                 guiGraphics.drawCenteredString(parentGui.getFont(), (this.waypointListPage + 1) + " / " + pageCount, sidebarMiddle, parentGui.bottom - 15, 0xFFFFFF);
 

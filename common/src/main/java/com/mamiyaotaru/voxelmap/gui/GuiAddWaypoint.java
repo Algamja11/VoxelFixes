@@ -22,44 +22,62 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.TreeSet;
+
 public class GuiAddWaypoint extends GuiScreenMinimap {
     private static final ResourceLocation BLANK = ResourceLocation.parse("textures/misc/white.png");
     private static final ResourceLocation COLOR_PICKER = ResourceLocation.parse("voxelmap:images/color_picker.png");
-    final WaypointManager waypointManager;
-    final ColorManager colorManager;
+    private static final ResourceLocation SUBWORLD_LIST = ResourceLocation.parse("voxelmap:images/icons/multiworld_list.png");
+    private static final ResourceLocation DIMENSION_LIST = ResourceLocation.parse("voxelmap:images/icons/dimension_list.png");
+
+    private final ColorManager colorManager;
+    private final WaypointManager waypointManager;
+
     private final IGuiWaypoints parentGui;
+
+    protected final Waypoint waypoint;
+    private final float lastRed;
+    private final float lastGreen;
+    private final float lastBlue;
+    private final String lastSuffix;
+    private final boolean lastEnabled;
+    private final String lastWorld;
+    private final TreeSet<DimensionContainer> lastDimensions;
+    private final int playerX;
+    private final int playerY;
+    private final int playerZ;
+
     private Button doneButton;
-    private GuiSlotDimensions dimensionList;
-    protected DimensionContainer selectedDimension;
-    private Component tooltip;
     private EditBox waypointName;
     private EditBox waypointX;
     private EditBox waypointY;
     private EditBox waypointZ;
     private Button buttonEnabled;
-    protected final Waypoint waypoint;
+    private Component tooltip;
     private boolean choosingColor;
     private boolean choosingIcon;
-    private final float red;
-    private final float green;
-    private final float blue;
-    private final String suffix;
-    private final boolean enabled;
     private final boolean editing;
-    private final int playerX;
-    private final int playerY;
-    private final int playerZ;
+
+    private boolean subworldListOpen;
+    private GuiSlotSubworlds subworldList;
+    private String selectedSubworld;
+
+    private boolean dimensionListOpen = true;
+    private GuiSlotDimensions dimensionList;
+    protected DimensionContainer selectedDimension;
 
     public GuiAddWaypoint(IGuiWaypoints par1GuiScreen, Waypoint par2Waypoint, boolean editing) {
         this.waypointManager = VoxelConstants.getVoxelMapInstance().getWaypointManager();
         this.colorManager = VoxelConstants.getVoxelMapInstance().getColorManager();
         this.parentGui = par1GuiScreen;
         this.waypoint = par2Waypoint;
-        this.red = this.waypoint.red;
-        this.green = this.waypoint.green;
-        this.blue = this.waypoint.blue;
-        this.suffix = this.waypoint.imageSuffix;
-        this.enabled = this.waypoint.enabled;
+        this.lastRed = this.waypoint.red;
+        this.lastGreen = this.waypoint.green;
+        this.lastBlue = this.waypoint.blue;
+        this.lastSuffix = this.waypoint.imageSuffix;
+        this.lastEnabled = this.waypoint.enabled;
+        this.lastWorld = this.waypoint.world;
+        this.lastDimensions = new TreeSet<>(this.waypoint.dimensions);
         this.editing = editing;
         this.parentScreen = (Screen) par1GuiScreen;
         this.playerX = VoxelConstants.getPlayer().getBlockX();
@@ -95,18 +113,38 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         this.doneButton = new Button.Builder(Component.translatable("addServer.add"), button -> this.acceptWaypoint()).bounds(this.getWidth() / 2 - 155, this.getHeight() / 6 + 168, 150, 20).build();
         this.addRenderableWidget(this.doneButton);
         this.addRenderableWidget(new Button.Builder(Component.translatable("gui.cancel"), button -> this.cancelWaypoint()).bounds(this.getWidth() / 2 + 5, this.getHeight() / 6 + 168, 150, 20).build());
-        this.doneButton.active = !this.waypointName.getValue().isEmpty();
+        this.doneButton.active = this.isAcceptable();
         this.setFocused(this.waypointName);
         this.waypointName.setFocused(true);
+        if (waypointManager.isMultiworld()) {
+            this.addRenderableWidget(new Button.Builder(Component.empty(), button -> {
+                this.subworldListOpen = false;
+                this.dimensionListOpen = true;
+            }).bounds(this.getWidth() / 2 + 102, buttonListY, 20, 20).build());
+
+            this.addRenderableWidget(new Button.Builder(Component.empty(), button -> {
+                this.subworldListOpen = true;
+                this.dimensionListOpen = false;
+            }).bounds(this.getWidth() / 2 + 102, buttonListY + 24, 20, 20).build());
+
+            this.subworldList = new GuiSlotSubworlds(this);
+            this.selectedSubworld = this.waypoint.world;
+        } else {
+            this.subworldListOpen = false;
+            this.dimensionListOpen = true;
+        }
         this.dimensionList = new GuiSlotDimensions(this);
     }
 
     protected void cancelWaypoint() {
-        waypoint.red = red;
-        waypoint.green = green;
-        waypoint.blue = blue;
-        waypoint.imageSuffix = suffix;
-        waypoint.enabled = enabled;
+        waypoint.red = lastRed;
+        waypoint.green = lastGreen;
+        waypoint.blue = lastBlue;
+        waypoint.imageSuffix = lastSuffix;
+        waypoint.enabled = lastEnabled;
+        waypoint.world = lastWorld;
+        waypoint.dimensions.clear();
+        waypoint.dimensions.addAll(lastDimensions);
 
         if (parentGui != null) {
             parentGui.accept(false);
@@ -219,7 +257,13 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
             }
             return false;
         }
-        this.dimensionList.mouseClicked(mouseX, mouseY, button);
+
+        if (this.subworldListOpen) {
+            this.subworldList.mouseClicked(mouseX, mouseY, button);
+        }
+        if (this.dimensionListOpen) {
+            this.dimensionList.mouseClicked(mouseX, mouseY, button);
+        }
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -235,7 +279,12 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         drawContext.drawString(this.getFont(), I18n.get("Z"), this.getWidth() / 2 + 44, this.getHeight() / 6 + 41, 16777215);
 
         this.tooltip = null;
-        this.dimensionList.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
+        if (this.subworldListOpen) {
+            this.subworldList.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
+        }
+        if (this.dimensionListOpen) {
+            this.dimensionList.render(drawContext, this.choosingColor || this.choosingIcon ? 0 : mouseX, this.choosingColor || this.choosingIcon ? 0 : mouseY, delta);
+        }
         this.buttonEnabled.setMessage(Component.literal(I18n.get("voxelmap.waypoints.enabled") + ": " + (this.waypoint.enabled ? I18n.get("options.on") : I18n.get("options.off"))));
 
         int buttonListY = this.getHeight() / 6 + 88;
@@ -243,6 +292,10 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
         drawContext.blit(RenderType::guiTextured, BLANK, this.getWidth() / 2 - 25, buttonListY + 24 + 5, 0, 0, 16, 10, 16, 10, color);
         Sprite waypointSprite = VoxelConstants.getVoxelMapInstance().getWaypointManager().getTextureAtlas().getAtlasSprite("voxelmap:images/waypoints/waypoint" + waypoint.imageSuffix + ".png");
         waypointSprite.blit(drawContext, GLUtils.GUI_TEXTURED_EQUAL_DEPTH, this.getWidth() / 2 - 25, buttonListY + 48 + 2, 16, 16, color);
+        if (waypointManager.isMultiworld()) {
+            drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, DIMENSION_LIST, this.getWidth() / 2 + 102, buttonListY, 0.0F, 0.0F, 20, 20, 20, 20, 0xFFFFFFFF);
+            drawContext.blit(GLUtils.GUI_TEXTURED_EQUAL_DEPTH, SUBWORLD_LIST, this.getWidth() / 2 + 102, buttonListY + 24, 0.0F, 0.0F, 20, 20, 20, 20, 0xFFFFFFFF);
+        }
         drawContext.pose().translate(0, 0, 20);
         if (this.choosingColor || this.choosingIcon) {
             super.renderBackground(drawContext, mouseX, mouseY, delta);
@@ -320,6 +373,15 @@ public class GuiAddWaypoint extends GuiScreenMinimap {
             this.waypoint.dimensions.add(this.selectedDimension);
         }
 
+    }
+
+    public void selectOrToggleSubworld(String world) {
+        if (this.selectedSubworld.equals(world)) {
+            this.selectedSubworld = "";
+        } else {
+            this.selectedSubworld = world;
+        }
+        this.waypoint.world = this.selectedSubworld;
     }
 
     static void setTooltip(GuiAddWaypoint par0GuiWaypoint, Component par1Str) {

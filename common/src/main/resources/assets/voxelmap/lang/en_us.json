@@ -204,7 +204,7 @@
   "voxelmap.worldmap.multiworld.detected1": "Detected world",
   "voxelmap.worldmap.multiworld.detected2": "If this is not correct, select your current world in the Multiworld screen.",
   "voxelmap.worldmap.multiworld.unknown": "Unknown world!  Please select your current world in the Multiworld screen.",
-  "voxelmap.worldmap.multiworld.edit": "Edit Multiworld Name",
-  "voxelmap.worldmap.multiworld.name": "Multiworld Name",
-  "voxelmap.worldmap.multiworld.delete_confirm": "Confirm Delete Multiworld"
+  "voxelmap.worldmap.subworld.edit": "Edit Multiworld Name",
+  "voxelmap.worldmap.subworld.name": "Multiworld Name",
+  "voxelmap.worldmap.subworld.delete_confirm": "Confirm Delete Multiworld"
 }

@@ -140,7 +140,7 @@
   "voxelmap.worldmap.multiworld.detected1": "偵測到新世界",
   "voxelmap.worldmap.multiworld.detected2": "如果偵測不正確，請在多世界選項中重新選擇。",
   "voxelmap.worldmap.multiworld.unknown": "未知的世界！請在多世界選項中重新選擇。",
-  "voxelmap.worldmap.multiworld.edit": "編輯多世界名稱",
-  "voxelmap.worldmap.multiworld.name": "多世界名稱",
-  "voxelmap.worldmap.multiworld.delete_confirm": "確認刪除多世界"
+  "voxelmap.worldmap.subworld.edit": "編輯多世界名稱",
+  "voxelmap.worldmap.subworld.name": "多世界名稱",
+  "voxelmap.worldmap.subworld.delete_confirm": "確認刪除多世界"
 }

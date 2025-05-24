@@ -204,7 +204,7 @@
   "voxelmap.worldmap.multiworld.detected1": "세계 삭제",
   "voxelmap.worldmap.multiworld.detected2": "이 세계가 알맞지 않다면, 현재 세계를 다중세계 설정에서 선택해주세요.",
   "voxelmap.worldmap.multiworld.unknown": "알 수 없는 세계입니다! 현재 세계를 다중세계 설정에서 선택해주세요.",
-  "voxelmap.worldmap.multiworld.edit": "다중세계 이름 수정",
-  "voxelmap.worldmap.multiworld.name": "다중세계 이름",
-  "voxelmap.worldmap.multiworld.delete_confirm": "다중세계 삭제 수락"
+  "voxelmap.worldmap.subworld.edit": "다중세계 이름 수정",
+  "voxelmap.worldmap.subworld.name": "다중세계 이름",
+  "voxelmap.worldmap.subworld.delete_confirm": "다중세계 삭제 수락"
 }
