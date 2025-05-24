@@ -93,8 +93,6 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     private static boolean gotSkin;
     private final Object closedLock = new Object();
 
-    private boolean keyboardInput;
-
     protected int mouseX;
     protected int mouseY;
     private float lastMouseX;
@@ -106,6 +104,12 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
     public boolean editClicked;
     public boolean deleteClicked;
     private long timeOfRelease;
+    private boolean keyboardInput;
+    private boolean sprintKeyDown;
+    private boolean upKeyDown;
+    private boolean downKeyDown;
+    private boolean leftKeyDown;
+    private boolean rightKeyDown;
 
     private float zoom;
     private float zoomStart;
@@ -312,6 +316,8 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        this.setKeyPressed(keyCode, scanCode, true);
+
         if (minecraft.options.keyJump.matches(keyCode, scanCode) || minecraft.options.keyShift.matches(keyCode, scanCode)) {
             if (minecraft.options.keyJump.matches(keyCode, scanCode)) {
                 this.zoomGoal /= 1.26F;
@@ -338,6 +344,31 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         }
 
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        this.setKeyPressed(keyCode, scanCode, false);
+
+        return super.keyReleased(keyCode, scanCode, modifiers);
+    }
+
+    private void setKeyPressed(int keyCode, int scanCode, boolean pressed) {
+        if (minecraft.options.keySprint.matches(keyCode, scanCode)) {
+            sprintKeyDown = pressed;
+        }
+        if (minecraft.options.keyUp.matches(keyCode, scanCode)) {
+            upKeyDown = pressed;
+        }
+        if (minecraft.options.keyDown.matches(keyCode, scanCode)) {
+            downKeyDown = pressed;
+        }
+        if (minecraft.options.keyLeft.matches(keyCode, scanCode)) {
+            leftKeyDown = pressed;
+        }
+        if (minecraft.options.keyRight.matches(keyCode, scanCode)) {
+            rightKeyDown = pressed;
+        }
     }
 
     private void switchToMouseInput() {
@@ -438,26 +469,26 @@ public class GuiPersistentMap extends PopupGuiScreen implements IGuiWaypoints {
         this.timeAtLastTick = System.currentTimeMillis();
 
         int kbDelta = 5;
-        if (minecraft.options.keySprint.isDown()) {
+        if (sprintKeyDown) {
             kbDelta = 10;
         }
 
-        if (minecraft.options.keyUp.isDown()) {
+        if (upKeyDown) {
             this.deltaY -= kbDelta / scaledZoom * timeSinceLastTick / 12.0F;
             this.switchToKeyboardInput();
         }
 
-        if (minecraft.options.keyDown.isDown()) {
+        if (downKeyDown) {
             this.deltaY += kbDelta / scaledZoom * timeSinceLastTick / 12.0F;
             this.switchToKeyboardInput();
         }
 
-        if (minecraft.options.keyLeft.isDown()) {
+        if (leftKeyDown) {
             this.deltaX -= kbDelta / scaledZoom * timeSinceLastTick / 12.0F;
             this.switchToKeyboardInput();
         }
 
-        if (minecraft.options.keyRight.isDown()) {
+        if (rightKeyDown) {
             this.deltaX += kbDelta / scaledZoom * timeSinceLastTick / 12.0F;
             this.switchToKeyboardInput();
         }

@@ -121,7 +121,7 @@ public class WaypointContainer {
     }
 
     private double getDiff(Waypoint waypoint, double distance, Camera camera) {
-        double degrees = 3.0 + 3.0 / distance;
+        double degrees = 3.0 + Math.min(3.0 / distance, 3.0F);
         double angle = Math.toRadians(degrees);
         double size = Math.sin(angle) * distance * options.waypointIconSize;
         Vec3 cameraPos = camera.getPosition();
