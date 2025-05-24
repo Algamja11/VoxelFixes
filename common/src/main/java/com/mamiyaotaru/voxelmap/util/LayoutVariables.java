@@ -1,6 +1,6 @@
 package com.mamiyaotaru.voxelmap.util;
 
-public class MapVariables {
+public class LayoutVariables {
     public int scScale;
     public float scaleProj;
     public int mapX;
