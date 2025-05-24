@@ -252,10 +252,9 @@ public class Radar implements IRadar {
                         float fontSize = this.options.fontSize / 4.0F;
                         guiGraphics.pose().scale(fontSize, fontSize, 1.0F);
 
-                        int textColor = ((int) (contact.brightness * 255.0F) << 24) | (contact.entity.getTeamColor() & 0x00FFFFFF);
                         int halfStringWidth = minecraft.font.width(contact.name) / 2;
                         guiGraphics.fill((int) (mapX / fontSize - halfStringWidth - 1), (int) ((mapY + 3) / fontSize + 8), (int) (mapX / fontSize + halfStringWidth + 1), (int) ((mapY + 3) / fontSize - 1), 0x40000000);
-                        GuiUtils.drawCenteredString(guiGraphics, contact.name, mapX / fontSize, (mapY + 3) / fontSize, textColor, false);
+                        GuiUtils.drawCenteredString(guiGraphics, contact.name, mapX / fontSize, (mapY + 3) / fontSize, contact.entity.getTeamColor(), false);
                     }
                 } catch (Exception e) {
                     VoxelConstants.getLogger().error("Error rendering mob icon! " + e.getLocalizedMessage() + " contact type " + BuiltInRegistries.ENTITY_TYPE.getKey(contact.entity.getType()), e);
