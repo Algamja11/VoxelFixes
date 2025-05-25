@@ -1,6 +1,9 @@
 package com.mamiyaotaru.voxelmap.util;
 
 import com.mamiyaotaru.voxelmap.VoxelConstants;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.tags.BiomeTags;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -13,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.TreeMap;
 import net.minecraft.Util;
 import net.minecraft.client.resources.language.I18n;
@@ -22,7 +24,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 
 public final class BiomeRepository {
-    private static final Random generator = new Random();
     private static final HashMap<Biome, Integer> IDtoColor = new HashMap<>(256);
     private static final TreeMap<String, Integer> nameToColor = new TreeMap<>();
     private static boolean dirty;
@@ -62,7 +63,7 @@ public final class BiomeRepository {
         }
 
         try {
-            InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath("voxelmap", "conf/biomecolors.txt")).get().open();
+            InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath("voxelmap", "config/biomecolors.txt")).get().open();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             String sCurrentLine;
@@ -89,7 +90,7 @@ public final class BiomeRepository {
             br.close();
             is.close();
         } catch (IOException var11) {
-            VoxelConstants.getLogger().error("Error loading biome color config file from litemod!", var11);
+            VoxelConstants.getLogger().error("Error loading biome color config file from mod!", var11);
         }
 
     }
@@ -155,11 +156,12 @@ public final class BiomeRepository {
         }
 
         if (color == null) {
-            int r = generator.nextInt(255);
-            int g = generator.nextInt(255);
-            int b = generator.nextInt(255);
-
-            color = r << 16 | g << 8 | b;
+            Holder<Biome> biomeHolder = getHolder(biome);
+            if (biomeHolder.is(BiomeTags.IS_RIVER) || biomeHolder.is(BiomeTags.IS_OCEAN) || biomeHolder.is(BiomeTags.IS_DEEP_OCEAN)) {
+                color = biome.getWaterColor();
+            } else {
+                color = biome.getFoliageColor();
+            }
             nameToColor.put(identifier, color);
             dirty = true;
         }
@@ -185,5 +187,19 @@ public final class BiomeRepository {
 
         if (biome != null) return getName(biome);
         return "Unknown";
+    }
+
+    @NotNull
+    public static Holder<Biome> getHolder(Biome biome) {
+        RegistryAccess registryAccess = VoxelConstants.getPlayer().level().registryAccess();
+
+        return registryAccess.lookupOrThrow(Registries.BIOME).wrapAsHolder(biome);
+    }
+
+    @NotNull
+    public static Holder<Biome> getHolder(int biomeId) {
+        RegistryAccess registryAccess = VoxelConstants.getPlayer().level().registryAccess();
+
+        return getHolder(registryAccess.lookupOrThrow(Registries.BIOME).byId(biomeId));
     }
 }
