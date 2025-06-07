@@ -98,7 +98,7 @@ public class WorldMatcher {
 
                 MessageUtils.printDebugWarn("remaining regions: " + this.candidateRegions.size());
                 if (!WorldMatcher.this.cancelled && this.candidateRegions.size() == 1 && !VoxelConstants.getVoxelMapInstance().getWaypointManager().receivedAutoSubworldName()) {
-                    VoxelConstants.getVoxelMapInstance().newSubWorldName(this.candidateRegions.get(0).getSubworldName(), false);
+                    VoxelConstants.getVoxelMapInstance().newSubWorldName(this.candidateRegions.getFirst().getSubworldName(), false);
                     MessageUtils.chatInfo(I18n.get("voxelmap.worldmap.multiworld.detected1") + ":" + " §a" + this.candidateRegions.get(0).getSubworldName() + ".§r" + " " + I18n.get("voxelmap.worldmap.multiworld.detected2"));
                 } else if (!WorldMatcher.this.cancelled && !VoxelConstants.getVoxelMapInstance().getWaypointManager().receivedAutoSubworldName()) {
                     MessageUtils.printDebugWarn("remaining regions: " + this.candidateRegions.size());
