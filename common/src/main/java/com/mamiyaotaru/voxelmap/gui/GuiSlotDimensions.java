@@ -13,10 +13,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.DimensionItem> {
-    private static final Component APPLIES = Component.translatable("minimap.waypoints.dimension.applies");
-    private static final Component NOT_APPLIES = Component.translatable("minimap.waypoints.dimension.notapplies");
-    private static final ResourceLocation CONFIRM = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
-    private static final ResourceLocation CANCEL = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
+    private static final Component TOOLTIP_APPLIES = Component.translatable("voxelmap.waypoints.dimension.tooltip.applies");
+    private static final Component TOOLTIP_NOT_APPLIES = Component.translatable("voxelmap.waypoints.dimension.tooltip.not_applies");
+    private static final ResourceLocation ENABLED_ICON = ResourceLocation.parse("textures/gui/sprites/container/beacon/confirm.png");
+    private static final ResourceLocation DISABLED_ICON = ResourceLocation.parse("textures/gui/sprites/container/beacon/cancel.png");
 
     private final GuiAddWaypoint parentGui;
     private final ArrayList<DimensionItem> dimensions;
@@ -49,9 +49,10 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
 
     @Override
     public int getRowWidth() {
-        return 100;
+        return 101;
     }
 
+    @Override
     public void setSelected(DimensionItem entry) {
         super.setSelected(entry);
         if (this.getSelected() instanceof DimensionItem) {
@@ -62,13 +63,13 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
         this.parentGui.setSelectedDimension(entry.dim);
     }
 
+    @Override
     protected boolean isSelectedItem(int index) {
         return this.dimensions.get(index).dim.equals(this.parentGui.selectedDimension);
     }
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -87,15 +88,15 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
         }
 
         public void render(GuiGraphics drawContext, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            drawContext.drawCenteredString(this.parentGui.getFontRenderer(), this.dim.getDisplayName(), this.parentGui.getWidth() / 2 + GuiSlotDimensions.this.width / 2, y + 3, 16777215);
-            byte padding = 4;
+            int width = GuiSlotDimensions.this.getWidth();
+            drawContext.drawCenteredString(this.parentGui.getFont(), this.dim.getDisplayName(), x + width / 2, y + 3, 16777215);
+
             byte iconWidth = 18;
-            x = this.parentGui.getWidth() / 2;
-            int width = GuiSlotDimensions.this.width;
-            if (mouseX >= x + padding && mouseY >= y && mouseX <= x + width + padding && mouseY <= y + GuiSlotDimensions.this.itemHeight) {
+
+            if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + entryHeight) {
                 Component tooltip;
-                if (this.parentGui.popupOpen() && mouseX >= x + width - iconWidth - padding && mouseX <= x + width) {
-                    tooltip = this.parentGui.waypoint.dimensions.contains(this.dim) ? APPLIES : NOT_APPLIES;
+                if (mouseX >= x + width - iconWidth && mouseX <= x + width) {
+                    tooltip = this.parentGui.waypoint.dimensions.contains(this.dim) ? TOOLTIP_APPLIES : TOOLTIP_NOT_APPLIES;
                 } else {
                     tooltip = null;
                 }
@@ -108,8 +109,7 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
             // 2 float: u,v start texture (in pixels - see last 2 int)
             // 2 int: height, width on screen
             // 2 int: height, width full texture in pixels
-            drawContext.blit(RenderType::guiTextured, this.parentGui.waypoint.dimensions.contains(this.dim) ? CONFIRM : CANCEL, x + width - iconWidth, y - 3, 0, 0, 18, 18, 18, 18);
-            drawContext.flush();
+            drawContext.blit(RenderType::guiTextured, this.parentGui.waypoint.dimensions.contains(this.dim) ? ENABLED_ICON : DISABLED_ICON, x + width - iconWidth, y - 3, 0, 0, 18, 18, 18, 18);
         }
 
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -120,12 +120,11 @@ class GuiSlotDimensions extends AbstractSelectionList<GuiSlotDimensions.Dimensio
             GuiSlotDimensions.this.setSelected(this);
             byte iconWidth = 18;
             int rightEdge = GuiSlotDimensions.this.getX() + GuiSlotDimensions.this.getWidth();
-            boolean inRange = mouseX >= (rightEdge - iconWidth) && mouseX <= rightEdge;
-            if (inRange && GuiSlotDimensions.this.doubleClicked) {
+            if (mouseX >= (rightEdge - iconWidth) && mouseX <= rightEdge) {
                 this.parentGui.toggleDimensionSelected();
             }
 
-            return true;
+            return super.mouseClicked(mouseX, mouseY, button);
         }
     }
 }

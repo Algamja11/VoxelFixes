@@ -1,5 +1,7 @@
 package com.mamiyaotaru.voxelmap.util;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

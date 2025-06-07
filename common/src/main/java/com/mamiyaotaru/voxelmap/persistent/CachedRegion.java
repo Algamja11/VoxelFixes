@@ -8,6 +8,7 @@ import com.mamiyaotaru.voxelmap.util.BiomeParser;
 import com.mamiyaotaru.voxelmap.util.BlockStateParser;
 import com.mamiyaotaru.voxelmap.util.CommandUtils;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
+import com.mamiyaotaru.voxelmap.util.MessageUtils;
 import com.mamiyaotaru.voxelmap.util.MutableBlockPos;
 import com.mamiyaotaru.voxelmap.util.ReflectionUtils;
 import com.mamiyaotaru.voxelmap.util.TextUtils;
@@ -92,7 +93,6 @@ public class CachedRegion {
     private static final ReadWriteLock tickLock = new ReentrantReadWriteLock();
     private static int loadedChunkCount;
     private boolean queuedToCompress;
-    final boolean debug = false;
 
     public CachedRegion() {
         this.world = null;
@@ -316,9 +316,7 @@ public class CachedRegion {
 
                     try {
                         synchronized (anvilLock) {
-                            if (debug) {
-                                VoxelConstants.getLogger().warn(Thread.currentThread().getName() + " starting load");
-                            }
+                            MessageUtils.printDebugWarn(Thread.currentThread().getName() + " starting load");
 
                             long loadTime = System.currentTimeMillis();
                             CompletableFuture<?> loadFuture = CompletableFuture.runAsync(() -> {
@@ -362,14 +360,10 @@ public class CachedRegion {
                             }
 
                             loadFuture.cancel(false);
-                            if (debug) {
-                                VoxelConstants.getLogger().warn(Thread.currentThread().getName() + " finished load after " + (System.currentTimeMillis() - loadTime) + " milliseconds");
-                            }
+                            MessageUtils.printDebugWarn(Thread.currentThread().getName() + " finished load after " + (System.currentTimeMillis() - loadTime) + " milliseconds");
                         }
 
-                        if (debug) {
-                            VoxelConstants.getLogger().warn(Thread.currentThread().getName() + " starting calculation");
-                        }
+                        MessageUtils.printDebugWarn(Thread.currentThread().getName() + " starting calculation");
 
                         long calcTime = System.currentTimeMillis();
 
@@ -405,9 +399,7 @@ public class CachedRegion {
                             }
                         }
 
-                        if (debug) {
-                            VoxelConstants.getLogger().warn(Thread.currentThread().getName() + " finished calculating after " + (System.currentTimeMillis() - calcTime) + " milliseconds");
-                        }
+                        MessageUtils.printDebugWarn(Thread.currentThread().getName() + " finished calculating after " + (System.currentTimeMillis() - calcTime) + " milliseconds");
                     } catch (Exception var41) {
                         VoxelConstants.getLogger().warn("error in anvil loading");
                     } finally {
@@ -425,17 +417,13 @@ public class CachedRegion {
                         try {
                             CompletableFuture<Void> tickFuture = CompletableFuture.runAsync(() -> this.chunkProvider.tick(() -> true, executor.isSameThread()));
                             long tickTime = System.currentTimeMillis();
-                            if (debug) {
-                                VoxelConstants.getLogger().warn(Thread.currentThread().getName() + " starting chunk GC tick");
-                            }
+                            MessageUtils.printDebugWarn(Thread.currentThread().getName() + " starting chunk GC tick");
 
                             while (!this.closed && !tickFuture.isDone()) {
                                 Thread.onSpinWait();
                             }
 
-                            if (debug) {
-                                VoxelConstants.getLogger().warn(Thread.currentThread().getName() + " finished chunk GC tick after " + (System.currentTimeMillis() - tickTime) + " milliseconds");
-                            }
+                            MessageUtils.printDebugWarn(Thread.currentThread().getName() + " finished chunk GC tick after " + (System.currentTimeMillis() - tickTime) + " milliseconds");
                         } catch (RuntimeException var38) {
                             VoxelConstants.getLogger().warn("error ticking from anvil loading");
                         } finally {
@@ -525,9 +513,7 @@ public class CachedRegion {
         if (this.liveChunksUpdated && !this.worldNamePathPart.isEmpty()) {
             if (newThread) {
                 ThreadManager.saveExecutorService.execute(() -> {
-                    if (VoxelConstants.DEBUG) {
-                        VoxelConstants.getLogger().info("Saving region file for " + CachedRegion.this.x + "," + CachedRegion.this.z + " in " + CachedRegion.this.worldNamePathPart + "/" + CachedRegion.this.subworldNamePathPart + CachedRegion.this.dimensionNamePathPart);
-                    }
+                    MessageUtils.printDebugInfo("Saving region file for " + CachedRegion.this.x + "," + CachedRegion.this.z + " in " + CachedRegion.this.worldNamePathPart + "/" + CachedRegion.this.subworldNamePathPart + CachedRegion.this.dimensionNamePathPart);
                     CachedRegion.this.threadLock.lock();
 
                     try {
@@ -537,10 +523,7 @@ public class CachedRegion {
                     } finally {
                         CachedRegion.this.threadLock.unlock();
                     }
-                    if (VoxelConstants.DEBUG) {
-                        VoxelConstants.getLogger().info("Finished saving region file for " + CachedRegion.this.x + "," + CachedRegion.this.z + " in " + CachedRegion.this.worldNamePathPart + "/" + CachedRegion.this.subworldNamePathPart + CachedRegion.this.dimensionNamePathPart + " ("
-                                + ThreadManager.saveExecutorService.getQueue().size() + ")");
-                    }
+                    MessageUtils.printDebugInfo("Finished saving region file for " + CachedRegion.this.x + "," + CachedRegion.this.z + " in " + CachedRegion.this.worldNamePathPart + "/" + CachedRegion.this.subworldNamePathPart + CachedRegion.this.dimensionNamePathPart + " ("  + ThreadManager.saveExecutorService.getQueue().size() + ")");
                 });
             } else {
                 try {

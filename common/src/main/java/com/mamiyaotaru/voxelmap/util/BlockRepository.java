@@ -21,11 +21,7 @@ public class BlockRepository {
     public static int airID;
     public static int voidAirID;
     public static int caveAirID;
-    public static MovingPistonBlock pistonTechBlock;
-    public static Block water;
-    public static Block lava;
-    public static Block ice;
-    public static Block grassBlock;
+
     public static Block oakLeaves;
     public static Block spruceLeaves;
     public static Block birchLeaves;
@@ -33,26 +29,36 @@ public class BlockRepository {
     public static Block acaciaLeaves;
     public static Block darkOakLeaves;
     public static Block mangroveLeaves;
-    public static Block grass;
-    public static Block fern;
-    public static Block tallGrass;
-    public static Block largeFern;
+
+    public static Block bush;
+    public static Block leafLitter;
+    public static Block lilypad;
+    public static Block redstone;
     public static Block reeds;
     public static Block vine;
-    public static Block lilypad;
-    public static Block tallFlower;
-    public static Block cobweb;
-    public static Block stickyPiston;
-    public static Block piston;
-    public static Block redstone;
-    public static Block ladder;
+    public static Block water;
+    public static Block fern;
+    public static Block largeFern;
+    public static Block grass;
+    public static Block tallGrass;
+    public static Block grassBlock;
+
     public static Block barrier;
+    public static Block cobweb;
     public static Block chorusPlant;
     public static Block chorusFlower;
+    public static Block ice;
+    public static Block ladder;
+    public static Block lava;
+    public static Block light;
+    public static Block piston;
+    public static Block stickyPiston;
+    public static MovingPistonBlock movingPiston;
+
     public static HashSet<Block> biomeBlocks;
-    public static Block[] biomeBlocksArray = { grassBlock, oakLeaves, spruceLeaves, birchLeaves, jungleLeaves, acaciaLeaves, darkOakLeaves, mangroveLeaves, grass, fern, tallGrass, largeFern, reeds, vine, lilypad, tallFlower, water };
     public static HashSet<Block> shapedBlocks;
-    public static Block[] shapedBlocksArray = { ladder, vine };
+    public static HashSet<Block> leafBlocks;
+
     private static final ConcurrentHashMap<BlockState, Integer> stateToInt = new ConcurrentHashMap<>(1024);
     private static final ReferenceArrayList<BlockState> blockStates = new ReferenceArrayList<>(16384);
     private static int count = 1;
@@ -60,16 +66,12 @@ public class BlockRepository {
 
     public static void getBlocks() {
         air = Blocks.AIR;
-        airID = getStateId(air.defaultBlockState());
         voidAir = Blocks.VOID_AIR;
-        voidAirID = getStateId(voidAir.defaultBlockState());
         caveAir = Blocks.CAVE_AIR;
+        airID = getStateId(air.defaultBlockState());
+        voidAirID = getStateId(voidAir.defaultBlockState());
         caveAirID = getStateId(caveAir.defaultBlockState());
-        pistonTechBlock = (MovingPistonBlock) Blocks.MOVING_PISTON;
-        water = Blocks.WATER;
-        lava = Blocks.LAVA;
-        ice = Blocks.ICE;
-        grassBlock = Blocks.GRASS_BLOCK;
+
         oakLeaves = Blocks.OAK_LEAVES;
         spruceLeaves = Blocks.SPRUCE_LEAVES;
         birchLeaves = Blocks.BIRCH_LEAVES;
@@ -77,25 +79,39 @@ public class BlockRepository {
         acaciaLeaves = Blocks.ACACIA_LEAVES;
         darkOakLeaves = Blocks.DARK_OAK_LEAVES;
         mangroveLeaves = Blocks.MANGROVE_LEAVES;
-        grass = Blocks.SHORT_GRASS;
-        fern = Blocks.FERN;
-        tallGrass = Blocks.TALL_GRASS;
-        largeFern = Blocks.LARGE_FERN;
+
+        bush = Blocks.BUSH;
+        leafLitter = Blocks.LEAF_LITTER;
+        lilypad = Blocks.LILY_PAD;
+        redstone = Blocks.REDSTONE_WIRE;
         reeds = Blocks.SUGAR_CANE;
         vine = Blocks.VINE;
-        lilypad = Blocks.LILY_PAD;
-        cobweb = Blocks.COBWEB;
-        stickyPiston = Blocks.STICKY_PISTON;
-        piston = Blocks.PISTON;
-        redstone = Blocks.REDSTONE_WIRE;
-        ladder = Blocks.LADDER;
+        fern = Blocks.FERN;
+        largeFern = Blocks.LARGE_FERN;
+        grass = Blocks.SHORT_GRASS;
+        tallGrass = Blocks.TALL_GRASS;
+        grassBlock = Blocks.GRASS_BLOCK;
+        water = Blocks.WATER;
+
         barrier = Blocks.BARRIER;
+        cobweb = Blocks.COBWEB;
         chorusPlant = Blocks.CHORUS_PLANT;
         chorusFlower = Blocks.CHORUS_FLOWER;
-        biomeBlocksArray = new Block[]{grassBlock, oakLeaves, spruceLeaves, birchLeaves, jungleLeaves, acaciaLeaves, darkOakLeaves, mangroveLeaves, grass, fern, tallGrass, largeFern, reeds, vine, lilypad, tallFlower, water};
+        ice = Blocks.ICE;
+        ladder = Blocks.LADDER;
+        lava = Blocks.LAVA;
+        light = Blocks.LIGHT;
+        piston = Blocks.PISTON;
+        stickyPiston = Blocks.STICKY_PISTON;
+        movingPiston = (MovingPistonBlock) Blocks.MOVING_PISTON;
+
+        Block[] biomeBlocksArray = new Block[] { oakLeaves, spruceLeaves, birchLeaves, jungleLeaves, acaciaLeaves, darkOakLeaves, mangroveLeaves, bush, leafLitter, lilypad, redstone, reeds, vine, fern, largeFern, grass, tallGrass, grassBlock, water };
+        Block[] shapedBlocksArray = new Block[] { ladder, vine, chorusPlant, chorusFlower };
+        Block[] leafBlocksArray = new Block[] { oakLeaves, spruceLeaves, birchLeaves, jungleLeaves, acaciaLeaves, darkOakLeaves, mangroveLeaves };
+
         biomeBlocks = new HashSet<>(Arrays.asList(biomeBlocksArray));
-        shapedBlocksArray = new Block[]{ladder, vine};
         shapedBlocks = new HashSet<>(Arrays.asList(shapedBlocksArray));
+        leafBlocks = new HashSet<>(Arrays.asList(leafBlocksArray));
 
         for (Block block : BuiltInRegistries.BLOCK) {
             if (block instanceof DoorBlock || block instanceof SignBlock) {

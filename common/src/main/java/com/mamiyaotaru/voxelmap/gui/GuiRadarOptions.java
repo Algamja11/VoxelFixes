@@ -4,6 +4,7 @@ import com.mamiyaotaru.voxelmap.RadarSettingsManager;
 import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.gui.overridden.EnumOptionsMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionButtonMinimap;
+import com.mamiyaotaru.voxelmap.gui.overridden.GuiOptionSliderMinimap;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -12,28 +13,25 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class GuiRadarOptions extends GuiScreenMinimap {
-    private static final EnumOptionsMinimap[] FULL_RELEVANT_OPTIONS = { EnumOptionsMinimap.SHOWRADAR, EnumOptionsMinimap.RADARMODE,  EnumOptionsMinimap.SHOWNEUTRALS, EnumOptionsMinimap.SHOWHOSTILES, EnumOptionsMinimap.SHOWPLAYERS, EnumOptionsMinimap.SHOWMOBNAMES, EnumOptionsMinimap.SHOWPLAYERNAMES, EnumOptionsMinimap.SHOWMOBHELMETS, EnumOptionsMinimap.SHOWPLAYERHELMETS, EnumOptionsMinimap.RADARFILTERING, EnumOptionsMinimap.RADAROUTLINES };
-    private static final EnumOptionsMinimap[] SIMPLE_RELEVANT_OPTIONS = { EnumOptionsMinimap.SHOWRADAR, EnumOptionsMinimap.RADARMODE, EnumOptionsMinimap.SHOWNEUTRALS, EnumOptionsMinimap.SHOWHOSTILES, EnumOptionsMinimap.SHOWPLAYERS, EnumOptionsMinimap.SHOWFACING };
+    private static final EnumOptionsMinimap[] FULL_RELEVANT_OPTIONS = { EnumOptionsMinimap.SHOW_RADAR, EnumOptionsMinimap.RADAR_MODE,  EnumOptionsMinimap.SHOW_MOBS, EnumOptionsMinimap.SHOW_PLAYERS, EnumOptionsMinimap.SHOW_MOB_NAMES, EnumOptionsMinimap.SHOW_PLAYER_NAMES, EnumOptionsMinimap.SHOW_MOB_HELMETS, EnumOptionsMinimap.SHOW_PLAYER_HELMETS, EnumOptionsMinimap.ICON_FILTERING, EnumOptionsMinimap.ICON_OUTLINES };
+    private static final EnumOptionsMinimap[] SIMPLE_RELEVANT_OPTIONS = { EnumOptionsMinimap.SHOW_RADAR, EnumOptionsMinimap.RADAR_MODE, EnumOptionsMinimap.SHOW_MOBS, EnumOptionsMinimap.SHOW_PLAYERS, EnumOptionsMinimap.SHOW_FACING };
 
-    private final Screen parent;
     private final RadarSettingsManager options;
     protected Component screenTitle;
 
     public GuiRadarOptions(Screen parent) {
-        this.parent = parent;
+        this.parentScreen = parent;
         this.options = VoxelConstants.getVoxelMapInstance().getRadarOptions();
     }
 
     public void init() {
         clearWidgets();
-        getButtonList().clear();
-        children().clear();
 
-        this.screenTitle = Component.translatable("options.minimap.radar.title");
+        this.screenTitle = Component.translatable("options.voxelmap.radar.title");
 
         EnumOptionsMinimap[] relevantOptions = options.radarMode == 2 ? FULL_RELEVANT_OPTIONS : SIMPLE_RELEVANT_OPTIONS;
 
-        for (int i = 0; i < relevantOptions.length; i++) {
+        for (int i = 0; i < relevantOptions.length; ++i) {
             EnumOptionsMinimap option = relevantOptions[i];
             GuiOptionButtonMinimap optionButton = new GuiOptionButtonMinimap(this.getWidth() / 2 - 155 + i % 2 * 160, this.getHeight() / 6 + 24 * (i >> 1), option, Component.literal(options.getKeyText(option)), this::optionClicked);
 
@@ -42,18 +40,23 @@ public class GuiRadarOptions extends GuiScreenMinimap {
 
         iterateButtonOptions();
 
-        if (options.radarMode == 2) addRenderableWidget(new Button.Builder(Component.translatable("options.minimap.radar.selectmobs"), x -> VoxelConstants.getMinecraft().setScreen(new GuiMobs(this, options))).bounds(getWidth() / 2 + 5, getHeight() / 6 + 120, 150, 20).build());
+        addRenderableWidget(new Button.Builder(Component.translatable("options.voxelmap.select_mobs"), x -> VoxelConstants.getMinecraft().setScreen(new GuiMobs(this, options))).bounds(getWidth() / 2 - 155, getHeight() / 6 + 120, 150, 20).build());
 
-        addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), x -> VoxelConstants.getMinecraft().setScreen(parent)).bounds(getWidth() / 2 - 100, getHeight() / 6 + 168, 200, 20).build());
+        if (options.radarMode == 2) {
+            float sValue = this.options.getFloatValue(EnumOptionsMinimap.RADAR_FONT_SIZE);
+            addRenderableWidget(new GuiOptionSliderMinimap(this.getWidth() / 2 + 5, this.getHeight() / 6 + 120, EnumOptionsMinimap.RADAR_FONT_SIZE, this.convertFloatValue(EnumOptionsMinimap.RADAR_FONT_SIZE, sValue), options));
+        }
+
+        addRenderableWidget(new Button.Builder(Component.translatable("gui.done"), x -> VoxelConstants.getMinecraft().setScreen(parentScreen)).bounds(getWidth() / 2 - 100, getHeight() / 6 + 168, 200, 20).build());
     }
 
     protected void optionClicked(Button buttonClicked) {
         if (!(buttonClicked instanceof GuiOptionButtonMinimap guiOptionButtonMinimap)) throw new IllegalStateException("Expected GuiOptionMinimap, but received " + buttonClicked.getClass().getSimpleName() + " instead!");
 
         EnumOptionsMinimap option = guiOptionButtonMinimap.returnEnumOptions();
-        options.setOptionValue(option);
+        options.setValue(option);
 
-        if (guiOptionButtonMinimap.returnEnumOptions() == EnumOptionsMinimap.RADARMODE) {
+        if (guiOptionButtonMinimap.returnEnumOptions() == EnumOptionsMinimap.RADAR_MODE) {
             init();
             return;
         }
@@ -64,35 +67,61 @@ public class GuiRadarOptions extends GuiScreenMinimap {
     }
 
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        this.renderBlurredBackground();
-        this.renderMenuBackground(drawContext);
-        drawContext.flush();
-        drawContext.drawCenteredString(getFontRenderer(), screenTitle, getWidth() / 2, 20, 16777215);
+        for (Object buttonObj : this.children()) {
+            if (buttonObj instanceof GuiOptionSliderMinimap slider) {
+                EnumOptionsMinimap option = slider.returnEnumOptions();
+                float fValue = this.convertFloatValue(option, this.options.getFloatValue(option));
+
+                if (this.getFocused() != slider) {
+                    slider.setValue(fValue);
+                }
+            }
+        }
 
         super.render(drawContext, mouseX, mouseY, delta);
+
+        drawContext.drawCenteredString(this.getFont(), screenTitle, getWidth() / 2, 20, 16777215);
     }
 
     private void iterateButtonOptions() {
-        for (GuiEventListener element : getButtonList()) {
-            if (!(element instanceof GuiOptionButtonMinimap button)) continue;
-            if (button.returnEnumOptions() != EnumOptionsMinimap.SHOWRADAR) button.active = options.showRadar;
+        for (GuiEventListener element : children()) {
+            if (element instanceof GuiOptionButtonMinimap button) {
+                EnumOptionsMinimap option = button.returnEnumOptions();
 
-            if (button.returnEnumOptions() == EnumOptionsMinimap.SHOWPLAYERS) {
-                button.active = button.active && (options.radarAllowed || options.radarPlayersAllowed);
-                continue;
+                if (option != EnumOptionsMinimap.SHOW_RADAR) button.active = options.showRadar;
+
+                if (option == EnumOptionsMinimap.SHOW_MOBS) {
+                    button.active = button.active && (options.radarAllowed || options.radarMobsAllowed);
+                    continue;
+                }
+
+                if (option == EnumOptionsMinimap.SHOW_MOB_NAMES || option == EnumOptionsMinimap.SHOW_MOB_HELMETS) {
+                    button.active = button.active && (options.showNeutrals || options.showHostiles) && (options.radarAllowed || options.radarMobsAllowed);
+                    continue;
+                }
+
+                if (option == EnumOptionsMinimap.SHOW_PLAYERS) {
+                    button.active = button.active && (options.radarAllowed || options.radarPlayersAllowed);
+                    continue;
+                }
+
+                if (option == EnumOptionsMinimap.SHOW_PLAYER_NAMES || option == EnumOptionsMinimap.SHOW_PLAYER_HELMETS) {
+                    button.active = button.active && options.showPlayers && (options.radarAllowed || options.radarPlayersAllowed);
+                }
             }
 
-            if (!(button.returnEnumOptions() != EnumOptionsMinimap.SHOWNEUTRALS && button.returnEnumOptions() != EnumOptionsMinimap.SHOWHOSTILES)) {
-                button.active = button.active && (options.radarAllowed || options.radarMobsAllowed);
-                continue;
-            }
+            if (element instanceof GuiOptionSliderMinimap slider) {
+                EnumOptionsMinimap option = slider.returnEnumOptions();
 
-            if (!(button.returnEnumOptions() != EnumOptionsMinimap.SHOWPLAYERHELMETS && button.returnEnumOptions() != EnumOptionsMinimap.SHOWPLAYERNAMES)) {
-                button.active = button.active && options.showPlayers && (options.radarAllowed || options.radarPlayersAllowed);
-                continue;
+                if (option == EnumOptionsMinimap.RADAR_FONT_SIZE) slider.active = options.showRadar;
             }
-
-            if (button.returnEnumOptions() == EnumOptionsMinimap.SHOWMOBHELMETS && button.returnEnumOptions() != EnumOptionsMinimap.SHOWMOBNAMES) button.active = button.active && (options.showNeutrals || options.showHostiles) && (options.radarAllowed || options.radarMobsAllowed);
         }
+    }
+
+    private float convertFloatValue(EnumOptionsMinimap option, float sValue) {
+        return switch (option) {
+            case RADAR_FONT_SIZE -> (sValue - 0.5F) / 1.5F;
+            default -> throw new IllegalArgumentException("Add code to handle EnumOptionMinimap: " + option.getName());
+        };
     }
 }

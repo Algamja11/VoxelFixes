@@ -1,6 +1,5 @@
 package com.mamiyaotaru.voxelmap;
 
-import com.google.common.collect.UnmodifiableIterator;
 import com.mamiyaotaru.voxelmap.interfaces.AbstractMapData;
 import com.mamiyaotaru.voxelmap.util.BlockModel;
 import com.mamiyaotaru.voxelmap.util.BlockRepository;
@@ -12,34 +11,22 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.RasterFormatException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.imageio.ImageIO;
-import net.minecraft.ResourceLocationException;
-import net.minecraft.client.Options;
+
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
@@ -47,16 +34,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ARGB;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
@@ -65,7 +48,6 @@ import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.joml.Vector3f;
@@ -79,39 +61,20 @@ public class ColorManager {
     private int[] blockColors = new int[16384];
     private int[] blockColorsWithDefaultTint = new int[16384];
     private final HashSet<Integer> biomeTintsAvailable = new HashSet<>();
-    private boolean optifineInstalled;
-    private final HashMap<Integer, int[][]> blockTintTables = new HashMap<>();
-    private final HashSet<Integer> biomeTextureAvailable = new HashSet<>();
-    private final HashMap<String, Integer> blockBiomeSpecificColors = new HashMap<>();
     private float failedToLoadX;
     private float failedToLoadY;
-    private String renderPassThreeBlendMode;
     private final RandomSource random = RandomSource.create();
     private boolean loaded;
     private boolean loadedTerrainImage;
     private final MutableBlockPos dummyBlockPos = new MutableBlockPos(BlockPos.ZERO.getX(), BlockPos.ZERO.getY(), BlockPos.ZERO.getZ());
     private final Vector3f fullbright = new Vector3f(1.0F, 1.0F, 1.0F);
-    private final ColorResolver spruceColorResolver = (blockState, biomex, blockPos) -> FoliageColor.FOLIAGE_EVERGREEN;
-    private final ColorResolver birchColorResolver = (blockState, biomex, blockPos) -> FoliageColor.FOLIAGE_BIRCH;
-    private final ColorResolver grassColorResolver = (blockState, biomex, blockPos) -> biomex.getGrassColor(blockPos.getX(), blockPos.getZ());
-    private final ColorResolver foliageColorResolver = (blockState, biomex, blockPos) -> biomex.getFoliageColor();
-    private final ColorResolver waterColorResolver = (blockState, biomex, blockPos) -> biomex.getWaterColor();
-    private final ColorResolver redstoneColorResolver = (blockState, biomex, blockPos) -> RedStoneWireBlock.getColorForPower(blockState.getValue(RedStoneWireBlock.POWER));
+    private final ColorResolver grassColorResolver = (blockState, biome, blockPos) -> biome.getGrassColor(blockPos.getX(), blockPos.getZ());
+    private final ColorResolver foliageColorResolver = (blockState, biome, blockPos) -> biome.getFoliageColor();
+    private final ColorResolver dryFoliageColorResolver = (blockState, biome, blockPos) -> biome.getDryFoliageColor();
+    private final ColorResolver waterColorResolver = (blockState, biome, blockPos) -> biome.getWaterColor();
+    private final ColorResolver redstoneColorResolver = (blockState, biome, blockPos) -> RedStoneWireBlock.getColorForPower(blockState.getValue(RedStoneWireBlock.POWER));
 
     public ColorManager() {
-        this.optifineInstalled = false;
-        Field ofProfiler = null;
-
-        try {
-            ofProfiler = Options.class.getDeclaredField("ofProfiler");
-        } catch (SecurityException | NoSuchFieldException ignored) {
-        } finally {
-            if (ofProfiler != null) {
-                this.optifineInstalled = true;
-            }
-
-        }
-
         ++this.sizeOfBiomeArray;
     }
 
@@ -172,22 +135,6 @@ public class ColorManager {
             Arrays.fill(this.blockColorsWithDefaultTint, 0xFEFF00FF);
             this.loadSpecialColors();
             this.biomeTintsAvailable.clear();
-            this.biomeTextureAvailable.clear();
-            this.blockBiomeSpecificColors.clear();
-            this.blockTintTables.clear();
-            if (this.optifineInstalled) {
-                try {
-                    this.processCTM();
-                } catch (Exception var4) {
-                    VoxelConstants.getLogger().error("error loading CTM " + var4.getLocalizedMessage(), var4);
-                }
-
-                try {
-                    this.processColorProperties();
-                } catch (Exception var3) {
-                    VoxelConstants.getLogger().error("error loading custom color properties " + var3.getLocalizedMessage(), var3);
-                }
-            }
 
             VoxelConstants.getVoxelMapInstance().getMap().forceFullRender(true);
         } catch (Exception var5) {
@@ -282,7 +229,7 @@ public class ColorManager {
 
     private void loadColorPicker() {
         try {
-            InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/colorpicker.png")).get().open();
+            InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath("voxelmap", "images/color_picker.png")).get().open();
             Image picker = ImageIO.read(is);
             is.close();
             this.colorPicker = new BufferedImage(picker.getWidth(null), picker.getHeight(null), 2);
@@ -310,13 +257,18 @@ public class ColorManager {
 
     private void loadSpecialColors() {
         int blockStateID;
-        for (Iterator<BlockState> blockStateIterator = BlockRepository.pistonTechBlock.getStateDefinition().getPossibleStates().iterator(); blockStateIterator.hasNext(); this.blockColors[blockStateID] = 0) {
+        for (Iterator<BlockState> blockStateIterator = BlockRepository.movingPiston.getStateDefinition().getPossibleStates().iterator(); blockStateIterator.hasNext(); this.blockColors[blockStateID] = 0) {
             BlockState blockState = blockStateIterator.next();
             blockStateID = BlockRepository.getStateId(blockState);
         }
 
-        for (Iterator<BlockState> var6 = BlockRepository.barrier.getStateDefinition().getPossibleStates().iterator(); var6.hasNext(); this.blockColors[blockStateID] = 0) {
-            BlockState blockState = var6.next();
+        for (Iterator<BlockState> blockStateIterator = BlockRepository.barrier.getStateDefinition().getPossibleStates().iterator(); blockStateIterator.hasNext(); this.blockColors[blockStateID] = 0) {
+            BlockState blockState = blockStateIterator.next();
+            blockStateID = BlockRepository.getStateId(blockState);
+        }
+
+        for (Iterator<BlockState> blockStateIterator = BlockRepository.light.getStateDefinition().getPossibleStates().iterator(); blockStateIterator.hasNext(); this.blockColors[blockStateID] = 0) {
+            BlockState blockState = blockStateIterator.next();
             blockStateID = BlockRepository.getStateId(blockState);
         }
 
@@ -338,13 +290,6 @@ public class ColorManager {
 
     public final int getBlockColor(MutableBlockPos blockPos, int blockStateID, Biome biomeID) {
         if (this.loaded && loadedTerrainImage) {
-            if (this.optifineInstalled && this.biomeTextureAvailable.contains(blockStateID)) {
-                Integer col = this.blockBiomeSpecificColors.get(blockStateID + " " + biomeID);
-                if (col != null) {
-                    return ARGB.toABGR(col);
-                }
-            }
-
             return ARGB.toABGR(this.getBlockColor(blockPos, blockStateID));
         } else {
             return 0;
@@ -395,13 +340,6 @@ public class ColorManager {
             }
 
             Block block = state.getBlock();
-            if (block == BlockRepository.cobweb) {
-                color |= -16777216;
-            }
-
-            if (block == BlockRepository.redstone) {
-                color = ColorUtils.colorMultiplier(color, VoxelConstants.getMinecraft().getBlockColors().getColor(state, null, null, 0) | 0xFF000000);
-            }
 
             if (BlockRepository.biomeBlocks.contains(block)) {
                 this.applyDefaultBuiltInShading(state, color);
@@ -411,6 +349,10 @@ public class ColorManager {
 
             if (BlockRepository.shapedBlocks.contains(block)) {
                 color = this.applyShape(block, color);
+            }
+
+            if (block == BlockRepository.redstone) {
+                color = ColorUtils.colorMultiplier(color, VoxelConstants.getMinecraft().getBlockColors().getColor(state, null, null, 0) | 0xFF000000);
             }
 
             if ((color >> 24 & 0xFF) < 27) {
@@ -534,18 +476,13 @@ public class ColorManager {
             Block block = blockState.getBlock();
             String blockName = String.valueOf(BuiltInRegistries.BLOCK.getKey(block));
             if (BlockRepository.biomeBlocks.contains(block) || !blockName.startsWith("minecraft:")) {
-                int tint;
-                MutableBlockPos tempBlockPos = new MutableBlockPos(0, 0, 0);
-                if (blockPos == this.dummyBlockPos) {
-                    tint = this.tintFromFakePlacedBlock(blockState, tempBlockPos, null); // Biome 4?
-                } else {
+                int tint = -1;
+                if (blockPos != this.dummyBlockPos) {
                     ClientLevel clientWorld = VoxelConstants.getClientWorld();
 
                     ChunkAccess chunk = clientWorld.getChunk(blockPos);
                     if (chunk != null && !((LevelChunk) chunk).isEmpty() && clientWorld.hasChunk(blockPos.getX() >> 4, blockPos.getZ() >> 4)) {
                         tint = VoxelConstants.getMinecraft().getBlockColors().getColor(blockState, clientWorld, blockPos, 1) | 0xFF000000;
-                    } else {
-                        tint = this.tintFromFakePlacedBlock(blockState, tempBlockPos, null); // Biome 4?
                     }
                 }
 
@@ -562,58 +499,12 @@ public class ColorManager {
 
     }
 
-    private int tintFromFakePlacedBlock(BlockState blockState, MutableBlockPos loopBlockPos, Biome biomeID) {
-        return -1;
-    }
-
     public int getBiomeTint(AbstractMapData mapData, Level world, BlockState blockState, int blockStateID, MutableBlockPos blockPos, MutableBlockPos loopBlockPos, int startX, int startZ) {
         ChunkAccess chunk = world.getChunk(blockPos);
         boolean live = chunk != null && !((LevelChunk) chunk).isEmpty() && VoxelConstants.getPlayer().level().hasChunk(blockPos.getX() >> 4, blockPos.getZ() >> 4);
         live = live && VoxelConstants.getPlayer().level().hasChunkAt(blockPos);
-        int tint = -2;
-        if (this.optifineInstalled || !live && this.biomeTintsAvailable.contains(blockStateID)) {
-            try {
-                int[][] tints = this.blockTintTables.get(blockStateID);
-                if (tints != null) {
-                    int r = 0;
-                    int g = 0;
-                    int b = 0;
 
-                    for (int t = blockPos.getX() - 1; t <= blockPos.getX() + 1; ++t) {
-                        for (int s = blockPos.getZ() - 1; s <= blockPos.getZ() + 1; ++s) {
-                            Biome biome;
-                            if (live) {
-                                biome = world.getBiome(loopBlockPos.withXYZ(t, blockPos.getY(), s)).value();
-                            } else {
-                                int dataX = t - startX;
-                                int dataZ = s - startZ;
-                                dataX = Math.max(dataX, 0);
-                                dataX = Math.min(dataX, mapData.getWidth() - 1);
-                                dataZ = Math.max(dataZ, 0);
-                                dataZ = Math.min(dataZ, mapData.getHeight() - 1);
-                                biome = mapData.getBiome(dataX, dataZ);
-                            }
-
-                            if (biome == null) {
-                                biome = world.registryAccess().lookupOrThrow(Registries.BIOME).get(Biomes.PLAINS).get().value();
-                            }
-                            int biomeID = world.registryAccess().lookupOrThrow(Registries.BIOME).getId(biome);
-                            int biomeTint = tints[biomeID][loopBlockPos.y / 8];
-                            r += (biomeTint & 0xFF0000) >> 16;
-                            g += (biomeTint & 0xFF00) >> 8;
-                            b += biomeTint & 0xFF;
-                        }
-                    }
-
-                    tint = 0xFF000000 | (r / 9 & 0xFF) << 16 | (g / 9 & 0xFF) << 8 | b / 9 & 0xFF;
-                }
-            } catch (Exception ignored) {
-            }
-        }
-
-        if (tint == -2) {
-            tint = this.getBuiltInBiomeTint(mapData, world, blockState, blockStateID, blockPos, loopBlockPos, startX, startZ, live);
-        }
+        int tint = this.getBuiltInBiomeTint(mapData, world, blockState, blockStateID, blockPos, loopBlockPos, startX, startZ, live);
 
         return ARGB.toABGR(tint);
     }
@@ -643,73 +534,47 @@ public class ColorManager {
     private int getBuiltInBiomeTintFromUnloadedChunk(AbstractMapData mapData, Level world, BlockState blockState, int blockStateID, MutableBlockPos blockPos, MutableBlockPos loopBlockPos, int startX, int startZ) {
         int tint = -1;
         Block block = blockState.getBlock();
-        ColorResolver colorResolver = null;
+        ColorResolver colorResolver;
+
         if (block == BlockRepository.water) {
-            colorResolver = this.waterColorResolver;
-        } else if (block == BlockRepository.spruceLeaves) {
-            colorResolver = this.spruceColorResolver;
-        } else if (block == BlockRepository.birchLeaves) {
-            colorResolver = this.birchColorResolver;
-        } else if (block != BlockRepository.oakLeaves && block != BlockRepository.jungleLeaves && block != BlockRepository.acaciaLeaves && block != BlockRepository.darkOakLeaves && block != BlockRepository.mangroveLeaves && block != BlockRepository.vine) {
-            if (block == BlockRepository.redstone) {
-                colorResolver = this.redstoneColorResolver;
-            } else if (BlockRepository.biomeBlocks.contains(block)) {
-                colorResolver = this.grassColorResolver;
-            }
+            colorResolver = waterColorResolver;
+        } else if (block == BlockRepository.redstone) {
+            colorResolver = redstoneColorResolver;
+        } else if (block == BlockRepository.leafLitter) {
+            colorResolver = dryFoliageColorResolver;
+        } else if (BlockRepository.leafBlocks.contains(block)) {
+            colorResolver = foliageColorResolver;
         } else {
-            colorResolver = this.foliageColorResolver;
+            colorResolver = grassColorResolver;
         }
 
-        if (colorResolver != null) {
-            int r = 0;
-            int g = 0;
-            int b = 0;
+        int r = 0;
+        int g = 0;
+        int b = 0;
 
-            for (int t = blockPos.getX() - 1; t <= blockPos.getX() + 1; ++t) {
-                for (int s = blockPos.getZ() - 1; s <= blockPos.getZ() + 1; ++s) {
-                    int dataX = t - startX;
-                    int dataZ = s - startZ;
-                    dataX = Math.max(dataX, 0);
-                    dataX = Math.min(dataX, 255);
-                    dataZ = Math.max(dataZ, 0);
-                    dataZ = Math.min(dataZ, 255);
-                    Biome biome = mapData.getBiome(dataX, dataZ);
-                    if (biome == null) {
-                        MessageUtils.printDebug("Null biome ID! " + " at " + t + "," + s);
-                        MessageUtils.printDebug("block: " + mapData.getBlockstate(dataX, dataZ) + ", height: " + mapData.getHeight(dataX, dataZ));
-                        MessageUtils.printDebug("Mapdata: " + mapData);
-                    }
-
-                    int biomeTint = biome == null ? 0 : colorResolver.getColorAtPos(blockState, biome, loopBlockPos.withXYZ(t, blockPos.getY(), s));
-                    r += (biomeTint & 0xFF0000) >> 16;
-                    g += (biomeTint & 0xFF00) >> 8;
-                    b += biomeTint & 0xFF;
+        for (int t = blockPos.getX() - 1; t <= blockPos.getX() + 1; ++t) {
+            for (int s = blockPos.getZ() - 1; s <= blockPos.getZ() + 1; ++s) {
+                int dataX = t - startX;
+                int dataZ = s - startZ;
+                dataX = Math.max(dataX, 0);
+                dataX = Math.min(dataX, 255);
+                dataZ = Math.max(dataZ, 0);
+                dataZ = Math.min(dataZ, 255);
+                Biome biome = mapData.getBiome(dataX, dataZ);
+                if (biome == null) {
+                    MessageUtils.printDebugWarn("Null biome ID! " + " at " + t + "," + s);
+                    MessageUtils.printDebugWarn("block: " + mapData.getBlockstate(dataX, dataZ) + ", height: " + mapData.getHeight(dataX, dataZ));
+                    MessageUtils.printDebugWarn("Mapdata: " + mapData);
                 }
+
+                int biomeTint = biome == null ? 0 : colorResolver.getColorAtPos(blockState, biome, loopBlockPos.withXYZ(t, blockPos.getY(), s));
+                r += (biomeTint & 0xFF0000) >> 16;
+                g += (biomeTint & 0xFF00) >> 8;
+                b += biomeTint & 0xFF;
             }
-
-            tint = (r / 9 & 0xFF) << 16 | (g / 9 & 0xFF) << 8 | b / 9 & 0xFF;
-        } else if (this.biomeTintsAvailable.contains(blockStateID)) {
-            tint = this.getCustomBlockBiomeTintFromUnloadedChunk(mapData, world, blockState, blockPos, loopBlockPos, startX, startZ);
         }
 
-        return tint;
-    }
-
-    private int getCustomBlockBiomeTintFromUnloadedChunk(AbstractMapData mapData, Level world, BlockState blockState, MutableBlockPos blockPos, MutableBlockPos loopBlockPos, int startX, int startZ) {
-        int tint;
-
-        try {
-            int dataX = blockPos.getX() - startX;
-            int dataZ = blockPos.getZ() - startZ;
-            dataX = Math.max(dataX, 0);
-            dataX = Math.min(dataX, mapData.getWidth() - 1);
-            dataZ = Math.max(dataZ, 0);
-            dataZ = Math.min(dataZ, mapData.getHeight() - 1);
-            Biome biome = mapData.getBiome(dataX, dataZ);
-            tint = this.tintFromFakePlacedBlock(blockState, loopBlockPos, biome);
-        } catch (Exception var12) {
-            tint = -1;
-        }
+        tint = (r / 9 & 0xFF) << 16 | (g / 9 & 0xFF) << 8 | b / 9 & 0xFF;
 
         return tint;
     }
@@ -720,614 +585,18 @@ public class ColorManager {
         int green = color >> 8 & 0xFF;
         int blue = color & 0xFF;
         if (block instanceof SignBlock) {
-            alpha = 31;
+            alpha = 32;
         } else if (block instanceof DoorBlock) {
-            alpha = 47;
+            alpha = 96;
         } else if (block == BlockRepository.ladder || block == BlockRepository.vine) {
-            alpha = 15;
+            alpha = 48;
+        } else if (block == BlockRepository.chorusPlant) {
+            alpha = 128;
+        } else if (block == BlockRepository.chorusFlower) {
+            alpha = 255;
         }
 
         return (alpha & 0xFF) << 24 | (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
-    }
-
-    private void processCTM() {
-        this.renderPassThreeBlendMode = "alpha";
-        Properties properties = new Properties();
-        ResourceLocation propertiesFile = ResourceLocation.fromNamespaceAndPath("minecraft", "optifine/renderpass.properties");
-
-        try {
-            InputStream input = VoxelConstants.getMinecraft().getResourceManager().getResource(propertiesFile).get().open();
-            if (input != null) {
-                properties.load(input);
-                input.close();
-                this.renderPassThreeBlendMode = properties.getProperty("blend.3", "alpha");
-            }
-        } catch (IOException var9) {
-            this.renderPassThreeBlendMode = "alpha";
-        }
-
-        String namespace = "minecraft";
-
-        for (ResourceLocation s : this.findResources(namespace, "/optifine/ctm", ".properties", true, false, true)) {
-            try {
-                this.loadCTM(s);
-            } catch (IllegalArgumentException ignored) {
-            }
-        }
-
-        for (int t = 0; t < this.blockColors.length; ++t) {
-            if (this.blockColors[t] != 0x1B000000 && this.blockColors[t] != 0xFEFF00FF) {
-                if ((this.blockColors[t] >> 24 & 0xFF) < 27) {
-                    this.blockColors[t] |= 0x1B000000;
-                }
-
-                this.checkForBiomeTinting(this.dummyBlockPos, BlockRepository.getStateById(t), this.blockColors[t]);
-            }
-        }
-
-    }
-
-    private void loadCTM(ResourceLocation propertiesFile) {
-        if (propertiesFile != null) {
-            BlockRenderDispatcher blockRendererDispatcher = VoxelConstants.getMinecraft().getBlockRenderer();
-            BlockModelShaper blockModelShapes = blockRendererDispatcher.getBlockModelShaper();
-            Properties properties = new Properties();
-
-            try {
-                InputStream input = VoxelConstants.getMinecraft().getResourceManager().getResource(propertiesFile).get().open();
-                if (input != null) {
-                    properties.load(input);
-                    input.close();
-                }
-            } catch (IOException var39) {
-                return;
-            }
-
-            String filePath = propertiesFile.getPath();
-            String method = properties.getProperty("method", "").trim().toLowerCase();
-            String faces = properties.getProperty("faces", "").trim().toLowerCase();
-            String matchBlocks = properties.getProperty("matchBlocks", "").trim().toLowerCase();
-            String matchTiles = properties.getProperty("matchTiles", "").trim().toLowerCase();
-            String metadata = properties.getProperty("metadata", "").trim().toLowerCase();
-            String tiles = properties.getProperty("tiles", "").trim();
-            String biomes = properties.getProperty("biomes", "").trim().toLowerCase();
-            String renderPass = properties.getProperty("renderPass", "").trim().toLowerCase();
-            metadata = metadata.replaceAll("\\s+", ",");
-            Set<BlockState> blockStates = new HashSet<>(this.parseBlocksList(matchBlocks, metadata));
-            String directory = filePath.substring(0, filePath.lastIndexOf("/") + 1);
-            String[] tilesParsed = this.parseStringList(tiles);
-            String tilePath = directory + "0";
-            if (tilesParsed.length > 0) {
-                tilePath = tilesParsed[0].trim();
-            }
-
-            if (tilePath.startsWith("~")) {
-                tilePath = tilePath.replace("~", "optifine");
-            } else if (!tilePath.contains("/")) {
-                tilePath = directory + tilePath;
-            }
-
-            if (!tilePath.toLowerCase().endsWith(".png")) {
-                tilePath = tilePath + ".png";
-            }
-
-            String[] biomesArray = biomes.split(" ");
-            if (blockStates.isEmpty()) {
-                Block block;
-                Pattern pattern = Pattern.compile(".*/block_(.+).properties");
-                Matcher matcher = pattern.matcher(filePath);
-                if (matcher.find()) {
-                    block = this.getBlockFromName(matcher.group(1));
-                    if (block != null) {
-                        Set<BlockState> matching = this.parseBlockMetadata(block, metadata);
-                        if (matching.isEmpty()) {
-                            matching.addAll(block.getStateDefinition().getPossibleStates());
-                        }
-
-                        blockStates.addAll(matching);
-                    }
-                } else {
-                    if (matchTiles.isEmpty()) {
-                        matchTiles = filePath.substring(filePath.lastIndexOf('/') + 1, filePath.lastIndexOf(".properties"));
-                    }
-
-                    if (!matchTiles.contains(":")) {
-                        matchTiles = "minecraft:blocks/" + matchTiles;
-                    }
-
-                    ResourceLocation matchID = ResourceLocation.parse(matchTiles);
-                    TextureAtlasSprite compareIcon = VoxelConstants.getMinecraft().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(matchID);
-                    if (compareIcon.atlasLocation() != MissingTextureAtlasSprite.getLocation()) {
-                        ArrayList<BlockState> tmpList = new ArrayList<>();
-
-                        for (Block testBlock : BuiltInRegistries.BLOCK) {
-
-                            for (BlockState blockState : testBlock.getStateDefinition().getPossibleStates()) {
-                                try {
-                                    BlockStateModel bakedModel = blockModelShapes.getBlockModel(blockState);
-                                    List<BakedQuad> quads = new ArrayList<>();
-                                    for (BlockModelPart modelPart : bakedModel.collectParts(this.random)) {
-                                        quads.addAll(modelPart.getQuads(Direction.UP));
-                                        quads.addAll(modelPart.getQuads(null));
-                                    }
-                                    BlockModel model = new BlockModel(quads, this.failedToLoadX, this.failedToLoadY);
-                                    if (model.numberOfFaces() > 0) {
-                                        ArrayList<BlockModel.BlockFace> blockFaces = model.getFaces();
-
-                                        for (int i = 0; i < blockFaces.size(); ++i) {
-                                            BlockModel.BlockFace face = model.getFaces().get(i);
-                                            float minU = face.getMinU();
-                                            float maxU = face.getMaxU();
-                                            float minV = face.getMinV();
-                                            float maxV = face.getMaxV();
-                                            if (this.similarEnough(minU, maxU, minV, maxV, compareIcon.getU0(), compareIcon.getU1(), compareIcon.getV0(), compareIcon.getV1())) {
-                                                tmpList.add(blockState);
-                                            }
-                                        }
-                                    }
-                                } catch (Exception ignored) {
-                                }
-                            }
-                        }
-
-                        blockStates.addAll(tmpList);
-                    }
-                }
-            }
-
-            if (!blockStates.isEmpty()) {
-                if (!method.equals("horizontal") && !method.startsWith("overlay") && (method.equals("sandstone") || method.equals("top") || faces.contains("top") || faces.contains("all") || faces.isEmpty())) {
-                    try {
-                        ResourceLocation pngResource = ResourceLocation.fromNamespaceAndPath(propertiesFile.getNamespace(), tilePath);
-                        InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(pngResource).get().open();
-                        Image top = ImageIO.read(is);
-                        is.close();
-                        top = top.getScaledInstance(1, 1, 4);
-                        BufferedImage topBuff = new BufferedImage(top.getWidth(null), top.getHeight(null), 6);
-                        Graphics gfx = topBuff.createGraphics();
-                        gfx.drawImage(top, 0, 0, null);
-                        gfx.dispose();
-                        int topRGB = topBuff.getRGB(0, 0);
-                        if ((topRGB >> 24 & 0xFF) == 0) {
-                            return;
-                        }
-
-                        for (BlockState blockState : blockStates) {
-                            topRGB = topBuff.getRGB(0, 0);
-                            if (blockState.getBlock() == BlockRepository.cobweb) {
-                                topRGB |= 0xFF000000;
-                            }
-
-                            if (renderPass.equals("3")) {
-                                topRGB = this.processRenderPassThree(topRGB);
-                                int blockStateID = BlockRepository.getStateId(blockState);
-                                int baseRGB = this.blockColors[blockStateID];
-                                if (baseRGB != 0x1B000000 && baseRGB != 0xFEFF00FF) {
-                                    topRGB = ColorUtils.colorMultiplier(baseRGB, topRGB);
-                                }
-                            }
-
-                            if (BlockRepository.shapedBlocks.contains(blockState.getBlock())) {
-                                topRGB = this.applyShape(blockState.getBlock(), topRGB);
-                            }
-
-                            int blockStateID = BlockRepository.getStateId(blockState);
-                            if (!biomes.isEmpty()) {
-                                this.biomeTextureAvailable.add(blockStateID);
-
-                                for (String s : biomesArray) {
-                                    int biomeInt = this.parseBiomeName(s);
-                                    if (biomeInt != -1) {
-                                        this.blockBiomeSpecificColors.put(blockStateID + " " + biomeInt, topRGB);
-                                    }
-                                }
-                            } else {
-                                this.blockColors[blockStateID] = topRGB;
-                            }
-                        }
-                    } catch (IOException var40) {
-                        VoxelConstants.getLogger().error("error getting CTM block from " + propertiesFile.getPath() + ": " + filePath + " " + BuiltInRegistries.BLOCK.getKey(blockStates.iterator().next().getBlock()) + " " + tilePath, var40);
-                    }
-                }
-
-            }
-        }
-    }
-
-    private boolean similarEnough(float a, float b, float c, float d, float one, float two, float three, float four) {
-        boolean similar = Math.abs(a - one) < 1.0E-4;
-        similar = similar && Math.abs(b - two) < 1.0E-4;
-        similar = similar && Math.abs(c - three) < 1.0E-4;
-        return similar && Math.abs(d - four) < 1.0E-4;
-    }
-
-    private int processRenderPassThree(int rgb) {
-        if (this.renderPassThreeBlendMode.equals("color") || this.renderPassThreeBlendMode.equals("overlay")) {
-            int red = rgb >> 16 & 0xFF;
-            int green = rgb >> 8 & 0xFF;
-            int blue = rgb & 0xFF;
-            float colorAverage = (red + blue + green) / 3.0F;
-            float lighteningFactor = (colorAverage - 127.5F) * 2.0F;
-            red += (int) (red * (lighteningFactor / 255.0F));
-            blue += (int) (red * (lighteningFactor / 255.0F));
-            green += (int) (red * (lighteningFactor / 255.0F));
-            int newAlpha = (int) Math.abs(lighteningFactor);
-            rgb = newAlpha << 24 | (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
-        }
-
-        return rgb;
-    }
-
-    private String[] parseStringList(String list) {
-        ArrayList<String> tmpList = new ArrayList<>();
-
-        for (String token : list.split("\\s+")) {
-            token = token.trim();
-
-            try {
-                if (token.matches("^\\d+$")) {
-                    tmpList.add(String.valueOf(Integer.parseInt(token)));
-                } else if (token.matches("^\\d+-\\d+$")) {
-                    String[] t = token.split("-");
-                    int min = Integer.parseInt(t[0]);
-                    int max = Integer.parseInt(t[1]);
-
-                    for (int i = min; i <= max; ++i) {
-                        tmpList.add(String.valueOf(i));
-                    }
-                } else if (!token.isEmpty()) {
-                    tmpList.add(token);
-                }
-            } catch (NumberFormatException ignored) {
-            }
-        }
-
-        return tmpList.toArray(String[]::new);
-    }
-
-    private Set<BlockState> parseBlocksList(String blocks, String metadataLine) {
-        Set<BlockState> blockStates = new HashSet<>();
-
-        for (String blockString : blocks.split("\\s+")) {
-            StringBuilder metadata = new StringBuilder(metadataLine);
-            blockString = blockString.trim();
-            String[] blockComponents = blockString.split(":");
-            int tokensUsed = 0;
-            Block block;
-            block = this.getBlockFromName(blockComponents[0]);
-            if (block != null) {
-                tokensUsed = 1;
-            } else if (blockComponents.length > 1) {
-                block = this.getBlockFromName(blockComponents[0] + ":" + blockComponents[1]);
-                if (block != null) {
-                    tokensUsed = 2;
-                }
-            }
-
-            if (block != null) {
-                if (blockComponents.length > tokensUsed) {
-                    metadata = new StringBuilder(blockComponents[tokensUsed]);
-
-                    for (int t = tokensUsed + 1; t < blockComponents.length; ++t) {
-                        metadata.append(":").append(blockComponents[t]);
-                    }
-                }
-
-                blockStates.addAll(this.parseBlockMetadata(block, metadata.toString()));
-            }
-        }
-
-        return blockStates;
-    }
-
-    private Set<BlockState> parseBlockMetadata(Block block, String metadataList) {
-        Set<BlockState> blockStates = new HashSet<>();
-        if (metadataList.isEmpty()) {
-            blockStates.addAll(block.getStateDefinition().getPossibleStates());
-        } else {
-            Set<String> valuePairs = Arrays.stream(metadataList.split(":")).map(String::trim).filter(metadata -> metadata.contains("=")).collect(Collectors.toSet());
-
-            if (!valuePairs.isEmpty()) {
-
-                for (BlockState blockState : block.getStateDefinition().getPossibleStates()) {
-                    boolean matches = true;
-
-                    for (String pair : valuePairs) {
-                        String[] propertyAndValues = pair.split("\\s*=\\s*", 5);
-                        if (propertyAndValues.length == 2) {
-                            Property<?> property = block.getStateDefinition().getProperty(propertyAndValues[0]);
-                            if (property != null) {
-                                boolean valueIncluded = false;
-                                String[] values = propertyAndValues[1].split(",");
-
-                                for (String value : values) {
-                                    if (property.getValueClass() == Integer.class && value.matches("^\\d+-\\d+$")) {
-                                        String[] range = value.split("-");
-                                        int min = Integer.parseInt(range[0]);
-                                        int max = Integer.parseInt(range[1]);
-                                        int intValue = (Integer) blockState.getValue(property);
-                                        if (intValue >= min && intValue <= max) {
-                                            valueIncluded = true;
-                                        }
-                                    } else if (!blockState.getValue(property).equals(property.getValue(value))) {
-                                        valueIncluded = true;
-                                    }
-                                }
-
-                                matches = matches && valueIncluded;
-                            }
-                        }
-                    }
-
-                    if (matches) {
-                        blockStates.add(blockState);
-                    }
-                }
-            }
-        }
-
-        return blockStates;
-    }
-
-    private int parseBiomeName(String name) {
-        Biome biome = this.world.registryAccess().lookupOrThrow(Registries.BIOME).get(ResourceLocation.parse(name)).get().value();
-        return biome != null ? this.world.registryAccess().lookupOrThrow(Registries.BIOME).getId(biome) : -1;
-    }
-
-    private List<ResourceLocation> findResources(String namespace, String startingPath, String suffixMaybeNull, boolean recursive, boolean directories, boolean sortByFilename) {
-        if (startingPath == null) {
-            startingPath = "";
-        }
-
-        if (!startingPath.isEmpty() && startingPath.charAt(0) == '/') {
-            startingPath = startingPath.substring(1);
-        }
-
-        String suffix = suffixMaybeNull == null ? "" : suffixMaybeNull;
-        ArrayList<ResourceLocation> resources;
-
-        Map<ResourceLocation, Resource> resourceMap = VoxelConstants.getMinecraft().getResourceManager().listResources(startingPath, asset -> asset.getPath().endsWith(suffix));
-        resources = resourceMap.keySet().stream().filter(candidate -> candidate.getNamespace().equals(namespace)).collect(Collectors.toCollection(ArrayList::new));
-
-        if (sortByFilename) {
-            resources.sort((o1, o2) -> {
-                String f1 = o1.getPath().replaceAll(".*/", "").replaceFirst("\\.properties", "");
-                String f2 = o2.getPath().replaceAll(".*/", "").replaceFirst("\\.properties", "");
-                int result = f1.compareTo(f2);
-                return result != 0 ? result : o1.getPath().compareTo(o2.getPath());
-            });
-        } else {
-            resources.sort(Comparator.comparing(ResourceLocation::getPath));
-        }
-
-        return resources;
-    }
-
-    private void processColorProperties() {
-        Properties properties = new Properties();
-
-        try {
-            InputStream input = VoxelConstants.getMinecraft().getResourceManager().getResource(ResourceLocation.parse("optifine/color.properties")).get().open();
-            if (input != null) {
-                properties.load(input);
-                input.close();
-            }
-        } catch (IOException exception) {
-            VoxelConstants.getLogger().error(exception);
-        }
-
-        BlockState blockState = BlockRepository.lilypad.defaultBlockState();
-        int blockStateID = BlockRepository.getStateId(blockState);
-        int lilyRGB = this.getBlockColor(blockStateID);
-        int lilypadMultiplier = 2129968;
-        String lilypadMultiplierString = properties.getProperty("lilypad");
-        if (lilypadMultiplierString != null) {
-            lilypadMultiplier = Integer.parseInt(lilypadMultiplierString, 16);
-        }
-
-        for (UnmodifiableIterator<BlockState> defaultFormat = BlockRepository.lilypad.getStateDefinition().getPossibleStates().iterator(); defaultFormat.hasNext(); this.blockColorsWithDefaultTint[blockStateID] = this.blockColors[blockStateID]) {
-            BlockState padBlockState = defaultFormat.next();
-            blockStateID = BlockRepository.getStateId(padBlockState);
-            this.blockColors[blockStateID] = ColorUtils.colorMultiplier(lilyRGB, lilypadMultiplier | 0xFF000000);
-        }
-
-        String defaultFormat = properties.getProperty("palette.format");
-        boolean globalGrid = defaultFormat != null && defaultFormat.equalsIgnoreCase("grid");
-        Enumeration<?> e = properties.propertyNames();
-
-        while (e.hasMoreElements()) {
-            String key = (String) e.nextElement();
-            if (key.startsWith("palette.block")) {
-                String filename = key.substring("palette.block.".length());
-                filename = filename.replace("~", "optifine");
-                this.processColorPropertyHelper(ResourceLocation.parse(filename), properties.getProperty(key), globalGrid);
-            }
-        }
-
-        for (ResourceLocation resource : this.findResources("minecraft", "/optifine/colormap/blocks", ".properties", true, false, true)) {
-            Properties colorProperties = new Properties();
-
-            try {
-                InputStream input = VoxelConstants.getMinecraft().getResourceManager().getResource(resource).get().open();
-                if (input != null) {
-                    colorProperties.load(input);
-                    input.close();
-                }
-            } catch (IOException var21) {
-                break;
-            }
-
-            String names = colorProperties.getProperty("blocks");
-            if (names == null) {
-                String name = resource.getPath();
-                name = name.substring(name.lastIndexOf('/') + 1, name.lastIndexOf(".properties"));
-                names = name;
-            }
-
-            String source = colorProperties.getProperty("source");
-            ResourceLocation resourcePNG;
-            if (source != null) {
-                resourcePNG = ResourceLocation.fromNamespaceAndPath(resource.getNamespace(), source);
-
-                VoxelConstants.getMinecraft().getResourceManager().getResource(resourcePNG);
-            } else {
-                resourcePNG = ResourceLocation.fromNamespaceAndPath(resource.getNamespace(), resource.getPath().replace(".properties", ".png"));
-            }
-
-            String format = colorProperties.getProperty("format");
-            boolean grid;
-            if (format != null) {
-                grid = format.equalsIgnoreCase("grid");
-            } else {
-                grid = globalGrid;
-            }
-
-            String yOffsetString = colorProperties.getProperty("yOffset");
-            int yOffset = 0;
-            if (yOffsetString != null) {
-                yOffset = Integer.parseInt(yOffsetString);
-            }
-
-            this.processColorProperty(resourcePNG, names, grid, yOffset);
-        }
-
-        this.processColorPropertyHelper(ResourceLocation.parse("optifine/colormap/water.png"), "water", globalGrid);
-        this.processColorPropertyHelper(ResourceLocation.parse("optifine/colormap/watercolorx.png"), "water", globalGrid);
-        this.processColorPropertyHelper(ResourceLocation.parse("optifine/colormap/swampgrass.png"), "grass_block grass fern tall_grass large_fern", globalGrid);
-        this.processColorPropertyHelper(ResourceLocation.parse("optifine/colormap/swampgrasscolor.png"), "grass_block grass fern tall_grass large_fern", globalGrid);
-        this.processColorPropertyHelper(ResourceLocation.parse("optifine/colormap/swampfoliage.png"), "oak_leaves vine", globalGrid);
-        this.processColorPropertyHelper(ResourceLocation.parse("optifine/colormap/swampfoliagecolor.png"), "oak_leaves vine", globalGrid);
-        this.processColorPropertyHelper(ResourceLocation.parse("optifine/colormap/pine.png"), "spruce_leaves", globalGrid);
-        this.processColorPropertyHelper(ResourceLocation.parse("optifine/colormap/pinecolor.png"), "spruce_leaves", globalGrid);
-        this.processColorPropertyHelper(ResourceLocation.parse("optifine/colormap/birch.png"), "birch_leaves", globalGrid);
-        this.processColorPropertyHelper(ResourceLocation.parse("optifine/colormap/birchcolor.png"), "birch_leaves", globalGrid);
-    }
-
-    private void processColorPropertyHelper(ResourceLocation resource, String list, boolean grid) {
-        ResourceLocation resourceProperties = ResourceLocation.fromNamespaceAndPath(resource.getNamespace(), resource.getPath().replace(".png", ".properties"));
-        Properties colorProperties = new Properties();
-        int yOffset = 0;
-
-        try {
-            InputStream input = VoxelConstants.getMinecraft().getResourceManager().getResource(resourceProperties).get().open();
-            if (input != null) {
-                colorProperties.load(input);
-                input.close();
-            }
-
-            String format = colorProperties.getProperty("format");
-            if (format != null) {
-                grid = format.equalsIgnoreCase("grid");
-            }
-
-            String yOffsetString = colorProperties.getProperty("yOffset");
-            if (yOffsetString != null) {
-                yOffset = Integer.parseInt(yOffsetString);
-            }
-        } catch (IOException ignored) {
-        }
-
-        this.processColorProperty(resource, list, grid, yOffset);
-    }
-
-    private void processColorProperty(ResourceLocation resource, String list, boolean grid, int yOffset) {
-        int[][] tints = new int[this.sizeOfBiomeArray][32];
-
-        for (int[] row : tints) {
-            Arrays.fill(row, -1);
-        }
-
-        boolean swamp = resource.getPath().contains("/swamp");
-        Image tintColors;
-
-        try {
-            InputStream is = VoxelConstants.getMinecraft().getResourceManager().getResource(resource).get().open();
-            tintColors = ImageIO.read(is);
-            is.close();
-        } catch (IOException var21) {
-            return;
-        }
-
-        BufferedImage tintColorsBuff = new BufferedImage(tintColors.getWidth(null), tintColors.getHeight(null), 1);
-        Graphics gfx = tintColorsBuff.createGraphics();
-        gfx.drawImage(tintColors, 0, 0, null);
-        gfx.dispose();
-        int numBiomesToCheck = grid ? Math.min(tintColorsBuff.getWidth(), this.sizeOfBiomeArray) : this.sizeOfBiomeArray;
-
-        for (int t = 0; t < numBiomesToCheck; ++t) {
-            Biome biome = this.world.registryAccess().lookupOrThrow(Registries.BIOME).byId(t);
-            if (biome != null) {
-                int tintMult;
-                int heightMultiplier = tintColorsBuff.getHeight() / 32;
-
-                for (int s = 0; s < 32; ++s) {
-                    if (grid) {
-                        tintMult = tintColorsBuff.getRGB(t, Math.max(0, s * heightMultiplier - yOffset)) & 16777215;
-                    } else {
-                        double var1 = Mth.clamp(biome.getBaseTemperature(), 0.0F, 1.0F);
-                        double var2 = Mth.clamp(biome.climateSettings.downfall(), 0.0F, 1.0F);
-
-                        var2 *= var1;
-                        var1 = 1.0 - var1;
-                        var2 = 1.0 - var2;
-                        tintMult = tintColorsBuff.getRGB((int) ((tintColorsBuff.getWidth() - 1) * var1), (int) ((tintColorsBuff.getHeight() - 1) * var2)) & 16777215;
-                    }
-
-                    if (tintMult != 0 && !swamp) {
-                        tints[t][s] = tintMult;
-                    }
-                }
-            }
-        }
-
-        Set<BlockState> blockStates = new HashSet<>(this.parseBlocksList(list, ""));
-
-        for (BlockState blockState : blockStates) {
-            int blockStateID = BlockRepository.getStateId(blockState);
-            int[][] previousTints = this.blockTintTables.get(blockStateID);
-            if (swamp && previousTints == null) {
-                ResourceLocation defaultResource;
-                if (resource.getPath().contains("grass")) {
-                    defaultResource = ResourceLocation.parse("textures/colormap/grass.png");
-                } else {
-                    defaultResource = ResourceLocation.parse("textures/colormap/foliage.png");
-                }
-
-                String stateString = blockState.toString().toLowerCase();
-                stateString = stateString.replaceAll("^block", "");
-                stateString = stateString.replace("{", "");
-                stateString = stateString.replace("}", "");
-                stateString = stateString.replace("[", ":");
-                stateString = stateString.replace("]", "");
-                stateString = stateString.replace(",", ":");
-                this.processColorProperty(defaultResource, stateString, false, 0);
-                previousTints = this.blockTintTables.get(blockStateID);
-            }
-
-            if (previousTints != null) {
-                for (int t = 0; t < this.sizeOfBiomeArray; ++t) {
-                    for (int s = 0; s < 32; ++s) {
-                        if (tints[t][s] == -1) {
-                            tints[t][s] = previousTints[t][s];
-                        }
-                    }
-                }
-            }
-
-            this.blockColorsWithDefaultTint[blockStateID] = ColorUtils.colorMultiplier(this.getBlockColor(blockStateID), tints[4][8] | 0xFF000000);
-            this.blockTintTables.put(blockStateID, tints);
-            this.biomeTintsAvailable.add(blockStateID);
-        }
-
-    }
-
-    private Block getBlockFromName(String name) {
-        try {
-            ResourceLocation resourceLocation = ResourceLocation.parse(name);
-            return BuiltInRegistries.BLOCK.containsKey(resourceLocation) ? BuiltInRegistries.BLOCK.get(resourceLocation).get().value() : null;
-        } catch (ResourceLocationException | NumberFormatException var3) {
-            return null;
-        }
     }
 
     @FunctionalInterface

@@ -4,7 +4,6 @@ import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.WaypointManager;
 import com.mamiyaotaru.voxelmap.gui.overridden.GuiScreenMinimap;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import java.util.ArrayList;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.ClientRecipeBook;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,11 +24,11 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
     private boolean multiworld;
     private EditBox newNameField;
     private boolean newWorld;
+    private GuiSubworldList subworldList;
     private float yaw;
-    private final CameraType thirdPersonViewOrig;
-    private String[] worlds;
+    private final CameraType lastCameraType;
     private final Screen parent;
-    final LocalPlayer thePlayer;
+    final LocalPlayer player;
     final LocalPlayer camera;
     private final WaypointManager waypointManager;
 
@@ -37,72 +36,56 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
         ClientLevel clientWorld = VoxelConstants.getClientWorld();
 
         this.parent = parent;
-        this.thePlayer = VoxelConstants.getPlayer();
-        this.camera = new LocalPlayer(VoxelConstants.getMinecraft(), clientWorld, VoxelConstants.getMinecraft().getConnection(), this.thePlayer.getStats(), new ClientRecipeBook(), false, false);
+        this.player = VoxelConstants.getPlayer();
+        this.camera = new LocalPlayer(VoxelConstants.getMinecraft(), clientWorld, VoxelConstants.getMinecraft().getConnection(), this.player.getStats(), new ClientRecipeBook(), false, false);
         this.camera.input = new KeyboardInput(VoxelConstants.getMinecraft().options);
-        this.camera.moveOrInterpolateTo(new Vec3(this.thePlayer.getX(), this.thePlayer.getY() + 0.35, this.thePlayer.getZ()), this.thePlayer.getYRot(), 0.0F);
-        this.yaw = this.thePlayer.getYRot();
-        this.thirdPersonViewOrig = VoxelConstants.getMinecraft().options.getCameraType();
+        this.camera.moveOrInterpolateTo(new Vec3(this.player.getX(), this.player.getY() + 0.35, this.player.getZ()), this.player.getYRot(), 0.0F);
+        this.yaw = this.player.getYRot();
+        this.lastCameraType = VoxelConstants.getMinecraft().options.getCameraType();
         this.waypointManager = VoxelConstants.getVoxelMapInstance().getWaypointManager();
     }
 
     public void init() {
-        ArrayList<String> knownSubworldNames = new ArrayList<>(this.waypointManager.getKnownSubworldNames());
         if (!this.multiworld && !this.waypointManager.isMultiworld() && !VoxelConstants.isRealmServer()) {
-            ConfirmScreen confirmScreen = new ConfirmScreen(this, Component.translatable("worldmap.multiworld.isthismultiworld"), Component.translatable("worldmap.multiworld.explanation"), Component.translatable("gui.yes"), Component.translatable("gui.no"));
+            ConfirmScreen confirmScreen = new ConfirmScreen(this, Component.translatable("voxelmap.worldmap.multiworld.ismultiworld"), Component.translatable("voxelmap.worldmap.multiworld.explanation"), Component.translatable("gui.yes"), Component.translatable("gui.no"));
             VoxelConstants.getMinecraft().setScreen(confirmScreen);
         } else {
             VoxelConstants.getMinecraft().options.setCameraType(CameraType.FIRST_PERSON);
             VoxelConstants.getMinecraft().setCameraEntity(this.camera);
         }
 
-        this.title = Component.translatable("worldmap.multiworld.title");
-        this.select = Component.translatable("worldmap.multiworld.select");
+        this.title = Component.translatable("voxelmap.worldmap.multiworld.title");
+        this.select = Component.translatable("voxelmap.worldmap.multiworld.select");
         this.clearWidgets();
-        int centerX = this.width / 2;
-        int buttonsPerRow = this.width / 150;
-        if (buttonsPerRow == 0) {
-            buttonsPerRow = 1;
-        }
 
-        int buttonWidth = this.width / buttonsPerRow - 5;
-        int xSpacing = (this.width - buttonsPerRow * buttonWidth) / 2;
-        Button cancelBtn = new Button.Builder(Component.translatable("gui.cancel"), button -> VoxelConstants.getMinecraft().setScreen(null)).bounds(centerX - 100, this.height - 30, 200, 20).build();
-        this.addRenderableWidget(cancelBtn);
-        knownSubworldNames.sort((name1, name2) -> -String.CASE_INSENSITIVE_ORDER.compare(name1, name2));
-        int numKnownSubworlds = knownSubworldNames.size();
-        int completeRows = (int) Math.floor((float) (numKnownSubworlds + 1) / buttonsPerRow);
-        int lastRowShiftBy = (int) (Math.ceil((float) (numKnownSubworlds + 1) / buttonsPerRow) * buttonsPerRow - (numKnownSubworlds + 1));
-        this.worlds = new String[numKnownSubworlds];
-        Button[] selectButtons = new Button[numKnownSubworlds + 1];
-        Button[] editButtons = new Button[numKnownSubworlds + 1];
-
-        for (int t = 0; t < numKnownSubworlds; ++t) {
-            int shiftBy = 1;
-            if (t / buttonsPerRow >= completeRows) {
-                shiftBy = lastRowShiftBy + 1;
-            }
-
-            this.worlds[t] = knownSubworldNames.get(t);
-            int tt = t;
-            int i = (buttonsPerRow - shiftBy - t % buttonsPerRow) * buttonWidth;
-            selectButtons[t] = new Button.Builder(Component.literal(this.worlds[t]), button -> this.worldSelected(this.worlds[tt])).bounds(i + xSpacing, this.height - 60 - t / buttonsPerRow * 21, buttonWidth - 32, 20).build();
-            editButtons[t] = new Button.Builder(Component.literal("⚒"), button -> this.editWorld(this.worlds[tt])).bounds(i + xSpacing + buttonWidth - 32, this.height - 60 - t / buttonsPerRow * 21, 30, 20).build();
-            this.addRenderableWidget(selectButtons[t]);
-            this.addRenderableWidget(editButtons[t]);
-        }
-
-        int numButtons = selectButtons.length - 1;
-        int i = (buttonsPerRow - 1 - lastRowShiftBy - numButtons % buttonsPerRow) * buttonWidth;
         if (!this.newWorld) {
-            selectButtons[numButtons] = new Button.Builder(Component.literal("< " + I18n.get("worldmap.multiworld.newname") + " >"), button -> {
+            Button newNameBtn = new Button.Builder(Component.literal("< " + I18n.get("voxelmap.worldmap.multiworld.new_name") + " >"), button -> {
                 this.newWorld = true;
                 this.newNameField.setFocused(true);
-            }).bounds(i + xSpacing, this.height - 60 - numButtons / buttonsPerRow * 21, buttonWidth - 2, 20).build();
-            this.addRenderableWidget(selectButtons[numButtons]);
+            }).bounds(10, this.getHeight() - 80, 150, 20).build();
+            this.addRenderableWidget(newNameBtn);
         }
 
-        this.newNameField = new EditBox(this.getFontRenderer(), i + xSpacing + 1, this.height - 60 - numButtons / buttonsPerRow * 21 + 1, buttonWidth - 4, 18, null);
+        this.newNameField = new EditBox(this.getFont(), 11, this.getHeight() - 79, 148, 18, null);
+
+        this.subworldList = new GuiSubworldList(this);
+
+        Button selectBtn = new Button.Builder(Component.translatable("mco.template.button.select"), button -> {
+            if (this.subworldList.getSelected() != null) {
+                this.selectWorld(this.subworldList.getSelected().getSubworldName());
+            }
+        }).bounds(10, this.getHeight() - 60, 75, 20).build();
+        this.addRenderableWidget(selectBtn);
+
+        Button editBtn = new Button.Builder(Component.translatable("selectServer.edit"), button -> {
+            if (this.subworldList.getSelected() != null) {
+                this.editWorld(this.subworldList.getSelected().getSubworldName());
+            }
+        }).bounds(85, this.getHeight() - 60, 75, 20).build();
+        this.addRenderableWidget(editBtn);
+
+        Button cancelBtn = new Button.Builder(Component.translatable("gui.cancel"), button -> VoxelConstants.getMinecraft().setScreen(null)).bounds(this.getWidth() / 2 - 100, this.getHeight() - 30, 200, 20).build();
+        this.addRenderableWidget(cancelBtn);
     }
 
     public void accept(boolean b) {
@@ -115,12 +98,33 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
 
     }
 
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (this.newWorld) {
             this.newNameField.mouseClicked(mouseX, mouseY, button);
         }
 
+        this.subworldList.mouseClicked(mouseX, mouseY, button);
+
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        this.subworldList.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        this.subworldList.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double amount) {
+        this.subworldList.mouseScrolled(mouseX, mouseY, horizontalAmount, amount);
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, amount);
     }
 
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -129,7 +133,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
             if ((keyCode == 257 || keyCode == 335) && this.newNameField.isFocused()) {
                 String newName = this.newNameField.getValue();
                 if (newName != null && !newName.isEmpty()) {
-                    this.worldSelected(newName);
+                    this.selectWorld(newName);
                 }
             }
         }
@@ -143,7 +147,7 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
             if (modifiers == 28) {
                 String newName = this.newNameField.getValue();
                 if (newName != null && !newName.isEmpty()) {
-                    this.worldSelected(newName);
+                    this.selectWorld(newName);
                 }
             }
         }
@@ -155,24 +159,31 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
         super.tick();
     }
 
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    }
+
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-        int titleStringWidth = this.getFontRenderer().width(this.title);
-        titleStringWidth = Math.max(titleStringWidth, this.getFontRenderer().width(this.select));
-        drawContext.fill(this.width / 2 - titleStringWidth / 2 - 5, 0, this.width / 2 + titleStringWidth / 2 + 5, 27, -1073741824);
-        drawContext.drawCenteredString(this.getFontRenderer(), this.title, this.width / 2, 5, 16777215);
-        drawContext.drawCenteredString(this.getFontRenderer(), this.select, this.width / 2, 15, 16711680);
+        super.render(drawContext, mouseX, mouseY, delta);
+        int titleStringWidth = this.getFont().width(this.title);
+        titleStringWidth = Math.max(titleStringWidth, this.getFont().width(this.select));
+        drawContext.fill(this.getWidth() / 2 - titleStringWidth / 2 - 5, 0, this.getWidth() / 2 + titleStringWidth / 2 + 5, 27, -1073741824);
+        drawContext.drawCenteredString(this.getFont(), this.title, this.getWidth() / 2, 5, 16777215);
+        drawContext.drawCenteredString(this.getFont(), this.select, this.getWidth() / 2, 15, 16711680);
+
         this.camera.xRotO = 0.0F;
         this.camera.setXRot(0.0F);
         this.camera.yRotO = this.yaw;
         this.camera.setYRot(this.yaw);
         float var4 = 0.475F;
-        this.camera.yOld = this.camera.yo = this.thePlayer.getY();
-        this.camera.xOld = this.camera.xo = this.thePlayer.getX() - var4 * Math.sin(this.yaw / 180.0 * Math.PI);
-        this.camera.zOld = this.camera.zo = this.thePlayer.getZ() + var4 * Math.cos(this.yaw / 180.0 * Math.PI);
+        this.camera.yOld = this.camera.yo = this.player.getY();
+        this.camera.xOld = this.camera.xo = this.player.getX() - var4 * Math.sin(this.yaw / 180.0 * Math.PI);
+        this.camera.zOld = this.camera.zo = this.player.getZ() + var4 * Math.cos(this.yaw / 180.0 * Math.PI);
         this.camera.setPosRaw(this.camera.xo, this.camera.yo, this.camera.zo);
-        float var5 = 1.0F;
+        float var5 = 5.0F * delta;
         this.yaw = (float) (this.yaw + var5 * (1.0 + 0.7F * Math.cos((this.yaw + 45.0F) / 45.0 * Math.PI)));
-        super.render(drawContext, mouseX, mouseY, delta);
+
+        this.subworldList.render(drawContext, mouseX, mouseY, delta);
         if (this.newWorld) {
             this.newNameField.render(drawContext, mouseX, mouseY, delta);
         }
@@ -182,16 +193,16 @@ public class GuiSubworldsSelect extends GuiScreenMinimap implements BooleanConsu
     @Override
     public void removed() {
         super.removed();
-        VoxelConstants.getMinecraft().options.setCameraType(this.thirdPersonViewOrig);
-        VoxelConstants.getMinecraft().setCameraEntity(this.thePlayer);
+        VoxelConstants.getMinecraft().options.setCameraType(this.lastCameraType);
+        VoxelConstants.getMinecraft().setCameraEntity(this.player);
     }
 
-    private void worldSelected(String selectedSubworldName) {
+    public void selectWorld(String selectedSubworldName) {
         this.waypointManager.setSubworldName(selectedSubworldName, false);
         VoxelConstants.getMinecraft().setScreen(this.parent);
     }
 
-    private void editWorld(String subworldNameToEdit) {
+    public void editWorld(String subworldNameToEdit) {
         VoxelConstants.getMinecraft().setScreen(new GuiSubworldEdit(this, subworldNameToEdit));
     }
 }
