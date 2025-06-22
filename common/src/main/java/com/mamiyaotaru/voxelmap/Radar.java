@@ -76,10 +76,7 @@ public class Radar implements IRadar {
             }
 
             if (this.timer > 15) {
-                // long t0 = System.nanoTime();
                 this.calculateMobs();
-                // long t1 = System.nanoTime();
-                // VoxelConstants.getLogger().info("Calculate Mobs " + calculateMobsPart + " took " + ((t1 - t0) / 1000) + " micros");
                 this.timer = 0;
             }
 
@@ -227,7 +224,7 @@ public class Radar implements IRadar {
                         yOffset = -4.0F;
                     }
 
-                    int imageSize = (int) (contact.icon.getIconWidth() / 8.0F);
+                    float imageSize = contact.icon.getIconWidth() / 8.0F;
                     contact.icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LEQUAL_DEPTH, x - imageSize / 2, y + yOffset - imageSize / 2, imageSize, imageSize, color);
 
                     if (contact.name != null && ((this.options.showPlayerNames && contact.category == MobCategory.PLAYER) || (this.options.showMobNames && contact.category != MobCategory.PLAYER && contact.entity.hasCustomName()))) {
