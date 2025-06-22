@@ -17,7 +17,6 @@ import com.mamiyaotaru.voxelmap.util.DynamicMoveableTexture;
 import com.mamiyaotaru.voxelmap.util.FullMapData;
 import com.mamiyaotaru.voxelmap.util.GLUtils;
 import com.mamiyaotaru.voxelmap.util.GameVariableAccessShim;
-import com.mamiyaotaru.voxelmap.util.ImageUtils;
 import com.mamiyaotaru.voxelmap.util.LayoutVariables;
 import com.mamiyaotaru.voxelmap.util.MapChunkCache;
 import com.mamiyaotaru.voxelmap.util.MapUtils;
@@ -1621,7 +1620,7 @@ public class Map implements Runnable, IChangeObserver {
                         RenderSystem.getTextureMatrix(),
                         RenderSystem.getShaderLineWidth());
 
-        RenderPipeline renderPipeline = GLUtils.GUI_TEXTURED_ANY_DEPTH_PIPELINE;
+        RenderPipeline renderPipeline = GLUtils.GUI_TEXTURED_ANY_DEPTH;
         try (MeshData meshData = bufferBuilder.build()) {
             GpuBuffer vertexBuffer = renderPipeline.getVertexFormat().uploadImmediateVertexBuffer(meshData.vertexBuffer());
             GpuBuffer indexBuffer;
@@ -1766,7 +1765,7 @@ public class Map implements Runnable, IChangeObserver {
                     guiGraphics.pose().translate(0.0f, -hypot);
                 }
 
-                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_PIPELINE, x - 4, y - 4, 8, 8, color);
+                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LEQUAL_DEPTH, x - 4, y - 4, 8, 8, color);
             } catch (Exception var40) {
                 this.error = "Error: marker overlay not found!";
             } finally {
@@ -1798,7 +1797,7 @@ public class Map implements Runnable, IChangeObserver {
                 guiGraphics.pose().translate(0.0f, -hypot);
                 guiGraphics.pose().rotate(locate * Mth.DEG_TO_RAD);
 
-                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_PIPELINE, x - 4, y - 4, 8, 8, color);
+                icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LEQUAL_DEPTH, x - 4, y - 4, 8, 8, color);
             } catch (Exception var42) {
                 this.error = "Error: waypoint overlay not found!";
             } finally {
@@ -1867,7 +1866,7 @@ public class Map implements Runnable, IChangeObserver {
 
     private void drawMapFrame(GuiGraphics guiGraphics, int x, int y, boolean squaremap) {
         ResourceLocation frameResource = squaremap ? resourceSquareMap : resourceRoundMap;
-        guiGraphics.blit(GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_PIPELINE, frameResource, x - 32, y - 32, 0, 0, 64, 64, 64, 64);
+        guiGraphics.blit(GLUtils.GUI_TEXTURED_LEQUAL_DEPTH, frameResource, x - 32, y - 32, 0, 0, 64, 64, 64, 64);
     }
 
     private void drawDirections(GuiGraphics drawContext, int x, int y, float scaleProj) {

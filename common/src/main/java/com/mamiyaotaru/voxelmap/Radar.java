@@ -257,7 +257,7 @@ public class Radar implements IRadar {
                     // }
 
                     int imageSize = (int) (contact.icon.getIconWidth() / 8.0F);
-                    contact.icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_PIPELINE, x - imageSize / 2, y + yOffset - imageSize / 2, imageSize, imageSize, color);
+                    contact.icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LEQUAL_DEPTH, x - imageSize / 2, y + yOffset - imageSize / 2, imageSize, imageSize, color);
 
                     if (contact.name != null && ((this.options.showPlayerNames && contact.category == MobCategory.PLAYER) || (this.options.showMobNames && contact.category != MobCategory.PLAYER && contact.entity.hasCustomName()))) {
 

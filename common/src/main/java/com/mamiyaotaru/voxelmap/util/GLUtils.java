@@ -71,58 +71,30 @@ public class GLUtils {
         }, 0);
     }
 
-    public static final RenderPipeline GUI_TEXTURED_EQUAL_DEPTH_PIPELINE = RenderPipeline
+    public static final RenderPipeline GUI_TEXTURED_EQUAL_DEPTH = RenderPipeline
             .builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/gui_textured_equal_depth"))
             .withDepthTestFunction(DepthTestFunction.EQUAL_DEPTH_TEST)
             .build();
 
-    public static final RenderPipeline GUI_TEXTURED_ANY_DEPTH_PIPELINE = RenderPipeline
+    public static final RenderPipeline GUI_TEXTURED_ANY_DEPTH = RenderPipeline
             .builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/gui_textured_any_depth"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .build();
 
-    public static final BlendFunction DST_ALPHA = new BlendFunction(SourceFactor.DST_ALPHA, DestFactor.ONE_MINUS_DST_ALPHA);
-
-    public static final RenderPipeline GUI_TEXTURED_ANY_DEPTH_PIPELINE_DST_ALPHA = RenderPipeline
+    public static final RenderPipeline GUI_TEXTURED_ANY_DEPTH_DST_ALPHA = RenderPipeline
             .builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/gui_textured_any_depth_dst_alpha"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-            .withBlend(DST_ALPHA)
+            .withBlend(new BlendFunction(SourceFactor.DST_ALPHA, DestFactor.ONE_MINUS_DST_ALPHA))
             .build();
 
-    public static final Function<ResourceLocation, RenderType> GUI_TEXTURED_EQUAL_DEPTH = Util.memoize(
-            (Function<ResourceLocation, RenderType>) (resourceLocation -> RenderType.create(
-                    "voxelmap_gui_textured_equal_depth",
-                    0x00C000,
-                    GUI_TEXTURED_EQUAL_DEPTH_PIPELINE,
-                    RenderType.CompositeState.builder()
-                            .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, false))
-                            .createCompositeState(false))));
-
-    public static final RenderPipeline GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_PIPELINE = RenderPipeline
+    public static final RenderPipeline GUI_TEXTURED_LEQUAL_DEPTH = RenderPipeline
             .builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-            .withLocation(ResourceLocation.parse("voxelmap:pipeline/gui_textured_equal_depth"))
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/gui_textured_lequal_depth"))
             .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST).build();
 
-    public static final Function<ResourceLocation, RenderType> GUI_TEXTURED_LESS_OR_EQUAL_DEPTH = Util.memoize(
-            (Function<ResourceLocation, RenderType>) (resourceLocation -> RenderType.create(
-                    "voxelmap_gui_textured_lequal_depth",
-                    0x00C000,
-                    GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_PIPELINE,
-                    RenderType.CompositeState.builder()
-                            .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, false))
-                            .createCompositeState(false))));
-
-    public static final Function<ResourceLocation, RenderType> GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_FILTER_MIN = Util.memoize(
-            (Function<ResourceLocation, RenderType>) (resourceLocation -> RenderType.create(
-                    "voxelmap_gui_textured_lequal_depth_filter_min",
-                    0x00C000,
-                    GUI_TEXTURED_LESS_OR_EQUAL_DEPTH_PIPELINE,
-                    RenderType.CompositeState.builder()
-                            .setTextureState(new ExtendedTextureStateShard(resourceLocation, FilterMode.LINEAR, FilterMode.NEAREST, true))
-                            .createCompositeState(false))));
 
     public static class ExtendedTextureStateShard extends RenderStateShard.EmptyTextureStateShard {
         private final Optional<ResourceLocation> texture;
@@ -173,22 +145,20 @@ public class GLUtils {
                     .createCompositeState(false));
 
     public static final RenderPipeline WAYPOINT_ICON_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_icon"))
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_icon_depthtest"))
             .withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
-            .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
-            .withDepthWrite(true)
+            .withBlend(BlendFunction.TRANSLUCENT)
             .build();
 
     public static final RenderPipeline WAYPOINT_ICON_NO_DEPTHTEST_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_icon"))
+            .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_icon_no_depthtest"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-            .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
-            .withDepthWrite(true)
+            .withBlend(BlendFunction.TRANSLUCENT)
             .build();
 
     public static final Function<ResourceLocation, RenderType> WAYPOINT_ICON_DEPTHTEST = Util.memoize(
             (Function<ResourceLocation, RenderType>) (resourceLocation -> RenderType.create(
-                    "voxelmap_icon_depthtest",
+                    "voxelmap_waypoint_icon_depthtest",
                     0x00C000, // buffer size
                     WAYPOINT_ICON_DEPTHTEST_PIPELINE,
                     RenderType.CompositeState.builder()
@@ -197,7 +167,7 @@ public class GLUtils {
 
     public static final Function<ResourceLocation, RenderType> WAYPOINT_ICON_NO_DEPTHTEST = Util.memoize(
             (Function<ResourceLocation, RenderType>) (resourceLocation -> RenderType.create(
-                    "voxelmap_icon_no_depthtest",
+                    "voxelmap_waypoint_icon_no_depthtest",
                     0x00C000, // buffer size
                     WAYPOINT_ICON_NO_DEPTHTEST_PIPELINE,
                     RenderType.CompositeState.builder()
@@ -207,9 +177,7 @@ public class GLUtils {
     public static final RenderPipeline WAYPOINT_TEXT_BACKGROUND_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/waypoint_background"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-            .withDepthBias(1.0F, 7.0F)
-            .withBlend(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA))
-            .withDepthWrite(false)
+            .withBlend(BlendFunction.TRANSLUCENT)
             .build();
 
     public static final RenderType WAYPOINT_TEXT_BACKGROUND = RenderType.create(
@@ -217,9 +185,10 @@ public class GLUtils {
             0x00C000, // buffer size
             WAYPOINT_TEXT_BACKGROUND_PIPELINE,
             RenderType.CompositeState.builder()
-                    .createCompositeState(false));
+                    .createCompositeState(false)
+    );
 
-    public static final VertexFormat VF = VertexFormat.builder()
+    public static final VertexFormat VERTEX_FORMAT = VertexFormat.builder()
             .add("Position", VertexFormatElement.POSITION)
             .add("Color", VertexFormatElement.COLOR)
             .add("UV0", VertexFormatElement.UV0)
@@ -232,7 +201,7 @@ public class GLUtils {
     public static final RenderPipeline ENTITY_ICON = RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
             .withLocation(ResourceLocation.parse("voxelmap:pipeline/entity_solid"))
             .withSampler("Sampler1")
-            .withVertexFormat(VF, VertexFormat.Mode.QUADS)
+            .withVertexFormat(VERTEX_FORMAT, VertexFormat.Mode.QUADS)
             .withShaderDefine("EMISSIVE")
             .withShaderDefine("NO_OVERLAY")
             .withShaderDefine("NO_CARDINAL_LIGHTING")
