@@ -709,10 +709,6 @@ public class Map implements Runnable, IChangeObserver {
                 this.drawArrow(drawContext, this.scWidth / 2, this.scHeight / 2, scaleProj);
             } else {
                 this.renderMap(drawContext, mapX, mapY, scScale, scaleProj);
-                if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
-                    this.layoutVariables.updateVars(scScale, mapX, mapY, this.zoomScale, this.zoomScaleAdjusted);
-                    VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(drawContext, this.layoutVariables, scaleProj);
-                }
                 this.drawDirections(drawContext, mapX, mapY, scaleProj);
                 this.drawArrow(drawContext, mapX, mapY, scaleProj);
             }
@@ -1567,7 +1563,7 @@ public class Map implements Runnable, IChangeObserver {
                 this.lastImageZ = this.lastZ;
             }
         }
-        //
+
         float multi = (float) (1.0 / this.zoomScale);
         this.percentX = (float) (GameVariableAccessShim.xCoordDouble() - this.lastImageX);
         this.percentY = (float) (GameVariableAccessShim.zCoordDouble() - this.lastImageZ);
@@ -1583,14 +1579,13 @@ public class Map implements Runnable, IChangeObserver {
         bufferBuilder.addVertex(256, -256, -2500).setUv(1, 1).setColor(255, 255, 255, 255);
         bufferBuilder.addVertex(-256, -256, -2500).setUv(0, 1).setColor(255, 255, 255, 255);
 
-        // guiGraphics.pose().translate(256, 256);
-        if (!this.options.rotates) {
-            guiGraphics.pose().rotate(-this.northRotate * Mth.DEG_TO_RAD);
-        } else {
+        if (this.options.rotates) {
             guiGraphics.pose().rotate(this.direction * Mth.DEG_TO_RAD);
+        } else {
+            guiGraphics.pose().rotate(-this.northRotate * Mth.DEG_TO_RAD);
         }
         guiGraphics.pose().scale(scale, scale);
-        // guiGraphics.pose().translate(-256, -256);
+
         guiGraphics.pose().translate(-this.percentX * 512.0F / 64.0F, this.percentY * 512.0F / 64.0F);
 
         Vector3f vector3f = new Vector3f();
@@ -1648,7 +1643,7 @@ public class Map implements Runnable, IChangeObserver {
                 if (!this.options.squareMap) {
                     renderPass.bindSampler("Sampler0", circleStencilTexture);
                     renderPass.drawIndexed(0, 0, meshData.drawState().indexCount() / 2, 1);
-                    renderPass.setPipeline(GLUtils.GUI_TEXTURED_ANY_DEPTH_PIPELINE_DST_ALPHA);
+                    renderPass.setPipeline(GLUtils.GUI_TEXTURED_ANY_DEPTH_DST_ALPHA);
                 }
                 renderPass.bindSampler("Sampler0", mapImages[this.zoom].getTextureView());
                 renderPass.drawIndexed(0, meshData.drawState().indexCount() / 2, meshData.drawState().indexCount() / 2, 1);
@@ -1657,8 +1652,6 @@ public class Map implements Runnable, IChangeObserver {
         RenderSystem.getModelViewStack().popMatrix();
         RenderSystem.setProjectionMatrix(originalProjectionMatrix, originalProjectionType);
         fboTessellator.clear();
-        // if (((saved++) % 1000) == 0)
-        // ImageUtils.saveImage("minimap_" + saved, fboTexture);
 
         guiGraphics.pose().popMatrix();
 
@@ -1666,6 +1659,12 @@ public class Map implements Runnable, IChangeObserver {
 
         double guiScale = (double) minecraft.getWindow().getWidth() / this.scWidth;
         minTablistOffset = guiScale * 63;
+
+        if (VoxelConstants.getVoxelMapInstance().getRadar() != null) {
+            this.layoutVariables.updateVars(scScale, x, y, this.zoomScale, this.zoomScaleAdjusted);
+            VoxelConstants.getVoxelMapInstance().getRadar().onTickInGame(guiGraphics, this.layoutVariables);
+        }
+
         this.drawMapFrame(guiGraphics, x, y, this.options.squareMap);
 
         double lastXDouble = GameVariableAccessShim.xCoordDouble();

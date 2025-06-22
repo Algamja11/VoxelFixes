@@ -53,7 +53,7 @@ public class Radar implements IRadar {
     }
 
     @Override
-    public void onTickInGame(GuiGraphics drawContext, LayoutVariables layoutVariables, float scaleProj) {
+    public void onTickInGame(GuiGraphics drawContext, LayoutVariables layoutVariables) {
         entityMapImageManager.onRenderTick(drawContext);
         if (this.options.radarAllowed || this.options.radarMobsAllowed || this.options.radarPlayersAllowed) {
             this.layoutVariables = layoutVariables;
@@ -84,7 +84,7 @@ public class Radar implements IRadar {
             }
 
             ++this.timer;
-            this.renderMapMobs(drawContext, this.layoutVariables.mapX, this.layoutVariables.mapY, scaleProj);
+            this.renderMapMobs(drawContext, this.layoutVariables.mapX, this.layoutVariables.mapY);
         }
     }
 
@@ -157,9 +157,7 @@ public class Radar implements IRadar {
         });
     }
 
-    public void renderMapMobs(GuiGraphics guiGraphics, int x, int y, float scaleProj) {
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().scale(scaleProj, scaleProj);
+    public void renderMapMobs(GuiGraphics guiGraphics, int x, int y) {
         double max = this.layoutVariables.zoomScaleAdjusted * 32.0;
         double lastX = GameVariableAccessShim.xCoordDouble();
         double lastZ = GameVariableAccessShim.zCoordDouble();
@@ -229,33 +227,6 @@ public class Radar implements IRadar {
                         yOffset = -4.0F;
                     }
 
-                    // if (Stream.of(EnumMobs.GHAST, EnumMobs.GHASTATTACKING, EnumMobs.WITHER, EnumMobs.WITHERINVULNERABLE, EnumMobs.VEX, EnumMobs.VEXCHARGING, EnumMobs.PUFFERFISH, EnumMobs.PUFFERFISHHALF, EnumMobs.PUFFERFISHFULL).anyMatch(enumMobs -> contact.type == enumMobs)) {
-                    // if (contact.type != EnumMobs.GHAST && contact.type != EnumMobs.GHASTATTACKING) {
-                    // if (contact.type != EnumMobs.WITHER && contact.type != EnumMobs.WITHERINVULNERABLE) {
-                    // if (contact.type != EnumMobs.VEX && contact.type != EnumMobs.VEXCHARGING) {
-                    // int size = ((Pufferfish) contact.entity).getPuffState();
-                    // switch (size) {
-                    // case 0 -> contact.type = EnumMobs.PUFFERFISH;
-                    // case 1 -> contact.type = EnumMobs.PUFFERFISHHALF;
-                    // case 2 -> contact.type = EnumMobs.PUFFERFISHFULL;
-                    // }
-                    // } else {
-                    // if (contact.entity instanceof Vex vex) {
-                    // contact.type = vex.isCharging() ? EnumMobs.VEXCHARGING : EnumMobs.VEX;
-                    // }
-                    // }
-                    // } else {
-                    // if (contact.entity instanceof WitherBoss witherBoss) {
-                    // contact.type = witherBoss.getInvulnerableTicks() > 0 ? EnumMobs.WITHERINVULNERABLE : EnumMobs.WITHER;
-                    // }
-                    // }
-                    // } else {
-                    // if (contact.entity instanceof Ghast ghast) {
-                    // contact.type = ghast.isCharging() ? EnumMobs.GHASTATTACKING : EnumMobs.GHAST;
-                    // }
-                    // }
-                    // }
-
                     int imageSize = (int) (contact.icon.getIconWidth() / 8.0F);
                     contact.icon.blit(guiGraphics, GLUtils.GUI_TEXTURED_LEQUAL_DEPTH, x - imageSize / 2, y + yOffset - imageSize / 2, imageSize, imageSize, color);
 
@@ -277,7 +248,6 @@ public class Radar implements IRadar {
                 }
             }
         }
-        guiGraphics.pose().popMatrix();
     }
 
     private boolean isHostile(Entity entity) {

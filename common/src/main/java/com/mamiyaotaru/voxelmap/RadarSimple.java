@@ -65,7 +65,7 @@ public class RadarSimple implements IRadar {
     }
 
     @Override
-    public void onTickInGame(GuiGraphics guiGraphics, LayoutVariables layoutVariables, float scaleProj) {
+    public void onTickInGame(GuiGraphics guiGraphics, LayoutVariables layoutVariables) {
         if (this.options.radarAllowed || this.options.radarMobsAllowed || this.options.radarPlayersAllowed) {
             this.layoutVariables = layoutVariables;
             if (this.options.isChanged()) {
@@ -89,7 +89,7 @@ public class RadarSimple implements IRadar {
 
             ++this.timer;
             if (this.completedLoading) {
-                this.renderMapMobs(guiGraphics, this.layoutVariables.mapX, this.layoutVariables.mapY, scaleProj);
+                this.renderMapMobs(guiGraphics, this.layoutVariables.mapX, this.layoutVariables.mapY);
             }
         }
     }
@@ -119,7 +119,7 @@ public class RadarSimple implements IRadar {
         this.contacts.sort(Comparator.comparingDouble(contact -> contact.y));
     }
 
-    public void renderMapMobs(GuiGraphics guiGraphics, int x, int y, float scaleProj) {
+    public void renderMapMobs(GuiGraphics guiGraphics, int x, int y) {
         double max = this.layoutVariables.zoomScaleAdjusted * 32.0;
 
         for (Contact contact : this.contacts) {
@@ -157,7 +157,6 @@ public class RadarSimple implements IRadar {
             if (inRange) {
                 try {
                     guiGraphics.pose().pushMatrix();
-                    guiGraphics.pose().scale(scaleProj, scaleProj);
                     float contactFacing = contact.entity.getYHeadRot();
                     if (this.minimapOptions.rotates) {
                         contactFacing -= this.direction;
