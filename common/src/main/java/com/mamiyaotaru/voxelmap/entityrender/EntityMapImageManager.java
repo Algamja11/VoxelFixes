@@ -340,6 +340,11 @@ public class EntityMapImageManager {
                 g.setComposite(AlphaComposite.Clear);
                 g.fillRect(0, 248, image.getWidth(), image.getHeight());
             }
+            if (model instanceof HappyGhastModel) {
+                Graphics2D g = image.createGraphics();
+                g.setComposite(AlphaComposite.Clear);
+                g.fillRect(0, 352, image.getWidth(), image.getHeight());
+            }
             image = ImageUtils.trim(image);
             int maxSize = Math.max(image.getHeight(), image.getWidth());
             int targetSize = model instanceof AbstractEquineModel<?> || model instanceof WitchModel || model instanceof WardenModel ? 50 : 32;
