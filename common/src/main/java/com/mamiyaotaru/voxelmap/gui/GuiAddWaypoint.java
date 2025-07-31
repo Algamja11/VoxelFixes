@@ -20,7 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen {
-    private static final ResourceLocation BLANK = ResourceLocation.parse("textures/misc/white.png");
+    private static final ResourceLocation BLANK = ResourceLocation.parse("voxelmap:images/solid.png");
     private static final ResourceLocation PICKER = ResourceLocation.parse("voxelmap:images/colorpicker.png");
     private static final ResourceLocation TARGET = ResourceLocation.parse("voxelmap:images/waypoints/target.png");
     final WaypointManager waypointManager;
@@ -183,13 +183,13 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button, boolean bl) {
         if (this.popupOpen()) {
-            super.mouseClicked(mouseX, mouseY, button);
-            this.waypointName.mouseClicked(mouseX, mouseY, button);
-            this.waypointX.mouseClicked(mouseX, mouseY, button);
-            this.waypointY.mouseClicked(mouseX, mouseY, button);
-            this.waypointZ.mouseClicked(mouseX, mouseY, button);
+            super.mouseClicked(mouseX, mouseY, button, bl);
+            this.waypointName.mouseClicked(mouseX, mouseY, button, bl);
+            this.waypointX.mouseClicked(mouseX, mouseY, button, bl);
+            this.waypointY.mouseClicked(mouseX, mouseY, button, bl);
+            this.waypointZ.mouseClicked(mouseX, mouseY, button, bl);
         }
         else if (choosingColor){
             int pickerSize = 200;
@@ -218,7 +218,7 @@ public class GuiAddWaypoint extends GuiScreenMinimap implements IPopupGuiScreen 
         }
 
         if (this.popupOpen() && this.dimensionList != null) {
-            this.dimensionList.mouseClicked(mouseX, mouseY, button);
+            this.dimensionList.mouseClicked(mouseX, mouseY, button, bl);
         }
 
         return true;

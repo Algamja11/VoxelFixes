@@ -172,14 +172,14 @@ public class GuiButtonRowListPlayers extends AbstractSelectionList<GuiButtonRowL
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (this.button != null && this.button.mouseClicked(mouseX, mouseY, button)) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button, boolean bl) {
+            if (this.button != null && this.button.mouseClicked(mouseX, mouseY, button, bl)) {
                 GuiButtonRowListPlayers.this.buttonClicked(this.id);
                 return true;
-            } else if (this.button1 != null && this.button1.mouseClicked(mouseX, mouseY, button)) {
+            } else if (this.button1 != null && this.button1.mouseClicked(mouseX, mouseY, button, bl)) {
                 GuiButtonRowListPlayers.this.buttonClicked(this.id1);
                 return true;
-            } else if (this.button2 != null && this.button2.mouseClicked(mouseX, mouseY, button)) {
+            } else if (this.button2 != null && this.button2.mouseClicked(mouseX, mouseY, button, bl)) {
                 GuiButtonRowListPlayers.this.buttonClicked(this.id2);
                 return true;
             } else {

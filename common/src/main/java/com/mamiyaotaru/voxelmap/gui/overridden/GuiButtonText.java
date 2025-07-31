@@ -27,8 +27,8 @@ public class GuiButtonText extends Button {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        boolean pressed = super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(double mouseX, double mouseY, int button, boolean bl) {
+        boolean pressed = super.mouseClicked(mouseX, mouseY, button, bl);
         this.setEditing(pressed);
         return pressed;
     }

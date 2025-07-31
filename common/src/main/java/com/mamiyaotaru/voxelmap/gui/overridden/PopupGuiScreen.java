@@ -64,7 +64,7 @@ public abstract class PopupGuiScreen extends GuiScreenMinimap implements IPopupG
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return !this.clickedPopup(mouseX, mouseY) && super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(double mouseX, double mouseY, int button, boolean bl) {
+        return !this.clickedPopup(mouseX, mouseY) && super.mouseClicked(mouseX, mouseY, button, bl);
     }
 }

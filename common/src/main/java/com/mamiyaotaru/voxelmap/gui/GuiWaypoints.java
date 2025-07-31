@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.players.NameAndId;
 
 public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     private final Screen parentScreen;
@@ -45,12 +46,14 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     protected Waypoint newWaypoint;
     private final Random generator = new Random();
     private boolean changedSort;
+    private NameAndId playerNameAndID;
 
     public GuiWaypoints(Screen parentScreen) {
         this.parentScreen = parentScreen;
         this.options = VoxelConstants.getVoxelMapInstance().getMapOptions();
         this.waypointManager = VoxelConstants.getVoxelMapInstance().getWaypointManager();
         this.highlightedWaypoint = this.waypointManager.getHighlightedWaypoint();
+        this.playerNameAndID = new NameAndId(VoxelConstants.getPlayer().getGameProfile());
     }
 
     @Override
@@ -166,9 +169,9 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        this.waypointList.mouseClicked(mouseX, mouseY, button);
-        return super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(double mouseX, double mouseY, int button, boolean bl) {
+        this.waypointList.mouseClicked(mouseX, mouseY, button, bl);
+        return super.mouseClicked(mouseX, mouseY, button, bl);
     }
 
     @Override
@@ -302,7 +305,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         }
 
         try {
-            return integratedServer.get().getPlayerList().isOp(VoxelConstants.getPlayer().getGameProfile());
+            return integratedServer.get().getPlayerList().isOp(playerNameAndID);
         } catch (RuntimeException exception) {
             return integratedServer.get().getWorldData().isAllowCommands();
         }
