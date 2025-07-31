@@ -90,7 +90,6 @@ public class EntityMapImageManager {
     private int fulfilledImageCreationRequests;
     private final HashMap<EntityType<?>, EntityVariantDataFactory> variantDataFactories = new HashMap<>();
     private ConcurrentLinkedQueue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
-    private final Camera fakeCamera = new Camera();
     private GpuTextureView fboTextureView;
     private GpuTextureView fboDepthTextureView;
     private VoxelMapCachedOrthoProjectionMatrixBuffer projection;
@@ -168,16 +167,7 @@ public class EntityMapImageManager {
         if (entity instanceof AbstractClientPlayer player) {
             variant = new DefaultEntityVariantData(entity.getType(), player.getSkin().texture(), null, size, addBorder);
         } else if (entity instanceof LivingEntity && baseRenderer instanceof LivingEntityRenderer renderer) {
-            if (minecraft.getEntityRenderDispatcher().camera == null) {
-                minecraft.getEntityRenderDispatcher().camera = fakeCamera;
-            }
-
             renderState = renderer.createRenderState(entity, 0.5f);
-
-            if (minecraft.getEntityRenderDispatcher().camera == fakeCamera) {
-                minecraft.getEntityRenderDispatcher().camera = null;
-            }
-
             variant = getVariantData(entity, renderer, renderState, size, addBorder);
         }
         if (variant == null) {
@@ -239,7 +229,8 @@ public class EntityMapImageManager {
 
         @SuppressWarnings("rawtypes")
         EntityModel model = ((LivingEntityRenderer) baseRenderer).getModel();
-        model.setupAnim((LivingEntityRenderState) renderState);
+//        model.setupAnim((LivingEntityRenderState) renderState);
+        model.resetPose();
         for (ModelPart part : getPartToRender(model)) {
             part.xRot = 0;
             part.yRot = 0;
