@@ -42,6 +42,7 @@ import net.minecraft.client.model.AbstractEquineModel;
 import net.minecraft.client.model.CamelModel;
 import net.minecraft.client.model.CodModel;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HappyGhastModel;
 import net.minecraft.client.model.LavaSlimeModel;
 import net.minecraft.client.model.LlamaModel;
 import net.minecraft.client.model.SalmonModel;
