@@ -53,9 +53,11 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.highlightedWaypoint = this.waypointManager.getHighlightedWaypoint();
     }
 
+    @Override
     public void tick() {
     }
 
+    @Override
     public void init() {
         this.screenTitle = Component.translatable("minimap.waypoints.title");
         this.waypointList = new GuiSlotWaypoints(this);
@@ -64,7 +66,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.addRenderableWidget(this.buttonSortCreated = new Button.Builder(Component.translatable("minimap.waypoints.sortbycreated"), button -> this.sortClicked(1)).bounds(this.getWidth() / 2, 34, 77, 20).build());
         this.addRenderableWidget(this.buttonSortColor = new Button.Builder(Component.translatable("minimap.waypoints.sortbycolor"), button -> this.sortClicked(4)).bounds(this.getWidth() / 2 + 77, 34, 77, 20).build());
         int filterStringWidth = this.getFontRenderer().width(I18n.get("minimap.waypoints.filter") + ":");
-        this.filter = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 153 + filterStringWidth + 5, this.getHeight() - 80, 305 - filterStringWidth - 5, 20, null);
+        this.filter = new EditBox(this.getFontRenderer(), this.getWidth() / 2 - 153 + filterStringWidth + 5, this.getHeight() - 80, 305 - filterStringWidth - 5, 20, Component.empty());
         this.filter.setMaxLength(35);
         this.addRenderableWidget(this.filter);
         this.addRenderableWidget(new Button.Builder(Component.translatable("minimap.waypoints.add"), button -> this.addWaypoint()).bounds(this.getWidth() / 2 - 154, this.getHeight() - 52, 74, 20).build());
@@ -143,6 +145,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.sort();
     }
 
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         boolean OK = super.keyPressed(keyCode, scanCode, modifiers);
         if (this.filter.isFocused()) {
@@ -152,6 +155,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         return OK;
     }
 
+    @Override
     public boolean charTyped(char chr, int modifiers) {
         boolean OK = super.charTyped(chr, modifiers);
         if (this.filter.isFocused()) {
@@ -161,20 +165,24 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         return OK;
     }
 
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         this.waypointList.mouseClicked(mouseX, mouseY, button);
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
+    @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         this.waypointList.mouseReleased(mouseX, mouseY, button);
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
+    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         return this.waypointList.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
+    @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double amount) {
         return this.waypointList.mouseScrolled(mouseX, mouseY, 0, amount);
     }
@@ -184,6 +192,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         return this.editClicked;
     }
 
+    @Override
     public void accept(boolean b) {
         if (this.deleteClicked) {
             this.deleteClicked = false;
@@ -266,6 +275,7 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
         this.waypointManager.saveWaypoints();
     }
 
+    @Override
     public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
         renderBackgroundTexture(drawContext);
         this.tooltip = null;
@@ -287,7 +297,9 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     public boolean canTeleport() {
         Optional<IntegratedServer> integratedServer = VoxelConstants.getIntegratedServer();
 
-        if (integratedServer.isEmpty()) return true;
+        if (integratedServer.isEmpty()) {
+            return true;
+        }
 
         try {
             return integratedServer.get().getPlayerList().isOp(VoxelConstants.getPlayer().getGameProfile());
@@ -299,6 +311,8 @@ public class GuiWaypoints extends GuiScreenMinimap implements IGuiWaypoints {
     @Override
     public void removed() {
 
-        if (changedSort) super.removed();
+        if (changedSort) {
+            super.removed();
+        }
     }
 }
