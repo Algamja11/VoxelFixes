@@ -1,3 +1,8 @@
+# ! NOTICE !
+
+I have become a co-developer of VoxelMap!
+Therefore, this repository will only be used for testing some experimental features!
+
 # VoxelMap Updated
 
 [![Modrinth](https://img.shields.io/badge/modrinth-voxelmap--updated-green)](https://modrinth.com/mod/voxelmap-updated)
